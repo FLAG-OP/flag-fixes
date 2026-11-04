@@ -2,6 +2,8 @@
 
 FLAG-OP 的修复目录、开发模板和安装管理工具。现有 8 个单算子修复仓库通过 `third_party/` 下固定 commit 的 Git submodule 接入；新的修复直接维护在本仓库的 `fixes/<fix-id>/`。
 
+**[文档与结果导航](docs/index.md)** · **[当前结果汇总](docs/current-status.md)** · [最新 CI](https://github.com/FLAG-OP/flag-fixes/actions/workflows/ci.yml)
+
 ## 快速开始
 
 需要 Python 3.10+、Git 和 Linux（安装事务使用文件锁）。
