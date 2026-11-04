@@ -1,0 +1,50 @@
+schema_version: 1
+id: lift-fresh-5743
+title: lift_fresh 家族空张量修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/liftfreshFIX
+  commit: 233323cde6ce9c4cb34b284a1319aa243ff24be7
+  repository: https://github.com/FLAG-OP/liftfreshFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: lift_fresh.patch
+  sha256: 93dc93a408ae055d03e12e8b89f3b72e7a5180949d9a7e09fe91f50cf93c1cb8
+targets:
+- path: src/flag_gems/ops/lift_fresh.py
+  before_sha256: a5439fa01cbabdbc85ff0e55a085d827a53e59c5f02c0d031baad8b77e626303
+  after_sha256: 584ef5f503e0f7d146db1b31b726f1990969db59d8a79b2dfa2b48f8327559f5
+  before_source: src/lift_fresh.py.orig
+  after_source: src/lift_fresh.py
+- path: src/flag_gems/ops/lift_fresh_copy.py
+  before_sha256: 38651d168d201fcf75ab17ce5ec5dfddab7114794043d0677f8040b21fbbd491
+  after_sha256: d3953e5c7835916a1f0d96c4d42eb55b418a7d68a6dcb47006573123e2d40c74
+  before_source: src/lift_fresh_copy.py.orig
+  after_source: src/lift_fresh_copy.py
+backends:
+- ascend
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/liftfreshFIX/blob/233323cde6ce9c4cb34b284a1319aa243ff24be7/README.md
+  commands:
+  - name: lift-fresh-direct
+    script: tests/test_lift_fresh_standalone.py
+    level: regression
+    env:
+      ASCEND_LAUNCH_BLOCKING: '1'
+    timeout_seconds: 600
+installation_status: needs-adaptation
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+- 原始 patch 与源仓库前后快照未通过一致性检查，发布前需修复。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5743

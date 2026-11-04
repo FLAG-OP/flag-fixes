@@ -1,0 +1,45 @@
+schema_version: 1
+id: arith-5732
+title: pow 链式布尔与半精度指数修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/arithFIX
+  commit: b73fbf173e1ea1e8ac7ed08316b5f96205ef02a9
+  repository: https://github.com/FLAG-OP/arithFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: arith.patch
+  sha256: 045438e4249adb71cbcbf9f8927058abf3feba1583d20052944cbecb8dec6885
+targets:
+- path: src/flag_gems/runtime/backend/_ascend/ops/pow.py
+  before_sha256: 6d919451a2abef5e9c78f95db0a8ba3dd074824bb80ec7bf88faf10a98f4db4b
+  after_sha256: da6262d50265fa46d9d8df5d0e72a5e6d2133265b3a45008451c5c55e3ecd1db
+  before_source: src/pow.py.orig
+  after_source: src/pow.py
+- path: src/flag_gems/runtime/backend/_spacemit/ops/argmin.py
+  before_sha256: 9f0d8803d718fcdd8db458a13af73ee1d5c624a648c1c3cfd631ee0a9c58d18d
+  after_sha256: f4aa7dc163dfb45099270c35ab56e531495997cea090a59ffc3b4e12298ff6ed
+  before_source: src/argmin_spacemit.py.orig
+  after_source: src/argmin_spacemit.py
+backends:
+- ascend
+- spacemit
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/arithFIX/blob/b73fbf173e1ea1e8ac7ed08316b5f96205ef02a9/README.md
+  commands: []
+installation_status: source-checked
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+- 源 patch 同时修改 Ascend pow 与 Spacemit argmin；暂按原始整体记录，待源仓库拆分后分别接入。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5732

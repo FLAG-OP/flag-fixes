@@ -1,0 +1,38 @@
+schema_version: 1
+id: mm-bf16-kunlunxin
+title: KunlunXIN BF16 mm 性能修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/mmBF16FIX
+  commit: 09967ec546277c8175fe4d1021daeb3e3b3678cd
+  repository: https://github.com/FLAG-OP/mmBF16FIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: mm.patch
+  sha256: 5ca99fb821ad82bf09259428f757cc58734cd17be82225bd3599d47d05953732
+targets:
+- path: src/flag_gems/runtime/backend/_kunlunxin/ops/mm.py
+  before_sha256: 848afc83d2a541b88c29fa66ab3396a60d4c73838dac0352d866d31dcc94c33b
+  after_sha256: 248323dd7a96e02c1fd1d53ddb598b6c96459b3fb848c958068267bd5e64f73e
+  before_source: kernel/legacy_flaggems.py
+  after_source: kernel/triton_level.py
+backends:
+- kunlunxin
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/mmBF16FIX/blob/09967ec546277c8175fe4d1021daeb3e3b3678cd/README.md
+  commands: []
+installation_status: source-checked
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+upstream_issue: null

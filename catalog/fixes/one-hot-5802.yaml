@@ -1,0 +1,39 @@
+schema_version: 1
+id: one-hot-5802
+title: one_hot inference_mode 递归修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/onehotFIX
+  commit: 3cef1d720fc5ce42978be4b7fc1c500eb516278f
+  repository: https://github.com/FLAG-OP/onehotFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: one_hot.patch
+  sha256: 3d0b999593bf161e596fd6b61b494df971d39bf9bba8d63f1a8752d10011ddf9
+targets:
+- path: src/flag_gems/ops/one_hot.py
+  before_sha256: 20e88ab2c0233eabb2e3b6fd44fb2679b4750ef0f2ae9af2d893864b42ba51b4
+  after_sha256: cfa9385004eb63da954e382703e8ce6eaa9bdae7f8715ed56eee7811930cdae3
+  before_source: src/one_hot.py.orig
+  after_source: src/one_hot.py
+backends:
+- ascend
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/onehotFIX/blob/3cef1d720fc5ce42978be4b7fc1c500eb516278f/README.md
+  commands: []
+installation_status: needs-adaptation
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+- 原始 patch 与源仓库前后快照未通过一致性检查，发布前需修复。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5802

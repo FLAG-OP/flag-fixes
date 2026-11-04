@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FLAG-OP fix manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "owner",
+    "status",
+    "deployable",
+    "source",
+    "target",
+    "patches",
+    "targets",
+    "backends",
+    "requires",
+    "conflicts",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "template_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "active",
+        "deprecated",
+        "retired"
+      ]
+    },
+    "deployable": {
+      "type": "boolean"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "commit",
+        "repository"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "submodule",
+            "local"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repository": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package",
+        "baseline_version",
+        "baseline_commit"
+      ],
+      "properties": {
+        "package": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "baseline_commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "before_sha256",
+          "after_sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "before_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "after_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "before_source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "after_source": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "backends": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hardware_status",
+        "evidence",
+        "commands"
+      ],
+      "properties": {
+        "hardware_status": {
+          "enum": [
+            "unverified",
+            "passed",
+            "failed"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "script",
+              "level"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "script": {
+                "type": "string",
+                "minLength": 1
+              },
+              "level": {
+                "enum": [
+                  "repro",
+                  "regression",
+                  "dispatch",
+                  "e2e",
+                  "benchmark"
+                ]
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "env": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "timeout_seconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 86400
+              }
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "upstream_issue": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "installation_status": {
+      "enum": [
+        "source-checked",
+        "needs-adaptation",
+        "draft"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "deployable": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "const": "active"
+          },
+          "patches": {
+            "minItems": 1
+          },
+          "targets": {
+            "minItems": 1
+          },
+          "validation": {
+            "properties": {
+              "hardware_status": {
+                "const": "passed"
+              },
+              "evidence": {
+                "minItems": 1
+              },
+              "commands": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

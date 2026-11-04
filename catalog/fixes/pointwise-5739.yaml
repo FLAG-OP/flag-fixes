@@ -1,0 +1,38 @@
+schema_version: 1
+id: pointwise-5739
+title: 广播 pointwise block pointer 修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/pointwiseFIX
+  commit: a6b538daa4b61f8da5e368e92847a45ae79ba856
+  repository: https://github.com/FLAG-OP/pointwiseFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: pointwise_dynamic.patch
+  sha256: 6793f9d04228ef2fffd376baec4b9b42a5f36ef985aedde7f97b0db2228e4129
+targets:
+- path: src/flag_gems/utils/pointwise_dynamic.py
+  before_sha256: 6a4f88e227ed566de05729c0ab3ac89457e0cbdcdbea31b12319908f4ee33290
+  after_sha256: 11d18254143662a4f93eb41747b24a1a5a403ef237c6a08fb951c02330643c98
+  before_source: src/pointwise_dynamic.py.orig
+  after_source: src/pointwise_dynamic.py
+backends:
+- ascend
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/pointwiseFIX/blob/a6b538daa4b61f8da5e368e92847a45ae79ba856/README.md
+  commands: []
+installation_status: source-checked
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5739

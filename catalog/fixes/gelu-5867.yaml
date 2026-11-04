@@ -1,0 +1,48 @@
+schema_version: 1
+id: gelu-5867
+title: GELU 家族 CANN pow 类型修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/geluFIX
+  commit: f07f22206a0961c3713c7ceea9f86bb2750e3dcd
+  repository: https://github.com/FLAG-OP/geluFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: gelu.patch
+  sha256: 3385c327f2458368d8b83051741b132a4e648b57f0fec8e22ba9f4c30db278dc
+targets:
+- path: src/flag_gems/fused/geglu.py
+  before_sha256: 0e2e4634054009d5905db462f53d17e544228f56fe6bcbdb2c0df3e895eac052
+  after_sha256: d552ad904e535c96fa0ff003c32561b4a08e88465bdbb066a0e14b4e02f7f9e9
+  before_source: src/geglu.py.orig
+  after_source: src/geglu.py
+- path: src/flag_gems/fused/gelu_and_mul.py
+  before_sha256: d58c99677ba1695b6a4183e1bd3915c93918a97137721882e162630b0f36cdca
+  after_sha256: 885069f9e8f0a11aa95d2df63f009eb5f253e6d76404a1abc3c114f6fea42744
+  before_source: src/gelu_and_mul.py.orig
+  after_source: src/gelu_and_mul.py
+- path: src/flag_gems/ops/gelu.py
+  before_sha256: 57549257ef74a72c2b7afe9c72a7a94ef8b0794a8214600b3f8867d942381d59
+  after_sha256: 3eca1d7f7c61500053b2b8bc12a268009c316fc7f52d6e5a842e205f682f0cd2
+  before_source: src/gelu.py.orig
+  after_source: src/gelu.py
+backends:
+- ascend
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/geluFIX/blob/f07f22206a0961c3713c7ceea9f86bb2750e3dcd/README.md
+  commands: []
+installation_status: source-checked
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5867

@@ -1,0 +1,46 @@
+schema_version: 1
+id: gather-5746
+title: Ascend 非连续 gather 索引修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/gatherFIX
+  commit: dbb6b6d06f93fa5ee280b0ded3273086bbc2915a
+  repository: https://github.com/FLAG-OP/gatherFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: gather.patch
+  sha256: 5d01608b0b9d834e4d0915816165b1d4447103689e0b043708834947ca0e99f3
+targets:
+- path: src/flag_gems/runtime/backend/_ascend/ops/gather.py
+  before_sha256: 453ce5280f6106e57d5f6000b4cea96ba062b1afe5cec4ebc6aaecc2a6f1d8e3
+  after_sha256: b9df123222ed62520f3e189d569ec8dfe681da57565edc71499ae448ae5ccfd9
+  before_source: src/gather.py.orig
+  after_source: src/gather.py
+backends:
+- ascend
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/gatherFIX/blob/dbb6b6d06f93fa5ee280b0ded3273086bbc2915a/README.md
+  commands:
+  - name: gather-direct
+    script: tests/test_gather_standalone.py
+    level: regression
+    env:
+      ASCEND_LAUNCH_BLOCKING: '1'
+      MOD: '{target}/src/flag_gems/runtime/backend/_ascend/ops/gather.py'
+    timeout_seconds: 600
+installation_status: needs-adaptation
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+- 原始 patch 与源仓库前后快照未通过一致性检查，发布前需修复。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5746

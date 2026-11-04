@@ -1,0 +1,33 @@
+schema_version: 1
+id: cann-pow-promotion
+title: Triton CANN pow 指数提升修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/geluFIX
+  commit: f07f22206a0961c3713c7ceea9f86bb2750e3dcd
+  repository: https://github.com/FLAG-OP/geluFIX
+target:
+  package: triton
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: libdevice_pow_promotion.patch
+  sha256: aac0189bfb3c60a8def076a892eef72c9b3e4176af768221a02147ba95b31697
+targets: []
+backends:
+- ascend
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/geluFIX/blob/f07f22206a0961c3713c7ceea9f86bb2750e3dcd/README.md
+  commands: []
+installation_status: needs-adaptation
+notes:
+- 原始补丁为 normal diff；首版安装器仅支持统一 diff。需要目标基线、文件 hash 和统一 diff 后才能接入安装。
+- 目标为 triton/language/extra/cann/libdevice.py；不能按 FlagGems 根目录应用。
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5867

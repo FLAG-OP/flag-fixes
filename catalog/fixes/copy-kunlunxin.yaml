@@ -1,0 +1,38 @@
+schema_version: 1
+id: copy-kunlunxin
+title: KunlunXIN 非连续 copy 修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: submodule
+  path: third_party/copyFIX
+  commit: 2b348a37fc1bc67c9226eb5371fd5431659f8e83
+  repository: https://github.com/FLAG-OP/copyFIX
+target:
+  package: flag_gems
+  baseline_version: null
+  baseline_commit: null
+patches:
+- path: copy.patch
+  sha256: 635c305e6ec9df6b2a82a55d47e795f50bd627cdb1ce4ce8b2e8ed1da7f38735
+targets:
+- path: src/flag_gems/runtime/backend/_kunlunxin/ops/copy.py
+  before_sha256: dd374e2d2bcde79ec9a209e67dbbbaa963d3cdd77f26b36454e91c8069b42040
+  after_sha256: d195a4497216a3bb9c638c5695e6621e24f5230e93cda52bab83415ec4257a16
+  before_source: src/copy.py.orig
+  after_source: src/copy.py
+backends:
+- kunlunxin
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/FLAG-OP/copyFIX/blob/2b348a37fc1bc67c9226eb5371fd5431659f8e83/README.md
+  commands: []
+installation_status: source-checked
+notes:
+- 历史硬件结果见源仓库 README；本仓库尚未复跑，未核实的版本兼容性不作声明。
+- 目标路径相对于 FlagGems 源码根目录。
+upstream_issue: null
