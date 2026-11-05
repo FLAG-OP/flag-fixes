@@ -71,12 +71,34 @@ RuntimeError: view size is not compatible with input tensor's size and stride ..
 | 基线 `src/flag_gems/ops/linear.py` | `4d46bae0804ac32b698582d010d5f0e02d3570c6703efff9d1d666e2bf43fd94` |
 | 修复后 | `ddec3383c1d6ca4b2f53cf6ea9550c2d5fead492a2562e0864e723b958ee951d` |
 
-## 怎么用
+## 怎么用：单项补丁安装
 
 前置：FlagGems 基线 `29e14822f6dfabf990973c41f7c2df7811a6f60f`（`git describe` = `v5.3.5-46-g29e14822`），
 目标文件 hash 与上表一致。验证硬件为 PPU，FlagGems vendor 解析为 `thead`，设备/dispatch 标识为 `cuda`：
 `cuda` 只是本环境的设备标识，不代表已验证所有 CUDA 厂商后端。本机环境与实际执行过的命令见
 `reports/validation.md`。
+
+本目录提供独立的 patch 和测试脚本，**不是独立 pip 包**。`draft` 表示验收材料尚未完整，
+`deployable=false` 表示统一工具的 `apply` 暂不开放；这不妨碍在匹配基线的测试工作树中手工
+应用补丁。PR 合并不会自动改变这两个状态。
+
+不使用管理工具时，也可单独应用本目录的补丁。先确认目标文件的 SHA256 与上表基线一致，
+并在测试工作树中操作：
+
+```bash
+FIX_DIR=/path/to/flag-fixes/fixes/linear-5379
+TARGET=/path/to/FlagGems
+sha256sum "$TARGET/src/flag_gems/ops/linear.py"  # 核对上表 before hash
+git -C "$TARGET" apply --check "$FIX_DIR/patches/linear-5379.patch" && \
+  git -C "$TARGET" apply "$FIX_DIR/patches/linear-5379.patch"
+sha256sum "$TARGET/src/flag_gems/ops/linear.py"  # 核对上表 after hash
+```
+
+随后按下方第 3 步运行单项测试。手工安装不创建管理工具的备份或安装记录，不能用
+`flag-fixes rollback` 撤销；下方第 4 步使用反向 patch，只撤销这份补丁。不要在同一目标上
+重复执行两份示例中的安装步骤。若使用管理工具进行精确 hash 预演，完整流程如下。
+测试和应用必须导入修改后的目标源码树，例如设置 `PYTHONPATH="$TARGET/src"` 并启动新进程；
+若仍导入另一份 site-packages 中的 FlagGems，这份补丁不会生效。
 
 三个测试脚本不依赖工作目录，但 `--root` 和 patch 路径依赖：`git -C` 会先切换工作目录、
 `--root .` 取决于当前目录，所以先保存两个绝对路径，后续命令全程使用它们（下文均为参数化示例，
@@ -102,8 +124,9 @@ PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/linear-5379/tests/test_linear_c
 PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
   verify linear-5379 --target "$TARGET" --python python3
 
-# 4) 回滚
-git -C "$TARGET" checkout -- src/flag_gems/ops/linear.py
+# 4) 撤销手工补丁：先检查反向应用是否可行
+git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/linear-5379/patches/linear-5379.patch" && \
+  git -C "$TARGET" apply --reverse "$MANAGER/fixes/linear-5379/patches/linear-5379.patch"
 ```
 
 容器侧整模型回归（problem.md 要求的独立 result-root，避免命中已有 on-Success 缓存）。

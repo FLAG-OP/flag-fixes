@@ -22,7 +22,8 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: pip
       - run: python -m pip install -e '.[dev]'
-      # validate covers schema + patch/baseline/snapshot hash consistency;
+      # validate checks schema, declared file hashes and script existence;
+      # baseline-to-patched-content consistency requires a separate check/plan.
       # compileall only syntax-checks local fix entry scripts (no hardware runners here).
       - run: flag-fixes validate
       - run: python -m compileall -q fixes

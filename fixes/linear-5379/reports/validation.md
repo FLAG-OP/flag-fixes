@@ -21,32 +21,50 @@
 | 运行时 vendor | FlagGems 解析 `vendor_name='thead'`, `device_name='cuda'`, `device_query_cmd='ppu-smi'`。**`cuda` 是本 PPU 环境的设备/dispatch 标识，不代表已验证所有 CUDA 厂商后端**；硬件为 PPU-ZW810E |
 
 目标树构造（可重建）。下表与下文命令用 `$TARGET_BASE` / `$TARGET_FIXED` 指代目标树，
-其取值是本机实际路径，换机器时改成自己的目录即可：
+以下是参数化复现示例，请先替换为本机绝对路径。历史执行时的目标路径为
+`/tmp/opencode/FlagGems-base` 与 `/tmp/opencode/FlagGems-fixed`，原始日志保持不变：
 
 ```bash
-MANAGER=/root/flag-fixes               # 本仓库根（换机器时改成本地 clone 路径）
-TARGET_BASE=$MANAGER/../FlagGems-base  # 修复前树；本机实际为 /tmp/opencode/FlagGems-base
-TARGET_FIXED=$MANAGER/../FlagGems-fixed# 修复后树；本机实际为 /tmp/opencode/FlagGems-fixed
-git -C <FlagGems> worktree add "$TARGET_BASE"  29e14822f6dfabf990973c41f7c2df7811a6f60f  # 修复前
-git -C <FlagGems> worktree add "$TARGET_FIXED" 29e14822f6dfabf990973c41f7c2df7811a6f60f  # 修复前基线
+MANAGER=/path/to/flag-fixes
+FLAGGEMS_SOURCE=/path/to/FlagGems      # 已包含下述基线 commit 的源码仓库
+TARGET_BASE="$MANAGER/../FlagGems-base"   # 新建修复前工作树
+TARGET_FIXED="$MANAGER/../FlagGems-fixed" # 新建修复后工作树
+git -C "$FLAGGEMS_SOURCE" worktree add --detach "$TARGET_BASE" 29e14822f6dfabf990973c41f7c2df7811a6f60f
+git -C "$FLAGGEMS_SOURCE" worktree add --detach "$TARGET_FIXED" 29e14822f6dfabf990973c41f7c2df7811a6f60f
 git -C "$TARGET_FIXED" apply "$MANAGER/fixes/linear-5379/patches/linear-5379.patch"      # 打上 patch
 ```
 
 ## 命令与结果
 
+下表中的三项测试分别在两棵树上运行，使用绝对脚本路径。修复前的非零退出是预期现象；
+以下循环记录每个命令的退出码，不能将最后一条输出命令的退出码当作整组通过标志。
+
+```bash
+for TARGET_TREE in "$TARGET_BASE" "$TARGET_FIXED"; do
+  for SCRIPT in repro_linear_view.py test_linear_noncontig.py test_linear_callers.py; do
+    if PYTHONPATH="$TARGET_TREE/src" python3 "$MANAGER/fixes/linear-5379/tests/$SCRIPT"; then
+      RESULT=0
+    else
+      RESULT=$?
+    fi
+    printf '%s %s exit=%s\n' "$TARGET_TREE" "$SCRIPT" "$RESULT"
+  done
+done
+```
+
 | 项目 | 精确命令 | 判定标准 | 修复前 | 修复后 | 证据 |
 | --- | --- | --- | --- | --- | --- |
-| 最小复现 | `PYTHONPATH=$TARGET_{BASE,FIXED}/src python3 tests/repro_linear_view.py` | 退出码 0 且打印 `OK`；修复前必须以 `linear.py:158` RuntimeError 非零退出 | **exit 1**：`File ".../ops/linear.py", line 158, in linear / input_flat = input.view(M, K)` → `RuntimeError: view size is not compatible with input tensor's size and stride ...`；输入 `(2,16,64) stride=(1024,1,16)` | **exit 0**：`out (2,16,32) mse=2.666e-11 max_diff=2.861e-05`，打印 `OK` | `tests/repro_linear_view.py`；traceback 原文见下 |
-| 回归/边界 | `PYTHONPATH=$TARGET_BASE/src python3 tests/test_linear_noncontig.py` | `TOTAL: ... 0 failed`（3 dtype × 9 布局 × dispatch/direct） | **exit 1**：`TOTAL: 20 passed, 30 failed`，30 条全部是同一 `view size is not compatible` （transpose/slice/permute/expand/4d/无 bias/gemv 布局 × dispatch 与 direct） | **exit 0**：`TOTAL: 50 passed, 0 failed` | 脚本内逐用例打印 mse/max_diff |
-| 调用方 / e2e | `PYTHONPATH=$TARGET_BASE/src python3 tests/test_linear_callers.py` | `TOTAL: 0 failed`（NHWC MLP、seq-first MLP、随机初始化 SigLIP 视觉塔）；缺依赖必须非零退出 | **exit 1**：第一个用例即在 `ops/linear.py:158` 抛同一 RuntimeError | **exit 0**：`TOTAL: 3 passed, 0 failed`，mse 依次 8.838e-15 / 4.177e-14 / 8.106e-13 | `tests/test_linear_callers.py`（SigLIP 随机初始化，不下载权重） |
+| 最小复现 | 上方双工作树循环：`repro_linear_view.py` | 退出码 0 且打印 `OK`；修复前必须以 `linear.py:158` RuntimeError 非零退出 | **exit 1**：`File ".../ops/linear.py", line 158, in linear / input_flat = input.view(M, K)` → `RuntimeError: view size is not compatible with input tensor's size and stride ...`；输入 `(2,16,64) stride=(1024,1,16)` | **exit 0**：`out (2,16,32) mse=2.666e-11 max_diff=2.861e-05`，打印 `OK` | `tests/repro_linear_view.py`；traceback 原文见下 |
+| 回归/边界 | 上方双工作树循环：`test_linear_noncontig.py` | `TOTAL: ... 0 failed`（3 dtype × 9 布局 × dispatch/direct） | **exit 1**：`TOTAL: 20 passed, 30 failed`，30 条全部是同一 `view size is not compatible` （transpose/slice/permute/expand/4d/无 bias/gemv 布局 × dispatch 与 direct） | **exit 0**：`TOTAL: 50 passed, 0 failed` | 脚本内逐用例打印 mse/max_diff |
+| 调用方 / e2e | 上方双工作树循环：`test_linear_callers.py` | `TOTAL: 0 failed`（NHWC MLP、seq-first MLP、随机初始化 SigLIP 视觉塔）；缺依赖必须非零退出 | **exit 1**：第一个用例即在 `ops/linear.py:158` 抛同一 RuntimeError | **exit 0**：`TOTAL: 3 passed, 0 failed`，mse 依次 8.838e-15 / 4.177e-14 / 8.106e-13 | `tests/test_linear_callers.py`（SigLIP 随机初始化，不下载权重） |
 | e2e 缺依赖（skip ≠ pass） | 同上，`PYTHONPATH` 前置一个只抛 `ImportError` 的同名 `transformers` 模块模拟缺依赖 | 必须非零（**exit 2**）且打印 `MISSING DEPENDENCY`，不得因前两项通过返回 0 | — | **exit 2**：`TOTAL: 2 passed, 0 failed`，stderr `MISSING DEPENDENCY: transformers - SigLIP caller case not run; a skip is not a pass (exit 2)` | 原始输出 `results/e2e-missing-dep-2026-11-05.log` |
 | 精度 | 同上（脚本内 oracle 均在注册前用原生 torch 计算，比较在 CPU 上进行） | fp32 `allclose(rtol=1e-3, atol=1e-3)`；连续对照组修复前后逐位相同 | 连续对照组 max_diff=0（通过） | fp32 dispatch/direct 全绿；连续对照组 max_diff=0，即修复未改变连续路径 | 修复后 repro mse 2.67e-11；`flag_gems.linear` vs 原生 |
 | 性能 | 不适用 | 非性能修复：连续路径无额外拷贝（`reshape` 返回视图 + `contiguous()` 空操作），非连续路径修复前根本无法完成计算，无法给出同口径前后耗时 | not-applicable | not-applicable | `benchmarks/` 保持模板状态，不伪造耗时 |
-| 清单与基线校验 | `PYTHONPATH=src python3 -m flag_fixes --root . validate` | exit 0，`valid: true` | — | **exit 0**：`{"valid": true, "fixes": 10, "deployable": 0, "hardware_verified": 0}` | 管理仓库 CLI |
-| 安装预演 | `PYTHONPATH=src python3 -m flag_fixes --root . check linear-5379 --target $TARGET_BASE`（`plan` 同结果） | exit 0：基线 hash 命中、`git apply --check` 干净、patch 后 hash 与声明一致 | — | **exit 0**，输出 `before_sha256=4d46bae0…` / `after_sha256=ddec3383…` / `deployable: false` | `check`、`plan` 两次运行输出一致 |
+| 清单与声明文件 hash 校验 | `PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" validate` | exit 0，`valid: true` | — | **exit 0**：`{"valid": true, "fixes": 10, "deployable": 0, "hardware_verified": 0}` | 管理仓库 CLI |
+| 安装预演 | `PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" check linear-5379 --target $TARGET_BASE`（`plan` 同结果） | exit 0：基线 hash 命中、`git apply --check` 干净、patch 后 hash 与声明一致 | — | **exit 0**，输出 `before_sha256=4d46bae0…` / `after_sha256=ddec3383…` / `deployable: false` | `check`、`plan` 两次运行输出一致 |
 | 部署拒绝检查 | `... apply linear-5379 --target $TARGET_BASE` | 必须拒绝（deployable=false） | — | **exit 2**：`error: Selected fixes are not approved for deployment` | 未产生任何安装状态 |
 | 状态/回滚 | `... status --target $TARGET_BASE` | 无安装记录、无漂移 | — | **exit 0**：`{"transactions": [], "drift": [], "recovery_required": false}` | 目标树保持修复前内容 |
-| 工具级验收 | `PYTHONPATH=src python3 -m flag_fixes --root . verify linear-5379 --target $TARGET_FIXED --python python3` | JSON `passed: true`，三个命令 `returncode=0` | — | **exit 0**，`passed: true`；repro/regression/e2e 分别 rc=0（两次运行均如此） | 原始输出 `results/verify-2026-11-04.json`（历史，dirty=true）与 `results/verify-2026-11-05.json`（干净重跑，见下节） |
+| 工具级验收 | `PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" verify linear-5379 --target $TARGET_FIXED --python python3` | JSON `passed: true`，三个命令 `returncode=0` | — | **exit 0**，`passed: true`；repro/regression/e2e 分别 rc=0（两次运行均如此） | 原始输出 `results/verify-2026-11-04.json`（历史，dirty=true）与 `results/verify-2026-11-05.json`（干净重跑，见下节） |
 | 容器整模型回归（x-benchmark） | problem.md 的 `run_model.py --models google/siglip-base-patch16-224 ... --result-root /data/ppu-benchmark/results_top515_repro` | on 趟 Success（且必须用独立 `--result-root` 绕过已有 on-Success 缓存） | not-run（本环境无该容器与运行器） | not-run（同左） | 见下方 not-run 说明 |
 
 ### 修复前 traceback（`tests/repro_linear_view.py`，基线树）
@@ -82,7 +100,7 @@ RuntimeError: view size is not compatible with input tensor's size and stride (a
 
 普通 CI（ubuntu runner，无设备）对本 fix 覆盖：`flag-fixes validate`（schema、patch hash、
 快照 hash、脚本存在性）+ `python -m pytest -q` + `python -m compileall -q fixes`（本地 fix 脚本
-语法检查）。**三个硬件脚本不进普通 CI**，只在带 PPU/CUDA 设备的环境运行；语法检查通过
+语法检查）。`validate` 仅核对各文件自身的声明 hash，不应用补丁；基线经 patch 后与修复快照的对应关系由 `check`/`plan` 单独验证。**三个硬件脚本不进普通 CI**，只在带 PPU/CUDA 设备的环境运行；语法检查通过
 ≠ 入口执行通过 ≠ 硬件验证通过，`hardware_status` 保持 `unverified`。
 
 ## 未执行、不适用与已知限制

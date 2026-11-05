@@ -47,7 +47,7 @@ fix 名称链接到本仓库清单；历史说明固定到当前 submodule commi
 | --- | --- | --- |
 | 2026-11-05 新增本地 fix `linear-5379` | 本仓库第 1 项本地修复（fix 索引合计 10 项 = 9 项外部 + 1 项本地）：FlagGems `linear` 对非连续输入调用 `view` 崩溃，改为 `reshape(...).contiguous()`；`deployable=false`、`hardware_status=unverified`，`apply` 会拒绝 | [fix 目录](../fixes/linear-5379/)、[诊断](../fixes/linear-5379/reports/diagnosis.md)、[验证记录](../fixes/linear-5379/reports/validation.md)、[verify 结果](../fixes/linear-5379/results/)、PR #1 |
 
-本地 fix 不进入上节 catalog 表。普通 CI 对本地 fix 脚本只做语法检查（`python -m compileall -q fixes`）、`flag-fixes validate` 的清单/patch/快照一致性检查与管理工具 pytest；三个硬件脚本只在带设备的环境运行，语法检查通过不等于硬件验证通过。
+本地 fix 不进入上节 catalog 表。普通 CI 对本地 fix 脚本只做语法检查（`python -m compileall -q fixes`）、`flag-fixes validate` 的 schema、各声明文件的 hash 和脚本存在性检查与管理工具 pytest。`validate` 不应用补丁，也不证明基线经 patch 后等于修复快照；该关系由针对目标树的 `check`/`plan` 单独验证。三个硬件脚本只在带设备的环境运行，语法检查通过不等于硬件验证通过。
 
 ## 后续工作
 
