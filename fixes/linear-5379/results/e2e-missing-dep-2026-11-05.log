@@ -1,0 +1,13 @@
+/tmp/opencode/FlagGems-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+MISSING DEPENDENCY: transformers - SigLIP caller case not run; a skip is not a pass (exit 2)
+nhwc input (2, 15, 15, 16) stride=(3600, 15, 1, 225) contiguous=False
+seq-first input (16, 8, 32) stride=(32, 512, 1) contiguous=False
+  [ERROR] MISSING DEPENDENCY: transformers - SigLIP caller case not run; a skip is not a pass (exit 2)
+=== 1. vision NHWC block (conv -> transpose -> MLP) ===
+  [PASS] nhwc-mlp mse=8.838e-15
+=== 2. transformer seq-first block (B,S,D -> S,B,D -> MLP) ===
+  [PASS] seq-first-mlp mse=4.177e-14
+=== 3. SigLIP vision tower, non-contiguous pixel_values ===
+  [SKIP] case 3 not run - see MISSING DEPENDENCY above
+TOTAL: 2 passed, 0 failed

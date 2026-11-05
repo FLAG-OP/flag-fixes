@@ -74,28 +74,40 @@ RuntimeError: view size is not compatible with input tensor's size and stride ..
 ## 怎么用
 
 前置：FlagGems 基线 `29e14822f6dfabf990973c41f7c2df7811a6f60f`（`git describe` = `v5.3.5-46-g29e14822`），
-目标文件 hash 与上表一致；本机验证环境见 `reports/validation.md`。
+目标文件 hash 与上表一致。验证硬件为 PPU，FlagGems vendor 解析为 `thead`，设备/dispatch 标识为 `cuda`：
+`cuda` 只是本环境的设备标识，不代表已验证所有 CUDA 厂商后端。本机环境与实际执行过的命令见
+`reports/validation.md`。
+
+三个测试脚本不依赖工作目录，但 `--root` 和 patch 路径依赖：`git -C` 会先切换工作目录、
+`--root .` 取决于当前目录，所以先保存两个绝对路径，后续命令全程使用它们（下文均为参数化示例，
+不是某台机器的实际路径）：
 
 ```bash
+MANAGER=/path/to/flag-fixes   # 本仓库根目录（含 catalog/、fixes/、src/）
+TARGET=/path/to/FlagGems      # FlagGems 源码根（含 src/flag_gems/...）
+
 # 1) 预演：确认目标仍是修复前内容，patch 能干净应用（不落盘）
-flag-fixes --root . check linear-5379 --target /path/to/FlagGems
+PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
+  check linear-5379 --target "$TARGET"
 
 # 2) 手工应用最小 patch（本修复未获部署资格，flag-fixes apply 会按设计拒绝）
-git -C /path/to/FlagGems apply fixes/linear-5379/patches/linear-5379.patch
+git -C "$TARGET" apply "$MANAGER/fixes/linear-5379/patches/linear-5379.patch"
 
-# 3) 验证（三个脚本都要退出码 0；无设备时退出码 2，不算通过）
-cd fixes/linear-5379
-PYTHONPATH=/path/to/FlagGems/src python3 tests/repro_linear_view.py
-PYTHONPATH=/path/to/FlagGems/src python3 tests/test_linear_noncontig.py
-PYTHONPATH=/path/to/FlagGems/src python3 tests/test_linear_callers.py
-# 或由管理工具跑（要求目标已是修复后内容，输出 JSON 见 results/）
-flag-fixes --root . verify linear-5379 --target /path/to/FlagGems --python python3
+# 3) 验证：三个脚本都必须退出码 0；缺设备或缺 transformers 时退出码 2，不算通过
+PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/linear-5379/tests/repro_linear_view.py"
+PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/linear-5379/tests/test_linear_noncontig.py"
+PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/linear-5379/tests/test_linear_callers.py"  # 需要 transformers
+
+# 或由管理工具跑（要求目标已是修复后内容；--root 永远指向管理仓库根，输出 JSON 见 results/）
+PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
+  verify linear-5379 --target "$TARGET" --python python3
 
 # 4) 回滚
-git -C /path/to/FlagGems checkout -- src/flag_gems/ops/linear.py
+git -C "$TARGET" checkout -- src/flag_gems/ops/linear.py
 ```
 
-容器侧整模型回归（problem.md 要求的独立 result-root，避免命中已有 on-Success 缓存）：
+容器侧整模型回归（problem.md 要求的独立 result-root，避免命中已有 on-Success 缓存）。
+以下路径是目标容器内的固定路径，按 problem.md 原样给出，不是本机路径：
 
 ```bash
 cd /home/wuyiqiang/x-benchmark && HF_HOME=/home/wuyiqiang/hf_cache \
@@ -118,11 +130,13 @@ python3 run_model.py --models "google/siglip-base-patch16-224" \
 ├── tests/
 │   ├── repro_linear_view.py      #   issue 最小复现 + 修复验收（level: repro）
 │   ├── test_linear_noncontig.py  #   布局 × dtype × 路径矩阵，50 用例（level: regression）
-│   └── test_linear_callers.py    #   NHWC/seq-first 调用方 + 随机初始化 SigLIP 视觉塔（level: e2e）
+│   └── test_linear_callers.py    #   NHWC/seq-first 调用方 + 随机初始化 SigLIP 视觉塔（level: e2e，需 transformers）
 ├── reports/
 │   ├── diagnosis.md              #   根因、方案、影响范围
 │   └── validation.md             #   环境、命令、前后结果、not-run 清单
-└── results/verify-2026-11-04.json# flag-fixes verify 原始输出
+└── results/
+    ├── verify-2026-11-04.json    # 历史记录：修复目录未提交时（HEAD 984891e，dirty=true）
+    └── verify-2026-11-05.json    # 已提交、干净工作树上的重跑结果
 ```
 
 ## 验证结果摘要
@@ -134,6 +148,12 @@ python3 run_model.py --models "google/siglip-base-patch16-224" \
 | `test_linear_callers.py` | exit 1（NHWC MLP 即崩） | 3 passed / 0 failed（含 SigLIP 视觉塔 mse=8.1e-13） |
 | 连续对照组 | 通过 | 通过，且与修复前逐位相同（max_diff=0） |
 | `flag-fixes check/plan` | — | exit 0（基线 hash、patch 应用、快照一致） |
+| 缺 transformers 时的 e2e | — | 退出码 2（`MISSING DEPENDENCY`，skip 不算通过） |
+
+判定与覆盖边界：三个硬件脚本只有退出码 0 才算通过，缺设备或缺 `transformers` 一律退出码 2。
+普通 CI（无设备 runner）执行 `flag-fixes validate`（schema、patch hash、快照 hash、脚本存在性）、
+`python -m pytest -q` 和本地 fix 脚本语法检查（`python -m compileall -q fixes`），**不**执行这三个
+硬件脚本；语法检查通过 ≠ 入口执行通过 ≠ 硬件验证通过。
 
 ## 已知边界（不装完美）
 
@@ -148,3 +168,10 @@ python3 run_model.py --models "google/siglip-base-patch16-224" \
   与 view/reshape 无关；回归矩阵因此只在 fp32 上断言该 M 段，详见 `reports/diagnosis.md`。
 - 没有性能基准：这是崩溃修复，连续路径逐位不变、非连续路径原本根本跑不完；
   `benchmarks/` 保持模板状态，未伪造前后耗时。
+- **证据文件的来源与可追溯性**：`results/verify-2026-11-04.json` 是修复目录尚未提交时
+  （管理仓库 HEAD `984891e`、`source_dirty=true`）跑出的历史记录，按审阅意见**原样保留**，
+  其中的 SHA 未改写，也不能单凭该 commit 还原当时未提交的脚本；`results/verify-2026-11-05.json`
+  是在已提交、干净的工作树上重跑的结果（`source_dirty=false`）。两份都是工具原始输出，
+  含本机绝对路径，未做脱敏或改写；`reports/validation.md` 中的摘录若为原文会明确标注。
+- **e2e 依赖**：`tests/test_linear_callers.py` 第 3 项需要 `transformers`（随机初始化、不下载权重），
+  缺失时退出码 2 并打印 `MISSING DEPENDENCY`，不会因为前两项通过而返回 0。

@@ -35,7 +35,19 @@ fix 名称链接到本仓库清单；历史说明固定到当前 submodule commi
 | [one-hot-5802](../catalog/fixes/one-hot-5802.yaml) | ascend | needs-adaptation | [onehotFIX README](https://github.com/FLAG-OP/onehotFIX/blob/3cef1d720fc5ce42978be4b7fc1c500eb516278f/README.md) |
 | [pointwise-5739](../catalog/fixes/pointwise-5739.yaml) | ascend | source-checked | [pointwiseFIX README](https://github.com/FLAG-OP/pointwiseFIX/blob/a6b538daa4b61f8da5e368e92847a45ae79ba856/README.md) |
 
+上表只覆盖 9 项外部来源修复；本仓库另有 1 项本地维护修复，见下节，合计 10 项 fix 索引。
+
 所有条目的 `deployable=false`、`hardware_status=unverified`。gather、lift_fresh、one_hot 的来源差异是 patch 与完整源码的注释/署名不一致；CANN pow 条目需要补丁格式和目标基线适配。
+
+## 本次变更记录（不改写上节基线）
+
+以下条目晚于上节 `2275e66` 基线，基线表中的历史数字保持原样；目录校验与管理工具测试的通过状态以对应 CI 运行为准。
+
+| 变更 | 内容 | 证据 |
+| --- | --- | --- |
+| 2026-11-05 新增本地 fix `linear-5379` | 本仓库第 1 项本地修复（fix 索引合计 10 项 = 9 项外部 + 1 项本地）：FlagGems `linear` 对非连续输入调用 `view` 崩溃，改为 `reshape(...).contiguous()`；`deployable=false`、`hardware_status=unverified`，`apply` 会拒绝 | [fix 目录](../fixes/linear-5379/)、[诊断](../fixes/linear-5379/reports/diagnosis.md)、[验证记录](../fixes/linear-5379/reports/validation.md)、[verify 结果](../fixes/linear-5379/results/)、PR #1 |
+
+本地 fix 不进入上节 catalog 表。普通 CI 对本地 fix 脚本只做语法检查（`python -m compileall -q fixes`）、`flag-fixes validate` 的清单/patch/快照一致性检查与管理工具 pytest；三个硬件脚本只在带设备的环境运行，语法检查通过不等于硬件验证通过。
 
 ## 后续工作
 

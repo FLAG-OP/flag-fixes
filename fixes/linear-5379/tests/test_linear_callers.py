@@ -11,7 +11,8 @@ Native references are computed before FlagGems registers anything; comparisons
 happen on CPU so the oracle is never routed through the code under test.
 
 Run:  PYTHONPATH=<FlagGems>/src python test_linear_callers.py
-Exit: 0 all cases pass, 1 any case fails, 2 no device.
+Exit: 0 all cases pass, 1 any case fails,
+      2 required dependency or device missing (a skip is not a pass)
 """
 import sys
 
@@ -64,6 +65,7 @@ ref_seq = mlp(seq_first)
 vision = None
 ref_pooled = None
 pixels = None
+dependency_error = None
 try:
     from transformers import SiglipVisionConfig, SiglipVisionModel
 
@@ -88,7 +90,11 @@ try:
         ref_pooled = vision(pixel_values=pixels).pooler_output
     print("native SigLIP vision forward ok", tuple(ref_pooled.shape))
 except ImportError:
-    print("  [SKIP] transformers unavailable - case 3 not run (a skip is not a pass)")
+    dependency_error = (
+        "MISSING DEPENDENCY: transformers - SigLIP caller case not run; "
+        "a skip is not a pass (exit 2)"
+    )
+    print(f"  [ERROR] {dependency_error}")
 
 # ---------------------------------------------------------------- under test
 flag_gems.only_enable(include=["linear"])
@@ -103,11 +109,15 @@ with torch.no_grad():
 
 print("=== 3. SigLIP vision tower, non-contiguous pixel_values ===")
 if vision is None:
-    print("  [SKIP] no transformers")
+    print("  [SKIP] case 3 not run - see MISSING DEPENDENCY above")
 else:
     with torch.no_grad():
         out = vision(pixel_values=pixels).pooler_output
     check("siglip-vision", out, ref_pooled, rtol=1e-3, atol=1e-3)
 
 print(f"TOTAL: {passed} passed, {failed} failed")
+if dependency_error:
+    # A missing required dependency must never be reported as success.
+    print(dependency_error, file=sys.stderr)
+    raise SystemExit(2)
 raise SystemExit(1 if failed else 0)

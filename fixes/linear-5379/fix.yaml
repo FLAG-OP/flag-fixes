@@ -42,6 +42,12 @@ validation:
     详细命令与数据见 reports/validation.md。
   - 视觉模型容器侧证据（problem.md，2026-09-01 live）：view→reshape 补丁后 18 个视觉模型
     36/36 翻转 Success，最小复现模型 google/siglip-base-patch16-224。
+  - 2026-11-05 在已提交、干净的工作树上重跑 flag-fixes verify，results/verify-2026-11-05.json
+    passed=true、source_dirty=false（source_commit 见该文件）；2026-11-04 的
+    results/verify-2026-11-04.json 是 fix 目录未提交时（HEAD 984891e、source_dirty=true）的
+    历史记录，按审阅意见原样保留、不改写其中 SHA。
+  - e2e 缺依赖行为：transformers 缺失时 tests/test_linear_callers.py 退出码 2 并打印
+    MISSING DEPENDENCY（skip 不算通过），原始输出 results/e2e-missing-dep-2026-11-05.log。
   commands:
   - name: linear-view-repro
     script: tests/repro_linear_view.py
@@ -57,11 +63,14 @@ validation:
     timeout_seconds: 1800
 notes:
 - 目标是厂商无关的 src/flag_gems/ops/linear.py，本机以 cuda dispatch key 运行
-  （FlagGems vendor 解析为 thead / ppu-smi）；仅覆盖该通用文件。
+  （FlagGems vendor 解析为 thead / ppu-smi）；cuda 是本 PPU 环境的设备/dispatch 标识，
+  不代表已验证所有 CUDA 厂商后端。仅覆盖该通用文件。
 - 同源问题在 _enflame/gcu300、_enflame/gcu400、_iluvatar 的 linear 覆写文件及
   ops/linear_backward.py 中依然存在，按后端分条另修，未包含在本 patch 内。
 - hardware_status 保持 unverified：本地设备三个脚本已跑通，但 problem.md 要求的
   容器侧 x-benchmark 回归（run_model.py + 独立 --result-root）与平台验收未在本环境执行。
 - deployable=false、owner=null：未完成平台验收与维护者审核，不具备部署资格。
+- 普通 CI（无设备 runner）只做 flag-fixes validate、pytest 与本地 fix 脚本语法检查
+  （compileall），不执行三个硬件脚本；语法检查通过不等于硬件验证通过。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5379
