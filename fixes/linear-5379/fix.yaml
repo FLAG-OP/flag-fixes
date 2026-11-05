@@ -43,7 +43,8 @@ validation:
   - 视觉模型容器侧证据（problem.md，2026-09-01 live）：view→reshape 补丁后 18 个视觉模型
     36/36 翻转 Success，最小复现模型 google/siglip-base-patch16-224。
   - 2026-11-05 在已提交、干净的工作树上重跑 flag-fixes verify，results/verify-2026-11-05.json
-    passed=true、source_dirty=false（source_commit 见该文件）；2026-11-04 的
+    passed=true、source_dirty=false、source_commit=cbf108a0925f9596076bfbe7cb54b09ccf7b3aa6
+    （三个命令 rc=0）；2026-11-04 的
     results/verify-2026-11-04.json 是 fix 目录未提交时（HEAD 984891e、source_dirty=true）的
     历史记录，按审阅意见原样保留、不改写其中 SHA。
   - e2e 缺依赖行为：transformers 缺失时 tests/test_linear_callers.py 退出码 2 并打印

@@ -16,7 +16,7 @@
 | 目标文件 | `src/flag_gems/ops/linear.py`，before `4d46bae0804ac32b698582d010d5f0e02d3570c6703efff9d1d666e2bf43fd94`，after `ddec3383c1d6ca4b2f53cf6ea9550c2d5fead492a2562e0864e723b958ee951d` |
 | patch | `patches/linear-5379.patch` sha256 `7055d63218f73529fc0de4012def51275235c2e6c0e5ed49da6253f56f053773` |
 | 管理仓库（2026-11-04 首跑） | flag-fixes `984891ebf6449c398329ab8eddd4a0f9283130be`，本 fix 目录当时**未提交**，`verify` 记录 `source_dirty=true` → `results/verify-2026-11-04.json`（历史记录，原样保留、未改写 SHA） |
-| 管理仓库（2026-11-05 重跑） | 本 fix 已提交、工作树干净，`verify` 记录 `source_dirty=false`、`source_commit` 为当时包含本 fix 的提交（具体哈希见该 JSON）→ `results/verify-2026-11-05.json`，由后续提交保存 |
+| 管理仓库（2026-11-05 重跑） | 本 fix 已提交、工作树干净，`verify` 记录 `source_dirty=false`、`source_commit=cbf108a0925f9596076bfbe7cb54b09ccf7b3aa6`（该 JSON 内为同一完整值）→ `results/verify-2026-11-05.json`，随后续提交保存 |
 | 执行入口 | 三个测试脚本不依赖工作目录；2026-11-04 首跑用 `cwd = fixes/linear-5379`，2026-11-05 重跑用脚本绝对路径。`PYTHONPATH=<target>/src`（`verify` 由工具注入同名变量）；`--root` 始终指向管理仓库根 |
 | 运行时 vendor | FlagGems 解析 `vendor_name='thead'`, `device_name='cuda'`, `device_query_cmd='ppu-smi'`。**`cuda` 是本 PPU 环境的设备/dispatch 标识，不代表已验证所有 CUDA 厂商后端**；硬件为 PPU-ZW810E |
 
@@ -74,7 +74,7 @@ RuntimeError: view size is not compatible with input tensor's size and stride (a
 | 文件 | 运行时的管理仓库状态 | 说明 |
 | --- | --- | --- |
 | `results/verify-2026-11-04.json` | HEAD `984891ebf6449c398329ab8eddd4a0f9283130be`，本 fix 目录未提交，`source_dirty=true` | 2026-11-04 的**历史记录，原样保留**：其中的 `source_commit` 不含当时未提交的 fix 文件，单凭该 commit 无法还原运行内容，不能作为"已提交源码"的证据；按审阅意见不改写其中任何字段 |
-| `results/verify-2026-11-05.json` | 本 fix 已提交、工作树干净，`source_commit` 为当时 HEAD（含本 fix），`source_dirty=false` | 2026-11-05 在**已提交、干净**源码上重跑，作为"可复跑"证据；结果文件随后续提交入库 |
+| `results/verify-2026-11-05.json` | 本 fix 已提交、工作树干净，`source_commit=cbf108a0925f9596076bfbe7cb54b09ccf7b3aa6`，`source_dirty=false` | 2026-11-05 在**已提交、干净**源码上重跑，`passed=true`、三个命令 rc=0，作为"可复跑"证据；结果文件随后续提交入库 |
 
 两份 JSON 都是 `flag-fixes verify` 的原始输出，含本机绝对路径，**未做脱敏、未做任何修改**。
 
