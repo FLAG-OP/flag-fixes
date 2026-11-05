@@ -1,0 +1,46 @@
+{
+  "fix": "linear-5379",
+  "passed": true,
+  "scope": "declared commands only; does not promote catalog hardware status",
+  "target": "/tmp/opencode/FlagGems-fixed",
+  "source_commit": "984891ebf6449c398329ab8eddd4a0f9283130be",
+  "source_dirty": true,
+  "results": [
+    {
+      "name": "linear-view-repro",
+      "level": "repro",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/root/flag-fixes/fixes/linear-5379/tests/repro_linear_view.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "input (2, 16, 64) stride=(1024, 1, 16) contiguous=False\nflag_gems from: /tmp/opencode/FlagGems-fixed/src/flag_gems/__init__.py\nout (2, 16, 32) mse=2.305e-11 max_diff=2.670e-05\nOK: flag_gems linear accepts non-contiguous input and matches native torch\n",
+      "stderr": "/tmp/opencode/FlagGems-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing\n  resolved_benchmark = resolve_benchmarker(\n/tmp/opencode/FlagGems-fixed/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list\n  warnings.warn(\n/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.\n  Overriding a previously registered kernel for the same operator and the same dispatch key\n  operator: aten::__ilshift__.Tensor(Tensor(a!) self, Tensor other) -> Tensor(a!)\n    registered at aten/src/ATen/RegisterSchema.cpp:6\n  dispatch key: CUDA\n  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:7149\n       new kernel: registered at /tmp/opencode/FlagGems-fixed/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)\n  self.m.impl(\nWARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.\nWARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.\n"
+    },
+    {
+      "name": "linear-noncontig-regression",
+      "level": "regression",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/root/flag-fixes/fixes/linear-5379/tests/test_linear_noncontig.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "=== float32 via Torch dispatch (F.linear) ===\n  [PASS] dispatch control-contig-2d mse=2.363e-11\n  [PASS] dispatch control-contig-1d mse=2.210e-12\n  [PASS] dispatch transpose-3d mse=2.502e-11\n  [PASS] dispatch slice-3d mse=2.620e-11\n  [PASS] dispatch permute-3d mse=2.558e-11\n  [PASS] dispatch expand-3d mse=2.848e-11\n  [PASS] dispatch transpose-4d mse=2.770e-11\n  [PASS] dispatch transpose-no-bias mse=2.900e-11\n  [PASS] dispatch gemv-3d-fp32 mse=2.769e-11\n=== float32 via direct flag_gems.linear ===\n  [PASS] direct control-contig-2d mse=2.363e-11\n  [PASS] direct control-contig-1d mse=2.210e-12\n  [PASS] direct transpose-3d mse=2.502e-11\n  [PASS] direct slice-3d mse=2.620e-11\n  [PASS] direct permute-3d mse=2.558e-11\n  [PASS] direct expand-3d mse=2.848e-11\n  [PASS] direct transpose-4d mse=2.770e-11\n  [PASS] direct transpose-no-bias mse=2.900e-11\n  [PASS] direct gemv-3d-fp32 mse=2.769e-11\n=== float16 via Torch dispatch (F.linear) ===\n  [PASS] dispatch control-contig-2d mse=0.000e+00\n  [PASS] dispatch control-contig-1d mse=0.000e+00\n  [PASS] dispatch transpose-3d mse=7.221e-06\n  [PASS] dispatch slice-3d mse=7.173e-06\n  [PASS] dispatch permute-3d mse=7.350e-06\n  [PASS] dispatch expand-3d mse=7.957e-06\n  [PASS] dispatch transpose-4d mse=8.036e-06\n  [PASS] dispatch transpose-no-bias mse=0.000e+00\n=== float16 via direct flag_gems.linear ===\n  [PASS] direct control-contig-2d mse=0.000e+00\n  [PASS] direct control-contig-1d mse=0.000e+00\n  [PASS] direct transpose-3d mse=7.221e-06\n  [PASS] direct slice-3d mse=7.173e-06\n  [PASS] direct permute-3d mse=7.350e-06\n  [PASS] direct expand-3d mse=7.957e-06\n  [PASS] direct transpose-4d mse=8.036e-06\n  [PASS] direct transpose-no-bias mse=0.000e+00\n=== bfloat16 via Torch dispatch (F.linear) ===\n  [PASS] dispatch control-contig-2d mse=0.000e+00\n  [PASS] dispatch control-contig-1d mse=0.000e+00\n  [PASS] dispatch transpose-3d mse=5.672e-04\n  [PASS] dispatch slice-3d mse=4.928e-04\n  [PASS] dispatch permute-3d mse=5.882e-04\n  [PASS] dispatch expand-3d mse=5.634e-04\n  [PASS] dispatch transpose-4d mse=5.299e-04\n  [PASS] dispatch transpose-no-bias mse=0.000e+00\n=== bfloat16 via direct flag_gems.linear ===\n  [PASS] direct control-contig-2d mse=0.000e+00\n  [PASS] direct control-contig-1d mse=0.000e+00\n  [PASS] direct transpose-3d mse=5.672e-04\n  [PASS] direct slice-3d mse=4.928e-04\n  [PASS] direct permute-3d mse=5.882e-04\n  [PASS] direct expand-3d mse=5.634e-04\n  [PASS] direct transpose-4d mse=5.299e-04\n  [PASS] direct transpose-no-bias mse=0.000e+00\nTOTAL: 50 passed, 0 failed\n",
+      "stderr": "/tmp/opencode/FlagGems-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing\n  resolved_benchmark = resolve_benchmarker(\n"
+    },
+    {
+      "name": "linear-vision-callers",
+      "level": "e2e",
+      "argv": [
+        "/usr/local/bin/python3",
+        "/root/flag-fixes/fixes/linear-5379/tests/test_linear_callers.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "nhwc input (2, 15, 15, 16) stride=(3600, 15, 1, 225) contiguous=False\nseq-first input (16, 8, 32) stride=(32, 512, 1) contiguous=False\npixel_values contiguous=False\nnative SigLIP vision forward ok (2, 32)\n=== 1. vision NHWC block (conv -> transpose -> MLP) ===\n  [PASS] nhwc-mlp mse=8.838e-15\n=== 2. transformer seq-first block (B,S,D -> S,B,D -> MLP) ===\n  [PASS] seq-first-mlp mse=4.177e-14\n=== 3. SigLIP vision tower, non-contiguous pixel_values ===\n  [PASS] siglip-vision mse=8.106e-13\nTOTAL: 3 passed, 0 failed\n",
+      "stderr": "/tmp/opencode/FlagGems-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing\n  resolved_benchmark = resolve_benchmarker(\n"
+    }
+  ]
+}

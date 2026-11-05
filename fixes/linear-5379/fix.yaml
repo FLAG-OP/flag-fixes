@@ -1,0 +1,77 @@
+schema_version: 1
+template_version: 1
+id: linear-5379
+title: linear 非连续输入 view 崩溃修复（view→reshape）
+owner: null
+status: draft
+deployable: false
+source:
+  kind: local
+  path: fixes/linear-5379
+  commit: null
+  repository: null
+target:
+  package: flag_gems
+  baseline_version: v5.3.5-46-g29e14822
+  baseline_commit: 29e14822f6dfabf990973c41f7c2df7811a6f60f
+patches:
+- path: patches/linear-5379.patch
+  sha256: 7055d63218f73529fc0de4012def51275235c2e6c0e5ed49da6253f56f053773
+targets:
+- path: src/flag_gems/ops/linear.py
+  before_sha256: 4d46bae0804ac32b698582d010d5f0e02d3570c6703efff9d1d666e2bf43fd94
+  after_sha256: ddec3383c1d6ca4b2f53cf6ea9550c2d5fead492a2562e0864e723b958ee951d
+  after_source: src/flag_gems/ops/linear.py
+backends:
+- cuda
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - https://github.com/flagos-ai/FlagGems/issues/5379
+  - 基线 FlagGems 29e14822f6dfabf990973c41f7c2df7811a6f60f (git describe v5.3.5-46-g29e14822)
+    的 src/flag_gems/ops/linear.py sha256=4d46bae0804ac32b698582d010d5f0e02d3570c6703efff9d1d666e2bf43fd94，
+    该文件在 41ace9c3..e5a396b4 区间内容不变，与 problem.md 描述的容器内
+    /data/ppu-benchmark/FlagGems/src/flag_gems/ops/linear.py:158 完全一致。
+  - 2026-11-04 本地 PPU 设备（PPU-ZW810E，torch 2.10.0 + triton 3.6.0）实测：
+    修复前 tests/repro_linear_view.py 退出码 1，报错 linear.py:158
+    "view size is not compatible with input tensor's size and stride"；
+    修复前 tests/test_linear_noncontig.py 20 passed / 30 failed；
+    修复后三个脚本全部退出码 0（repro OK、regression 50/50、callers 3/3）。
+    详细命令与数据见 reports/validation.md。
+  - 视觉模型容器侧证据（problem.md，2026-09-01 live）：view→reshape 补丁后 18 个视觉模型
+    36/36 翻转 Success，最小复现模型 google/siglip-base-patch16-224。
+  - 2026-11-05 在已提交、干净的工作树上重跑 flag-fixes verify，results/verify-2026-11-05.json
+    passed=true、source_dirty=false、source_commit=cbf108a0925f9596076bfbe7cb54b09ccf7b3aa6
+    （三个命令 rc=0）；2026-11-04 的
+    results/verify-2026-11-04.json 是 fix 目录未提交时（HEAD 984891e、source_dirty=true）的
+    历史记录，按审阅意见原样保留、不改写其中 SHA。
+  - e2e 缺依赖行为：transformers 缺失时 tests/test_linear_callers.py 退出码 2 并打印
+    MISSING DEPENDENCY（skip 不算通过），原始输出 results/e2e-missing-dep-2026-11-05.log。
+  commands:
+  - name: linear-view-repro
+    script: tests/repro_linear_view.py
+    level: repro
+    timeout_seconds: 900
+  - name: linear-noncontig-regression
+    script: tests/test_linear_noncontig.py
+    level: regression
+    timeout_seconds: 1800
+  - name: linear-vision-callers
+    script: tests/test_linear_callers.py
+    level: e2e
+    timeout_seconds: 1800
+notes:
+- 目标是厂商无关的 src/flag_gems/ops/linear.py，本机以 cuda dispatch key 运行
+  （FlagGems vendor 解析为 thead / ppu-smi）；cuda 是本 PPU 环境的设备/dispatch 标识，
+  不代表已验证所有 CUDA 厂商后端。仅覆盖该通用文件。
+- 同源问题在 _enflame/gcu300、_enflame/gcu400、_iluvatar 的 linear 覆写文件及
+  ops/linear_backward.py 中依然存在，按后端分条另修，未包含在本 patch 内。
+- hardware_status 保持 unverified：本地设备三个脚本已跑通，但 problem.md 要求的
+  容器侧 x-benchmark 回归（run_model.py + 独立 --result-root）与平台验收未在本环境执行。
+- deployable=false、owner=null：未完成平台验收与维护者审核，不具备部署资格。
+- 普通 CI（无设备 runner）只做 flag-fixes validate、pytest 与本地 fix 脚本语法检查
+  （compileall），不执行三个硬件脚本；语法检查通过不等于硬件验证通过。
+installation_status: source-checked
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/5379
