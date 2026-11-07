@@ -1,0 +1,248 @@
+diff --git a/src/flag_gems/ops/abs.py b/src/flag_gems/ops/abs.py
+index 62e081f3..90b8ff15 100644
+--- a/src/flag_gems/ops/abs.py
++++ b/src/flag_gems/ops/abs.py
+@@ -17,6 +17,7 @@ import logging
+ import triton
+ import triton.language as tl
+ 
++from flag_gems.ops.absolute import absolute
+ from flag_gems.utils import pointwise_dynamic
+ 
+ logger = logging.getLogger(__name__)
+@@ -30,10 +31,19 @@ def abs_func(x):
+ 
+ def abs(A):
+     logger.debug("GEMS ABS")
++    if A.is_complex():
++        # Triton's type_canonicalisation_dict has no complex entry, so the
++        # pointwise kernel must not see a complex pointer. |a+bi| is computed
++        # by absolute(), which already reduces the real view with sqrt(re^2+im^2).
++        return absolute(A)
+     return abs_func(A)
+ 
+ 
+ def abs_(A):
+     logger.debug("GEMS ABS_")
++    if A.is_complex():
++        # Match native torch, which rejects in-place abs for complex tensors
++        # instead of failing inside the Triton launch path.
++        raise RuntimeError("In-place abs is not supported for complex tensors.")
+     abs_func(A, out0=A)
+     return A
+diff --git a/src/flag_gems/ops/absolute.py b/src/flag_gems/ops/absolute.py
+index c5766123..80698409 100644
+--- a/src/flag_gems/ops/absolute.py
++++ b/src/flag_gems/ops/absolute.py
+@@ -71,6 +71,10 @@ def absolute(input: torch.Tensor):
+ 
+ def absolute_(input: torch.Tensor):
+     logger.debug("GEMS ABSOLUTE_")
++    if input.is_complex():
++        # Match native torch, which rejects in-place abs for complex tensors
++        # instead of failing inside the Triton launch path.
++        raise RuntimeError("In-place abs is not supported for complex tensors.")
+     n_elements = input.numel()
+     if n_elements == 0:
+         return input
+diff --git a/src/flag_gems/ops/conv2d.py b/src/flag_gems/ops/conv2d.py
+index 54b25363..0a323b93 100644
+--- a/src/flag_gems/ops/conv2d.py
++++ b/src/flag_gems/ops/conv2d.py
+@@ -285,7 +285,7 @@ def conv2d_backward_kernel_weight(
+         :, None
+     ]
+ 
+-    input_pointer += (ci_point_value * input_c_stride[None])[:, None] + (
++    input_pointer += (ci_point_value * input_c_stride)[:, None] + (
+         pid_groups[None] * input_c_stride * input_c
+     )[None, :]
+ 
+diff --git a/src/flag_gems/ops/sum.py b/src/flag_gems/ops/sum.py
+index 30fe4fe8..972ceacc 100644
+--- a/src/flag_gems/ops/sum.py
++++ b/src/flag_gems/ops/sum.py
+@@ -28,6 +28,65 @@ from flag_gems.utils import triton_lang_extension as ext
+ 
+ logger = logging.getLogger(__name__)
+ 
++# Triton's type_canonicalisation_dict has no complex entry, so a complex
++# tensor must never reach a kernel above. Complex reductions are therefore
++# decomposed into real/imaginary parts (view_as_real layout) and recombined
++# with view_as_complex, matching ATen semantics.
++_COMPLEX_TO_REAL = {
++    torch.complex32: torch.float16,
++    torch.complex64: torch.float32,
++    torch.complex128: torch.float64,
++}
++
++
++def _real_sum(x, dim, keepdim, dtype):
++    """Sum a real tensor with ATen dim/keepdim semantics.
++
++    Routes through the public entries so their empty-tensor branches apply
++    (sum_dim_comm would divide by a zero-sized dim).
++    """
++    if dim is None or (isinstance(dim, (list, tuple)) and len(dim) == 0):
++        res = sum(x, dtype=dtype)
++        if keepdim:
++            res = res.reshape([1] * x.ndim)
++        return res
++    return sum_dim(x, dim, keepdim, dtype=dtype)
++
++
++def _sum_complex(inp, dim=None, keepdim=False, *, dtype=None, out=None):
++    """ATen-compatible sum for complex inputs (and complex dtype requests).
++
++    * dtype None / complex -> sum real and imaginary parts separately and
++      recombine (cast the input up first when a wider complex dtype is
++      requested, mirroring ATen promotion).
++    * dtype real -> ATen casts the complex input to the real dtype first
++      (dropping the imaginary part), so summing the real parts matches.
++    """
++    if inp.is_complex():
++        if dtype is None or dtype.is_complex:
++            target = dtype if dtype is not None else inp.dtype
++            if target != inp.dtype:
++                inp = inp.to(target)
++            part_dtype = _COMPLEX_TO_REAL[target]
++            real_part = _real_sum(inp.real, dim, keepdim, part_dtype)
++            imag_part = _real_sum(inp.imag, dim, keepdim, part_dtype)
++            res = torch.view_as_complex(torch.stack((real_part, imag_part), dim=-1))
++            if res.dtype != target:
++                res = res.to(target)
++        else:
++            res = _real_sum(inp.real, dim, keepdim, dtype)
++    else:
++        # real input with a complex dtype requested: sum in the matching real
++        # dtype, then reinterpret the result as complex (imag parts are zero).
++        part_dtype = _COMPLEX_TO_REAL[dtype]
++        res = _real_sum(inp, dim, keepdim, part_dtype).to(dtype)
++    if out is not None:
++        if out.shape != res.shape:
++            out.resize_(res.shape)
++        out.copy_(res)
++        return out
++    return res
++
+ 
+ @libentry()
+ @triton.jit
+@@ -75,6 +134,8 @@ def sum_kernel_2(mid, out, mid_size, BLOCK_MID: tl.constexpr):
+ 
+ def sum(inp, *, dtype=None):
+     logger.debug("GEMS SUM")
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, None, False, dtype=dtype)
+     inp = inp.contiguous()
+     M = inp.numel()
+ 
+@@ -104,6 +165,8 @@ def sum(inp, *, dtype=None):
+ 
+ def sum_out(inp, *, dtype=None, out):
+     logger.debug("GEMS SUM_OUT")
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, None, False, dtype=dtype, out=out)
+     M = inp.numel()
+     if dtype is None:
+         dtype = inp.dtype
+@@ -349,6 +412,8 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
+ 
+ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
+     logger.debug("GEMS SUM_DIM")
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, dim, keepdim, dtype=dtype)
+     # support dim = 0, which are consistent with PyTorch
+     if inp.numel() == 0:
+         if dtype is None:
+@@ -387,4 +452,6 @@ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
+ 
+ def sum_dim_out(inp, dim=None, keepdim=False, *, dtype=None, out):
+     logger.debug("GEMS SUM_DIM_OUT")
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, dim, keepdim, dtype=dtype, out=out)
+     return sum_dim_comm(inp, dim, keepdim, dtype=dtype, out=out)
+diff --git a/src/flag_gems/ops/zero.py b/src/flag_gems/ops/zero.py
+index adb75894..49ea7090 100644
+--- a/src/flag_gems/ops/zero.py
++++ b/src/flag_gems/ops/zero.py
+@@ -44,6 +44,12 @@ def _launch_zero_kernel(tensor: torch.Tensor):
+     assert isinstance(tensor, torch.Tensor), "Expected a torch.Tensor"
+     if tensor.device.type != flag_gems.device:
+         raise ValueError(f"Tensor must be on {flag_gems.device} device")
++    if tensor.is_complex():
++        # Triton's type_canonicalisation_dict has no complex entry, so the
++        # kernel must not see a complex pointer. view_as_real returns a view
++        # that shares storage, so zeroing (re, im) zeroes the complex tensor.
++        _launch_zero_kernel(torch.view_as_real(tensor))
++        return tensor
+     assert tensor.is_contiguous(), "Tensor must be contiguous"
+     assert tensor.numel() >= 0
+     n_elements = tensor.numel()
+diff --git a/src/flag_gems/ops/zeros.py b/src/flag_gems/ops/zeros.py
+index 7d6bc59a..7f3a4836 100644
+--- a/src/flag_gems/ops/zeros.py
++++ b/src/flag_gems/ops/zeros.py
+@@ -47,6 +47,10 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
+         device = torch.device(device_.name)
+ 
+     out = torch.empty(size, device=device, dtype=dtype)
++    if out.is_complex():
++        # Triton has no complex dtype; zero through the real view instead.
++        zero_(out)
++        return out
+     N = volume(size)
+     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
+     with torch_device_fn.device(device):
+@@ -56,6 +60,12 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
+ 
+ def zero_(x: torch.Tensor) -> torch.Tensor:
+     logger.debug("GEMS ZERO_")
++    if x.is_complex():
++        # Triton's type_canonicalisation_dict has no complex entry, so the
++        # kernel must not see a complex pointer. view_as_real returns a view
++        # that shares storage, so zeroing (re, im) zeroes the complex tensor.
++        zero_(torch.view_as_real(x))
++        return x
+     N = x.numel()
+     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
+     with torch_device_fn.device(x.device):
+diff --git a/src/flag_gems/ops/zeros_like.py b/src/flag_gems/ops/zeros_like.py
+index 7110fc6f..75eaea7e 100644
+--- a/src/flag_gems/ops/zeros_like.py
++++ b/src/flag_gems/ops/zeros_like.py
+@@ -17,7 +17,7 @@ import logging
+ import torch
+ import triton
+ 
+-from flag_gems.ops.zeros import zeros_kernel
++from flag_gems.ops.zeros import zero_, zeros_kernel
+ from flag_gems.runtime import torch_device_fn
+ 
+ logger = logging.getLogger(__name__)
+@@ -32,6 +32,10 @@ def zeros_like(
+     if dtype is None:
+         dtype = x.dtype
+     out = torch.empty_like(x, device=device, dtype=dtype)
++    if out.is_complex():
++        # Triton has no complex dtype; zero through the real view instead.
++        zero_(out)
++        return out
+     N = x.numel()
+     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
+     with torch_device_fn.device(x.device):
+diff --git a/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py b/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+index 016f030d..88226dad 100644
+--- a/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
++++ b/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+@@ -167,8 +167,8 @@ def linear_backward(
+     for dim in batch_dims:
+         batch_size *= dim
+ 
+-    input_flat = input.view(batch_size, in_features).contiguous()
+-    grad_output_flat = grad_output.view(batch_size, out_features).contiguous()
++    input_flat = input.reshape(batch_size, in_features)
++    grad_output_flat = grad_output.reshape(batch_size, out_features).contiguous()
+ 
+     grad_input = None
+     grad_weight = None

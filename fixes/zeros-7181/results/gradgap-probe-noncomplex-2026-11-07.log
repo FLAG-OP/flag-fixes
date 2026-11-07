@@ -1,0 +1,40 @@
+You are using a model of type m2_bert to instantiate a model of type bert. This is not supported for all configurations of models and can yield errors.
+/root/.cache/huggingface/modules/transformers_modules/togethercomputer/m2_hyphen_bert_hyphen_80M_hyphen_8k_hyphen_retrieval/90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b/blockdiag_multiply.py:50: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.bfloat16)
+/root/.cache/huggingface/modules/transformers_modules/togethercomputer/m2_hyphen_bert_hyphen_80M_hyphen_8k_hyphen_retrieval/90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b/blockdiag_multiply.py:63: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_bwd
+/tmp/opencode/diag_cmp.py:50: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at ../torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  print(f"native loss={float(lnat):.9e} grads={len(g_native)}", flush=True)
+-- Bidirectional: True
+-- Using Long Conv Residual: True
+-- Hyena w: 10
+-- Hyena w mod: 1
+-- Hyena filter order: 8
+-- Hyena filter dropout: 0.2
+-- Hyena filter wd: 0.1
+-- Hyena filter emb dim: 5
+-- Hyena filter lr: 0.001
+-- Hyena filter lr pos emb: 1e-05
+native loss=1.000000000e+00 grads=50
+/tmp/opencode/flagfix-noncplx/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+flag_gems from: /tmp/opencode/flagfix-noncplx/src/flag_gems/__init__.py
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+enabled with unused exclude: ['sum', 'sum_dim', 'sum_out', 'sum_dim_out', 'zeros', 'zero_', 'zero', 'zero_out', 'zeros_like', 'abs', 'abs_', 'absolute', 'absolute_', 'fill_scalar_', 'fill_scalar', 'fill_tensor', 'fill_tensor_out', 'fill_scalar_out']
+/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: aten::pad: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:76.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: aten::conv1d: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:76.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+probe: loss=1.000000e+00 have=18 missing=34
+[cmp] compared=18
+[cmp] worst ratio=9.988e+02 absdiff=8.595e-01 native_max=9.009e-08 other_max=8.595e-01 :: embeddings.token_type_embeddings.weight
+[cmp] worst ratio=9.980e+02 absdiff=5.108e-01 native_max=1.622e-08 other_max=5.108e-01 :: encoder.layer.0.attention.out_linear.weight
+[cmp] worst ratio=9.971e+02 absdiff=3.397e-01 native_max=1.668e-03 other_max=3.397e-01 :: embeddings.word_embeddings.weight
+[cmp] worst ratio=9.971e+02 absdiff=3.386e-01 native_max=6.016e-09 other_max=3.386e-01 :: embeddings.position_embeddings.weight
+[cmp] worst ratio=9.901e+02 absdiff=1.004e-01 native_max=4.150e-09 other_max=1.004e-01 :: encoder.layer.0.attention.out_linear.bias
+filter-subtree missing: 32
+other missing: pooler.dense.weight
+other missing: pooler.dense.bias
+PROBE DONE

@@ -1,0 +1,74 @@
+/root/flag-fixes/fixes/zeros-7181/tests/test_complex_ops.py:62: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at ../aten/src/ATen/native/Copy.cpp:308.)
+  native[("c", dt, "realout")] = torch.sum(c, dtype=torch.float64 if rdt == torch.float32 else torch.float32)
+/tmp/opencode/flagfix-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+flag_gems from: /tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py
+/tmp/opencode/flagfix-fixed/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list
+  warnings.warn(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::__ilshift__.Tensor(Tensor(a!) self, Tensor other) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:7149
+       new kernel: registered at /tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+[PASS] sum full torch.complex64
+[PASS] sum dim0 torch.complex64
+[PASS] sum dim-1 keepdim torch.complex64
+[PASS] sum dim(0,1) torch.complex64
+[PASS] sum upcast c128 torch.complex64
+[PASS] sum out real torch.complex64
+[PASS] sum empty torch.complex64
+[PASS] sum noncontig torch.complex64
+[PASS] zeros torch.complex64
+[PASS] zeros_like torch.complex64
+[PASS] zeros_like dtype torch.complex64
+[PASS] zeros empty torch.complex64
+[PASS] flag_gems.zeros direct torch.complex64
+[PASS] flag_gems.zero_ torch.complex64
+[PASS] aten.zero_ torch.complex64
+[PASS] abs torch.complex64
+[PASS] abs noncontig torch.complex64
+[PASS] abs empty torch.complex64
+[PASS] flag_gems.abs direct torch.complex64
+[PASS] torch.absolute torch.complex64
+[PASS] sum full torch.complex128
+[PASS] sum dim0 torch.complex128
+[PASS] sum dim-1 keepdim torch.complex128
+[PASS] sum dim(0,1) torch.complex128
+[PASS] sum upcast c128 torch.complex128
+[PASS] sum out real torch.complex128
+[PASS] sum empty torch.complex128
+[PASS] sum noncontig torch.complex128
+[PASS] zeros torch.complex128
+[PASS] zeros_like torch.complex128
+[PASS] zeros_like dtype torch.complex128
+[PASS] zeros empty torch.complex128
+[PASS] flag_gems.zeros direct torch.complex128
+[PASS] flag_gems.zero_ torch.complex128
+[PASS] aten.zero_ torch.complex128
+[PASS] abs torch.complex128
+[PASS] abs noncontig torch.complex128
+[PASS] abs empty torch.complex128
+[PASS] flag_gems.abs direct torch.complex128
+[PASS] torch.absolute torch.complex128
+[PASS] sum f32
+[PASS] sum f32 dim0
+[PASS] sum f64
+[PASS] sum i64
+[PASS] sum i64 dim0 keepdim
+[PASS] zeros f32
+[PASS] zeros_like f32
+[PASS] zeros_like i64->f64
+[PASS] zeros f32 empty
+[PASS] abs f32
+[PASS] abs i64
+[PASS] abs_ real in-place
+[PASS] abs_ torch.complex64 rejected identical to native: In-place abs is not supported for complex tensors.
+[PASS] abs_ torch.complex128 rejected identical to native: In-place abs is not supported for complex tensors.
+
+TOTAL: 54 passed, 0 failed
+ALL COMPLEX OPS REGRESSION PASSED
