@@ -103,9 +103,7 @@ oracle 口径：native 参照在 `flag_gems.enable()` **之前**捕获（enable 
 | `flag_fixes plan zeros-7181 --target $BASE` | 0 | 同上（预演不落盘） |
 | `flag_fixes apply zeros-7181 --target $BASE` | 2 | `error: Selected fixes are not approved for deployment`（`deployable=false`，**按设计拒绝**） |
 | `flag_fixes status --target /tmp/opencode/flagfix-fixed` | 0 | `{"transactions": [], "drift": [], "recovery_required": false}` |
-| `flag_fixes verify zeros-7181 --target /tmp/opencode/flagfix-fixed --python python3` | 0 | `passed: true`，3/3 命令 `returncode=0`（repro / regression / e2e），耗时 20m01s，`source_dirty: true`，`source_commit: f159ce07b199` → `results/verify-2026-11-07-dirty.json` |
-
-`verify` 已在**已提交、干净**工作树上重跑的结果见 `results/verify-2026-11-07.json`。
+| `flag_fixes verify zeros-7181 --target /tmp/opencode/flagfix-fixed --python python3` | 0 | 两次均 `passed: true`、3/3 命令 `returncode=0`（repro / regression / e2e）：脏跑（HEAD `f159ce07b199`，`source_dirty: true`，20m01s）→ `results/verify-2026-11-07-dirty.json`；**已提交干净树**重跑（HEAD `a12c2fae0c49`，`source_dirty: false`，21m12s）→ `results/verify-2026-11-07.json` |
 
 ## 未执行（如实登记，不算通过）
 

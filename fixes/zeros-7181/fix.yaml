@@ -103,6 +103,11 @@ validation:
     e2e 缺依赖行为：transformers 缺失时 tests/test_m2_bert_backward.py 退出码 2 并打印
     MISSING DEPENDENCY（skip 不算通过），原始输出 results/e2e-missing-dep-2026-11-07.log；
     无 CUDA 设备同样退出码 2。
+  - |-
+    flag-fixes verify 在已提交干净树上通过：source_dirty=false，source_commit=a12c2fae0c49
+    （passed=true，3/3 命令 rc=0：complex-keyerror-repro / complex-ops-regression /
+    m2-bert-fwd-bwd），results/verify-2026-11-07.json；此前 dirty 预跑（HEAD f159ce07b199，
+    source_dirty=true）同样 passed=true，results/verify-2026-11-07-dirty.json。
   commands:
   - name: complex-keyerror-repro
     script: tests/repro_complex64.py
