@@ -42,7 +42,7 @@ KeyError: 'complex64'
 | `/tmp/opencode/FlagGems-base` | 纯基线 `29e14822` | `check`/`plan` 的 hash 预演目标 |
 | `/tmp/opencode/flagfix-e2ebase` | 基线 + `linear-5379.patch`（1 文件） | e2e「修复前-阶段一」 |
 | `/tmp/opencode/flagfix-noncplx` | e2ebase + 本 patch 的 conv2d + linear_backward 两个 hunk（回退 6 个 complex 文件，3 文件） | e2e「修复前-阶段二」= problem.md 签名树 |
-| `/tmp/opencode/flagfix-fixed` | e2ebase + `zeros-7181.patch` 全量（9 文件含 linear.py 依赖） | e2e 修复后（11-08 用**最终 patch** 重建） |
+| `/tmp/opencode/flagfix-fixed` | e2ebase + `zeros-7181.patch` 全量（9 文件含 linear.py 依赖） | e2e 修复后（11-09 用**第二轮评审最终 patch** 重建） |
 
 ```bash
 BASE=/tmp/opencode/FlagGems-base
@@ -75,13 +75,13 @@ linear-5379 的 after hash `ddec3383…`（9 文件与 `e2e_precondition` 一致
 
 | 命令 / 脚本 | 修复前（`flagfix-noncplx` / 基线） | 修复后（`flagfix-fixed` / 基线） |
 | --- | --- | --- |
-| `tests/repro_complex64.py`（issue #7181 形态 + torch 入口） | **exit 1**：`ISSUE REPRODUCED`，`KeyError: 'complex64'` → `results/repro-baseline-2026-11-08.log` | **exit 0** → `results/repro-fixed-2026-11-08.log` |
-| `tests/test_complex_ops.py`（**139 用例**矩阵） | **exit 1**：`TOTAL: 18 passed, 121 failed, 139 total`（107 条 complex KeyError；其余为 strided `zero_` 断言、交叉 dtype 静默分歧等修复缺失行为）→ `results/regression-baseline-2026-11-08.log` | **exit 0**：`TOTAL: 139 passed, 0 failed, 139 total` → `results/regression-fixed-2026-11-08.log` |
-| `tests/test_m2_bert_backward.py`（12L/768/12/3072/8192，问题原配置） | **阶段一** `flagfix-e2ebase` exit 1：`_thead/ops/linear_backward.py:170` view `RuntimeError` → `results/e2e-linearblocker-baseline-2026-11-07.log`；**阶段二** `flagfix-noncplx` exit 1：前向 `FORWARD OK` loss rel=0.0，反向 `ops/sum.py:385 → KeyError: 'complex64'`（= problem.md 签名）→ `results/e2e-problem-path-noncomplex-2026-11-07.log` | **exit 0**：`E2E OK: loss_native=1.000000000e+00 loss_gems=1.000000000e+00 rel=0.000e+00 grads_present_finite=161 grads_missing_known_gap=384` → `results/e2e-fixed-2026-11-08.log` |
-| 同脚本，强制无设备（`CUDA_VISIBLE_DEVICES=`） | exit 2（缺设备） | exit 2（缺设备）→ `results/nocuda-regression-2026-11-08.log` |
-| 同脚本，卸掉 `transformers` 后 | exit 2：`MISSING DEPENDENCY: transformers -> exit 2` | exit 2 → `results/e2e-missing-dep-2026-11-08.log` |
-| 同脚本，跑在**基线树**（前置哈希检查） | — | **exit 2**（模型工作前）：`MISSING PRECONDITION: src/flag_gems/ops/linear.py sha256 4d46bae0… != expected ddec3383…` → `results/e2e-precondition-baseline-2026-11-08.log` |
-| 同脚本，跑在**仅 linear-5379 树**（缺 zeros-7181） | — | **exit 2**（模型工作前）：首个失配 `sum.py 5259b9f6… != 0e105b60…`（连同 zeros/zero/zeros_like/abs 等逐条列出）→ `results/e2e-precondition-linearonly-2026-11-08.log` |
+| `tests/repro_complex64.py`（issue #7181 形态 + torch 入口） | **exit 1**：`ISSUE REPRODUCED`，`KeyError: 'complex64'` → `results/repro-baseline-2026-11-09.log` | **exit 0** → `results/repro-fixed-2026-11-09.log` |
+| `tests/test_complex_ops.py`（**210 用例**矩阵，第二轮扩含 bool/complex→bool/空输入/conj） | **exit 1**：`TOTAL: 33 passed, 177 failed, 210 total`（137 条 complex KeyError；其余为 strided `zero_` 断言、交叉 dtype 静默分歧、bool out 拒绝、conj 直调等修复缺失行为）→ `results/regression-baseline-2026-11-09.log` | **exit 0**：`TOTAL: 210 passed, 0 failed, 210 total` → `results/regression-fixed-2026-11-09.log`（第一轮 139 口径见 `results/regression-*-2026-11-08.log`：18/121/139 → 139/0/139） |
+| `tests/test_m2_bert_backward.py`（12L/768/12/3072/8192，问题原配置） | **阶段一** `flagfix-e2ebase` exit 1：`_thead/ops/linear_backward.py:170` view `RuntimeError` → `results/e2e-linearblocker-baseline-2026-11-07.log`；**阶段二** `flagfix-noncplx` exit 1：前向 `FORWARD OK` loss rel=0.0，反向 `ops/sum.py:385 → KeyError: 'complex64'`（= problem.md 签名）→ `results/e2e-problem-path-noncomplex-2026-11-07.log` | **exit 0**：`E2E OK: loss_native=1.000000000e+00 loss_gems=1.000000000e+00 rel=0.000e+00 grads_present_finite=161 grads_missing_known_gap=384` → `results/e2e-fixed-2026-11-09.log` |
+| 同脚本，强制无设备（`CUDA_VISIBLE_DEVICES=`） | exit 2（缺设备） | exit 2（缺设备）→ `results/nocuda-regression-2026-11-09.log` |
+| 同脚本，隔离 `transformers` import 后 | exit 2：`MISSING DEPENDENCY: transformers -> exit 2` | exit 2 → `results/e2e-missing-dep-2026-11-09.log` |
+| 同脚本，跑在**基线树**（前置哈希检查） | — | **exit 2**（模型工作前）：`MISSING PRECONDITION: src/flag_gems/ops/linear.py sha256 4d46bae0… != expected ddec3383…` → `results/e2e-precondition-baseline-2026-11-09.log` |
+| 同脚本，跑在**仅 linear-5379 树**（缺 zeros-7181） | — | **exit 2**（模型工作前）：首个失配 `sum.py 5259b9f6… != 82750041…`（连同 zeros/zero/zeros_like/abs 等逐条列出）→ `results/e2e-precondition-linearonly-2026-11-09.log` |
 | e2e 判据（修复后日志逐条满足） | — | 见下「e2e 判据与证据链」 |
 
 > **计数器缺陷注（旧日志）**：`results/*-2026-11-07.log` 中 regression 的
@@ -116,14 +116,19 @@ native 参照在 `flag_gems.enable()` **之前**捕获（enable 后 call-site �
 `torch.*` 已被 dispatch 进 flag_gems，不能当 oracle）；complex 比较一律经
 `torch.view_as_real`（flag_gems `eq`/`nonzero` 不支持 complex，属已记录的预存缺口）。
 
-回归 139 用例分层判据（2026-11-08 版 `test_complex_ops.py`）：
+回归 210 用例分层判据（2026-11-09 版 `test_complex_ops.py`，第二轮评审后）：
 
 | 套件 | 判据 |
 | --- | --- |
 | 原 54 用例（sum/zeros 族/abs 基础矩阵） | rtol=1e-5 / atol=1e-5（逐项与 native 比） |
 | **strided `zero_`**（`x[::2]`、`x[1::2]`、view 列、narrow、转置、0 维 × `gops.zero_`/`gops.zero`/`aten.zero_`） | 被操作子与 native 同形：仅目标区间归零、原存储不被污染、返回值身份/dtype/stride 正确 |
 | **模长量级**（`abs`/`absolute`，大数/亚正规/inf/NaN 形态） | rtol=1e-6 或 1e-10（量级分档）、atol=0、`equal_nan=True`；inf 优先于 NaN 与 native 一致 |
-| **交叉 dtype out 矩阵**（`sum`/`sum_dim` out × real/complex/bool in × dtype 显式/省略） | ok 用例数值一致；err 用例双向：本实现不抛而 native 抛 → fail，反之亦然；报错**逐字**与 ATen 一致（如 `expected scalar type but found ComplexFloat`） |
+| **交叉 dtype out 矩阵**（`sum`/`sum_dim` out × real/complex/bool in × dtype 显式/省略，含空输入） | ok 用例数值一致；err 用例双向：本实现不抛而 native 抛 → fail，反之亦然；报错**逐字**与 ATen 一致（如 `expected scalar type but found ComplexFloat`） |
+| **bool out 采用**（第二轮新增）：dim 形 `dtype=None` 采用 `out.dtype`（bool/real/complex × 空/非空）、全量 `sum.out` 不采用只校验、显式 `dtype != out.dtype` 报错逐字 | 与 native 双向 oracle（ok 值+dtype+shape、err 类型+消息逐字）；`sum([T,T,T], dim=0, out=bool)` 等计数语义与 ATen 一致 |
+| **complex→bool any-component**（第二轮新增）：纯虚 `[0+1j]`、全零、混合、c64/c128 × 全量/dim × 显式 `dtype=bool` 与 bool out | c10 TypeCast 规则：任一分量非零为 True（`sum([0+1j], dtype=bool)` = True）；报错逐字 |
+| **空输入归约**（第二轮新增）：bool/f32/complex × dim0/dim1/keepdim/全量 × 各 out dtype | 与 native 一致的零结果（不进 kernel、无除零）；空 + bool out 亦不抛 |
+| **conj 张量**（第二轮新增）：预 enable 构造带 conj bit 的 contiguous/strided 张量 × `abs`/`sum` × 直调 `gops.*` 与 `torch.*` dispatch | 与 native oracle 一致（`abs(conj)` 模长、`sum(conj)` 共轭求和、strided conj 视图） |
+| **cast-first 非零规则**（第二轮新增）：f32 抵消样例 `[[0.5,…],[−0.5,…]]` 与小数 complex → `dtype=bool` | ATen 先按非零转 bool 再归约（0.5→True），非求和后截断（0.0→False）；直调与 dispatch 一致 |
 | **autograd parity**（`abs().sum()`、`sum().abs()`、`(x*2).abs().sum()` × c64/c128） | 梯度+前向 rtol=1e-4 / atol=1e-6；仅**实数标量结尾**链入判据（`pow(2)` 链与 complex 中间标量风险已排除，不纳入） |
 
 ### 梯度缺口对照（不属于本 patch 的预存缺陷）
@@ -146,13 +151,31 @@ native 参照在 `flag_gems.enable()` **之前**捕获（enable 后 call-site �
 
 | 命令 | 退出码 | 结果 |
 | --- | --- | --- |
-| `flag_fixes validate` | 0 | `{"valid": true, "fixes": 11, "deployable": 0, "hardware_verified": 0}`（2026-11-08，含 `e2e_precondition` 新 schema）→ `results/cli-validate-2026-11-08.log` |
-| `flag_fixes check linear-5379 zeros-7181 --target $BASE` | 0 | 9 目标（8+linear.py）before hash 全中、patch `git apply --check` 干净 → `results/cli-check-2026-11-08.log` |
-| `flag_fixes plan linear-5379 zeros-7181 --target $BASE` | 0 | 同上（预演不落盘）→ `results/cli-plan-2026-11-08.log` |
-| `flag_fixes check zeros-7181 --target $BASE`（**漏依赖 ID**） | 2 | `error: zeros-7181: include required fixes: ['linear-5379']`（requires 子集检查实测）→ `results/cli-check-requiredfail-2026-11-08.log` |
-| `flag_fixes apply linear-5379 zeros-7181 --target $BASE` | 2 | `error: Selected fixes are not approved for deployment`（`deployable=false`，**按设计拒绝**）→ `results/cli-apply-2026-11-08.log` |
-| `flag_fixes status --target /tmp/opencode/flagfix-fixed` | 0 | `{"transactions": [], "drift": [], "recovery_required": false}` → `results/cli-status-2026-11-08.log` |
-| `flag_fixes verify zeros-7181 --target /tmp/opencode/flagfix-fixed --python python3` | 0 | 11-07 两轮 `passed: true` 3/3（脏跑 `results/verify-2026-11-07-dirty.json`、干净跑 `results/verify-2026-11-07.json`）；11-08 修正轮提交后干净重跑 → `results/verify-2026-11-08.json`（下表提交步骤完成后执行） |
+| `flag_fixes validate` | 0 | `{"valid": true, "fixes": 11, "deployable": 0, "hardware_verified": 0}`（2026-11-09，第二轮 hash 更新后复验）→ `results/cli-validate-2026-11-09.log` |
+| `flag_fixes check linear-5379 zeros-7181 --target $BASE` | 0 | 9 目标（8+linear.py）before hash 全中、patch `git apply --check` 干净 → `results/cli-check-2026-11-09.log` |
+| `flag_fixes plan linear-5379 zeros-7181 --target $BASE` | 0 | 同上（预演不落盘）→ `results/cli-plan-2026-11-09.log` |
+| `flag_fixes check zeros-7181 --target $BASE`（**漏依赖 ID**） | 2 | `error: zeros-7181: include required fixes: ['linear-5379']`（requires 子集检查实测）→ `results/cli-check-requiredfail-2026-11-09.log` |
+| `flag_fixes apply linear-5379 zeros-7181 --target $BASE` | 2 | `error: Selected fixes are not approved for deployment`（`deployable=false`，**按设计拒绝**）→ `results/cli-apply-2026-11-09.log` |
+| `flag_fixes status --target /tmp/opencode/flagfix-fixed` | 0 | `{"transactions": [], "drift": [], "recovery_required": false}` → `results/cli-status-2026-11-09.log` |
+| `flag_fixes verify zeros-7181 --target /tmp/opencode/flagfix-fixed --python python3` | 0 | 三轮均 `passed: true` 3/3（11-07 初版 `verify-2026-11-07{,-dirty}.json`、11-08 第一轮 `verify-2026-11-08.json`、11-09 第二轮提交后干净跑 → `results/verify-2026-11-09.json`，本表提交步骤完成后执行） |
+
+## 第二轮评审修正（2026-11-09，基于 `9fa84cf`）
+
+评审确认第一轮四项 must-fix 全部落地后，新增两处 P2 正确性缺陷与 conj 跟进项，本轮
+全部修复并复验（源码改动仅 `ops/sum.py`、`ops/absolute.py`；测试扩至 210 用例）：
+
+| 评审项 | 修复 | 验证 |
+| --- | --- | --- |
+| P2：`sum_dim_out` 拒绝合法 bool out（`dtype=None` 时曾强制按 i64 计算再判不匹配） | 删除 bool→i64 特殊分支：dim 形一律采用 `out.dtype`（bool/real/complex、空/非空），显式 `dtype != out.dtype` 仍逐字报错；全量 `sum.out` 保持不采用只校验 | bool out 采用矩阵 + 报错逐字双向 oracle（`regression-fixed-2026-11-09.log` 全绿）；native 对照见测试 pre-enable oracle |
+| P2：complex→bool 丢虚部（`_sum_complex` 曾对所有实目标取 `inp.real`，`sum([0+1j], dtype=bool)` 得 False、native True） | bool 目标改用完整张量 any-component 规则（`real.ne(0) \| imag.ne(0)`，对齐 c10 TypeCast），其余实目标保持实部语义 | 纯虚/全零/混合 × c64/c128 × 全量/dim × `dtype=bool`/bool out 全部与 native 一致 |
+| conj 跟进：`view_as_real` 不接受未物化 conj bit（`.contiguous()` 不清 conj 位） | `absolute.py` 入口 `resolve_conj().contiguous()`；`_sum_complex` 入口 `resolve_conj()`（`.imag` 访问器在 enable 后返回未取负的裸存储视图，dispatch 路径靠 ATen 物化掩盖、直调路径暴露） | 预 enable 构造 conj 张量 × `abs`/`sum` × 直调 `gops.*` 与 `torch.*` dispatch 全部与 native 一致 |
+| 连带发现并修复：空输入 dim-out `ZeroDivisionError`（`sum_dim_comm` 除以零长度维；全量 `sum.out` 空输入同样） | `sum_dim`/`sum_dim_out` 空分支共用 `_empty_dim_result`（按 dtype 造约简形状零张量，不进 kernel）；`sum_out` 补 `M == 0` 分支 | bool/f32/complex 空输入 × dim/全量 × 各 out dtype 与 native 一致 |
+| 连带发现并修复：float→bool cast-first 截断分歧（flag_gems cast kernel `0.5→False`，ATen 非零规则 `0.5→True`）；scalar `dim` 直调 `sum_dim_comm` 未归一化 | `_cast_before_sum`：bool 目标用 `inp.ne(0)` 建掩码（`sum`/`sum_out`/`sum_dim_comm` 三处），complex bool 支用 real/imag 比较；`sum_dim_comm` 入口把标量 `dim` 归一化为列表 | 抵消样例 `[[0.5,…],[−0.5,…]]` 与小数 complex 的 bool 归约与 native 一致；`gops.sum_dim(x, 0)` 直调可用 |
+
+同轮复验（全部 exit code 达标、日志见 `results/*-2026-11-09.log`）：repro 1→0、
+regression 33/177/210→210/0/210、e2e `E2E OK`（前置 9 文件新哈希、161/384、
+loss rel=0）、错树前置 exit 2、缺依赖/缺设备 exit 2、CLI 六项退出码与第一轮一致、
+`compileall`/`pytest`(26) 通过；patch/快照/`fix.yaml` 三者 hash 一致（`validate`+`check`/`plan`）。
 
 ## 未执行（如实登记，不算通过）
 

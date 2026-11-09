@@ -48,7 +48,7 @@ binder 在 `mangle_type` 阶段取 `type_canonicalisation_dict['complex64']` 即
 | 实验 | 修复前（基线） | 修复后 |
 | --- | --- | --- |
 | `repro_complex64.py`（issue #7181 直接调用形态 + torch 入口） | exit 1，`KeyError: 'complex64'` | exit 0 |
-| `test_complex_ops.py`（139 用例矩阵，2026-11-08 版） | `TOTAL: 18 passed, 121 failed, 139 total`（107 条 complex KeyError，其余为 strided 断言 / 交叉 dtype 静默分歧等修复缺失行为） | `TOTAL: 139 passed, 0 failed, 139 total` |
+| `test_complex_ops.py`（210 用例矩阵，2026-11-09 版） | `TOTAL: 33 passed, 177 failed, 210 total`（137 条 complex KeyError，其余为 strided 断言 / 交叉 dtype 静默分歧 / bool out 拒绝 / conj 直调等修复缺失行为） | `TOTAL: 210 passed, 0 failed, 210 total` |
 | 真实模型反向（`test_m2_bert_backward.py`，见下 3） | `ops/sum.py:385` KeyError 中断 | 反向完成 |
 
 > 2026-11-07 的旧日志（`results/*-2026-11-07.log`）中 regression 的
@@ -122,7 +122,7 @@ m2-bert 的 conv1d 输入来自 `rearrange(b l d -> b d l)` 转置（非连续�
 
 ## 修复与影响
 
-一个实例、8 个文件（完整 diff 见 `patches/zeros-7181.patch`，366 行 / +195 −23）。
+一个实例、8 个文件（完整 diff 见 `patches/zeros-7181.patch`，494 行 / +267 −46）。
 按评审口径分**三类改动**（同一次反向链路上的三个层次，故并入一个 fix；每类有独立验收）：
 
 | 类 | 文件 | 验收口径 |
@@ -135,12 +135,12 @@ m2-bert 的 conv1d 输入来自 `rearrange(b l d -> b d l)` 转置（非连续�
 
 | 文件 | 改动与机制 |
 | --- | --- |
-| `ops/sum.py` | `_COMPLEX_TO_REAL` 映射 + `_real_sum`/`_sum_complex`：complex 输入经 `torch.view_as_real` 降到实数视图复用现有实数 kernel，结果按映射 dtype 转回；`sum/sum_out/sum_dim/sum_dim_out` 四入口前置分支。**交叉 dtype out 语义对齐 ATen**：`sum_dim_out(dtype=None)` 采用 `out.dtype`（实数与 complex 均如此；bool out 先按 i64 计算），显式 `dtype != out.dtype` 抛与 ATen 逐字一致的报错；`sum_out` 全量形式不采用、只校验；`sum`/`sum_out`/`sum_dim_comm` 先把输入 cast 到 dtype 再归约（ATen cast-first，修复 f32→i64 ±1 级分歧）。实数路径逐位不变（分支在 `is_complex()` 处短路）；实数 in + complex out 走 `_sum_complex`。 |
+| `ops/sum.py` | `_COMPLEX_TO_REAL` 映射 + `_real_sum`/`_sum_complex`：complex 输入经 `torch.view_as_real` 降到实数视图复用现有实数 kernel，结果按映射 dtype 转回；`sum/sum_out/sum_dim/sum_dim_out` 四入口前置分支。**交叉 dtype out 语义对齐 ATen（第二轮评审修订）**：`sum_dim_out(dtype=None)` 一律采用 `out.dtype`（实数/complex/**bool** 均如此——曾错误地把 bool out 强制按 i64 计算再判不匹配、拒绝 `torch.sum(x_bool, dim=0, out=out_bool)`；空输入走 `_empty_dim_result` 零分支，不进 kernel、无除零），显式 `dtype != out.dtype` 抛与 ATen 逐字一致的报错；`sum_out` 全量形式不采用、只校验（空输入 `M==0` 同样直接给标量零）；cast-first：`_cast_before_sum` 先把输入转到计算 dtype（bool 目标用 `inp.ne(0)` 非零规则——flag_gems float→bool cast kernel 是截断语义，`0.5→False`，与 ATen `0.5→True` 分歧；complex→bool 目标用 `real.ne(0)\|imag.ne(0)` 对齐 c10 TypeCast 的任一分量规则，`sum([0+1j], dtype=bool)` = True，曾取实部得 False）；`sum_dim_comm` 入口把标量 `dim` 归一化为列表；`_sum_complex` 入口 `resolve_conj()`（enable 后 `.imag` 访问器返回未取负的裸存储视图，dispatch 靠 ATen 物化掩盖、直调暴露，`gops.sum(conj)` 曾得 `4+6j` vs native `4−6j`）。实数路径逐位不变（分支在 `is_complex()` 处短路）；实数 in + complex out 走 `_sum_complex`。 |
 | `ops/zeros.py` | `zeros()` 对 complex 分配后 `zero_(out)`；complex `zero_()` = **`x.copy_(0); return x`**——直接 ATen redispatch 到 native 实现，**stride 正确**（切片/视图/转置张量的稀疏存储也被清零）、保持 dtype 与"返回入参张量"语义。（评审修正：旧实现经 `view_as_real` 递归会把连续视图的存储当稠密 buffer 清零，strided 张量非全零区间/原张量被污染。） |
 | `ops/zero.py` | `_launch_zero_kernel` 同口径：complex 一律 `tensor.copy_(0); return tensor`，`zero`/`zero.out`/`zero_` 三入口覆盖。 |
 | `ops/zeros_like.py` | complex 分支调 `zero_(out)` 继承 strides/dtype/布局（`zeros_like` 语义天然正确）。 |
 | `ops/abs.py` | `abs()` complex 委托给已带 `_absolute_complex_kernel` 的 `absolute()`；`abs_()` complex 抛 `RuntimeError("In-place abs is not supported for complex tensors.")`，**与 native 逐字一致**（回归逐字比对）。 |
-| `ops/absolute.py` | `_absolute_complex_kernel` 模长改用**缩放 hypot**：`m=max(|re|,|im|)`，`m_safe=where(m>0,m,1)`，`y=m*sqrt((re/m)^2+(im/m)^2)`，`y=where(is_inf,inf,y)`——inf 优先于 NaN、NaN 正常传播、避免大数中间量溢出（评审指正：旧 `sqrt(re^2+im^2)` 在 ~1e20 级溢出为 inf、NaN 形态不一致）；`absolute_()` complex 前置拒绝同 `abs_`。 |
+| `ops/absolute.py` | 入口 `input.resolve_conj().contiguous()`（第二轮评审：`.contiguous()` 不清 conj 位，`view_as_real` 对未物化 conj 张量直接抛错；`resolve_conj` 无 conj 位时是 no-op）。`_absolute_complex_kernel` 模长用**缩放 hypot**：`m=max(|re|,|im|)`，`m_safe=where(m>0,m,1)`，`y=m*sqrt((re/m)^2+(im/m)^2)`，`y=where(is_inf,inf,y)`——inf 优先于 NaN、NaN 正常传播、避免大数中间量溢出（评审指正：旧 `sqrt(re^2+im^2)` 在 ~1e20 级溢出为 inf、NaN 形态不一致）；`absolute_()` complex 前置拒绝同 `abs_`。 |
 | `ops/conv2d.py:288` | `input_c_stride[None]` → 标量直接参与广播（消除 constexpr `[None]` 崩溃），仅此一处。 |
 | `_thead/ops/linear_backward.py:170/171` | `view` → `reshape`（非连续输入的机械修复）。 |
 
@@ -152,9 +152,11 @@ m2-bert 的 conv1d 输入来自 `rearrange(b l d -> b d l)` 转置（非连续�
 - **`ops/linear.py` 不在本 patch**：line 158 归 linear-5379（已合入本仓库），
   其 after sha `ddec3383…` 钉入 `e2e_precondition`。本仓库 e2e 树构造 =
   基线 + `linear-5379.patch` + `zeros-7181.patch`。
-- 数值影响：complex 求和/清零/模长与 native oracle 逐项一致（回归 139 用例：
+- 数值影响：complex 求和/清零/模长与 native oracle 逐项一致（回归 210 用例：
   模长 rtol=1e-6 或 1e-10、atol=0、equal_nan；交叉 dtype out 矩阵 ok/err 双向
-  + ATen 报错逐字；autograd 链 parity rtol=1e-4/atol=1e-6，限实数标量结尾链）；
+  + ATen 报错逐字；bool out 采用 / complex→bool any-component / 空输入 / conj
+  直调与 dispatch / cast-first 非零规则（第二轮新增）；autograd 链 parity
+  rtol=1e-4/atol=1e-6，限实数标量结尾链）；
   m2-bert 前向 loss 与 native **完全一致**（rel=0.000e+00）。
 
 ## 已知限制与上游跟踪

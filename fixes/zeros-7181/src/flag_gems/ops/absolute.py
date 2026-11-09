@@ -62,7 +62,9 @@ def _absolute_complex_kernel(ri_ptr, out_ptr, n_elements, BLOCK_SIZE: tl.constex
 
 def absolute(input: torch.Tensor):
     logger.debug("GEMS ABSOLUTE")
-    x = input.contiguous()
+    # resolve_conj materializes an unresolved conjugate view (no-op otherwise):
+    # contiguous() does not clear the conj bit and view_as_real rejects it.
+    x = input.resolve_conj().contiguous()
     n_elements = x.numel()
     grid = lambda meta: (triton.cdiv(n_elements, meta["BLOCK_SIZE"]),)
 

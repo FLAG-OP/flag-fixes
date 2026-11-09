@@ -21,7 +21,6 @@ import triton
 import triton.language as tl
 
 from flag_gems import runtime
-from flag_gems.ops.zeros import zero_
 from flag_gems.runtime import torch_device_fn
 from flag_gems.utils import dim_compress, libentry, libtuner
 from flag_gems.utils import triton_lang_extension as ext
@@ -82,7 +81,15 @@ def _sum_complex(inp, dim=None, keepdim=False, *, dtype=None, out=None):
       requested, mirroring ATen promotion).
     * dtype real -> ATen casts the complex input to the real dtype first
       (dropping the imaginary part), so summing the real parts matches.
+      bool is the exception (c10 TypeCast): a complex value converts to
+      True when EITHER component is nonzero, so the cast must see the full
+      complex tensor, not just the real part.
     """
+    # Materialize an unresolved conj bit first: the .real/.imag accessors
+    # hand back views whose raw storage is un-negated, which downstream
+    # kernels read literally (dispatch works only because ATen materializes
+    # conj inputs before entering this path).
+    inp = inp.resolve_conj()
     if inp.is_complex():
         if dtype is None or dtype.is_complex:
             target = dtype if dtype is not None else inp.dtype
@@ -94,6 +101,12 @@ def _sum_complex(inp, dim=None, keepdim=False, *, dtype=None, out=None):
             res = torch.view_as_complex(torch.stack((real_part, imag_part), dim=-1))
             if res.dtype != target:
                 res = res.to(target)
+        elif dtype is torch.bool:
+            # sum([0+1j], dtype=bool) is True: cast the whole complex tensor
+            # with the any-component rule, then reduce (cast-first, ATen).
+            # Build the mask from real/imag comparisons: float->bool casts
+            # truncate in flag_gems while the nonzero rule must apply.
+            res = _real_sum(inp.real.ne(0) | inp.imag.ne(0), dim, keepdim, torch.bool)
         else:
             res = _real_sum(inp.real, dim, keepdim, dtype)
     else:
@@ -160,6 +173,20 @@ def sum_kernel_2(mid, out, mid_size, BLOCK_MID: tl.constexpr):
     tl.store(out, sum_val)
 
 
+def _cast_before_sum(inp, dtype):
+    """ATen casts the input to dtype before reducing (cast-first).
+
+    The bool cast must use the nonzero rule (0.5 -> True): flag_gems'
+    float->bool cast kernel truncates instead (0.5 -> False), so build the
+    mask with a comparison.
+    """
+    if dtype == inp.dtype:
+        return inp
+    if dtype is torch.bool:
+        return inp.ne(0)
+    return inp.to(dtype)
+
+
 def sum(inp, *, dtype=None):
     logger.debug("GEMS SUM")
     if inp.is_complex() or (dtype is not None and dtype.is_complex):
@@ -172,7 +199,7 @@ def sum(inp, *, dtype=None):
     if dtype != inp.dtype:
         # ATen casts the input to dtype before summing (full sum and dim sum
         # both); accumulate in the cast dtype instead of widening afterwards.
-        inp = inp.to(dtype)
+        inp = _cast_before_sum(inp, dtype)
     M = inp.numel()
 
     if M == 0:
@@ -201,7 +228,7 @@ def sum_out(inp, *, dtype=None, out):
         if dtype is torch.bool:
             dtype = torch.int64
     if dtype != inp.dtype:
-        inp = inp.to(dtype)
+        inp = _cast_before_sum(inp, dtype)
     if out.dtype != dtype:
         # ATen sum.out (full reduction) does NOT adopt out.dtype and raises
         # when it differs from the computed dtype.
@@ -210,6 +237,14 @@ def sum_out(inp, *, dtype=None, out):
             f"but got {_aten_dtype_name(out.dtype)} instead"
         )
     M = inp.numel()
+    if M == 0:
+        # Empty full reduction: ATen yields a zero scalar of dtype without
+        # launching the kernel (the kernel path divides by a zero mid size).
+        res = torch.zeros([], dtype=dtype, device=inp.device)
+        if out.shape != res.shape:
+            out.resize_(res.shape)
+        out.copy_(res)
+        return out
     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
     mid_size = triton.cdiv(M, block_size)
     block_mid = triton.next_power_of_2(mid_size)
@@ -364,11 +399,15 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
         dtype = inp.dtype
         if dtype is torch.bool:
             dtype = torch.int64
+    if dim is not None and not isinstance(dim, (list, tuple)):
+        # public entries accept a scalar dim (torch.sum(x, 0)); normalize
+        # for the iterable-only reduction body below.
+        dim = [dim]
     if dtype != inp.dtype:
         # ATen casts the input to dtype before reducing, so for instance
         # f32->i64 truncates each element before summing (summing first and
-        # truncating the total can differ by 1).
-        inp = inp.to(dtype)
+        # truncating the total can differ by 1); bool uses the nonzero rule.
+        inp = _cast_before_sum(inp, dtype)
     if dim is None:
         result = torch.sum(inp, dtype=dtype)
         if keepdim:
@@ -451,6 +490,34 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
         return out
 
 
+def _empty_dim_result(inp, dim, keepdim, dtype):
+    """Zeros of the reduced shape for an empty input.
+
+    ATen never launches the reduction for a zero-element input; sharing this
+    between sum_dim's empty branch and sum_dim_out keeps both from dividing
+    by a zero-sized dim (review P2: sum_dim_out used to ZeroDivisionError).
+    """
+    out_shape = list(inp.shape)
+    if dim is None or (isinstance(dim, (list, tuple)) and len(dim) == 0):
+        if keepdim:
+            out_shape = [1] * len(out_shape)
+        else:
+            out_shape = []
+    else:
+        dims_to_reduce = dim if isinstance(dim, (list, tuple)) else [dim]
+        if keepdim:
+            for d in dims_to_reduce:
+                out_shape[d % inp.ndim] = 1
+        else:
+            sorted_dims_to_remove = sorted(
+                dims_to_reduce, key=lambda x: x % inp.ndim, reverse=True
+            )
+            for d in sorted_dims_to_remove:
+                index_to_remove = d % inp.ndim
+                out_shape.pop(index_to_remove)
+    return torch.zeros(out_shape, dtype=dtype, device=inp.device)
+
+
 def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
     logger.debug("GEMS SUM_DIM")
     if inp.is_complex() or (dtype is not None and dtype.is_complex):
@@ -459,35 +526,11 @@ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
     if inp.numel() == 0:
         if dtype is None:
             dtype = inp.dtype
-        if dtype is torch.bool:
-            dtype = torch.int64
-
-        out_shape = list(inp.shape)
-        if dim is None:
-            if keepdim:
-                out_shape = [1] * len(out_shape)
-            else:
-                out_shape = []
-        elif isinstance(dim, (list, tuple)) and len(dim) == 0:
-            if keepdim:
-                out_shape = [1] * len(out_shape)
-            else:
-                out_shape = []
-        else:
-            dims_to_reduce = dim if isinstance(dim, (list, tuple)) else [dim]
-            if keepdim:
-                for d in dims_to_reduce:
-                    out_shape[d % inp.ndim] = 1
-            else:
-                sorted_dims_to_remove = sorted(
-                    dims_to_reduce, key=lambda x: x % inp.ndim, reverse=True
-                )
-                for d in sorted_dims_to_remove:
-                    index_to_remove = d % inp.ndim
-                    out_shape.pop(index_to_remove)
-        out = torch.empty(out_shape, dtype=dtype, device=inp.device)
-        zero_(out)
-        return out
+            if dtype is torch.bool:
+                # ATen's empty bool reduction without an explicit dtype
+                # promotes to int64; an explicit dtype=torch.bool is kept.
+                dtype = torch.int64
+        return _empty_dim_result(inp, dim, keepdim, dtype)
     return sum_dim_comm(inp, dim, keepdim, dtype=dtype)
 
 
@@ -495,13 +538,9 @@ def sum_dim_out(inp, dim=None, keepdim=False, *, dtype=None, out):
     logger.debug("GEMS SUM_DIM_OUT")
     if dtype is None:
         # ATen sum.dim_IntList_out computes in out.dtype when dtype is omitted
-        # (real and complex inputs alike); the full-reduction sum.out variant
-        # does not adopt and requires a dtype match.
+        # (real, complex and bool inputs alike, empty and non-empty); the
+        # full-reduction sum.out variant does not adopt and requires a match.
         dtype = out.dtype
-        if inp.dtype is torch.bool and dtype is torch.bool:
-            # bool reductions always compute int64 (ATen), so a bool out can
-            # never match the computed dtype.
-            dtype = torch.int64
     if inp.is_complex() or dtype.is_complex or out.is_complex():
         return _sum_complex(inp, dim, keepdim, dtype=dtype, out=out)
     if dtype != out.dtype:
@@ -510,4 +549,12 @@ def sum_dim_out(inp, dim=None, keepdim=False, *, dtype=None, out):
             f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
             f"but got {_aten_dtype_name(out.dtype)} instead"
         )
+    if inp.numel() == 0:
+        # Empty reductions yield zeros of the reduced shape in dtype (bool
+        # out included); sum_dim_comm would divide by a zero-sized dim.
+        res = _empty_dim_result(inp, dim, keepdim, dtype)
+        if out.shape != res.shape:
+            out.resize_(res.shape)
+        out.copy_(res)
+        return out
     return sum_dim_comm(inp, dim, keepdim, dtype=dtype, out=out)

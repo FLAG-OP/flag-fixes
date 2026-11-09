@@ -24,6 +24,12 @@ Suites (review round 1):
   * autograd parity      -- local complex chains abs().sum(), sum().abs(),
     (x*2).abs().sum() must produce finite grads equal to native within
     1e-4 (end in a real scalar; native rejects complex-scalar backward).
+  * review round 2       -- dim-sum with an out adopts out.dtype (bool out
+    works for bool/real inputs, full sum.out does not adopt and raises),
+    complex->bool uses the any-component nonzero rule (sum([0+1j],
+    dtype=bool) is True), empty inputs yield zeros without launching a
+    reduction (no ZeroDivisionError), and abs/sum resolve an unresolved
+    conj bit before reading storage (conj views are built pre-enable).
 
 Comparisons on complex tensors go through torch.view_as_real: flag_gems eq/
 nonzero are not complex-capable (pre-existing gap outside this fix).
@@ -284,6 +290,154 @@ _so("f32 aten full out=f32",
 _so("f32 aten full out=i64 ERR",
     lambda: torch.ops.aten.sum.out(_rf, out=torch.empty((), dtype=torch.int64, device=DEV)))
 
+# --- review round 2: bool out adoption / complex->bool / empty inputs ---
+# Dim-form sum adopts out.dtype (including bool); full-form sum.out does not
+# adopt and raises. Complex->bool follows c10 TypeCast (any component
+# nonzero -> True). Empty inputs must produce zeros of the reduced shape
+# without launching a reduction.
+_xb = torch.tensor([[True, False, True], [False, False, True]], device=DEV)
+_xb2 = torch.tensor([True, True], device=DEV)
+_xb3 = torch.tensor([True, True, True], device=DEV)
+_xe = torch.zeros(0, dtype=torch.bool, device=DEV)
+_xe3 = torch.zeros(0, 3, dtype=torch.bool, device=DEV)
+_re = torch.empty(0, dtype=torch.float32, device=DEV)
+_pure = torch.tensor([0 + 1j, 0 + 1j], device=DEV)
+_pure128 = torch.tensor([0 + 1j], dtype=torch.complex128, device=DEV)
+_mixed = torch.tensor([0 + 1j, 1 + 1j, 0 + 0j, 2 + 0j], device=DEV)
+_c22 = torch.tensor([[0 + 1j, 0 + 2j], [0 + 3j, 0 + 4j]], device=DEV)
+_cz = torch.zeros(2, dtype=torch.complex64, device=DEV)
+_ce = torch.empty(0, dtype=torch.complex64, device=DEV)
+# cast-first nonzero-rule probes: sum-then-cast would give False/0 where
+# ATen casts each element to True first (0.5 -> True, not truncation).
+_cancel = torch.tensor([[0.5, 10.0], [-0.5, 10.0]], device=DEV)
+_cancel_full = torch.tensor([[0.5, 0.5], [-0.5, -0.5]], device=DEV)
+_frac = torch.tensor([0.5 + 0.5j], device=DEV)
+
+_so("f32 cancel dim0 out=bool",
+    lambda: torch.sum(_cancel, 0, out=torch.empty(2, dtype=torch.bool, device=DEV)))
+_so("f32 cancel dim0 dtype=bool",
+    lambda: torch.sum(_cancel, 0, dtype=torch.bool))
+_so("f32 cancel full dtype=bool",
+    lambda: torch.sum(_cancel_full, dtype=torch.bool))
+_so("f32 cancel aten full dtype=bool out=bool",
+    lambda: torch.ops.aten.sum.out(_cancel_full, dtype=torch.bool,
+                                   out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 frac dim0 dtype=bool",
+    lambda: torch.sum(_frac, 0, dtype=torch.bool))
+_so("c64 frac all dtype=bool out bool",
+    lambda: torch.sum(_frac, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("f32 empty dim0 dtype=bool",
+    lambda: torch.sum(_re, 0, dtype=torch.bool))
+
+_so("bool dim0 out=bool adopt",
+    lambda: torch.sum(_xb, 0, out=torch.empty(3, dtype=torch.bool, device=DEV)))
+_so("bool dim0 dtype=bool out=bool",
+    lambda: torch.sum(_xb, 0, dtype=torch.bool,
+                      out=torch.empty(3, dtype=torch.bool, device=DEV)))
+_so("bool dim0 out=i64 adopt",
+    lambda: torch.sum(_xb, 0, out=torch.empty(3, dtype=torch.int64, device=DEV)))
+_so("bool dim0 out=f32 adopt",
+    lambda: torch.sum(_xb, 0, out=torch.empty(3, dtype=torch.float32, device=DEV)))
+_so("bool dim0 dtype=f32 out=f32",
+    lambda: torch.sum(_xb, 0, dtype=torch.float32,
+                      out=torch.empty(3, dtype=torch.float32, device=DEV)))
+_so("bool dim0 dtype=f32 out=bool ERR",
+    lambda: torch.sum(_xb, 0, dtype=torch.float32,
+                      out=torch.empty(3, dtype=torch.bool, device=DEV)))
+_so("bool dim0 dtype=bool out=i64 ERR",
+    lambda: torch.sum(_xb, 0, dtype=torch.bool,
+                      out=torch.empty(3, dtype=torch.int64, device=DEV)))
+_so("bool dim(0,1) out=bool",
+    lambda: torch.sum(_xb, (0, 1), out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool dim0 keepdim out bool",
+    lambda: torch.sum(_xb, 0, keepdim=True,
+                      out=torch.empty(1, 3, dtype=torch.bool, device=DEV)))
+_so("bool count2 out=bool",
+    lambda: torch.sum(_xb2, 0, out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool count3 out=bool",
+    lambda: torch.sum(_xb3, 0, out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool aten full out=bool ERR",
+    lambda: torch.ops.aten.sum.out(_xb, out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool aten full dtype=bool out=bool",
+    lambda: torch.ops.aten.sum.out(_xb2, dtype=torch.bool,
+                                   out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool aten full out=i64",
+    lambda: torch.ops.aten.sum.out(_xb2, out=torch.empty((), dtype=torch.int64, device=DEV)))
+_so("f32 dim0 out=bool adopt",
+    lambda: torch.sum(_rf, 0, out=torch.empty(3, dtype=torch.bool, device=DEV)))
+_so("bool empty dim0 out=bool",
+    lambda: torch.sum(_xe3, 0, out=torch.empty(3, dtype=torch.bool, device=DEV)))
+_so("bool empty dim0 out=i64",
+    lambda: torch.sum(_xe, 0, out=torch.empty((), dtype=torch.int64, device=DEV)))
+_so("bool empty dim0 out=f32",
+    lambda: torch.sum(_xe, 0, out=torch.empty((), dtype=torch.float32, device=DEV)))
+_so("bool empty dim0 dtype=bool out=bool",
+    lambda: torch.sum(_xe, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool empty dim0 dtype=f32 out=i64 ERR",
+    lambda: torch.sum(_xe, 0, dtype=torch.float32,
+                      out=torch.empty((), dtype=torch.int64, device=DEV)))
+_so("bool empty dim1 out=bool",
+    lambda: torch.sum(_xe3, 1, out=torch.empty(0, dtype=torch.bool, device=DEV)))
+_so("bool empty dim0 keepdim out bool",
+    lambda: torch.sum(_xe, 0, keepdim=True,
+                      out=torch.empty(1, dtype=torch.bool, device=DEV)))
+_so("bool empty full out=i64",
+    lambda: torch.ops.aten.sum.out(_xe, out=torch.empty((), dtype=torch.int64, device=DEV)))
+_so("bool empty full out=bool ERR",
+    lambda: torch.ops.aten.sum.out(_xe, out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool empty full dtype=bool out=bool",
+    lambda: torch.ops.aten.sum.out(_xe, dtype=torch.bool,
+                                   out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("bool empty no-dim",
+    lambda: torch.sum(_xe))
+_so("bool empty no-dim dtype=bool",
+    lambda: torch.sum(_xe, dtype=torch.bool))
+_so("bool empty dim0 dtype=bool",
+    lambda: torch.sum(_xe, 0, dtype=torch.bool))
+_so("f32 empty dim0 out=f32",
+    lambda: torch.sum(_re, 0, out=torch.empty((), dtype=torch.float32, device=DEV)))
+_so("f32 empty dim0 out=i64",
+    lambda: torch.sum(_re, 0, out=torch.empty((), dtype=torch.int64, device=DEV)))
+_so("c64 pureimag dim0 out=bool adopt",
+    lambda: torch.sum(_pure, 0, out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 pureimag dim0 dtype=bool out=bool",
+    lambda: torch.sum(_pure, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 pureimag dim0 dtype=bool",
+    lambda: torch.sum(_pure, 0, dtype=torch.bool))
+_so("c64 pureimag all dtype=bool",
+    lambda: torch.sum(_pure, dtype=torch.bool))
+_so("c128 pureimag dim0 dtype=bool out=bool",
+    lambda: torch.sum(_pure128, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 mixed dim0 dtype=bool out=bool",
+    lambda: torch.sum(_mixed, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 mixed all dtype=bool",
+    lambda: torch.sum(_mixed, dtype=torch.bool))
+_so("c64 c22 dim0 dtype=bool out bool",
+    lambda: torch.sum(_c22, 0, dtype=torch.bool,
+                      out=torch.empty(2, dtype=torch.bool, device=DEV)))
+_so("c64 c22 dim1 dtype=bool out bool",
+    lambda: torch.sum(_c22, 1, dtype=torch.bool,
+                      out=torch.empty(2, dtype=torch.bool, device=DEV)))
+_so("c64 allzero dim0 dtype=bool out bool",
+    lambda: torch.sum(_cz, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 dim0 dtype=bool out=i64 ERR",
+    lambda: torch.sum(_mixed, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.int64, device=DEV)))
+_so("c64 empty dim0 dtype=bool out bool",
+    lambda: torch.sum(_ce, 0, dtype=torch.bool,
+                      out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 empty full dtype=bool out bool",
+    lambda: torch.ops.aten.sum.out(_ce, dtype=torch.bool,
+                                   out=torch.empty((), dtype=torch.bool, device=DEV)))
+_so("c64 empty full out=bool ERR",
+    lambda: torch.ops.aten.sum.out(_ce, out=torch.empty((), dtype=torch.bool, device=DEV)))
+
 _sumout_oracles = {}
 for _label, _run in _sumout_cases:
     try:
@@ -308,6 +462,22 @@ for _dt in (torch.complex64, torch.complex128):
         _ag[(_dt, _cname)] = (_x0, _y.detach().clone(), _xn.grad.clone())
 
 import flag_gems  # noqa: E402
+
+# --- review round 2: unresolved conj views (built pre-enable) ---
+# Post-enable .conj() materializes under flag_gems, so the conj bit must be
+# captured here; abs and sum must resolve it before reading storage.
+_conj = {}
+for _dt in (torch.complex64, torch.complex128):
+    _cbase = torch.tensor(
+        [[1 + 2j, 5 + 6j], [3 + 4j, 7 + 8j]], dtype=_dt, device=DEV
+    )
+    _pc = _cbase.conj()
+    _pcs = _cbase[::2].conj()
+    _conj[(_dt, "abs")] = (_pc, torch.abs(_pc))
+    _conj[(_dt, "abs_strided")] = (_pcs, torch.abs(_pcs))
+    _conj[(_dt, "sum")] = (_pc, torch.sum(_pc))
+    _conj[(_dt, "sum_dim0")] = (_pc, torch.sum(_pc, 0))
+    _conj[(_dt, "sum_strided")] = (_pcs, torch.sum(_pcs))
 
 print("flag_gems from:", flag_gems.__file__, flush=True)
 flag_gems.enable()
@@ -463,6 +633,24 @@ def sumout_case(label, run, orc):
 
 for _label, _run in _sumout_cases:
     sumout_case(_label, _run, _sumout_oracles[_label])
+
+# --- review round 2: conj materialization in abs and sum ---
+for (_dt, _cname), (_tin, _oracle) in _conj.items():
+    if _cname in ("abs", "abs_strided"):
+        check(f"conj {_cname} {_dt} direct",
+              lambda _tin=_tin: gops.abs(_tin), _oracle, rtol=1e-6, atol=0.0)
+        check(f"conj {_cname} {_dt} dispatch",
+              lambda _tin=_tin: torch.abs(_tin), _oracle, rtol=1e-6, atol=0.0)
+    elif _cname == "sum_dim0":
+        check(f"conj {_cname} {_dt} direct",
+              lambda _tin=_tin: gops.sum_dim(_tin, 0), _oracle)
+        check(f"conj {_cname} {_dt} dispatch",
+              lambda _tin=_tin: torch.sum(_tin, 0), _oracle)
+    else:  # sum, sum_strided
+        check(f"conj {_cname} {_dt} direct",
+              lambda _tin=_tin: gops.sum(_tin), _oracle)
+        check(f"conj {_cname} {_dt} dispatch",
+              lambda _tin=_tin: torch.sum(_tin), _oracle)
 
 # --- review P2: local complex autograd parity vs native ---
 for (_dt, _cname), (_x0, _y_nat, _g_nat) in _ag.items():

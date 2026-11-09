@@ -16,11 +16,11 @@ target:
   baseline_commit: 29e14822f6dfabf990973c41f7c2df7811a6f60f
 patches:
 - path: patches/zeros-7181.patch
-  sha256: ba9638a8d452c8e7eb68439b67546b8ba6376e4f5c75cd5548907332fe6680ac
+  sha256: 60acb22f1800f2f2c9b2aacf3f0bcd254465e40b2e1babcc3cc48e1a2387a6ea
 targets:
 - path: src/flag_gems/ops/sum.py
   before_sha256: 5259b9f60445ef4a99e85387bc1e4c7a2264681170c695c6fc9b94378fa6348b
-  after_sha256: 0e105b60f6c31ff0e8d4ab81fc7f44864c44727b9c89e084456e15d905920c7d
+  after_sha256: 827500417ac340aa3b3d02e3d14a7307e15444bf668a3e9c3c6ccfd768d4bcdd
   after_source: src/flag_gems/ops/sum.py
 - path: src/flag_gems/ops/zeros.py
   before_sha256: ef6ee0ed2217edf2e49441ebd03ede9221b59d0a95e8ca2f7884dd28b64ae543
@@ -40,7 +40,7 @@ targets:
   after_source: src/flag_gems/ops/abs.py
 - path: src/flag_gems/ops/absolute.py
   before_sha256: fc3a44054ba94313dae0755b0d340db731a9feb3cb08ca0a05c6495735ab5b54
-  after_sha256: 7b443e7611e35c6f126d6592f61baa73d341af05fe1afe75180b37f8c5a2a1b8
+  after_sha256: b9a9ce1981862e244817c16ef91e828e9c43beeddd5ace619d019f19afa441c2
   after_source: src/flag_gems/ops/absolute.py
 - path: src/flag_gems/ops/conv2d.py
   before_sha256: 290a77432d169331d594a59696d61e6b020ed65ce0e1d1a18ece3b669ff391e7
@@ -69,7 +69,7 @@ e2e_precondition:
   - path: src/flag_gems/ops/linear.py
     sha256: ddec3383c1d6ca4b2f53cf6ea9550c2d5fead492a2562e0864e723b958ee951d
   - path: src/flag_gems/ops/sum.py
-    sha256: 0e105b60f6c31ff0e8d4ab81fc7f44864c44727b9c89e084456e15d905920c7d
+    sha256: 827500417ac340aa3b3d02e3d14a7307e15444bf668a3e9c3c6ccfd768d4bcdd
   - path: src/flag_gems/ops/zeros.py
     sha256: 391893014d200a1bca9b167903517ea24e69a1187d3a0a223d9fb0ae9990f9f7
   - path: src/flag_gems/ops/zero.py
@@ -79,7 +79,7 @@ e2e_precondition:
   - path: src/flag_gems/ops/abs.py
     sha256: 9d473703db901f6ccc1cda134b7a95229b6fbec12656bd680eae48f14149ae0c
   - path: src/flag_gems/ops/absolute.py
-    sha256: 7b443e7611e35c6f126d6592f61baa73d341af05fe1afe75180b37f8c5a2a1b8
+    sha256: b9a9ce1981862e244817c16ef91e828e9c43beeddd5ace619d019f19afa441c2
   - path: src/flag_gems/ops/conv2d.py
     sha256: 778519c06d988a99dae05075e5d15ed5556f9ce0f8540f635811666a7c35de24
   - path: src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
@@ -97,24 +97,26 @@ validation:
   - |-
     基线 FlagGems 29e14822f6dfabf990973c41f7c2df7811a6f60f (git describe
     v5.3.5-46-g29e14822)，8 个目标文件 before/after sha256 见 targets；
-    patches/zeros-7181.patch sha256=ba9638a8d452c8e7eb68439b67546b8ba6376e4f5c75cd5548907332fe6680ac，
+    patches/zeros-7181.patch sha256=60acb22f1800f2f2c9b2aacf3f0bcd254465e40b2e1babcc3cc48e1a2387a6ea，
     在基线上 git apply --check 干净，patch 应用后的文件内容与 src/ 快照逐字节一致
     （flagfix-fixed 工作树逐文件 cmp 通过）。
   - |-
-    2026-11-08 本地 PPU 设备（PPU-ZW810E，torch 2.10.0 + triton 3.6.0，
-    CUDA_VISIBLE_DEVICES=0）双树实测：修复前 tests/repro_complex64.py 退出码 1
-    （KeyError: 'complex64'，triton/_utils.py type_canonicalisation_dict，即
-    problem.md 原始签名）；修复前 tests/test_complex_ops.py（139 用例）
-    TOTAL 18 passed / 121 failed / 139 total（107 条 complex KeyError，其余为
-    strided zero_ 断言、交叉 dtype 静默分歧等修复缺失行为）；修复后 repro 退出码 0、
-    regression TOTAL 139 passed / 0 failed / 139 total。原始输出
-    results/repro-baseline-2026-11-08.log、results/regression-baseline-2026-11-08.log、
-    results/regression-fixed-2026-11-08.log。2026-11-07 旧日志保留：其 TOTAL 行
-    计数器有缺陷（printed N = passed+failed），旧口径实际 16/38/54，38 条失败全为
-    complex KeyError，计数器已于 11-08 修正为 passed/failed/total 三独立数字。
+    2026-11-09 本地 PPU 设备（PPU-ZW810E，torch 2.10.0 + triton 3.6.0，
+    CUDA_VISIBLE_DEVICES=0）双树实测（第二轮评审最终代码）：修复前
+    tests/repro_complex64.py 退出码 1（KeyError: 'complex64'，triton/_utils.py
+    type_canonicalisation_dict，即 problem.md 原始签名）；修复前
+    tests/test_complex_ops.py（210 用例）TOTAL 33 passed / 177 failed /
+    210 total（137 条 complex KeyError，其余为 strided zero_ 断言、交叉 dtype
+    静默分歧、bool out 拒绝、conj 直调等修复缺失行为）；修复后 repro 退出码 0、
+    regression TOTAL 210 passed / 0 failed / 210 total。原始输出
+    results/repro-baseline-2026-11-09.log、results/regression-baseline-2026-11-09.log、
+    results/regression-fixed-2026-11-09.log。历史口径保留：11-08 第一轮（139 用例）
+    18/121/139 → 139/0/139（results/*-2026-11-08.log，提交 085e199/9fa84cf）；
+    2026-11-07 旧日志 TOTAL 行计数器有缺陷（printed N = passed+failed），旧口径
+    实际 16/38/54，38 条失败全为 complex KeyError，计数器已于 11-08 修正。
   - |-
     真实模型 e2e（tests/test_m2_bert_backward.py，12L/768/8192 全量容器配置，
-    2026-11-08）：修复前（基线 + linear-5379 + conv2d/linear_backward 机械修复、
+    2026-11-09 复跑）：修复前（基线 + linear-5379 + conv2d/linear_backward 机械修复、
     complex 修复缺失）反向在 ops/sum.py:385 sum_dim → sum_dim_kernel_non_inner 抛
     KeyError: 'complex64'，退出码 1（results/e2e-problem-path-noncomplex-2026-11-07.log）；
     再早一层的阻塞（仅基线 + linear-5379）是 _thead/ops/linear_backward.py:170
@@ -123,19 +125,19 @@ validation:
     linear-5379 + zeros-7181）、model code revision=90e0b28f…、opt_einsum=bundled-stub、
     前向 loss 与 native 完全一致 rel=0.000e+00（backward 前快照）、反向完成、
     161 个梯度 present+finite、缺失集合与 tests/known_gap_m2.txt（384 条）
-    双向断言通过，results/e2e-fixed-2026-11-08.log。
+    双向断言通过，results/e2e-fixed-2026-11-09.log。
   - |-
     e2e 前置依赖检查实测（模型工作之前 exit 2）：基线树 MISSING PRECONDITION
-    （linear.py 4d46bae0… != ddec3383…）results/e2e-precondition-baseline-2026-11-08.log；
-    仅 linear-5379 树 MISSING PRECONDITION（sum.py 5259b9f6… != 0e105b60… 连同
-    zeros/zero/zeros_like/abs 等逐条）results/e2e-precondition-linearonly-2026-11-08.log；
+    （linear.py 4d46bae0… != ddec3383…）results/e2e-precondition-baseline-2026-11-09.log；
+    仅 linear-5379 树 MISSING PRECONDITION（sum.py 5259b9f6… != 82750041… 连同
+    zeros/zero/zeros_like/abs 等逐条）results/e2e-precondition-linearonly-2026-11-09.log；
     另有双源校验：e2e_precondition 的 sha 必须等于 targets[].after_sha256。
   - |-
     缺依赖/缺设备行为（skip 不算通过）：transformers 缺失 e2e 退出码 2 打印
-    MISSING DEPENDENCY，results/e2e-missing-dep-2026-11-08.log；无 CUDA 设备
-    （CUDA_VISIBLE_DEVICES=）regression 退出码 2，results/nocuda-regression-2026-11-08.log。
+    MISSING DEPENDENCY，results/e2e-missing-dep-2026-11-09.log；无 CUDA 设备
+    （CUDA_VISIBLE_DEVICES=）regression 退出码 2，results/nocuda-regression-2026-11-09.log。
   - |-
-    评审修正轮加固套件（含于 139 用例，results/regression-fixed-2026-11-08.log）：
+    评审两轮加固套件（含于 210 用例，results/regression-fixed-2026-11-09.log）：
     strided zero_（切片[::2]/[1::2]/view 列/narrow/转置/0 维 × gops.zero_/zero/
     aten.zero_，仅目标区间归零、原存储不污染）；模长量级（rtol=1e-6 或 1e-10、
     atol=0、equal_nan，inf 优先于 NaN）；交叉 dtype out 矩阵（ok/err 双向 +
@@ -143,15 +145,35 @@ validation:
     sum 输入 cast-first 等 ATen 语义对齐）；autograd parity（abs().sum() 等
     实数标量结尾链，grads+fwd rtol=1e-4/atol=1e-6）。complex zero_ 一律
     x.copy_(0) 原生 redispatch（stride 正确），absolute 模长用缩放 hypot
-    （inf 优先、NaN 传播、防大数溢出）。
+    （inf 优先、NaN 传播、防大数溢出）。第二轮新增：bool out 采用矩阵
+    （dim 形采用 out.dtype 含 bool/空输入、全量 sum.out 不采用只校验、
+    显式不符报错逐字）、complex→bool any-component（[0+1j]→True、纯虚/全零/
+    混合 × c64/c128）、空输入归约零分支（无除零）、conj 张量 abs/sum 直调+
+    dispatch（预 enable 构造 conj bit）、cast-first 非零规则抵消样例
+    （0.5→True 而非截断 False）。
+  - |-
+    第二轮评审修正（2026-11-09，基于 9fa84cf；源码仅 sum.py/absolute.py 变更，
+    patch 重建 sha256=60acb22f…、494 行 +267 −46）：(1) sum_dim_out 删除
+    bool→i64 强制分支，dim 形一律采用 out.dtype（bool out 可用），显式不符
+    仍逐字报错；(2) _sum_complex 对 bool 目标改用完整张量任一分量非零规则
+    （real.ne(0)|imag.ne(0)，对齐 c10 TypeCast；sum([0+1j], dtype=bool)=True）；
+    (3) absolute 入口 resolve_conj().contiguous()、_sum_complex 入口
+    resolve_conj()（conj bit 物化；enable 后 .imag 访问器返回未取负裸存储，
+    直调 gops.sum(conj) 曾 4+6j vs native 4-6j）；(4) 空输入 dim-out/全量-out
+    零分支（曾 ZeroDivisionError）；(5) _cast_before_sum bool 目标用 ne(0)
+    非零规则（flag_gems float→bool cast 截断 0.5→False 与 ATen 分歧）、
+    sum_dim_comm 标量 dim 归一化。全部纳入测试（210 用例）并在设备复验：
+    regression 33/177/210 → 210/0/210、e2e E2E OK（161/384、loss rel=0）、
+    repro 1→0、错树前置/缺依赖/缺设备/CLI 退出码全达标
+    （results/*-2026-11-09.log）。
   - |-
     管理工具 requires 强制实测：check/plan/apply/status 必须同时给出
-    linear-5379 zeros-7181（results/cli-check-2026-11-08.log 等 exit 0）；
+    linear-5379 zeros-7181（results/cli-check-2026-11-09.log 等 exit 0）；
     只给 zeros-7181 时 exit 2 "include required fixes: ['linear-5379']"
-    （results/cli-check-requiredfail-2026-11-08.log）；validate exit 0
-    fixes=11（results/cli-validate-2026-11-08.log）；apply 因 deployable=false
-    exit 2（results/cli-apply-2026-11-08.log）；status 干净
-    （results/cli-status-2026-11-08.log）。
+    （results/cli-check-requiredfail-2026-11-09.log）；validate exit 0
+    fixes=11（results/cli-validate-2026-11-09.log）；apply 因 deployable=false
+    exit 2（results/cli-apply-2026-11-09.log）；status 干净
+    （results/cli-status-2026-11-09.log）。
   - |-
     预存缺陷对照（非本 patch 引入）：无任何 complex 修复的树上以 unused 排除
     sum/zeros/abs/fill 后反向可完成，梯度缺失集合与修复树完全一致
@@ -166,15 +188,16 @@ validation:
     flag_gems.abs(x) 返回与 native 一致的实部模长（tests/repro_complex64.py 内含）。
   - |-
     e2e 缺依赖行为：transformers 缺失时 tests/test_m2_bert_backward.py 退出码 2 并打印
-    MISSING DEPENDENCY（skip 不算通过），原始输出 results/e2e-missing-dep-2026-11-08.log；
-    无 CUDA 设备同样退出码 2（results/nocuda-regression-2026-11-08.log）。
+    MISSING DEPENDENCY（skip 不算通过），原始输出 results/e2e-missing-dep-2026-11-09.log；
+    无 CUDA 设备同样退出码 2（results/nocuda-regression-2026-11-09.log）。
   - |-
     flag-fixes verify 在已提交干净树上通过：source_dirty=false，source_commit=a12c2fae0c49
     （passed=true，3/3 命令 rc=0：complex-keyerror-repro / complex-ops-regression /
     m2-bert-fwd-bwd），results/verify-2026-11-07.json；此前 dirty 预跑（HEAD f159ce07b199，
     source_dirty=true）同样 passed=true，results/verify-2026-11-07-dirty.json。
-    2026-11-08 评审修正轮提交后干净重跑 → results/verify-2026-11-08.json
-    （commit 以该 JSON 的 provenance 字段为准）。
+    2026-11-08 第一轮评审修正提交后干净重跑 → results/verify-2026-11-08.json
+    （commit 085e199）；2026-11-09 第二轮评审修正提交后干净重跑 →
+    results/verify-2026-11-09.json（commit 以该 JSON 的 provenance 字段为准）。
   commands:
   - name: complex-keyerror-repro
     script: tests/repro_complex64.py

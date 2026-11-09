@@ -25,7 +25,7 @@
 ```
 修复前: KeyError: 'complex64' (triton/_utils.py type_canonicalisation_dict)
         -> 反向首崩于 src/flag_gems/ops/sum.py:385（problem.md live 同款）
-修复后: 反向完成，loss rel=0.000e+00，回归 139/139，复现脚本 exit 0
+修复后: 反向完成，loss rel=0.000e+00，回归 210/210，复现脚本 exit 0
 ```
 
 ## 问题是怎么回事
@@ -65,7 +65,7 @@ triton 3.6.0 的 `type_canonicalisation_dict` 只登记实数 dtype；`zeros` �
 
 ## 修复思路
 
-一个实例、8 个文件，`patches/zeros-7181.patch`（366 行 / +195 −23）。按评审口径分
+一个实例、8 个文件，`patches/zeros-7181.patch`（494 行 / +267 −46）。按评审口径分
 **三类改动**（同一反向链路的三个层次，故并入一个 fix；每类独立验收，详见
 `reports/diagnosis.md`）：A 类 = complex dtype 支持本体（sum/zeros 族/abs，
 验收 = KeyError 消失 + native oracle 一致）；B 类 = 同链路前置阻塞（conv2d、
@@ -90,12 +90,12 @@ e2e 树 = 基线 + `linear-5379.patch` + 本 patch。
 
 | 文件 | before | after |
 | --- | --- | --- |
-| `src/flag_gems/ops/sum.py` | `5259b9f60445ef4a99e85387bc1e4c7a2264681170c695c6fc9b94378fa6348b` | `0e105b60f6c31ff0e8d4ab81fc7f44864c44727b9c89e084456e15d905920c7d` |
+| `src/flag_gems/ops/sum.py` | `5259b9f60445ef4a99e85387bc1e4c7a2264681170c695c6fc9b94378fa6348b` | `827500417ac340aa3b3d02e3d14a7307e15444bf668a3e9c3c6ccfd768d4bcdd` |
 | `src/flag_gems/ops/zeros.py` | `ef6ee0ed2217edf2e49441ebd03ede9221b59d0a95e8ca2f7884dd28b64ae543` | `391893014d200a1bca9b167903517ea24e69a1187d3a0a223d9fb0ae9990f9f7` |
 | `src/flag_gems/ops/zero.py` | `8f8d83c541e003274466f95f8817b46eb8df4d450b2068a51386a3e6bb278b10` | `1baf813d998fe4d4eaf522846bc862e21822014369a9eed347948b381a79d7fd` |
 | `src/flag_gems/ops/zeros_like.py` | `14bc478e3a474ae5872503717704f2569d4ef2dc2f65a4aaf54a7dd64817fc2d` | `754892efc4dec014628890d4389e0b705ff8f04cc20f6bea4642b31684e09fb9` |
 | `src/flag_gems/ops/abs.py` | `b7cf2a18414e159822c0c98c41aad61434184765aebc625b8f016eeee15fb930` | `9d473703db901f6ccc1cda134b7a95229b6fbec12656bd680eae48f14149ae0c` |
-| `src/flag_gems/ops/absolute.py` | `fc3a44054ba94313dae0755b0d340db731a9feb3cb08ca0a05c6495735ab5b54` | `7b443e7611e35c6f126d6592f61baa73d341af05fe1afe75180b37f8c5a2a1b8` |
+| `src/flag_gems/ops/absolute.py` | `fc3a44054ba94313dae0755b0d340db731a9feb3cb08ca0a05c6495735ab5b54` | `b9a9ce1981862e244817c16ef91e828e9c43beeddd5ace619d019f19afa441c2` |
 | `src/flag_gems/ops/conv2d.py` | `290a77432d169331d594a59696d61e6b020ed65ce0e1d1a18ece3b669ff391e7` | `778519c06d988a99dae05075e5d15ed5556f9ce0f8540f635811666a7c35de24` |
 | `src/flag_gems/runtime/backend/_thead/ops/linear_backward.py` | `f47b39ea0d62911eeb8601c613e2348e87852685119d0390ece26b437b915267` | `3fd7813424813de45ae0bf0e9aa8f0fb825601cb1b02948183e6dd48f348f413` |
 
@@ -176,12 +176,13 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 ├── fix.yaml                      # 清单（schema_version 1，8 目标 + requires/
 │                                 #   e2e_precondition 9 文件 + 3 硬件命令）
 ├── WORKFLOW.md                   # 8 步执行清单及证据
-├── patches/zeros-7181.patch      # 最小 diff（8 文件，366 行 / +195 −23），git apply 用
+├── patches/zeros-7181.patch      # 最小 diff（8 文件，494 行 / +267 −46），git apply 用
 ├── src/flag_gems/...             # 修复后完整文件快照（8 个），与 patch 结果逐字节一致
 ├── tests/
 │   ├── repro_complex64.py        #   issue #7181 / problem.md 最小复现（level: repro）
-│   ├── test_complex_ops.py       #   回归 139 用例：基础矩阵 + strided + 模长 +
-│   │                             #   交叉 dtype out 矩阵 + autograd parity（level: regression）
+│   ├── test_complex_ops.py       #   回归 210 用例：基础矩阵 + strided + 模长 +
+│   │                             #   交叉 dtype out 矩阵 + autograd parity +
+│   │                             #   bool/complex→bool/空输入/conj（level: regression）
 │   ├── test_m2_bert_backward.py  #   m2-bert 前向+反向（level: e2e，需 transformers，
 │   │                             #   含 9 文件前置哈希 + revision pin + 缺口 fixture 断言）
 │   ├── known_gap_m2.txt          #   filter_fn 已知缺口精确集合（32 模板 × 12 = 384）
@@ -189,14 +190,16 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 ├── reports/
 │   ├── diagnosis.md              #   根因、方案、影响范围、预存缺陷双树证据
 │   └── validation.md             #   环境、命令、前后结果、未执行清单
-└── results/                      # 权威日志为 *-2026-11-08.log（评审修正轮）：
-    ├── repro-{baseline,fixed}-2026-11-08.log       # 复现 exit 1 / exit 0
-    ├── regression-{baseline,fixed}-2026-11-08.log  # 18/121/139 → 139/0/139
-    ├── e2e-fixed-2026-11-08.log                    # E2E OK（precondition/fixture/revision）
-    ├── e2e-precondition-{baseline,linearonly}-2026-11-08.log  # 前置哈希 exit 2 实测
-    ├── e2e-missing-dep-2026-11-08.log / nocuda-regression-2026-11-08.log  # exit 2
-    ├── cli-{validate,check,plan,apply,status,check-requiredfail}-2026-11-08.log
-    ├── verify-2026-11-08.json                      # 修正轮提交后干净 verify
+└── results/                      # 权威日志为 *-2026-11-09.log（评审第二轮）：
+    ├── repro-{baseline,fixed}-2026-11-09.log       # 复现 exit 1 / exit 0
+    ├── regression-{baseline,fixed}-2026-11-09.log  # 33/177/210 → 210/0/210
+    ├── e2e-fixed-2026-11-09.log                    # E2E OK（precondition/fixture/revision）
+    ├── e2e-precondition-{baseline,linearonly}-2026-11-09.log  # 前置哈希 exit 2 实测
+    ├── e2e-missing-dep-2026-11-09.log / nocuda-regression-2026-11-09.log  # exit 2
+    ├── cli-{validate,check,plan,apply,status,check-requiredfail}-2026-11-09.log
+    ├── verify-2026-11-09.json                      # 第二轮提交后干净 verify
+    ├── *-2026-11-08.log / verify-2026-11-08.json   # 第一轮历史（139 用例口径，
+    │                                               #   提交 085e199/9fa84cf，不改写）
     ├── *-2026-11-07.log                            # 初版历史原文（不改写；
     │                                               #   其 regression TOTAL 行有计数器
     │                                               #   缺陷，实际 16/38/54，见
@@ -208,12 +211,13 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 
 ## 验证结果摘要
 
-（2026-11-08 评审修正轮，日志见 `results/*-2026-11-08.log`）
+（2026-11-09 评审第二轮，日志见 `results/*-2026-11-09.log`；第一轮 139 用例口径见
+`results/*-2026-11-08.log`）
 
 | 项目 | 修复前 | 修复后 |
 | --- | --- | --- |
 | `repro_complex64.py` | exit 1，`ISSUE REPRODUCED` + `KeyError: 'complex64'` | exit 0 |
-| `test_complex_ops.py`（139 用例） | 18 passed / 121 failed / 139 total | 139 passed / 0 failed / 139 total |
+| `test_complex_ops.py`（210 用例） | 33 passed / 177 failed / 210 total | 210 passed / 0 failed / 210 total |
 | `test_m2_bert_backward.py`（e2e） | 阶段一：linear_backward `view` RuntimeError；阶段二：反向 `sum.py:385 KeyError: 'complex64'`（problem.md 签名） | exit 0，`E2E OK`，precondition 9 文件 OK，loss rel=0.000e+00，161 梯度存在且有限，384 缺口与 fixture 双向断言一致 |
 | e2e 前置哈希（基线树 / 仅 linear 树） | — | 均 exit 2 `MISSING PRECONDITION`（模型工作之前） |
 | 前向对照 | （阶段二）loss rel=0.0 | loss rel=0.0（与原生逐位一致） |
