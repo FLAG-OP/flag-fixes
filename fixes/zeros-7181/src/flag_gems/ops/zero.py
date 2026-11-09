@@ -45,10 +45,12 @@ def _launch_zero_kernel(tensor: torch.Tensor):
     if tensor.device.type != flag_gems.device:
         raise ValueError(f"Tensor must be on {flag_gems.device} device")
     if tensor.is_complex():
-        # Triton's type_canonicalisation_dict has no complex entry, so the
-        # kernel must not see a complex pointer. view_as_real returns a view
-        # that shares storage, so zeroing (re, im) zeroes the complex tensor.
-        _launch_zero_kernel(torch.view_as_real(tensor))
+        # Triton's type_canonicalisation_dict has no complex entry, and the
+        # dense kernel below writes at contiguous offsets, so it must not see
+        # a complex (or strided) tensor. Native ATen copy_ is stride-correct
+        # and matches zeros.zero_'s complex path; unlike the old view_as_real
+        # recursion it also handles slices/transpose views correctly.
+        tensor.copy_(0)
         return tensor
     assert tensor.is_contiguous(), "Tensor must be contiguous"
     assert tensor.numel() >= 0

@@ -1,0 +1,160 @@
+/root/flag-fixes/fixes/zeros-7181/tests/test_complex_ops.py:82: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at ../aten/src/ATen/native/Copy.cpp:308.)
+  native[("c", dt, "realout")] = torch.sum(c, dtype=torch.float64 if rdt == torch.float32 else torch.float32)
+/root/flag-fixes/fixes/zeros-7181/tests/test_complex_ops.py:252: UserWarning: An output with one or more elements was resized since it had shape [2, 1], which does not match the required output shape [3]. This behavior is deprecated, and in a future PyTorch release outputs will not be resized unless they have zero elements. You can explicitly reuse an out tensor t by resizing it, inplace, to zero elements with t.resize_(0). (Triggered internally at ../aten/src/ATen/native/Resize.cpp:31.)
+  lambda _ci=_ci, _dt=_dt: torch.sum(_ci, 0,
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+flag_gems from: /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py
+/tmp/opencode/FlagGems-base/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list
+  warnings.warn(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::__ilshift__.Tensor(Tensor(a!) self, Tensor other) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:7149
+       new kernel: registered at /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+[FAIL] sum full torch.complex64: KeyError('complex64')
+[FAIL] sum dim0 torch.complex64: KeyError('complex64')
+[FAIL] sum dim-1 keepdim torch.complex64: KeyError('complex64')
+[FAIL] sum dim(0,1) torch.complex64: KeyError('complex64')
+[FAIL] sum upcast c128 torch.complex64: KeyError('complex64')
+[FAIL] sum out real torch.complex64: KeyError('complex64')
+[FAIL] sum empty torch.complex64: KeyError('complex64')
+[FAIL] sum noncontig torch.complex64: KeyError('complex64')
+[FAIL] zeros torch.complex64: KeyError('complex64')
+[FAIL] zeros_like torch.complex64: KeyError('complex64')
+[FAIL] zeros_like dtype torch.complex64: KeyError('complex128')
+[FAIL] zeros empty torch.complex64: KeyError('complex64')
+[FAIL] flag_gems.zeros direct torch.complex64: KeyError('complex64')
+[FAIL] flag_gems.zero_ torch.complex64: KeyError('complex64')
+[FAIL] aten.zero_ torch.complex64: KeyError('complex64')
+[FAIL] abs torch.complex64: KeyError('complex64')
+[FAIL] abs noncontig torch.complex64: KeyError('complex64')
+[PASS] abs empty torch.complex64
+[FAIL] flag_gems.abs direct torch.complex64: KeyError('complex64')
+[PASS] torch.absolute torch.complex64
+[FAIL] sum full torch.complex128: KeyError('complex128')
+[FAIL] sum dim0 torch.complex128: KeyError('complex128')
+[FAIL] sum dim-1 keepdim torch.complex128: KeyError('complex128')
+[FAIL] sum dim(0,1) torch.complex128: KeyError('complex128')
+[FAIL] sum upcast c128 torch.complex128: KeyError('complex128')
+[FAIL] sum out real torch.complex128: KeyError('complex128')
+[FAIL] sum empty torch.complex128: KeyError('complex128')
+[FAIL] sum noncontig torch.complex128: KeyError('complex128')
+[FAIL] zeros torch.complex128: KeyError('complex128')
+[FAIL] zeros_like torch.complex128: KeyError('complex128')
+[FAIL] zeros_like dtype torch.complex128: KeyError('complex128')
+[FAIL] zeros empty torch.complex128: KeyError('complex128')
+[FAIL] flag_gems.zeros direct torch.complex128: KeyError('complex128')
+[FAIL] flag_gems.zero_ torch.complex128: KeyError('complex128')
+[FAIL] aten.zero_ torch.complex128: KeyError('complex128')
+[FAIL] abs torch.complex128: KeyError('complex128')
+[FAIL] abs noncontig torch.complex128: KeyError('complex128')
+[PASS] abs empty torch.complex128
+[FAIL] flag_gems.abs direct torch.complex128: KeyError('complex128')
+[PASS] torch.absolute torch.complex128
+[PASS] sum f32
+[PASS] sum f32 dim0
+[PASS] sum f64
+[PASS] sum i64
+[PASS] sum i64 dim0 keepdim
+[PASS] zeros f32
+[PASS] zeros_like f32
+[PASS] zeros_like i64->f64
+[PASS] zeros f32 empty
+[PASS] abs f32
+[PASS] abs i64
+[PASS] abs_ real in-place
+[FAIL] abs_ torch.complex64: got KeyError: KeyError('complex64'), native 'In-place abs is not supported for complex tensors.'
+[FAIL] abs_ torch.complex128: got KeyError: KeyError('complex128'), native 'In-place abs is not supported for complex tensors.'
+[FAIL] zero_ strided torch.complex64 slice[::2]: KeyError('complex64')
+[FAIL] zero (zero.py) strided torch.complex64 slice[::2]: AssertionError('Tensor must be contiguous')
+[FAIL] aten.zero_ strided torch.complex64 slice[::2]: KeyError('complex64')
+[FAIL] zero_ strided torch.complex64 slice[1::2]: KeyError('complex64')
+[FAIL] zero (zero.py) strided torch.complex64 slice[1::2]: AssertionError('Tensor must be contiguous')
+[FAIL] zero_ strided torch.complex64 view-col: KeyError('complex64')
+[FAIL] zero (zero.py) strided torch.complex64 view-col: AssertionError('Tensor must be contiguous')
+[FAIL] zero_ strided torch.complex64 narrow-offset: KeyError('complex64')
+[FAIL] zero (zero.py) strided torch.complex64 narrow-offset: KeyError('complex64')
+[FAIL] zero_ strided torch.complex64 transpose: KeyError('complex64')
+[FAIL] zero (zero.py) strided torch.complex64 transpose: AssertionError('Tensor must be contiguous')
+[FAIL] zero_ strided torch.complex64 0-dim: KeyError('complex64')
+[FAIL] zero (zero.py) strided torch.complex64 0-dim: KeyError('complex64')
+[FAIL] zero_ strided torch.complex128 slice[::2]: KeyError('complex128')
+[FAIL] zero (zero.py) strided torch.complex128 slice[::2]: AssertionError('Tensor must be contiguous')
+[FAIL] aten.zero_ strided torch.complex128 slice[::2]: KeyError('complex128')
+[FAIL] zero_ strided torch.complex128 slice[1::2]: KeyError('complex128')
+[FAIL] zero (zero.py) strided torch.complex128 slice[1::2]: AssertionError('Tensor must be contiguous')
+[FAIL] zero_ strided torch.complex128 view-col: KeyError('complex128')
+[FAIL] zero (zero.py) strided torch.complex128 view-col: AssertionError('Tensor must be contiguous')
+[FAIL] zero_ strided torch.complex128 narrow-offset: KeyError('complex128')
+[FAIL] zero (zero.py) strided torch.complex128 narrow-offset: KeyError('complex128')
+[FAIL] zero_ strided torch.complex128 transpose: KeyError('complex128')
+[FAIL] zero (zero.py) strided torch.complex128 transpose: AssertionError('Tensor must be contiguous')
+[FAIL] zero_ strided torch.complex128 0-dim: KeyError('complex128')
+[FAIL] zero (zero.py) strided torch.complex128 0-dim: KeyError('complex128')
+[FAIL] abs magnitude edges torch.complex64: KeyError('complex64')
+[FAIL] abs magnitude edges torch.complex128: KeyError('complex128')
+[FAIL] sum.out matrix torch.complex64 dim0 out=same: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 out=other-complex adopt: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex64 dim0 dtype=c128 out=c128: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex64 dim0 dtype=c128 out=c64 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 dtype=f32 out=f32: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 dtype=f64 out=f32 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 out=f32 adopt: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 out=f64 adopt: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 out=i64 adopt: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim(0,1) out=same: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim(0,1) out=c128 adopt: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 keepdim out=(1,3): AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 dim0 out=(2,1) resize: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 empty dim0 out: AssertionError("unexpected ZeroDivisionError: ZeroDivisionError('integer division or modulo by zero')")
+[FAIL] sum.out matrix torch.complex64 aten full out=same: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 aten full out=other-complex ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 aten full dtype=c128 out=c64 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 aten full dtype=c128 out=c128: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex64 aten full out=i64 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex128 dim0 out=same: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 out=other-complex adopt: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex128 dim0 dtype=c128 out=c128: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 dtype=c128 out=c64 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex64')")
+[FAIL] sum.out matrix torch.complex128 dim0 dtype=f32 out=f32: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 dtype=f64 out=f32 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 out=f32 adopt: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 out=f64 adopt: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 out=i64 adopt: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim(0,1) out=same: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim(0,1) out=c128 adopt: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 keepdim out=(1,3): AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 dim0 out=(2,1) resize: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 empty dim0 out: AssertionError("unexpected ZeroDivisionError: ZeroDivisionError('integer division or modulo by zero')")
+[FAIL] sum.out matrix torch.complex128 aten full out=same: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 aten full out=other-complex ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 aten full dtype=c128 out=c64 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 aten full dtype=c128 out=c128: AssertionError("unexpected KeyError: KeyError('complex128')")
+[FAIL] sum.out matrix torch.complex128 aten full out=i64 ERR: AssertionError("error type KeyError != native RuntimeError: KeyError('complex128')")
+[FAIL] sum.out matrix f32 dim0 out=i64 adopt: AssertionError('Tensor-likes are not close!\n\nMismatched elements: 2 / 3 (66.7%)\nGreatest absolute difference: 1 at index (0,) (up to 1e-05 allowed)\nGreatest relative difference: 1.0 at index (0,) (up to 1e-05 allowed)')
+[PASS] sum.out matrix f32 dim0 out=f64 adopt
+[FAIL] sum.out matrix f32 dim0 out=c64 adopt: AssertionError("unexpected KeyError: KeyError('complex64')")
+[FAIL] sum.out matrix f32 dim0 dtype=f64 out=f32 ERR: AssertionError("expected RuntimeError, got ok result tensor([-2.2953,  2.5095,  0.5706], device='cuda:0')")
+[FAIL] sum.out matrix f32 aten full out=f64 ERR: AssertionError("expected RuntimeError, got ok result tensor(0.7848, device='cuda:0', dtype=torch.float64)")
+[PASS] sum.out matrix f32 aten full out=f32
+[FAIL] sum.out matrix f32 aten full out=i64 ERR: AssertionError("expected RuntimeError, got ok result tensor(0, device='cuda:0')")
+[FAIL] autograd grad abs().sum() torch.complex64: KeyError('complex64')
+[FAIL] autograd fwd abs().sum() torch.complex64: KeyError('complex64')
+[FAIL] autograd grad sum().abs() torch.complex64: KeyError('complex64')
+[FAIL] autograd fwd sum().abs() torch.complex64: KeyError('complex64')
+[FAIL] autograd grad (x*2).abs().sum() torch.complex64: KeyError('complex64')
+[FAIL] autograd fwd (x*2).abs().sum() torch.complex64: KeyError('complex64')
+[FAIL] autograd grad abs().sum() torch.complex128: KeyError('complex128')
+[FAIL] autograd fwd abs().sum() torch.complex128: KeyError('complex128')
+[FAIL] autograd grad sum().abs() torch.complex128: KeyError('complex128')
+[FAIL] autograd fwd sum().abs() torch.complex128: KeyError('complex128')
+[FAIL] autograd grad (x*2).abs().sum() torch.complex128: KeyError('complex128')
+[FAIL] autograd fwd (x*2).abs().sum() torch.complex128: KeyError('complex128')
+
+TOTAL: 18 passed, 121 failed, 139 total

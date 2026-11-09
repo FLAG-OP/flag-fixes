@@ -1,5 +1,5 @@
 diff --git a/src/flag_gems/ops/abs.py b/src/flag_gems/ops/abs.py
-index 62e081f3..90b8ff15 100644
+index 62e081f3..2cd81d08 100644
 --- a/src/flag_gems/ops/abs.py
 +++ b/src/flag_gems/ops/abs.py
 @@ -17,6 +17,7 @@ import logging
@@ -10,14 +10,15 @@ index 62e081f3..90b8ff15 100644
  from flag_gems.utils import pointwise_dynamic
  
  logger = logging.getLogger(__name__)
-@@ -30,10 +31,19 @@ def abs_func(x):
+@@ -30,10 +31,20 @@ def abs_func(x):
  
  def abs(A):
      logger.debug("GEMS ABS")
 +    if A.is_complex():
 +        # Triton's type_canonicalisation_dict has no complex entry, so the
 +        # pointwise kernel must not see a complex pointer. |a+bi| is computed
-+        # by absolute(), which already reduces the real view with sqrt(re^2+im^2).
++        # by absolute(), whose real-view reduction is hypot-stable (scaled
++        # sqrt(re^2+im^2)) so large/small magnitudes do not overflow.
 +        return absolute(A)
      return abs_func(A)
  
@@ -31,10 +32,29 @@ index 62e081f3..90b8ff15 100644
      abs_func(A, out0=A)
      return A
 diff --git a/src/flag_gems/ops/absolute.py b/src/flag_gems/ops/absolute.py
-index c5766123..80698409 100644
+index c5766123..d38f9868 100644
 --- a/src/flag_gems/ops/absolute.py
 +++ b/src/flag_gems/ops/absolute.py
-@@ -71,6 +71,10 @@ def absolute(input: torch.Tensor):
+@@ -46,7 +46,17 @@ def _absolute_complex_kernel(ri_ptr, out_ptr, n_elements, BLOCK_SIZE: tl.constex
+     base = offsets * 2
+     re = tl.load(ri_ptr + base, mask=mask)
+     im = tl.load(ri_ptr + base + 1, mask=mask)
+-    y = tl.sqrt(re * re + im * im)
++    # hypot-stable magnitude: naive sqrt(re*re+im*im) overflows float32 for
++    # |z| > ~1.4e19 (1e20+1e20j -> inf instead of 1.414e20) and underflows
++    # for |z| < ~1.2e-23 (1e-30+1e-30j -> 0 instead of 1.414e30). Scale by
++    # m = max(|re|,|im|) first (std::hypot style), keep +-inf explicit so it
++    # wins over NaN like std::hypot, and let NaN propagate through the math.
++    a = tl.abs(re)
++    b = tl.abs(im)
++    m = tl.maximum(a, b)
++    m_safe = tl.where(m > 0, m, 1.0)
++    y = m * tl.sqrt((re / m_safe) * (re / m_safe) + (im / m_safe) * (im / m_safe))
++    y = tl.where((a == float("inf")) | (b == float("inf")), float("inf"), y)
+     tl.store(out_ptr + offsets, y, mask=mask)
+ 
+ 
+@@ -71,6 +81,10 @@ def absolute(input: torch.Tensor):
  
  def absolute_(input: torch.Tensor):
      logger.debug("GEMS ABSOLUTE_")
@@ -59,10 +79,10 @@ index 54b25363..0a323b93 100644
      )[None, :]
  
 diff --git a/src/flag_gems/ops/sum.py b/src/flag_gems/ops/sum.py
-index 30fe4fe8..972ceacc 100644
+index 30fe4fe8..cf05619a 100644
 --- a/src/flag_gems/ops/sum.py
 +++ b/src/flag_gems/ops/sum.py
-@@ -28,6 +28,65 @@ from flag_gems.utils import triton_lang_extension as ext
+@@ -28,6 +28,93 @@ from flag_gems.utils import triton_lang_extension as ext
  
  logger = logging.getLogger(__name__)
  
@@ -75,6 +95,27 @@ index 30fe4fe8..972ceacc 100644
 +    torch.complex64: torch.float32,
 +    torch.complex128: torch.float64,
 +}
++
++# ATen spells dtype names in sum.out's error messages differently from
++# torch.dtype reprs (e.g. float32 -> "float", int64 -> "long int").
++_ATEN_DTYPE_NAMES = {
++    torch.float16: "c10::Half",
++    torch.bfloat16: "c10::BFloat16",
++    torch.float32: "float",
++    torch.float64: "double",
++    torch.complex64: "c10::complex<float>",
++    torch.complex128: "c10::complex<double>",
++    torch.int64: "long int",
++    torch.int32: "int",
++    torch.int16: "short",
++    torch.int8: "signed char",
++    torch.uint8: "unsigned char",
++    torch.bool: "bool",
++}
++
++
++def _aten_dtype_name(dtype):
++    return _ATEN_DTYPE_NAMES.get(dtype, str(dtype).replace("torch.", ""))
 +
 +
 +def _real_sum(x, dim, keepdim, dtype):
@@ -121,6 +162,13 @@ index 30fe4fe8..972ceacc 100644
 +    if out is not None:
 +        if out.shape != res.shape:
 +            out.resize_(res.shape)
++        if out.dtype != res.dtype:
++            # ATen sum.out raises on an out dtype that differs from the
++            # computed result; copy_ alone would silently cast (review P2).
++            raise RuntimeError(
++                f"Expected out tensor to have dtype {_aten_dtype_name(res.dtype)}, "
++                f"but got {_aten_dtype_name(out.dtype)} instead"
++            )
 +        out.copy_(res)
 +        return out
 +    return res
@@ -128,25 +176,76 @@ index 30fe4fe8..972ceacc 100644
  
  @libentry()
  @triton.jit
-@@ -75,6 +134,8 @@ def sum_kernel_2(mid, out, mid_size, BLOCK_MID: tl.constexpr):
+@@ -75,20 +162,23 @@ def sum_kernel_2(mid, out, mid_size, BLOCK_MID: tl.constexpr):
  
  def sum(inp, *, dtype=None):
      logger.debug("GEMS SUM")
 +    if inp.is_complex() or (dtype is not None and dtype.is_complex):
 +        return _sum_complex(inp, None, False, dtype=dtype)
      inp = inp.contiguous()
++    if dtype is None:
++        dtype = inp.dtype
++        if dtype is torch.bool:
++            dtype = torch.int64
++    if dtype != inp.dtype:
++        # ATen casts the input to dtype before summing (full sum and dim sum
++        # both); accumulate in the cast dtype instead of widening afterwards.
++        inp = inp.to(dtype)
      M = inp.numel()
  
-@@ -104,6 +165,8 @@ def sum(inp, *, dtype=None):
+     if M == 0:
+-        if dtype is None:
+-            dtype = inp.dtype
+         out = torch.zeros([], dtype=dtype, device=inp.device)
+         return out
+ 
+-    if dtype is None:
+-        dtype = inp.dtype
+-        if dtype is torch.bool:
+-            inp = inp.to(torch.int64)
+-            dtype = torch.int64
+     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
+     mid_size = triton.cdiv(M, block_size)
+     block_mid = triton.next_power_of_2(mid_size)
+@@ -104,12 +194,22 @@ def sum(inp, *, dtype=None):
  
  def sum_out(inp, *, dtype=None, out):
      logger.debug("GEMS SUM_OUT")
+-    M = inp.numel()
 +    if inp.is_complex() or (dtype is not None and dtype.is_complex):
 +        return _sum_complex(inp, None, False, dtype=dtype, out=out)
-     M = inp.numel()
      if dtype is None:
          dtype = inp.dtype
-@@ -349,6 +412,8 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
+         if dtype is torch.bool:
+-            inp = inp.to(torch.int64)
+             dtype = torch.int64
++    if dtype != inp.dtype:
++        inp = inp.to(dtype)
++    if out.dtype != dtype:
++        # ATen sum.out (full reduction) does NOT adopt out.dtype and raises
++        # when it differs from the computed dtype.
++        raise RuntimeError(
++            f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
++            f"but got {_aten_dtype_name(out.dtype)} instead"
++        )
++    M = inp.numel()
+     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
+     mid_size = triton.cdiv(M, block_size)
+     block_mid = triton.next_power_of_2(mid_size)
+@@ -264,7 +364,11 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
+         dtype = inp.dtype
+         if dtype is torch.bool:
+             dtype = torch.int64
+-
++    if dtype != inp.dtype:
++        # ATen casts the input to dtype before reducing, so for instance
++        # f32->i64 truncates each element before summing (summing first and
++        # truncating the total can differ by 1).
++        inp = inp.to(dtype)
+     if dim is None:
+         result = torch.sum(inp, dtype=dtype)
+         if keepdim:
+@@ -349,6 +453,8 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
  
  def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
      logger.debug("GEMS SUM_DIM")
@@ -155,32 +254,49 @@ index 30fe4fe8..972ceacc 100644
      # support dim = 0, which are consistent with PyTorch
      if inp.numel() == 0:
          if dtype is None:
-@@ -387,4 +452,6 @@ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
+@@ -387,4 +493,21 @@ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
  
  def sum_dim_out(inp, dim=None, keepdim=False, *, dtype=None, out):
      logger.debug("GEMS SUM_DIM_OUT")
-+    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++    if dtype is None:
++        # ATen sum.dim_IntList_out computes in out.dtype when dtype is omitted
++        # (real and complex inputs alike); the full-reduction sum.out variant
++        # does not adopt and requires a dtype match.
++        dtype = out.dtype
++        if inp.dtype is torch.bool and dtype is torch.bool:
++            # bool reductions always compute int64 (ATen), so a bool out can
++            # never match the computed dtype.
++            dtype = torch.int64
++    if inp.is_complex() or dtype.is_complex or out.is_complex():
 +        return _sum_complex(inp, dim, keepdim, dtype=dtype, out=out)
++    if dtype != out.dtype:
++        # ATen: an explicit dtype that differs from out.dtype raises.
++        raise RuntimeError(
++            f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
++            f"but got {_aten_dtype_name(out.dtype)} instead"
++        )
      return sum_dim_comm(inp, dim, keepdim, dtype=dtype, out=out)
 diff --git a/src/flag_gems/ops/zero.py b/src/flag_gems/ops/zero.py
-index adb75894..49ea7090 100644
+index adb75894..67e045e3 100644
 --- a/src/flag_gems/ops/zero.py
 +++ b/src/flag_gems/ops/zero.py
-@@ -44,6 +44,12 @@ def _launch_zero_kernel(tensor: torch.Tensor):
+@@ -44,6 +44,14 @@ def _launch_zero_kernel(tensor: torch.Tensor):
      assert isinstance(tensor, torch.Tensor), "Expected a torch.Tensor"
      if tensor.device.type != flag_gems.device:
          raise ValueError(f"Tensor must be on {flag_gems.device} device")
 +    if tensor.is_complex():
-+        # Triton's type_canonicalisation_dict has no complex entry, so the
-+        # kernel must not see a complex pointer. view_as_real returns a view
-+        # that shares storage, so zeroing (re, im) zeroes the complex tensor.
-+        _launch_zero_kernel(torch.view_as_real(tensor))
++        # Triton's type_canonicalisation_dict has no complex entry, and the
++        # dense kernel below writes at contiguous offsets, so it must not see
++        # a complex (or strided) tensor. Native ATen copy_ is stride-correct
++        # and matches zeros.zero_'s complex path; unlike the old view_as_real
++        # recursion it also handles slices/transpose views correctly.
++        tensor.copy_(0)
 +        return tensor
      assert tensor.is_contiguous(), "Tensor must be contiguous"
      assert tensor.numel() >= 0
      n_elements = tensor.numel()
 diff --git a/src/flag_gems/ops/zeros.py b/src/flag_gems/ops/zeros.py
-index 7d6bc59a..7f3a4836 100644
+index 7d6bc59a..db711e80 100644
 --- a/src/flag_gems/ops/zeros.py
 +++ b/src/flag_gems/ops/zeros.py
 @@ -47,6 +47,10 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
@@ -188,21 +304,23 @@ index 7d6bc59a..7f3a4836 100644
  
      out = torch.empty(size, device=device, dtype=dtype)
 +    if out.is_complex():
-+        # Triton has no complex dtype; zero through the real view instead.
++        # Triton has no complex dtype; zero through zero_ instead.
 +        zero_(out)
 +        return out
      N = volume(size)
      grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
      with torch_device_fn.device(device):
-@@ -56,6 +60,12 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
+@@ -56,6 +60,14 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
  
  def zero_(x: torch.Tensor) -> torch.Tensor:
      logger.debug("GEMS ZERO_")
 +    if x.is_complex():
-+        # Triton's type_canonicalisation_dict has no complex entry, so the
-+        # kernel must not see a complex pointer. view_as_real returns a view
-+        # that shares storage, so zeroing (re, im) zeroes the complex tensor.
-+        zero_(torch.view_as_real(x))
++        # Triton's type_canonicalisation_dict has no complex entry, and the
++        # dense kernel below writes numel zeros at contiguous offsets, which
++        # corrupts strided views (zeros of a [::2] slice must land at strides,
++        # not at 0..numel-1). Native ATen copy_ is stride-correct and is the
++        # same redispatch path ops/copy.py uses for complex tensors.
++        x.copy_(0)
 +        return x
      N = x.numel()
      grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)

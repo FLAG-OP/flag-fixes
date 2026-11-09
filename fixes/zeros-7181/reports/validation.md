@@ -1,20 +1,25 @@
 # 验证记录
 
-- 修复 ID：`zeros-7181`；验证日期：2026-11-07（本机 PPU 环境实测）。
+- 修复 ID：`zeros-7181`；验证日期：2026-11-07（初版）→ **2026-11-08（评审修正轮复跑）**，
+  本机 PPU 环境实测。下表凡 2026-11-08 的日志为**当前代码**（评审修正后）的权威证据；
+  `-2026-11-07` 日志为历史原文，不改写（其 regression `TOTAL` 行有计数器缺陷，见下注）。
 - `hardware_status: unverified`：problem.md 指定的 x-benchmark 容器整模型 on 趟回归未在
   本环境执行（见文末「未执行」），下述全部为本地双树对照证据。
 - 三个硬件脚本只有退出码 0 才算通过；缺设备 / 缺 `transformers` 一律退出码 2，
-  **skip 不是通过**。
+  **skip 不算通过**。
 
 ## 环境与源码
 
 | 项 | 值 |
 | --- | --- |
 | FlagGems 基线 | commit `29e14822f6dfabf990973c41f7c2df7811a6f60f`（`git describe` = `v5.3.5-46-g29e14822`） |
+| e2e 模型代码 revision | `90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b`（`trust_remote_code` 动态加载，e2e 打印 `model code: commit=…` 并与 pin 比对） |
 | 硬件 / vendor | PPU-ZW810E，FlagGems vendor 解析为 `thead`，设备/dispatch 标识为 `cuda`（`cuda` 只是本环境设备标识，不代表已验证 CUDA 厂商后端） |
-| 软件栈 | torch 2.10.0 / triton 3.6.0 / Python 3.12.3 / transformers 4.57.0 / 驱动 `ppu-smi` |
+| 软件栈 | torch 2.10.0 / triton 3.6.0 / Python 3.12.3 / transformers 4.57.0 / PyYAML 6.0.2 / 驱动 `ppu-smi` |
+| `opt_einsum` | 宿主缺失；e2e 用 `tests/_stubs/opt_einsum.py` 兜底并打印 `opt_einsum=bundled-stub`（非 flag_gems 依赖，仅 host import） |
 | 模型 | `togethercomputer/m2-bert-80M-8k-retrieval`（`trust_remote_code`，随机初始化，不下载权重，`HF_ENDPOINT=https://hf-mirror.com`） |
-| 管理仓库 | `/root/flag-fixes`，分支 `zeros-7181`；dirty 验证时 HEAD `f159ce07b199`（`source_dirty: true`） |
+| 管理仓库 | `/root/flag-fixes`，分支 `zeros-7181`；11-08 复跑时 HEAD 待提交（验证记录随后以 verify JSON 的 `commit` 字段钉死） |
+| 运行条件 | 所有 GPU 脚本必须 `CUDA_VISIBLE_DEVICES=0`：本环境不设置该变量时 `torch.cuda.is_available()` 枚举挂起（已知怪癖，`device_count()` 不受影响）；统一 `timeout -k 10` 兜底 |
 
 肇事堆栈（problem.md live，修复前实测同款）：
 
@@ -37,7 +42,7 @@ KeyError: 'complex64'
 | `/tmp/opencode/FlagGems-base` | 纯基线 `29e14822` | `check`/`plan` 的 hash 预演目标 |
 | `/tmp/opencode/flagfix-e2ebase` | 基线 + `linear-5379.patch`（1 文件） | e2e「修复前-阶段一」 |
 | `/tmp/opencode/flagfix-noncplx` | e2ebase + 本 patch 的 conv2d + linear_backward 两个 hunk（回退 6 个 complex 文件，3 文件） | e2e「修复前-阶段二」= problem.md 签名树 |
-| `/tmp/opencode/flagfix-fixed` | e2ebase + `zeros-7181.patch` 全量（9 文件） | e2e 修复后 |
+| `/tmp/opencode/flagfix-fixed` | e2ebase + `zeros-7181.patch` 全量（9 文件含 linear.py 依赖） | e2e 修复后（11-08 用**最终 patch** 重建） |
 
 ```bash
 BASE=/tmp/opencode/FlagGems-base
@@ -59,26 +64,67 @@ git -C /tmp/opencode/flagfix-fixed apply $FIX/patches/zeros-7181.patch
 
 按上式重建的两棵树与在用树 `diff -rq` 仅 `.git` 元数据不同、工作区文件逐字节一致。
 `flagfix-fixed` 的 8 个目标文件 sha256 与 `fix.yaml` after hash 逐文件复核一致，
-且与 `fixes/zeros-7181/src/` 快照逐字节 `cmp` 通过。
+且与 `fixes/zeros-7181/src/` 快照逐字节 `cmp` 通过；`ops/linear.py` 亦等于
+linear-5379 的 after hash `ddec3383…`（9 文件与 `e2e_precondition` 一致）。
 
 ## 命令与结果
 
 下文 `$FIX` = `/root/flag-fixes/fixes/zeros-7181`，`$T` 为对应树根；
-硬件脚本统一形如 `PYTHONPATH=$T/src python3 $FIX/tests/<script>`。
+硬件脚本统一形如 `CUDA_VISIBLE_DEVICES=0 PYTHONPATH=$T/src python3 $FIX/tests/<script>`。
 所有日志为工具原文、未脱敏，已存 `results/`（文件名见各 log 内首行命令与下表）。
 
 | 命令 / 脚本 | 修复前（`flagfix-noncplx` / 基线） | 修复后（`flagfix-fixed` / 基线） |
 | --- | --- | --- |
-| `tests/repro_complex64.py`（issue #7181 形态 + torch 入口） | **exit 1**：`ISSUE REPRODUCED`，`KeyError: 'complex64'` → `results/repro-baseline-2026-11-07.log` | **exit 0** |
-| `tests/test_complex_ops.py`（54 用例矩阵） | **exit 1**：`TOTAL: 54 passed, 38 failed`（38 条全是 complex KeyError）→ `results/regression-baseline-2026-11-07.log` | **exit 0**：`TOTAL: 54 passed, 0 failed` → `results/regression-fixed-2026-11-07.log` |
-| `tests/test_m2_bert_backward.py`（12L/768/12/3072/8192，问题原配置） | **阶段一** `flagfix-e2ebase` exit 1：`_thead/ops/linear_backward.py:170` view `RuntimeError` → `results/e2e-linearblocker-baseline-2026-11-07.log`；**阶段二** `flagfix-noncplx` exit 1：前向 `FORWARD OK` loss rel=0.0，反向 `ops/sum.py:385 → KeyError: 'complex64'`（= problem.md 签名）→ `results/e2e-problem-path-noncomplex-2026-11-07.log` | **exit 0**：`E2E OK: loss_native=1.000000000e+00 loss_gems=1.000000000e+00 rel=0.000e+00 grads_present_finite=161 grads_skipped_known_gap=384` → `results/e2e-fixed-2026-11-07.log` |
-| 同脚本，强制无设备（`CUDA_VISIBLE_DEVICES=`） | exit 2（缺设备） | exit 2（缺设备） |
-| 同脚本，卸掉 `transformers` 后 | exit 2：`MISSING DEPENDENCY: transformers -> exit 2` → `results/e2e-missing-dep-2026-11-07.log` | exit 2 |
-| e2e 判据（修复后日志逐条满足） | — | loss 快照 rel ≤ 1e-3（实际 0）；反向完成；除文档化 `filter_fn.*` 缺口外原生产出的梯度全部存在且有限（161 个），无 flag_gems 独有梯度；梯度数值仅打印不判据 |
+| `tests/repro_complex64.py`（issue #7181 形态 + torch 入口） | **exit 1**：`ISSUE REPRODUCED`，`KeyError: 'complex64'` → `results/repro-baseline-2026-11-08.log` | **exit 0** → `results/repro-fixed-2026-11-08.log` |
+| `tests/test_complex_ops.py`（**139 用例**矩阵） | **exit 1**：`TOTAL: 18 passed, 121 failed, 139 total`（107 条 complex KeyError；其余为 strided `zero_` 断言、交叉 dtype 静默分歧等修复缺失行为）→ `results/regression-baseline-2026-11-08.log` | **exit 0**：`TOTAL: 139 passed, 0 failed, 139 total` → `results/regression-fixed-2026-11-08.log` |
+| `tests/test_m2_bert_backward.py`（12L/768/12/3072/8192，问题原配置） | **阶段一** `flagfix-e2ebase` exit 1：`_thead/ops/linear_backward.py:170` view `RuntimeError` → `results/e2e-linearblocker-baseline-2026-11-07.log`；**阶段二** `flagfix-noncplx` exit 1：前向 `FORWARD OK` loss rel=0.0，反向 `ops/sum.py:385 → KeyError: 'complex64'`（= problem.md 签名）→ `results/e2e-problem-path-noncomplex-2026-11-07.log` | **exit 0**：`E2E OK: loss_native=1.000000000e+00 loss_gems=1.000000000e+00 rel=0.000e+00 grads_present_finite=161 grads_missing_known_gap=384` → `results/e2e-fixed-2026-11-08.log` |
+| 同脚本，强制无设备（`CUDA_VISIBLE_DEVICES=`） | exit 2（缺设备） | exit 2（缺设备）→ `results/nocuda-regression-2026-11-08.log` |
+| 同脚本，卸掉 `transformers` 后 | exit 2：`MISSING DEPENDENCY: transformers -> exit 2` | exit 2 → `results/e2e-missing-dep-2026-11-08.log` |
+| 同脚本，跑在**基线树**（前置哈希检查） | — | **exit 2**（模型工作前）：`MISSING PRECONDITION: src/flag_gems/ops/linear.py sha256 4d46bae0… != expected ddec3383…` → `results/e2e-precondition-baseline-2026-11-08.log` |
+| 同脚本，跑在**仅 linear-5379 树**（缺 zeros-7181） | — | **exit 2**（模型工作前）：首个失配 `sum.py 5259b9f6… != 0e105b60…`（连同 zeros/zero/zeros_like/abs 等逐条列出）→ `results/e2e-precondition-linearonly-2026-11-08.log` |
+| e2e 判据（修复后日志逐条满足） | — | 见下「e2e 判据与证据链」 |
 
-oracle 口径：native 参照在 `flag_gems.enable()` **之前**捕获（enable 后 call-site 的
+> **计数器缺陷注（旧日志）**：`results/*-2026-11-07.log` 中 regression 的
+> `TOTAL: {N} passed, {M} failed` 行，`{N}` 实为 passed+failed（`TOTAL: {passed + failed}
+> passed, {failed} failed`）。旧日志原文保留；旧口径实际为 **16 passed / 38 failed /
+> 54 total**（38 条失败全部为 complex KeyError）。2026-11-08 起打印改为
+> `passed/failed/total` 三个独立数字，新日志无此问题。
+
+### e2e 判据与证据链（`results/e2e-fixed-2026-11-08.log`）
+
+执行顺序与逐条判据：
+
+1. **前置哈希（模型工作之前）**：`e2e_precondition.files` 9 条 sha256 逐文件核对
+   （8 个目标 after hash + `ops/linear.py` `ddec3383…`），任一失配打印
+   `MISSING PRECONDITION: … -> exit 2`（上面两行日志即其实测）；同时做**双源校验**
+   ——`e2e_precondition` 的 sha 必须与 `targets[].after_sha256` 一致，防清单漂移。
+   通过时打印 `precondition OK: 9 files at declared sha256 (baseline 29e1482 + linear-5379 + zeros-7181)`。
+2. **模型代码 pin**：打印 `model code: commit=90e0b28f…` 与 `revision` 比对。
+3. **依赖**：`opt_einsum=bundled-stub`（或 `real`）打印；`transformers` 缺失 exit 2。
+4. **前向**：`FORWARD OK`，loss 快照在 backward **之前** 为 Python float（防 loss
+   存储间歇覆写），`rel=0.000e+00`（≤1e-3 阈值，实际逐位一致）。
+5. **反向完成**；原生产出的梯度全部存在且有限：`grads_present_finite=161`；
+   缺失集合与 `tests/known_gap_m2.txt`（32 模板 × 12 = **384** 条）**双向断言**
+   ——fixture 外缺梯度 → fail；fixture 内反而有梯度 → fail。全部
+   `missinggrad:` 行原样打印作证据。
+6. native 侧同配置梯度数 `native grads=545` 打印（对照参考，不作阈值判据）。
+7. 退出码 0 才算 `E2E OK`。
+
+### oracle 口径
+
+native 参照在 `flag_gems.enable()` **之前**捕获（enable 后 call-site 的
 `torch.*` 已被 dispatch 进 flag_gems，不能当 oracle）；complex 比较一律经
 `torch.view_as_real`（flag_gems `eq`/`nonzero` 不支持 complex，属已记录的预存缺口）。
+
+回归 139 用例分层判据（2026-11-08 版 `test_complex_ops.py`）：
+
+| 套件 | 判据 |
+| --- | --- |
+| 原 54 用例（sum/zeros 族/abs 基础矩阵） | rtol=1e-5 / atol=1e-5（逐项与 native 比） |
+| **strided `zero_`**（`x[::2]`、`x[1::2]`、view 列、narrow、转置、0 维 × `gops.zero_`/`gops.zero`/`aten.zero_`） | 被操作子与 native 同形：仅目标区间归零、原存储不被污染、返回值身份/dtype/stride 正确 |
+| **模长量级**（`abs`/`absolute`，大数/亚正规/inf/NaN 形态） | rtol=1e-6 或 1e-10（量级分档）、atol=0、`equal_nan=True`；inf 优先于 NaN 与 native 一致 |
+| **交叉 dtype out 矩阵**（`sum`/`sum_dim` out × real/complex/bool in × dtype 显式/省略） | ok 用例数值一致；err 用例双向：本实现不抛而 native 抛 → fail，反之亦然；报错**逐字**与 ATen 一致（如 `expected scalar type but found ComplexFloat`） |
+| **autograd parity**（`abs().sum()`、`sum().abs()`、`(x*2).abs().sum()` × c64/c128） | 梯度+前向 rtol=1e-4 / atol=1e-6；仅**实数标量结尾**链入判据（`pow(2)` 链与 complex 中间标量风险已排除，不纳入） |
 
 ### 梯度缺口对照（不属于本 patch 的预存缺陷）
 
@@ -88,22 +134,25 @@ oracle 口径：native 参照在 `flag_gems.enable()` **之前**捕获（enable 
 
 | 观察项 | 无 complex 修复树 | 修复树 | 结论 |
 | --- | --- | --- | --- |
-| 缺失梯度集合 | `missing=34`（32× `filter_fn.*` + 2× 未使用 pooler） | 完全相同 `missing=34` | flag_gems 全包 0 个 `register_autograd`，`aten::pad`/`aten::conv1d` 走 autograd-not-implemented 回退 → 预存、与本 patch 无关 |
+| 缺失梯度集合 | `missing=34`（32× `filter_fn.*` + 2× 未使用 pooler） | 完全相同 `missing=34` | flag_gems 全包 0 个 `register_autograd`，`aten::pad`/`aten::conv1d` 走 autograd-not-implemented 回退 → 预存、与本 patch 无关；12L 默认配置精确集合固化为 `tests/known_gap_m2.txt`（384 条）并被 e2e 双向断言 |
 | 梯度数值分歧 | native ~1e-9 vs flag_gems ~0.5 量级（近驻点参数），另有 native 有值 / flag_gems 为 0 项 | 同形态、同参数集合 | 预存、与本 patch 无关 |
-| loss 张量回读（个别 run） | 不适用（反向跑不完） | 部分 run `backward()` 后 loss 存储被覆写（间歇） | 预存内存异常，无法修复前 A/B；e2e 因此在反向**前**快照 loss 为 Python float |
+| loss 张量回读（个别 run） | 不适用（反向跑不完） | 部分 run `backward()` 后 loss 存储被覆写（间歇） | **归因未定**（既未证明预存、也未证明本修复引入，见 diagnosis.md §3）；e2e 因此在反向**前**快照 loss 为 Python float |
 
 ## 管理工具执行结果
 
-均在 `/root/flag-fixes` 下、`PYTHONPATH=src` 执行，2026-11-07：
+均在 `/root/flag-fixes` 下、`PYTHONPATH=src` 执行。**注意**：`requires:
+[linear-5379]` 非空后，select 类命令（`check`/`plan`/`apply`/`status`）必须同时给出
+两个 ID：`… linear-5379 zeros-7181`（catalog 会做 requires 子集检查）。
 
 | 命令 | 退出码 | 结果 |
 | --- | --- | --- |
-| `flag_fixes validate` | 0 | `{"valid": true, "fixes": 11, "deployable": 0, "hardware_verified": 0}` |
-| `flag_fixes check zeros-7181 --target $BASE` | 0 | 8 目标 before hash 全中、patch `git apply --check` 干净 |
-| `flag_fixes plan zeros-7181 --target $BASE` | 0 | 同上（预演不落盘） |
-| `flag_fixes apply zeros-7181 --target $BASE` | 2 | `error: Selected fixes are not approved for deployment`（`deployable=false`，**按设计拒绝**） |
-| `flag_fixes status --target /tmp/opencode/flagfix-fixed` | 0 | `{"transactions": [], "drift": [], "recovery_required": false}` |
-| `flag_fixes verify zeros-7181 --target /tmp/opencode/flagfix-fixed --python python3` | 0 | 两次均 `passed: true`、3/3 命令 `returncode=0`（repro / regression / e2e）：脏跑（HEAD `f159ce07b199`，`source_dirty: true`，20m01s）→ `results/verify-2026-11-07-dirty.json`；**已提交干净树**重跑（HEAD `a12c2fae0c49`，`source_dirty: false`，21m12s）→ `results/verify-2026-11-07.json` |
+| `flag_fixes validate` | 0 | `{"valid": true, "fixes": 11, "deployable": 0, "hardware_verified": 0}`（2026-11-08，含 `e2e_precondition` 新 schema）→ `results/cli-validate-2026-11-08.log` |
+| `flag_fixes check linear-5379 zeros-7181 --target $BASE` | 0 | 9 目标（8+linear.py）before hash 全中、patch `git apply --check` 干净 → `results/cli-check-2026-11-08.log` |
+| `flag_fixes plan linear-5379 zeros-7181 --target $BASE` | 0 | 同上（预演不落盘）→ `results/cli-plan-2026-11-08.log` |
+| `flag_fixes check zeros-7181 --target $BASE`（**漏依赖 ID**） | 2 | `error: zeros-7181: include required fixes: ['linear-5379']`（requires 子集检查实测）→ `results/cli-check-requiredfail-2026-11-08.log` |
+| `flag_fixes apply linear-5379 zeros-7181 --target $BASE` | 2 | `error: Selected fixes are not approved for deployment`（`deployable=false`，**按设计拒绝**）→ `results/cli-apply-2026-11-08.log` |
+| `flag_fixes status --target /tmp/opencode/flagfix-fixed` | 0 | `{"transactions": [], "drift": [], "recovery_required": false}` → `results/cli-status-2026-11-08.log` |
+| `flag_fixes verify zeros-7181 --target /tmp/opencode/flagfix-fixed --python python3` | 0 | 11-07 两轮 `passed: true` 3/3（脏跑 `results/verify-2026-11-07-dirty.json`、干净跑 `results/verify-2026-11-07.json`）；11-08 修正轮提交后干净重跑 → `results/verify-2026-11-08.json`（下表提交步骤完成后执行） |
 
 ## 未执行（如实登记，不算通过）
 

@@ -6,15 +6,27 @@ Pre-fix : forward completes (complex ops are forward-safe) but backward dies
           type_canonicalisation_dict while summing u_f*k_f hybrid-conv
           gradients -> exit 1.
 Post-fix: flag_gems forward matches the native torch forward (loss compare),
-          backward completes, every gradient native produces is present and
-          finite except the documented pre-existing ``filter_fn.*`` hyena-filter
-          gap (flag_gems ships no autograd kernels - pad/conv1d hit the
-          autograd-not-implemented fallback - identical missing set and the
-          same grad-value divergence measured WITHOUT this fix; see
-          reports/validation.md) -> exit 0. Gradient VALUES are printed for
-          information but not a pass criterion: the native-vs-flag_gems value
-          divergence at near-stationary params is pre-existing (shown on a
-          complex-fix-free tree with complex ops excluded).
+          backward completes: the original crash chain runs to completion and
+          every gradient the native oracle produces is present and finite
+          except the EXACT known-gap set declared in known_gap_m2.txt (asserted
+          bidirectionally: unexpected missing grads and unexpectedly present
+          fixture entries both fail) -> exit 0. This proves "the native
+          computation chain continues to execute", not full gradient
+          correctness: value comparison stays informational (pre-existing
+          near-stationary divergence, measured identically without this fix);
+          local complex autograd parity (abs/sum chains, tight tolerance) is
+          asserted in test_complex_ops.py.
+
+Precondition (machine-checkable, review P2): before any model work the run
+loads fix.yaml's e2e_precondition.files (our 8 targets' after_sha256 values
+plus linear-5379's src/flag_gems/ops/linear.py) and hashes the target tree;
+mismatch/missing -> ``MISSING PRECONDITION`` exit 2, never a wrong-combination
+0/1. Requires are declared in fix.yaml (requires: linear-5379) instead of
+prose.
+
+Model code pinned: revision 90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b; the
+config print records the resolved commit and whether the bundled opt_einsum
+stub was used.
 
 Config defaults equal the container run (12 layers / hidden 768 / heads 12 /
 inter 3072 / seq 8192 / POS 8192 / LMAX 8192 / hyena filter order 128);
@@ -22,8 +34,8 @@ override with NLAYERS/HIDDEN/HEADS/INTER/SEQLEN/POS/LMAX/HORDER for quick runs.
 Random init, trust_remote_code, no weight download.
 
 Run : PYTHONPATH=<FlagGems>/src python test_m2_bert_backward.py
-Exit: 0 = ok | 1 = failure | 2 = missing CUDA / transformers / model code
-A skip is not a pass: missing dependency -> exit 2, never 0.
+Exit: 0 = ok | 1 = failure | 2 = missing CUDA / transformers / precondition
+A skip is not a pass: missing dependency or precondition -> exit 2, never 0.
 """
 import os
 import sys
@@ -50,8 +62,10 @@ except Exception:
 # when the real package is not installed (offline pip hosts).
 try:
     import opt_einsum  # noqa: F401
+    OPT_EINSUM = "real"
 except ImportError:
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "_stubs"))
+    OPT_EINSUM = "bundled-stub"
 
 import torch  # noqa: E402
 
@@ -59,7 +73,68 @@ if not torch.cuda.is_available():
     print("MISSING CUDA DEVICE: m2-bert e2e needs a CUDA device -> exit 2", flush=True)
     os._exit(2)
 
+_src = os.environ.get("FLAG_GEMS_SRC")
+if _src:
+    sys.path.insert(0, _src)
+try:
+    import flag_gems
+except Exception:
+    traceback.print_exc()
+    print("flag_gems not importable - set PYTHONPATH=<FlagGems>/src -> exit 1", flush=True)
+    os._exit(1)
+print("flag_gems from:", flag_gems.__file__, flush=True)
+
+# --- machine-checkable precondition (fix.yaml e2e_precondition) ---
+# The evidence behind this test only applies to the exact tree combination
+# baseline + linear-5379 + zeros-7181; a wrong tree must exit 2, not run.
+_FIX_YAML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fix.yaml")
+try:
+    import yaml
+
+    with open(_FIX_YAML) as _fh:
+        _fixdoc = yaml.safe_load(_fh)
+    _pre = _fixdoc["e2e_precondition"]
+    _expected = [(e["path"], e["sha256"]) for e in _pre["files"]]
+    # dual-source guard: our own entries must mirror targets.after_sha256
+    _targets = {t["path"]: t["after_sha256"] for t in _fixdoc.get("targets", [])}
+    for _p, _sha in _expected:
+        if _p in _targets and _targets[_p] != _sha:
+            print(f"MISSING PRECONDITION: fix.yaml inconsistent: e2e_precondition "
+                  f"{_p}={_sha} != targets.after_sha256 {_targets[_p]} -> exit 2",
+                  flush=True)
+            os._exit(2)
+except Exception as e:
+    print(f"MISSING PRECONDITION: cannot read fix.yaml e2e_precondition "
+          f"({_FIX_YAML}: {e}) -> exit 2", flush=True)
+    os._exit(2)
+
+_pkg_root = os.path.dirname(flag_gems.__file__)
+import hashlib
+
+_pre_fail = False
+for _rel, _sha_want in _expected:
+    _abs = os.path.join(_pkg_root, _rel.split("src/flag_gems/", 1)[-1])
+    if not os.path.exists(_abs):
+        print(f"MISSING PRECONDITION: {_rel} absent in {_pkg_root} -> exit 2", flush=True)
+        _pre_fail = True
+        continue
+    _sha_got = hashlib.sha256(open(_abs, "rb").read()).hexdigest()
+    if _sha_got != _sha_want:
+        print(f"MISSING PRECONDITION: {_rel} sha256 {_sha_got} != expected "
+              f"{_sha_want} (need baseline + linear-5379 + zeros-7181 as "
+              f"applied in reports/validation.md) -> exit 2", flush=True)
+        _pre_fail = True
+if _pre_fail:
+    os._exit(2)
+_baseline = str(_fixdoc.get("target", {}).get("baseline_commit", ""))[:7]
+print(
+    f"precondition OK: {len(_expected)} files at declared sha256 "
+    f"(baseline {_baseline} + linear-5379 + zeros-7181)",
+    flush=True,
+)
+
 REPO = "togethercomputer/m2-bert-80M-8k-retrieval"
+REVISION = os.environ.get("M2_REVISION", "90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b")
 NLAYERS = int(os.environ.get("NLAYERS", 12))
 HIDDEN = int(os.environ.get("HIDDEN", 768))
 HEADS = int(os.environ.get("HEADS", 12))
@@ -70,15 +145,17 @@ LMAX = int(os.environ.get("LMAX", 8192))
 HORDER = int(os.environ.get("HORDER", 128))
 print(
     f"config: {REPO} layers={NLAYERS} hidden={HIDDEN} heads={HEADS} inter={INTER} "
-    f"seq={SEQLEN} pos={POS} lmax={LMAX} horder={HORDER}",
+    f"seq={SEQLEN} pos={POS} lmax={LMAX} horder={HORDER} "
+    f"revision={REVISION} opt_einsum={OPT_EINSUM}",
     flush=True,
 )
 
 try:
-    cfg = AutoConfig.from_pretrained(REPO, trust_remote_code=True)
+    cfg = AutoConfig.from_pretrained(REPO, revision=REVISION, trust_remote_code=True)
 except Exception as e:
     print(f"MISSING DEPENDENCY: model code/config unavailable ({e}) -> exit 2", flush=True)
     os._exit(2)
+print(f"model code: commit={getattr(cfg, '_commit_hash', None) or REVISION}", flush=True)
 
 cfg.num_hidden_layers = NLAYERS
 cfg.hidden_size = HIDDEN
@@ -132,17 +209,7 @@ model.zero_grad(set_to_none=True)
 loss_native_val = float(loss_native)  # snapshot: see note at the final print
 print(f"native OK loss={loss_native_val:.9e} grads={len(g_native)}", flush=True)
 
-# --- Phase B: flag_gems ---
-_src = os.environ.get("FLAG_GEMS_SRC")
-if _src:
-    sys.path.insert(0, _src)
-try:
-    import flag_gems
-except Exception:
-    traceback.print_exc()
-    print("flag_gems not importable - set PYTHONPATH=<FlagGems>/src -> exit 1", flush=True)
-    os._exit(1)
-print("flag_gems from:", flag_gems.__file__, flush=True)
+# --- Phase B: flag_gems (imported + precondition-checked above) ---
 flag_gems.enable()
 
 try:
@@ -169,20 +236,51 @@ except Exception:
     os._exit(1)
 
 g_gems = grads_of()
-KNOWN_GAP = ("filter_fn",)  # pre-existing flag_gems pad/conv1d autograd gap, not this fix
+
+# Exact known-gap set (fixture, review follow-up): layer templates with {i}
+# plus any literal non-layer names, recorded from an actual run. The assert is
+# bidirectional -- a missing grad outside the fixture fails, and a fixture
+# entry that now HAS a grad also fails (stale fixture must be updated
+# consciously). The full missing set is printed as evidence.
+_GAP_FIXTURE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "known_gap_m2.txt")
+if not os.path.exists(_GAP_FIXTURE):
+    print(f"E2E FAILED: known-gap fixture missing: {_GAP_FIXTURE}", flush=True)
+    os._exit(1)
+known_gap = set()
+with open(_GAP_FIXTURE) as _fh:
+    for _line in _fh:
+        _line = _line.strip()
+        if not _line or _line.startswith("#"):
+            continue
+        if "{i}" in _line:
+            known_gap.update(_line.replace("{i}", str(_i)) for _i in range(NLAYERS))
+        else:
+            known_gap.add(_line)
+
+missing = sorted(n for n in g_native if n not in g_gems)
+unexpected = [n for n in missing if n not in known_gap]
+absent = sorted(n for n in (known_gap & set(g_native)) if n in g_gems)
+for n in missing:
+    print(f"missinggrad: {n}", flush=True)
+if unexpected:
+    print(f"E2E FAILED: missing grads outside known_gap_m2.txt ({len(unexpected)}): "
+          f"{unexpected[:10]}", flush=True)
+    os._exit(1)
+if absent:
+    print(f"E2E FAILED: known_gap_m2.txt stale, grad now present for {len(absent)}: "
+          f"{absent[:10]}", flush=True)
+    os._exit(1)
+missing_set = set(missing)
+
 # fp32 tolerance: abs floor for vanishing grads + rel band for large ones,
 # normalized by max(|native|, |gems|) so tiny-vs-tiny pairs cannot blow up.
 ATOL, RTOL = 1e-6, 1e-3
 rows = []
-checked = skipped = 0
+checked = 0
 for name, want in g_native.items():
-    got = g_gems.get(name)
-    if got is None:
-        if want is None or any(k in name for k in KNOWN_GAP):
-            skipped += 1
-            continue
-        print(f"E2E FAILED: missing grad after gems backward: {name}", flush=True)
-        os._exit(1)
+    if name in missing_set:
+        continue
+    got = g_gems[name]
     if got.shape != want.shape:
         print(f"E2E FAILED: grad shape {name}: {tuple(got.shape)} != {tuple(want.shape)}", flush=True)
         os._exit(1)
@@ -210,20 +308,23 @@ for ratio, name, d_abs, wmax, gmax in rows[:5]:
     )
 worst = rows[0][0] if rows else 0.0
 print(
-    f"grad presence: {checked} present+finite compared, {skipped} skipped "
-    f"(known filter_fn gap / native-unused), worst value ratio={worst:.3e} (info)",
+    f"grad presence: {checked} present+finite compared, {len(missing_set)} missing "
+    f"(== known_gap_m2.txt asserted), worst value ratio={worst:.3e} (info)",
     flush=True,
 )
 
-# Losses are reported from the pre-backward snapshots: a pre-existing,
-# intermittent flag_gems-backward anomaly was observed to overwrite the loss
-# scalar tensor's storage after loss_gems.backward() (seen on this tree in
-# some runs, not others; pre-fix trees die before backward completes, so no
-# A/B attribution is possible). The parity check runs on the snapshots before
-# any backward.
+# Losses are reported from the pre-backward snapshots: an intermittent
+# flag_gems-backward anomaly was observed to overwrite the loss scalar
+# tensor's storage after loss_gems.backward() (some runs, not others).
+# Attribution undetermined: pre-fix trees die before backward completes so
+# the same code path never completed on them (no A/B), and fixed-tree runs
+# vary run-to-run -- it is therefore neither proven pre-existing nor proven
+# caused by this fix. The parity check runs on the snapshots taken before any
+# backward, so the reported values are unaffected either way.
 print(
     f"E2E OK: loss_native={loss_native_val:.9e} loss_gems={loss_gems_val:.9e} "
-    f"rel={rel:.3e} grads_present_finite={checked} grads_skipped_known_gap={skipped}",
+    f"rel={rel:.3e} grads_present_finite={checked} "
+    f"grads_missing_known_gap={len(missing_set)}",
     flush=True,
 )
 os._exit(0)

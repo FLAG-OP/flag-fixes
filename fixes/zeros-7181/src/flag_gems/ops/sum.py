@@ -38,6 +38,27 @@ _COMPLEX_TO_REAL = {
     torch.complex128: torch.float64,
 }
 
+# ATen spells dtype names in sum.out's error messages differently from
+# torch.dtype reprs (e.g. float32 -> "float", int64 -> "long int").
+_ATEN_DTYPE_NAMES = {
+    torch.float16: "c10::Half",
+    torch.bfloat16: "c10::BFloat16",
+    torch.float32: "float",
+    torch.float64: "double",
+    torch.complex64: "c10::complex<float>",
+    torch.complex128: "c10::complex<double>",
+    torch.int64: "long int",
+    torch.int32: "int",
+    torch.int16: "short",
+    torch.int8: "signed char",
+    torch.uint8: "unsigned char",
+    torch.bool: "bool",
+}
+
+
+def _aten_dtype_name(dtype):
+    return _ATEN_DTYPE_NAMES.get(dtype, str(dtype).replace("torch.", ""))
+
 
 def _real_sum(x, dim, keepdim, dtype):
     """Sum a real tensor with ATen dim/keepdim semantics.
@@ -83,6 +104,13 @@ def _sum_complex(inp, dim=None, keepdim=False, *, dtype=None, out=None):
     if out is not None:
         if out.shape != res.shape:
             out.resize_(res.shape)
+        if out.dtype != res.dtype:
+            # ATen sum.out raises on an out dtype that differs from the
+            # computed result; copy_ alone would silently cast (review P2).
+            raise RuntimeError(
+                f"Expected out tensor to have dtype {_aten_dtype_name(res.dtype)}, "
+                f"but got {_aten_dtype_name(out.dtype)} instead"
+            )
         out.copy_(res)
         return out
     return res
@@ -137,19 +165,20 @@ def sum(inp, *, dtype=None):
     if inp.is_complex() or (dtype is not None and dtype.is_complex):
         return _sum_complex(inp, None, False, dtype=dtype)
     inp = inp.contiguous()
-    M = inp.numel()
-
-    if M == 0:
-        if dtype is None:
-            dtype = inp.dtype
-        out = torch.zeros([], dtype=dtype, device=inp.device)
-        return out
-
     if dtype is None:
         dtype = inp.dtype
         if dtype is torch.bool:
-            inp = inp.to(torch.int64)
             dtype = torch.int64
+    if dtype != inp.dtype:
+        # ATen casts the input to dtype before summing (full sum and dim sum
+        # both); accumulate in the cast dtype instead of widening afterwards.
+        inp = inp.to(dtype)
+    M = inp.numel()
+
+    if M == 0:
+        out = torch.zeros([], dtype=dtype, device=inp.device)
+        return out
+
     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
     mid_size = triton.cdiv(M, block_size)
     block_mid = triton.next_power_of_2(mid_size)
@@ -167,12 +196,20 @@ def sum_out(inp, *, dtype=None, out):
     logger.debug("GEMS SUM_OUT")
     if inp.is_complex() or (dtype is not None and dtype.is_complex):
         return _sum_complex(inp, None, False, dtype=dtype, out=out)
-    M = inp.numel()
     if dtype is None:
         dtype = inp.dtype
         if dtype is torch.bool:
-            inp = inp.to(torch.int64)
             dtype = torch.int64
+    if dtype != inp.dtype:
+        inp = inp.to(dtype)
+    if out.dtype != dtype:
+        # ATen sum.out (full reduction) does NOT adopt out.dtype and raises
+        # when it differs from the computed dtype.
+        raise RuntimeError(
+            f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
+            f"but got {_aten_dtype_name(out.dtype)} instead"
+        )
+    M = inp.numel()
     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
     mid_size = triton.cdiv(M, block_size)
     block_mid = triton.next_power_of_2(mid_size)
@@ -327,7 +364,11 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
         dtype = inp.dtype
         if dtype is torch.bool:
             dtype = torch.int64
-
+    if dtype != inp.dtype:
+        # ATen casts the input to dtype before reducing, so for instance
+        # f32->i64 truncates each element before summing (summing first and
+        # truncating the total can differ by 1).
+        inp = inp.to(dtype)
     if dim is None:
         result = torch.sum(inp, dtype=dtype)
         if keepdim:
@@ -452,6 +493,21 @@ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
 
 def sum_dim_out(inp, dim=None, keepdim=False, *, dtype=None, out):
     logger.debug("GEMS SUM_DIM_OUT")
-    if inp.is_complex() or (dtype is not None and dtype.is_complex):
+    if dtype is None:
+        # ATen sum.dim_IntList_out computes in out.dtype when dtype is omitted
+        # (real and complex inputs alike); the full-reduction sum.out variant
+        # does not adopt and requires a dtype match.
+        dtype = out.dtype
+        if inp.dtype is torch.bool and dtype is torch.bool:
+            # bool reductions always compute int64 (ATen), so a bool out can
+            # never match the computed dtype.
+            dtype = torch.int64
+    if inp.is_complex() or dtype.is_complex or out.is_complex():
         return _sum_complex(inp, dim, keepdim, dtype=dtype, out=out)
+    if dtype != out.dtype:
+        # ATen: an explicit dtype that differs from out.dtype raises.
+        raise RuntimeError(
+            f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
+            f"but got {_aten_dtype_name(out.dtype)} instead"
+        )
     return sum_dim_comm(inp, dim, keepdim, dtype=dtype, out=out)

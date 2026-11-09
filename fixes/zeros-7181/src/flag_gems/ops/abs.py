@@ -34,7 +34,8 @@ def abs(A):
     if A.is_complex():
         # Triton's type_canonicalisation_dict has no complex entry, so the
         # pointwise kernel must not see a complex pointer. |a+bi| is computed
-        # by absolute(), which already reduces the real view with sqrt(re^2+im^2).
+        # by absolute(), whose real-view reduction is hypot-stable (scaled
+        # sqrt(re^2+im^2)) so large/small magnitudes do not overflow.
         return absolute(A)
     return abs_func(A)
 

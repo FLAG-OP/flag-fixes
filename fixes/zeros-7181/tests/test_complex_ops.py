@@ -5,7 +5,25 @@ Pre-fix : every complex case fails with KeyError 'complex64'/'complex128'
           from triton/_utils.py type_canonicalisation_dict (baseline); real
           cases pass -> non-zero exit, TOTAL shows failures.
 Post-fix: all complex paths run in Triton (real-view lowering where needed),
-          all real paths unchanged -> ``TOTAL n passed, 0 failed`` exit 0.
+          all real paths unchanged -> ``TOTAL n passed, 0 failed, n total``
+          exit 0.
+
+Suites (review round 1):
+  * zero_ strided views  -- slice[::2]/[1::2]/view-col/narrow/transpose
+    cases must zero exactly the selected storage elements of the underlying
+    tensor (the old view_as_real + dense-kernel path corrupted neighbors),
+    via flag_gems.zero_, flag_gems.zero (zero.py) and aten.zero_; identity
+    (return is input) asserted.
+  * abs magnitude edges  -- 1e20+1e20j / 1e-30+1e-30j class values must match
+    native hypot (naive sqrt over/underflows float32); rtol=1e-6/atol=0 so a
+    wrong 0.0 does not pass, plus inf/nan special values (equal_nan).
+  * sum.out cross-dtype  -- dim-form out-dtype adoption vs full-form dtype
+    requirement, wrong-dtype RuntimeError identity (aten message), resize of
+    a wrong-shape out: every case oracle-driven from native, ok and err
+    categories must match bidirectionally.
+  * autograd parity      -- local complex chains abs().sum(), sum().abs(),
+    (x*2).abs().sum() must produce finite grads equal to native within
+    1e-4 (end in a real scalar; native rejects complex-scalar backward).
 
 Comparisons on complex tensors go through torch.view_as_real: flag_gems eq/
 nonzero are not complex-capable (pre-existing gap outside this fix).
@@ -28,7 +46,7 @@ DEV = "cuda"
 passed = failed = 0
 
 
-def check(name, fn, oracle):
+def check(name, fn, oracle, *, rtol=1e-5, atol=1e-5, equal_nan=False):
     global passed, failed
     try:
         got = fn()
@@ -36,7 +54,9 @@ def check(name, fn, oracle):
         g = torch.view_as_real(got) if got.is_complex() else got
         w = torch.view_as_real(oracle) if oracle.is_complex() else oracle
         if g.numel():
-            torch.testing.assert_close(g, w, rtol=1e-5, atol=1e-5)
+            torch.testing.assert_close(
+                g, w, rtol=rtol, atol=atol, equal_nan=equal_nan
+            )
         else:
             assert g.shape == w.shape
         passed += 1
@@ -100,6 +120,193 @@ for _dt in (torch.complex64, torch.complex128):
 _src = os.environ.get("FLAG_GEMS_SRC")
 if _src:
     sys.path.insert(0, _src)
+
+# --- review P1a: zero_ on strided complex views (native oracle per case) ---
+# For every (dtype, view-kind) pair: pattern input, a view-builder applied to
+# a fresh clone of the pattern, and the underlying base tensor after native
+# (pre-enable) zeroing of the view -- flag_gems must reproduce the base
+# exactly, including the elements the view does NOT cover.
+_zero_stride = {}
+for _dt in (torch.complex64, torch.complex128):
+    _pat = torch.tensor(
+        [1 + 2j, 3 + 4j, 5 + 6j, 7 + 8j, 9 + 10j, 11 + 12j, 13 + 14j, 15 + 16j],
+        dtype=_dt,
+        device=DEV,
+    )
+
+    def _view_even(b):
+        return b[::2]
+
+    def _view_odd(b):
+        return b[1::2]
+
+    def _view_col(b):
+        return b.view(4, 2)[:, 1]
+
+    def _view_narrow(b):
+        return b.narrow(0, 2, 4)
+
+    def _view_transpose(b):
+        return b.view(4, 2).t()
+
+    for _cname, _mk in (
+        ("slice[::2]", _view_even),
+        ("slice[1::2]", _view_odd),
+        ("view-col", _view_col),
+        ("narrow-offset", _view_narrow),
+        ("transpose", _view_transpose),
+    ):
+        _ob = _pat.clone()
+        _mk(_ob).zero_()  # native oracle base, pre-enable
+        _zero_stride[(_dt, _cname)] = (_pat, _mk, _ob)
+    _p0 = torch.tensor(5 - 6j, dtype=_dt, device=DEV)
+    _b0 = _p0.clone()
+    _b0.zero_()
+    _zero_stride[(_dt, "0-dim")] = (_p0, lambda b: b, _b0)
+
+# --- review P1b: abs magnitude edges (native hypot oracle, pre-enable) ---
+_mag_vals = {
+    torch.complex64: [
+        1e20 + 1e20j,          # naive sqrt overflows float32 -> inf
+        1e-30 - 1e-30j,        # naive sqrt underflows to 0
+        1e20 + 1e-20j,         # mixed scale
+        3.0 + 4.0j,
+        -3.0 - 4.0j,
+        0.0 + 0.0j,
+        -0.0 - 0.0j,
+        1e-38 + 1e-38j,
+        3.4e38 + 1.0j,         # near float32 max
+        float("inf") + 0.0j,
+        0.0 + float("inf") * 1j,
+        float("inf") + float("nan") * 1j,  # hypot: inf wins over nan
+        float("nan") + 1.0j,
+    ],
+    torch.complex128: [
+        1e200 + 1e200j,
+        1e-200 - 1e-200j,
+        1e200 + 1e-100j,
+        3.0 + 4.0j,
+        0.0 + 0.0j,
+        -0.0 - 0.0j,
+        1e-320 + 1e-320j,      # subnormal
+        1.7e308 + 1.0j,
+        float("inf") + 0.0j,
+        float("inf") + float("nan") * 1j,
+        float("nan") + 1.0j,
+    ],
+}
+_mag = {}
+for _dt, _vals in _mag_vals.items():
+    _tin = torch.tensor(_vals, dtype=_dt, device=DEV)
+    _mag[_dt] = (_tin, torch.abs(_tin))  # native oracle, pre-enable
+
+# --- review P2: sum.out / sum.dim_IntList.out cross-dtype oracle matrix ---
+# Each case is a zero-arg runner that builds fresh input+out and performs one
+# call; the native outcome (ok value or exception type+message) is captured
+# pre-enable and the same runner is re-run under flag_gems.
+_sumout_cases = []
+
+
+def _so(label, run):
+    _sumout_cases.append((label, run))
+
+
+for _dt in (torch.complex64, torch.complex128):
+    _ci = torch.tensor(
+        [[1 + 2j, 3 - 4j, 0 - 0.5j], [-2 + 7j, 0 + 0j, 4 - 1j]],
+        dtype=_dt,
+        device=DEV,
+    )
+    _co = torch.complex128 if _dt == torch.complex64 else torch.complex64
+    _so(f"{_dt} dim0 out=same",
+        lambda _ci=_ci, _dt=_dt: torch.sum(_ci, 0, out=torch.empty(3, dtype=_dt, device=DEV)))
+    _so(f"{_dt} dim0 out=other-complex adopt",
+        lambda _ci=_ci, _co=_co: torch.sum(_ci, 0, out=torch.empty(3, dtype=_co, device=DEV)))
+    _so(f"{_dt} dim0 dtype=c128 out=c128",
+        lambda _ci=_ci: torch.sum(_ci, 0, dtype=torch.complex128,
+                                  out=torch.empty(3, dtype=torch.complex128, device=DEV)))
+    _so(f"{_dt} dim0 dtype=c128 out=c64 ERR",
+        lambda _ci=_ci: torch.sum(_ci, 0, dtype=torch.complex128,
+                                  out=torch.empty(3, dtype=torch.complex64, device=DEV)))
+    _so(f"{_dt} dim0 dtype=f32 out=f32",
+        lambda _ci=_ci: torch.sum(_ci, 0, dtype=torch.float32,
+                                  out=torch.empty(3, dtype=torch.float32, device=DEV)))
+    _so(f"{_dt} dim0 dtype=f64 out=f32 ERR",
+        lambda _ci=_ci: torch.sum(_ci, 0, dtype=torch.float64,
+                                  out=torch.empty(3, dtype=torch.float32, device=DEV)))
+    _so(f"{_dt} dim0 out=f32 adopt",
+        lambda _ci=_ci: torch.sum(_ci, 0, out=torch.empty(3, dtype=torch.float32, device=DEV)))
+    _so(f"{_dt} dim0 out=f64 adopt",
+        lambda _ci=_ci: torch.sum(_ci, 0, out=torch.empty(3, dtype=torch.float64, device=DEV)))
+    _so(f"{_dt} dim0 out=i64 adopt",
+        lambda _ci=_ci: torch.sum(_ci, 0, out=torch.empty(3, dtype=torch.int64, device=DEV)))
+    _so(f"{_dt} dim(0,1) out=same",
+        lambda _ci=_ci, _dt=_dt: torch.sum(_ci, (0, 1), out=torch.empty((), dtype=_dt, device=DEV)))
+    _so(f"{_dt} dim(0,1) out=c128 adopt",
+        lambda _ci=_ci: torch.sum(_ci, (0, 1),
+                                  out=torch.empty((), dtype=torch.complex128, device=DEV)))
+    _so(f"{_dt} dim0 keepdim out=(1,3)",
+        lambda _ci=_ci, _dt=_dt: torch.sum(_ci, 0, keepdim=True,
+                                           out=torch.empty(1, 3, dtype=_dt, device=DEV)))
+    _so(f"{_dt} dim0 out=(2,1) resize",
+        lambda _ci=_ci, _dt=_dt: torch.sum(_ci, 0,
+                                           out=torch.empty(2, 1, dtype=_dt, device=DEV)))
+    _so(f"{_dt} empty dim0 out",
+        lambda _dt=_dt: torch.sum(torch.empty(0, 3, dtype=_dt, device=DEV), 0,
+                                  out=torch.empty(3, dtype=_dt, device=DEV)))
+    _so(f"{_dt} aten full out=same",
+        lambda _ci=_ci, _dt=_dt: torch.ops.aten.sum.out(_ci, out=torch.empty((), dtype=_dt, device=DEV)))
+    _so(f"{_dt} aten full out=other-complex ERR",
+        lambda _ci=_ci, _co=_co: torch.ops.aten.sum.out(_ci, out=torch.empty((), dtype=_co, device=DEV)))
+    _so(f"{_dt} aten full dtype=c128 out=c64 ERR",
+        lambda _ci=_ci: torch.ops.aten.sum.out(_ci, dtype=torch.complex128,
+                                               out=torch.empty((), dtype=torch.complex64, device=DEV)))
+    _so(f"{_dt} aten full dtype=c128 out=c128",
+        lambda _ci=_ci: torch.ops.aten.sum.out(_ci, dtype=torch.complex128,
+                                               out=torch.empty((), dtype=torch.complex128, device=DEV)))
+    _so(f"{_dt} aten full out=i64 ERR",
+        lambda _ci=_ci: torch.ops.aten.sum.out(_ci, out=torch.empty((), dtype=torch.int64, device=DEV)))
+
+_rf = torch.randn(2, 3, device=DEV)
+_so("f32 dim0 out=i64 adopt",
+    lambda: torch.sum(_rf, 0, out=torch.empty(3, dtype=torch.int64, device=DEV)))
+_so("f32 dim0 out=f64 adopt",
+    lambda: torch.sum(_rf, 0, out=torch.empty(3, dtype=torch.float64, device=DEV)))
+_so("f32 dim0 out=c64 adopt",
+    lambda: torch.sum(_rf, 0, out=torch.empty(3, dtype=torch.complex64, device=DEV)))
+_so("f32 dim0 dtype=f64 out=f32 ERR",
+    lambda: torch.sum(_rf, 0, dtype=torch.float64,
+                      out=torch.empty(3, dtype=torch.float32, device=DEV)))
+_so("f32 aten full out=f64 ERR",
+    lambda: torch.ops.aten.sum.out(_rf, out=torch.empty((), dtype=torch.float64, device=DEV)))
+_so("f32 aten full out=f32",
+    lambda: torch.ops.aten.sum.out(_rf, out=torch.empty((), dtype=torch.float32, device=DEV)))
+_so("f32 aten full out=i64 ERR",
+    lambda: torch.ops.aten.sum.out(_rf, out=torch.empty((), dtype=torch.int64, device=DEV)))
+
+_sumout_oracles = {}
+for _label, _run in _sumout_cases:
+    try:
+        _sumout_oracles[_label] = ("ok", _run().clone())
+    except Exception as _e:
+        _sumout_oracles[_label] = ("err", type(_e), str(_e))
+
+# --- review P2: local complex autograd parity (native grads, pre-enable) ---
+_ag_chains = {
+    "abs().sum()": lambda t: t.abs().sum(),
+    "sum().abs()": lambda t: t.sum().abs(),
+    "(x*2).abs().sum()": lambda t: (t * 2).abs().sum(),
+}
+_ag = {}
+for _dt in (torch.complex64, torch.complex128):
+    _x0 = torch.complex(torch.randn(4, 5, device=DEV), torch.randn(4, 5, device=DEV))
+    _x0 = _x0.to(_dt)
+    for _cname, _chain in _ag_chains.items():
+        _xn = _x0.clone().requires_grad_()
+        _y = _chain(_xn)
+        _y.backward()
+        _ag[(_dt, _cname)] = (_x0, _y.detach().clone(), _xn.grad.clone())
+
 import flag_gems  # noqa: E402
 
 print("flag_gems from:", flag_gems.__file__, flush=True)
@@ -180,7 +387,97 @@ for dt in (torch.complex64, torch.complex128):
             failed += 1
             print(f"[FAIL] abs_ {dt}: got {type(e).__name__}: {e!r}, native {native_err!r}", flush=True)
 
-print(f"\nTOTAL: {passed + failed} passed, {failed} failed", flush=True)
+# --- review P1a: zero_ must be stride-correct for complex views ---
+for (_dt, _cname), (_pat, _mk, _ob) in _zero_stride.items():
+    def _run_zero(_pat=_pat, _mk=_mk):
+        b = _pat.clone()
+        v = _mk(b)
+        r = gops.zero_(v)
+        assert r is v, "zero_ must return its input"
+        return b
+    check(f"zero_ strided {_dt} {_cname}", _run_zero, _ob)
+
+    def _run_zero_py(_pat=_pat, _mk=_mk):
+        b = _pat.clone()
+        v = _mk(b)
+        r = gops.zero(v)
+        assert r is v, "zero must return its input"
+        return b
+    check(f"zero (zero.py) strided {_dt} {_cname}", _run_zero_py, _ob)
+
+    if _cname == "slice[::2]":
+        def _run_aten_zero(_pat=_pat, _mk=_mk):
+            b = _pat.clone()
+            torch.ops.aten.zero_(_mk(b))
+            return b
+        check(f"aten.zero_ strided {_dt} {_cname}", _run_aten_zero, _ob)
+
+# --- review P1b: abs magnitude edges (hypot-stable, no overflow/underflow) ---
+for _dt, (_tin, _oracle) in _mag.items():
+    _mag_rtol = 1e-6 if _dt == torch.complex64 else 1e-10
+    check(
+        f"abs magnitude edges {_dt}",
+        lambda _tin=_tin: torch.abs(_tin),
+        _oracle,
+        rtol=_mag_rtol,
+        atol=0.0,
+        equal_nan=True,
+    )
+
+
+# --- review P2: sum.out matrix, oracle-driven in both directions ---
+def sumout_case(label, run, orc):
+    global passed, failed
+    try:
+        got = run()
+        got_err = None
+    except Exception as e:
+        got, got_err = None, e
+    try:
+        if orc[0] == "err":
+            _want_type, _want_msg = orc[1], orc[2]
+            assert got_err is not None, f"expected {_want_type.__name__}, got ok result {got!r}"
+            assert type(got_err) is _want_type, (
+                f"error type {type(got_err).__name__} != native {_want_type.__name__}: {got_err!r}"
+            )
+            assert str(got_err) == _want_msg, (
+                f"error message {str(got_err)!r} != native {_want_msg!r}"
+            )
+        else:
+            want = orc[1]
+            assert got_err is None, f"unexpected {type(got_err).__name__}: {got_err!r}"
+            assert got.dtype == want.dtype, f"dtype {got.dtype} != {want.dtype}"
+            assert got.shape == want.shape, f"shape {tuple(got.shape)} != {tuple(want.shape)}"
+            g = torch.view_as_real(got) if got.is_complex() else got
+            w = torch.view_as_real(want) if want.is_complex() else want
+            if g.numel():
+                torch.testing.assert_close(g, w, rtol=1e-5, atol=1e-5)
+        passed += 1
+        print(f"[PASS] sum.out matrix {label}", flush=True)
+    except Exception as e:
+        failed += 1
+        print(f"[FAIL] sum.out matrix {label}: {e!r}", flush=True)
+        if os.environ.get("VERBOSE"):
+            traceback.print_exc()
+
+
+for _label, _run in _sumout_cases:
+    sumout_case(_label, _run, _sumout_oracles[_label])
+
+# --- review P2: local complex autograd parity vs native ---
+for (_dt, _cname), (_x0, _y_nat, _g_nat) in _ag.items():
+    def _ag_grad(_x0=_x0, _cname=_cname):
+        xn = _x0.clone().requires_grad_()
+        _ag_chains[_cname](xn).backward()
+        assert xn.grad is not None, "gradient missing"
+        return xn.grad
+    check(f"autograd grad {_cname} {_dt}", _ag_grad, _g_nat, rtol=1e-4, atol=1e-6)
+
+    def _ag_fwd(_x0=_x0, _cname=_cname):
+        return _ag_chains[_cname](_x0).detach()
+    check(f"autograd fwd {_cname} {_dt}", _ag_fwd, _y_nat, rtol=1e-4, atol=1e-6)
+
+print(f"\nTOTAL: {passed} passed, {failed} failed, {passed + failed} total", flush=True)
 if failed:
     os._exit(1)
 print("ALL COMPLEX OPS REGRESSION PASSED", flush=True)

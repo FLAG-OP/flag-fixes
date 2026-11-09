@@ -48,7 +48,7 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
 
     out = torch.empty(size, device=device, dtype=dtype)
     if out.is_complex():
-        # Triton has no complex dtype; zero through the real view instead.
+        # Triton has no complex dtype; zero through zero_ instead.
         zero_(out)
         return out
     N = volume(size)
@@ -61,10 +61,12 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
 def zero_(x: torch.Tensor) -> torch.Tensor:
     logger.debug("GEMS ZERO_")
     if x.is_complex():
-        # Triton's type_canonicalisation_dict has no complex entry, so the
-        # kernel must not see a complex pointer. view_as_real returns a view
-        # that shares storage, so zeroing (re, im) zeroes the complex tensor.
-        zero_(torch.view_as_real(x))
+        # Triton's type_canonicalisation_dict has no complex entry, and the
+        # dense kernel below writes numel zeros at contiguous offsets, which
+        # corrupts strided views (zeros of a [::2] slice must land at strides,
+        # not at 0..numel-1). Native ATen copy_ is stride-correct and is the
+        # same redispatch path ops/copy.py uses for complex tensors.
+        x.copy_(0)
         return x
     N = x.numel()
     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)

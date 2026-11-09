@@ -46,7 +46,17 @@ def _absolute_complex_kernel(ri_ptr, out_ptr, n_elements, BLOCK_SIZE: tl.constex
     base = offsets * 2
     re = tl.load(ri_ptr + base, mask=mask)
     im = tl.load(ri_ptr + base + 1, mask=mask)
-    y = tl.sqrt(re * re + im * im)
+    # hypot-stable magnitude: naive sqrt(re*re+im*im) overflows float32 for
+    # |z| > ~1.4e19 (1e20+1e20j -> inf instead of 1.414e20) and underflows
+    # for |z| < ~1.2e-23 (1e-30+1e-30j -> 0 instead of 1.414e30). Scale by
+    # m = max(|re|,|im|) first (std::hypot style), keep +-inf explicit so it
+    # wins over NaN like std::hypot, and let NaN propagate through the math.
+    a = tl.abs(re)
+    b = tl.abs(im)
+    m = tl.maximum(a, b)
+    m_safe = tl.where(m > 0, m, 1.0)
+    y = m * tl.sqrt((re / m_safe) * (re / m_safe) + (im / m_safe) * (im / m_safe))
+    y = tl.where((a == float("inf")) | (b == float("inf")), float("inf"), y)
     tl.store(out_ptr + offsets, y, mask=mask)
 
 

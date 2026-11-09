@@ -18,13 +18,14 @@
 **complex 张量被送进为实数设计的 Triton kernel，triton mangle 阶段取
 `type_canonicalisation_dict['complex64']` 直接 KeyError；同一条反向链路还埋着两个预存
 阻塞（conv2d 标量 `[None]` 的 constexpr 崩溃、thead linear_backward 的 view 崩溃）。
-8 个文件一次修完：complex 求和走实数视图复用现有 kernel、zeros 族经 `zero_` 递归原地清零、
-abs 委托已有的 complex absolute 实现（in-place 按 native 原样拒绝），另两个是机械修复。**
+8 个文件一次修完：complex 求和走实数视图复用现有 kernel、complex `zero_` 一律
+`x.copy_(0)` 原生 redispatch（stride 正确）、abs 模长用缩放 hypot（inf 优先 NaN、
+防大数溢出），另两个是机械修复。**
 
 ```
 修复前: KeyError: 'complex64' (triton/_utils.py type_canonicalisation_dict)
         -> 反向首崩于 src/flag_gems/ops/sum.py:385（problem.md live 同款）
-修复后: 反向完成，loss rel=0.000e+00，回归 54/54，复现脚本 exit 0
+修复后: 反向完成，loss rel=0.000e+00，回归 139/139，复现脚本 exit 0
 ```
 
 ## 问题是怎么回事
@@ -64,29 +65,37 @@ triton 3.6.0 的 `type_canonicalisation_dict` 只登记实数 dtype；`zeros` �
 
 ## 修复思路
 
-一个实例、8 个文件，`patches/zeros-7181.patch`（248 行）：
+一个实例、8 个文件，`patches/zeros-7181.patch`（366 行 / +195 −23）。按评审口径分
+**三类改动**（同一反向链路的三个层次，故并入一个 fix；每类独立验收，详见
+`reports/diagnosis.md`）：A 类 = complex dtype 支持本体（sum/zeros 族/abs，
+验收 = KeyError 消失 + native oracle 一致）；B 类 = 同链路前置阻塞（conv2d、
+linear_backward，验收 = 最小复现 + e2e 剥洋葱链）；C 类 = 后端/依赖边界
+（linear.py 归 linear-5379，`requires` + `e2e_precondition` 钉死，验收 = e2e
+起跑前 9 文件哈希不匹配 exit 2）。
 
 | 文件 | 机制 |
 | --- | --- |
-| `ops/sum.py` | `_COMPLEX_TO_REAL` + `torch.view_as_real` 降维复用现有实数 kernel，结果按映射 dtype 转回；4 个入口前置分支，实数路径短路逐位不变 |
-| `ops/zeros.py` / `ops/zero.py` / `ops/zeros_like.py` | complex 分支走 `zero_(torch.view_as_real(x))` **原地清零真实存储**并返回入参（保持 dtype 与"返回同一张量"语义） |
-| `ops/abs.py` / `ops/absolute.py` | `abs()` complex 委托已有 `_absolute_complex_kernel` 的 `absolute()`；`abs_()`/`absolute_()` 按 native 原样抛 `RuntimeError`（逐字比对） |
+| `ops/sum.py` | `_COMPLEX_TO_REAL` + `torch.view_as_real` 降维复用现有实数 kernel，结果按映射 dtype 转回；4 个入口前置分支，实数路径短路逐位不变；交叉 dtype out 语义对齐 ATen（`sum_dim_out(dtype=None)` 采用 `out.dtype`、显式不符逐字抛错、`sum` 系 cast-first） |
+| `ops/zeros.py` / `ops/zero.py` | complex 一律 `x.copy_(0); return x`——ATen 原生 redispatch，**stride 正确**（切片/视图/转置的稀疏存储也被清零），保持 dtype 与"返回同一张量"语义 |
+| `ops/zeros_like.py` | complex 分支调 `zero_(out)` 继承 strides/dtype/布局（`zeros_like` 语义天然正确） |
+| `ops/abs.py` / `ops/absolute.py` | `abs()` complex 委托已有 `_absolute_complex_kernel` 的 `absolute()`；模长用**缩放 hypot**（`m=max(\|re\|,\|im\|)` 归一后开方，inf 优先于 NaN、NaN 传播、防大数溢出）；`abs_()`/`absolute_()` 按 native 原样抛 `RuntimeError`（逐字比对） |
 | `ops/conv2d.py:288` | 标量直接参与广播，消除 constexpr `[None]`；文件内仅此一处 |
 | `_thead/ops/linear_backward.py:170/171` | `view` → `reshape`（同 linear-5379 口径） |
 
-**`ops/linear.py` 不在本 patch**（line 158 归已合入的 linear-5379）；e2e 树 =
-基线 + `linear-5379.patch` + 本 patch。
+**`ops/linear.py` 不在本 patch**（line 158 归已合入的 linear-5379）；`requires:
+[linear-5379]` + `e2e_precondition`（9 文件 sha256）把依赖钉进 e2e 起跑前检查。
+e2e 树 = 基线 + `linear-5379.patch` + 本 patch。
 
 完整 diff 见 `patches/zeros-7181.patch`，前后文件 hash（sha256）：
 
 | 文件 | before | after |
 | --- | --- | --- |
-| `src/flag_gems/ops/sum.py` | `5259b9f60445ef4a99e85387bc1e4c7a2264681170c695c6fc9b94378fa6348b` | `1888070c373a74921d891dba9bcf2b8521efa251075217e4d4a51bc096447c9b` |
-| `src/flag_gems/ops/zeros.py` | `ef6ee0ed2217edf2e49441ebd03ede9221b59d0a95e8ca2f7884dd28b64ae543` | `813e40426a72d471ebd3a15b248eb0a905c14959eecc6cf1e3751d765d0dee78` |
-| `src/flag_gems/ops/zero.py` | `8f8d83c541e003274466f95f8817b46eb8df4d450b2068a51386a3e6bb278b10` | `d53db33608361810acfb3f1a51711f843c28fd306aa5227cb4df9c94428b3fcd` |
+| `src/flag_gems/ops/sum.py` | `5259b9f60445ef4a99e85387bc1e4c7a2264681170c695c6fc9b94378fa6348b` | `0e105b60f6c31ff0e8d4ab81fc7f44864c44727b9c89e084456e15d905920c7d` |
+| `src/flag_gems/ops/zeros.py` | `ef6ee0ed2217edf2e49441ebd03ede9221b59d0a95e8ca2f7884dd28b64ae543` | `391893014d200a1bca9b167903517ea24e69a1187d3a0a223d9fb0ae9990f9f7` |
+| `src/flag_gems/ops/zero.py` | `8f8d83c541e003274466f95f8817b46eb8df4d450b2068a51386a3e6bb278b10` | `1baf813d998fe4d4eaf522846bc862e21822014369a9eed347948b381a79d7fd` |
 | `src/flag_gems/ops/zeros_like.py` | `14bc478e3a474ae5872503717704f2569d4ef2dc2f65a4aaf54a7dd64817fc2d` | `754892efc4dec014628890d4389e0b705ff8f04cc20f6bea4642b31684e09fb9` |
-| `src/flag_gems/ops/abs.py` | `b7cf2a18414e159822c0c98c41aad61434184765aebc625b8f016eeee15fb930` | `db870d1f8c0e8a416cfd0c87c008b97dcac0010e041c82dbe46af5e80acde1d1` |
-| `src/flag_gems/ops/absolute.py` | `fc3a44054ba94313dae0755b0d340db731a9feb3cb08ca0a05c6495735ab5b54` | `14ebdba50fc8f2cbe80f78955e2fabdaec871d8b751c9eb55fea720570085e39` |
+| `src/flag_gems/ops/abs.py` | `b7cf2a18414e159822c0c98c41aad61434184765aebc625b8f016eeee15fb930` | `9d473703db901f6ccc1cda134b7a95229b6fbec12656bd680eae48f14149ae0c` |
+| `src/flag_gems/ops/absolute.py` | `fc3a44054ba94313dae0755b0d340db731a9feb3cb08ca0a05c6495735ab5b54` | `7b443e7611e35c6f126d6592f61baa73d341af05fe1afe75180b37f8c5a2a1b8` |
 | `src/flag_gems/ops/conv2d.py` | `290a77432d169331d594a59696d61e6b020ed65ce0e1d1a18ece3b669ff391e7` | `778519c06d988a99dae05075e5d15ed5556f9ce0f8540f635811666a7c35de24` |
 | `src/flag_gems/runtime/backend/_thead/ops/linear_backward.py` | `f47b39ea0d62911eeb8601c613e2348e87852685119d0390ece26b437b915267` | `3fd7813424813de45ae0bf0e9aa8f0fb825601cb1b02948183e6dd48f348f413` |
 
@@ -113,16 +122,18 @@ git -C "$TARGET" apply --check "$FIX_DIR/patches/zeros-7181.patch" && \
 本 patch（两个 patch 改动文件不相交，顺序任意）。验证必须导入修改后的目标源码树：
 `PYTHONPATH="$TARGET/src"` 并启动新进程；若仍导入 site-packages 中的 FlagGems，本补丁不生效。
 
-管理工具完整预演（`--root` 永远指向管理仓库根）：
+管理工具完整预演（`--root` 永远指向管理仓库根）。**注意 `requires: [linear-5379]`
+非空后，select 类命令必须同时给出两个 ID**（只给 zeros-7181 会 exit 2
+`include required fixes`）：
 
 ```bash
 MANAGER=/path/to/flag-fixes
 TARGET=/path/to/FlagGems   # 纯基线
 
 PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
-  check zeros-7181 --target "$TARGET"     # exit 0：before hash + git apply --check
+  check linear-5379 zeros-7181 --target "$TARGET"   # exit 0：before hash + git apply --check
 PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
-  plan zeros-7181 --target "$TARGET"      # exit 0：预演不落盘
+  plan linear-5379 zeros-7181 --target "$TARGET"    # exit 0：预演不落盘
 # apply 会因 deployable=false 返回 exit 2（按设计），需手工 git apply
 PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/zeros-7181/tests/repro_complex64.py"
 PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/zeros-7181/tests/test_complex_ops.py"
@@ -130,7 +141,8 @@ PYTHONPATH="$TARGET/src" python3 "$MANAGER/fixes/zeros-7181/tests/test_m2_bert_b
 ```
 
 三个脚本只有退出码 0 才算通过；缺设备或缺 `transformers` 时退出码 2（skip 不算通过）。
-或由管理工具跑（要求目标已是修复后内容）：
+GPU 脚本需 `CUDA_VISIBLE_DEVICES=0`（本环境不设时设备枚举挂起，见 validation.md）。
+或由管理工具跑（要求目标已是修复后内容；e2e 内另有 9 文件前置哈希检查）：
 
 ```bash
 PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
@@ -161,44 +173,55 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 
 ```
 ├── README.md                     # 本文
-├── fix.yaml                      # 清单（schema_version 1，8 目标 + 3 硬件命令）
+├── fix.yaml                      # 清单（schema_version 1，8 目标 + requires/
+│                                 #   e2e_precondition 9 文件 + 3 硬件命令）
 ├── WORKFLOW.md                   # 8 步执行清单及证据
-├── patches/zeros-7181.patch      # 最小 diff（8 文件，248 行），git apply 用
+├── patches/zeros-7181.patch      # 最小 diff（8 文件，366 行 / +195 −23），git apply 用
 ├── src/flag_gems/...             # 修复后完整文件快照（8 个），与 patch 结果逐字节一致
 ├── tests/
 │   ├── repro_complex64.py        #   issue #7181 / problem.md 最小复现（level: repro）
-│   ├── test_complex_ops.py       #   sum/zeros 族/abs 回归 54 用例（level: regression）
-│   ├── test_m2_bert_backward.py  #   m2-bert 前向+反向（level: e2e，需 transformers）
+│   ├── test_complex_ops.py       #   回归 139 用例：基础矩阵 + strided + 模长 +
+│   │                             #   交叉 dtype out 矩阵 + autograd parity（level: regression）
+│   ├── test_m2_bert_backward.py  #   m2-bert 前向+反向（level: e2e，需 transformers，
+│   │                             #   含 9 文件前置哈希 + revision pin + 缺口 fixture 断言）
+│   ├── known_gap_m2.txt          #   filter_fn 已知缺口精确集合（32 模板 × 12 = 384）
 │   └── _stubs/opt_einsum.py      #   缺依赖时的 import 兜底（仅当宿主无 opt_einsum 生效）
 ├── reports/
 │   ├── diagnosis.md              #   根因、方案、影响范围、预存缺陷双树证据
 │   └── validation.md             #   环境、命令、前后结果、未执行清单
-└── results/
-    ├── repro-baseline-2026-11-07.log            # 修复前复现 exit 1 原文
-    ├── regression-baseline-2026-11-07.log        # 54 passed, 38 failed
-    ├── regression-fixed-2026-11-07.log           # 54 passed, 0 failed
-    ├── e2e-linearblocker-baseline-2026-11-07.log # e2e 阶段一（linear_backward view）
-    ├── e2e-problem-path-noncomplex-2026-11-07.log# e2e 阶段二（problem.md 签名）
-    ├── e2e-fixed-2026-11-07.log                  # E2E OK
-    ├── e2e-missing-dep-2026-11-07.log            # 缺 transformers -> exit 2
-    ├── gradgap-probe-noncomplex-2026-11-07.log   # 预存梯度缺口（无 complex 修复树）
-    ├── gradgap-probe-fixed-2026-11-07.log        # 同缺口（修复树）——与本 patch 无关
-    ├── verify-2026-11-07-dirty.json              # verify（HEAD f159ce07, dirty=true）
-    └── verify-2026-11-07.json                    # verify（已提交干净树）
+└── results/                      # 权威日志为 *-2026-11-08.log（评审修正轮）：
+    ├── repro-{baseline,fixed}-2026-11-08.log       # 复现 exit 1 / exit 0
+    ├── regression-{baseline,fixed}-2026-11-08.log  # 18/121/139 → 139/0/139
+    ├── e2e-fixed-2026-11-08.log                    # E2E OK（precondition/fixture/revision）
+    ├── e2e-precondition-{baseline,linearonly}-2026-11-08.log  # 前置哈希 exit 2 实测
+    ├── e2e-missing-dep-2026-11-08.log / nocuda-regression-2026-11-08.log  # exit 2
+    ├── cli-{validate,check,plan,apply,status,check-requiredfail}-2026-11-08.log
+    ├── verify-2026-11-08.json                      # 修正轮提交后干净 verify
+    ├── *-2026-11-07.log                            # 初版历史原文（不改写；
+    │                                               #   其 regression TOTAL 行有计数器
+    │                                               #   缺陷，实际 16/38/54，见
+    │                                               #   validation.md 注）
+    ├── e2e-{linearblocker-baseline,problem-path-noncomplex}-2026-11-07.log
+    ├── gradgap-probe-{noncomplex,fixed}-2026-11-07.log  # 预存梯度缺口双树对照
+    └── verify-2026-11-07{,-dirty}.json              # 初版 verify（passed 3/3）
 ```
 
 ## 验证结果摘要
 
+（2026-11-08 评审修正轮，日志见 `results/*-2026-11-08.log`）
+
 | 项目 | 修复前 | 修复后 |
 | --- | --- | --- |
 | `repro_complex64.py` | exit 1，`ISSUE REPRODUCED` + `KeyError: 'complex64'` | exit 0 |
-| `test_complex_ops.py` | 54 passed / 38 failed | 54 passed / 0 failed |
-| `test_m2_bert_backward.py`（e2e） | 阶段一：linear_backward `view` RuntimeError；阶段二：反向 `sum.py:385 KeyError: 'complex64'`（problem.md 签名） | exit 0，`E2E OK` loss rel=0.000e+00，161 梯度存在且有限，384 个 `filter_fn.*` 跳过（预存缺口） |
+| `test_complex_ops.py`（139 用例） | 18 passed / 121 failed / 139 total | 139 passed / 0 failed / 139 total |
+| `test_m2_bert_backward.py`（e2e） | 阶段一：linear_backward `view` RuntimeError；阶段二：反向 `sum.py:385 KeyError: 'complex64'`（problem.md 签名） | exit 0，`E2E OK`，precondition 9 文件 OK，loss rel=0.000e+00，161 梯度存在且有限，384 缺口与 fixture 双向断言一致 |
+| e2e 前置哈希（基线树 / 仅 linear 树） | — | 均 exit 2 `MISSING PRECONDITION`（模型工作之前） |
 | 前向对照 | （阶段二）loss rel=0.0 | loss rel=0.0（与原生逐位一致） |
 | 实数路径回归 | 通过 | 通过，逐位不变 |
-| `flag-fixes validate/check/plan` | — | exit 0（8 文件 hash、patch 应用、快照一致） |
+| `flag-fixes validate/check/plan` | — | exit 0（9 文件 hash、patch 应用、快照一致；须同时给两个 ID） |
+| `flag-fixes check zeros-7181`（漏依赖） | — | exit 2 `include required fixes: ['linear-5379']` |
 | `flag-fixes apply` | — | exit 2（`deployable=false` 按设计拒绝） |
-| `flag-fixes verify` | — | `passed: true`，3/3 命令 exit 0（见 results/ 两份 JSON） |
+| `flag-fixes verify` | — | `passed: true`，3/3 命令 exit 0（11-07 两份 JSON；11-08 提交后重跑见 results/） |
 | 缺 transformers / 缺设备 | — | 退出码 2（`MISSING …`，skip 不算通过） |
 
 判定与覆盖边界：三个硬件脚本只有退出码 0 才算通过。普通 CI（无设备 runner）执行
@@ -213,9 +236,10 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
   `owner=null`，`flag-fixes apply` 会按设计拒绝。
 - **预存缺陷（双树同形态，非本 patch 引入，见 reports/diagnosis.md 与
   results/gradgap-probe-*.log）**：flag_gems 全包 0 个 `register_autograd`，
-  `aten::pad`/`aten::conv1d` 回退导致 hyena `filter_fn.*` 梯度缺失（1L 配置 34 个，
-  两棵树集合完全一致）；近驻点参数 native-vs-flag_gems 梯度数值分歧；个别 run 中
-  loss 张量存储被间歇覆写（e2e 因此在反向前快照 loss）。
+  `aten::pad`/`aten::conv1d` 回退导致 hyena `filter_fn.*` 梯度缺失（12L 精确集合
+  384 条固化为 `tests/known_gap_m2.txt`，e2e 双向断言；1L 同形态 32+2）；
+  近驻点参数 native-vs-flag_gems 梯度数值分歧；个别 run 中 loss 张量存储被间歇
+  覆写——**归因未定**（既未证明预存、也未证明本修复引入；e2e 因此在反向前快照 loss）。
 - **未修的 complex 缺口**：`mean`/`full`/`ones`、`eq`/`where` 等
   `ComplexMode=NONE`/未覆写入口不在本 patch（m2-bert 反向不需要）；complex 比较请用
   `torch.view_as_real`。
@@ -224,4 +248,5 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 - 没有性能基准：崩溃修复，反向修复前跑不完、无同口径耗时；`benchmarks/` 保持模板状态。
 - **e2e 依赖**：`test_m2_bert_backward.py` 需要 `transformers`，缺失时退出码 2 并打印
   `MISSING DEPENDENCY`，不会因为前两个脚本通过而返回 0；`opt_einsum` 缺失时使用
-  `tests/_stubs/opt_einsum.py` 兜底（host 侧 import 需要，非 FlagGems 依赖）。
+  `tests/_stubs/opt_einsum.py` 兜底（host 侧 import 需要，非 FlagGems 依赖），运行时
+  打印 `opt_einsum=bundled-stub|real`；模型代码 revision 打印并比对 pin `90e0b28f…`。
