@@ -1,0 +1,46 @@
+{
+  "fix": "flaggems-selective-enable",
+  "passed": false,
+  "scope": "declared commands only; does not promote catalog hardware status",
+  "target": "/tmp/opencode/FlagScale-adamw-fixed",
+  "source_commit": "ea8ad18b8178d604901cfe5db55e548e51061519",
+  "source_dirty": false,
+  "results": [
+    {
+      "name": "flaggems-full-enable-repro",
+      "level": "repro",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python",
+        "/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/repro_flaggems_full_enable.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "[flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/tmp/flaggems_cache/flaggems, TRITON_CACHE_DIR=/tmp/flaggems_cache/triton, TORCH_EXTENSIONS_DIR=/tmp/flaggems_cache/torch_extensions)\nenable_flaggems returned : True\nregistered ops           : 2\ngelu registered          : True\nlayer_norm registered    : False\nPASS: selective include honoured\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.\n  Overriding a previously registered kernel for the same operator and the same dispatch key\n  operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate=\"none\") -> Tensor\n    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6\n  dispatch key: CUDA\n  previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:352\n       new kernel: registered at /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)\n  self.m.impl(\n"
+    },
+    {
+      "name": "flaggems-semantics-regression",
+      "level": "regression",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python",
+        "/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/test_flaggems_semantics.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "ok   include list -> only gelu family: n_ops=2 gelu=True ln=False returned=True (expect n_ops=2 gelu=True ln=False returned=True)\nok   include absent -> full enable (stock): n_ops=full gelu=True ln=True returned=True (expect n_ops=full gelu=True ln=True returned=True)\nok   include \"none\" -> full enable: n_ops=full gelu=True ln=True returned=True (expect n_ops=full gelu=True ln=True returned=True)\nok   include ListConfig accepted: n_ops=2 gelu=True ln=False returned=True (expect n_ops=2 gelu=True ln=False returned=True)\nok   exclude without include -> gelu still registered (FlagGems cpp-patch quirk): n_ops=full gelu=True ln=True returned=True (expect n_ops=full gelu=True ln=True returned=True)\nok   use_flaggems=false -> no-op: n_ops=0 gelu=False ln=False returned=False (expect n_ops=0 gelu=False ln=False returned=False)\nPASS: all semantics cases match\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n"
+    },
+    {
+      "name": "flaggems-include-dispatch",
+      "level": "dispatch",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python",
+        "/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/test_flaggems_dispatch.py"
+      ],
+      "returncode": 1,
+      "passed": false,
+      "stdout": "[flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/tmp/flaggems_cache/flaggems, TRITON_CACHE_DIR=/tmp/flaggems_cache/triton, TORCH_EXTENSIONS_DIR=/tmp/flaggems_cache/torch_extensions)\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.\n  Overriding a previously registered kernel for the same operator and the same dispatch key\n  operator: aten::gelu(Tensor self, *, str approximate=\"none\") -> Tensor\n    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6\n  dispatch key: CUDA\n  previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesUnaryOps.cpp:64\n       new kernel: registered at /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)\n  self.m.impl(\nTraceback (most recent call last):\n  File \"/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/test_flaggems_dispatch.py\", line 57, in <module>\n    sys.exit(main())\n  File \"/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/test_flaggems_dispatch.py\", line 37, in main\n    with profile(activities=[ProfilerActivity.CUDA]) as prof:\n  File \"/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/profiler/profiler.py\", line 806, in __enter__\n    self.start()\n  File \"/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/profiler/profiler.py\", line 816, in start\n    self._transit_action(ProfilerAction.NONE, self.current_action)\n  File \"/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/profiler/profiler.py\", line 872, in _transit_action\n    action()\n  File \"/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/profiler/profiler.py\", line 203, in prepare_trace\n    self.profiler._prepare_trace()\n  File \"/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/profiler.py\", line 366, in _prepare_trace\n    _prepare_profiler(self.config(create_trace_id=True), self.kineto_activities)\nRuntimeError: [2026-11-10 18:55:55] [FATAL] [/mnt/ssd3/xpytorch/workspace/afce1bbc-66a1-4529-8228-718621f2ebaf/subpod/baidu/xpu/cupti/lib/cupti/impl/context_manager.cpp:74:checkRuntimeProfilerEnv] Runtime profiler is disabled. To enable it, set the environment variable: XPU_ENABLE_PROFILER_TRACING=1\n\n"
+    }
+  ]
+}
