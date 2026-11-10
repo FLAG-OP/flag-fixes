@@ -16,7 +16,7 @@
 | Triton | 3.0.0（`triton/backends/xpu`，`xpu3-elfconv` 工具链） |
 | FlagGems | `v5.0.0`，基线 commit `4e08b44e9b9ad68c2c27b4d25d04c6b76c30ff7a` |
 | 关键环境变量 | `GEMS_VENDOR=kunlunxin`，`KLX_USE_AUTOTUNE=0`，`USE_FLAGGEMS=1`，`XPU_FORCE_SHARED_DEVICE_CONTEXT=1` |
-| 管理仓库 | FLAG-OP/flag-fixes，本地 fix `fixes/gelu-kunlunxin-pow/`；首个 verify 时 `source_commit=f159ce07b1995fe6c313b5f7845bf4f46821b876`、`source_dirty=true`（fix 未提交）；fix 提交为 `3e95f021e93ed105d37842a6366034a86857b267`，在该提交的干净树上复跑得 `source_dirty=false` |
+| 管理仓库 | FLAG-OP/flag-fixes，本地 fix `fixes/gelu-kunlunxin-pow/`；首个 verify 时 `source_commit=f159ce07b1995fe6c313b5f7845bf4f46821b876`、`source_dirty=true`（fix 未提交）；fix 提交为 `3e95f021e93ed105d37842a6366034a86857b267`，在最终树 `d57e825472f66809ac1224dd7aca8c6e4bec47a3` 上复跑得 `source_dirty=false` |
 | 目标文件 hash | `_kunlunxin/ops/gelu.py` `6c53c738…` → `e9c72e11…`；`_kunlunxin/fused/gelu_and_mul.py` `a3192f8d…` → `2669825c…` |
 | 执行日期 | 2026-11-10 |
 | 执行者 | AI agent（无人类 owner；`owner=null`） |
@@ -46,7 +46,7 @@ git -C /tmp/opencode/FlagGems-gelu-fixed apply \
 | 回归/边界 | `python3 tests/test_gelu_accuracy.py` | 3 dtype（fp32/bf16/fp16）× 4 形状（含 (1,64)、(17,33)、(2990,1024)、(3,128,512)）× 连续/转置/切片/permute × none/tanh 前反向 + fused `gelu_and_mul` 前后向，误差在 atol/rtol 内 | exit 0，0 failed | exit 0，0 failed | `results/accuracy-{base,fixed}-2026-11-10.log` |
 | 调用方/dispatch | `python3 tests/test_gelu_family_dispatch.py` | `enable()` 后 `F.gelu`、`nn.GELU(tanh)`、`aten.gelu_backward`、`autograd.grad`、非连续输入、gated MLP 与 native 参考一致 | exit 0，0 failed | exit 0，0 failed | `results/dispatch-{base,fixed}-2026-11-10.log` |
 | 性能/精度 | `python3 tests/bench_gelu_family.py --iters 100 --json results/bench-<tree>-2026-11-10.json` | 同设备/同输入/同计时；同时校验精度门限 | 见下方性能表 | 见下方性能表 | `results/bench-{base,fixed}-2026-11-10.{json,stdout.log,stderr.log}` |
-| 工具链 verify | `PYTHONPATH=src python3 -m flag_fixes --root . verify gelu-kunlunxin-pow --target /tmp/opencode/FlagGems-gelu-fixed --python python3` | 4 个 declared 命令全部 rc=0 | — | `passed=true`，4/4 rc=0；首个结果 `source_dirty=true`，在 fix 提交 `3e95f021` 的干净树上复跑为 `source_dirty=false` | `results/verify-2026-11-10.json`、`results/verify-2026-11-10-clean.json` |
+| 工具链 verify | `PYTHONPATH=src python3 -m flag_fixes --root . verify gelu-kunlunxin-pow --target /tmp/opencode/FlagGems-gelu-fixed --python python3` | 4 个 declared 命令全部 rc=0 | — | `passed=true`，4/4 rc=0；首个结果 `source_dirty=true`，在最终树 `d57e8254`（只比 `3e95f021` 多文档/标题改动）上复跑为 `source_dirty=false` | `results/verify-2026-11-10.json`、`results/verify-2026-11-10-clean.json` |
 | 平台整模型 e2e | problem 所述 x-benchmark `run_model.py`（on 趟，独立 `--result-root`） | 整模型吞吐提升且不劣化 | **not-run** | **not-run** | 原因：本环境没有 x-benchmark runner / 模型权重缓存；未伪造结果 |
 | 安装/回滚演练 | `… apply` / `… rollback` | 安装事务成功、回滚 hash 还原 | **not-run** | **not-run** | 原因：`deployable=false`，`apply` 按规范拒绝；未获得部署资格前不做目标树安装 |
 | 上游 PR | FlagGems upstream | PR 合入 | **not-run** | **not-run** | 原因：草稿尚未通过平台验收与 owner 审核 |
@@ -84,7 +84,7 @@ $ python3 -m flag_fixes --root . verify gelu-kunlunxin-pow \
     --target /tmp/opencode/FlagGems-gelu-fixed --python python3
 { "fix": "gelu-kunlunxin-pow", "passed": true,
   "scope": "declared commands only; does not promote catalog hardware status",
-  "source_commit": "3e95f021e93ed105d37842a6366034a86857b267",
+  "source_commit": "d57e825472f66809ac1224dd7aca8c6e4bec47a3",
   "source_dirty": false }
 # gelu-pow-repro             rc=0  PASS: GELU kernels are within the native-torch budget
 # gelu-family-accuracy       rc=0  TOTAL: 0 failed (GELU family matches native torch)
