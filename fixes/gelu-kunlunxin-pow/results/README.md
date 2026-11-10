@@ -17,7 +17,8 @@
 | `dispatch-base-2026-11-10.log` / `dispatch-fixed-2026-11-10.log` | `tests/test_gelu_family_dispatch.py`，修复前后均 0 failed |
 | `verify-2026-11-10.json` | 首次 `flag_fixes verify`：4/4 rc=0，`source_dirty=true`（fix 尚未提交） |
 | `verify-2026-11-10.stderr.log` | 首次 verify 的 stderr（空文件） |
-| `verify-2026-11-10-clean.json` | fix 提交后复跑：`source_dirty=false`，`source_commit` 指向包含本 fix 的提交 |
+| `verify-2026-11-10-clean.json` | fix 提交 `3e95f021e93ed105d37842a6366034a86857b267` 的干净树上复跑：4/4 rc=0，`source_dirty=false` |
+| `verify-2026-11-10-clean.stderr.log` | 干净树 verify 的 stderr（空文件） |
 
 ## 判定
 
