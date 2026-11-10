@@ -49,10 +49,16 @@ ATTRIBUTION 实测 41.8→17.3 ms kernel，对应平台文档 "clip+optimizer 62
 ## 工具链校验
 
 - `flag-fixes --root . validate`：valid（12 fixes = 9 external + 3 local）
-- `flag-fixes check adamw-fused --target <fixed 树>` / `plan`：exit 0
+- `flag-fixes check adamw-fused --target <base 树>` / `plan`：exit 0
+  （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply adamw-fused --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <fixed 树>`：clean
-- `flag-fixes verify adamw-fused --target <fixed 树> --python <本机 python>`：见 `results/verify-2026-11-10.json`
+- `flag-fixes verify adamw-fused --target <fixed 树> --python <本机 python>`：
+  首次 4/4 rc=0（`results/verify-2026-11-10.json`，`source_dirty=true`，
+  fix 未提交）；提交后干净树复跑 4/4 rc=0
+  （`results/verify-2026-11-10-clean.json`，source commit `25afaebc…`、
+  `source_dirty=false`）
+- 仓库测试 `python -m pytest -q`：26 passed, 3 subtests passed
 
 ## not-run（未验证清单，不记为通过）
 

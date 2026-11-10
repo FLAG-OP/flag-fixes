@@ -8,7 +8,7 @@
 | --- | --- |
 | 当前做完了什么、测试是否通过、哪些修复还不能安装 | [当前结果汇总](current-status.md) |
 | 每项修复的源码、patch、来源检查结果及已知差异 | [来源交付检查](source-audit.md) |
-| 本仓库本地维护的 fix（源码、patch、测试、验证记录） | [fixes/](../fixes/)（当前 2 项：[linear-5379](../fixes/linear-5379/)、[gelu-kunlunxin-pow](../fixes/gelu-kunlunxin-pow/)） |
+| 本仓库本地维护的 fix（源码、patch、测试、验证记录） | [fixes/](../fixes/)（当前 3 项：[linear-5379](../fixes/linear-5379/)、[gelu-kunlunxin-pow](../fixes/gelu-kunlunxin-pow/)、[adamw-fused](../fixes/adamw-fused/)） |
 | 整体目录、内容归属和分阶段计划 | [仓库设计](design.md) |
 | 如何检查、安装、验证和回滚 | [安装说明](installation.md) |
 | 如何新增一个由本仓库维护的 fix | [接入指南](adding-a-fix.md)、[fix 模板](../templates/fix/README.md) |

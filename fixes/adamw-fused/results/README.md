@@ -15,6 +15,8 @@
 | `numerics-fixed-2026-11-10.log` | 修复后：exit 0（bf16 max\|diff\| 3.05e-05、fp32 2.98e-08，allclose 全通过） |
 | `selection-base-2026-11-10.log` | `tests/test_adamw_selection.py` 在基线：exit 1（`adamw_impl_kwargs` 不存在） |
 | `selection-fixed-2026-11-10.log` | 修复后：exit 0（9 例选择矩阵全对，含 DTensor/CPU/env 护栏） |
+| `verify-2026-11-10.json` / `.stderr.log` | 首次 `flag_fixes verify`（fixed 树）：4/4 rc=0，`source_dirty=true`（fix 尚未提交；stderr 空文件） |
+| `verify-2026-11-10-clean.json` / `.stderr.log` | 干净提交树 `25afaebc5d89a1a30f7bafcbad518fdfa3eaf39c` 上复跑：4/4 rc=0，`source_dirty=false`（stderr 空文件） |
 
 ## 判定
 
@@ -24,6 +26,7 @@
 | 数值回归（bf16/fp32 allclose） | ✅（fixed exit 0；基线 exit 1 是"未选 fused"的预期失败） |
 | 选择矩阵 | ✅（fixed exit 0） |
 | 性能前后对照（同参数集/同梯度/同计时） | ✅ 2.4× 墙钟、4× launch |
+| `flag_fixes verify`（fixed 树，4 个声明命令） | ✅ 4/4 rc=0；干净树复跑 `source_dirty=false` |
 | 平台整模型验收 | ❌ not-run（无平台 runner/模型/数据），`hardware_status=unverified` |
 
 ## 口径说明

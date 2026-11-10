@@ -22,7 +22,7 @@ flag-fixes --root . show gather-5746
 ## 当前交付范围
 
 - 8 个历史修复源仓库的固定 submodule 和 9 项 fix 索引（GELU 来源拆出 Triton 层条目）。
-- 1 项本仓库维护的本地修复 [linear-5379](fixes/linear-5379/) 和 1 项本地性能修复 [gelu-kunlunxin-pow](fixes/gelu-kunlunxin-pow/)（flag_fixes fix 索引合计 11 项 = 9 项外部 + 2 项本地）。
+- 1 项本仓库维护的本地修复 [linear-5379](fixes/linear-5379/)、1 项本地性能修复 [gelu-kunlunxin-pow](fixes/gelu-kunlunxin-pow/)（FlagGems 层）和 1 项本地性能修复 [adamw-fused](fixes/adamw-fused/)（FlagScale 层，fused AdamW）（flag_fixes fix 索引合计 12 项 = 9 项外部 + 3 项本地）。
 - 新修复模板和 `new` 创建入口。
 - 清单校验、基线检查、安装预演、显式安装、状态、回滚与验证命令。
 - 安装器使用临时目标树进行功能测试。
