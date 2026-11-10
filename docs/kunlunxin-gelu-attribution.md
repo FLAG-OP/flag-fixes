@@ -123,3 +123,31 @@ FlagScale 集成路径（`enable_flaggems` include 模式）。
    `XMLIR_ENABLE_LINEAR_FC_FUSION` 等 50+ 环境变量语义；
 3. 平台节点复跑 A/B 矩阵（命令见 problem29/RESULT.md 第五阶段）；
 4. 真实多卡 FSDP2 归因 `cluster_cast_kl3`（12,399 次/步，单卡复现不出）。
+
+## 附：最终运行配置与总账（2026-11-10，整步实测）
+
+在全部代码修复之上，厂商环境变量扫描发现一对零代码收益
+（`problem29/RESULT.md` 第八阶段，wall 3 步中位数，数值逐位不变）：
+
+```bash
+export XMLIR_MATMUL_FAST_MODE=1      # GEMM 换 fast algo（精度逐位一致）
+export XMLIR_MATMUL_FAST_TUNE=1      # 配套 tune
+```
+
+**总账**（BGE-M3 重建负载，reason.md 口径）：
+
+| 指标 | 基线 | 最终 | 提升 |
+|---|---:|---:|---|
+| step wall | 2,665.9 ms | 2,258.3 ms | **-15.3%**（吞吐 +18.1%） |
+| 对 A100（1,419 ms） | 1.86× | 1.59× | 差距收敛 35.4% |
+
+分解：GELU -350 ms（gelu-kunlunxin-pow + flaggems-selective-enable）+
+AdamW -24 ms（adamw-fused）+ GEMM algo -33 ms（上述 env，零代码）。
+
+无效/负收益项（已测，勿重试）：`KLX_USE_AUTOTUNE=1`（0）、
+`XMLIR_ENABLE_XBLAS_ADDMM=1`（0）、`XMLIR_FC_AUTOTUNE_BOOL=1`（+12.7 ms 更差）。
+
+训练侧决策项：`approximate="tanh"`（单核再省 ~100 ms/步，需 loss 签核）。
+厂商移交项：libdevice erf/exp 质量、fc_fusion weight-scale 缓存、env 语义、
+两个 Triton 编译器崩溃 bug（nan splat / 循环标量 load，最小复现在
+problem29/probes/）。
