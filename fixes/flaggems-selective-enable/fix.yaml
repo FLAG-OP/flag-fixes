@@ -61,12 +61,16 @@ validation:
     timeout_seconds: 900
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
   - name: flaggems-semantics-regression
     script: tests/test_flaggems_semantics.py
     level: regression
     timeout_seconds: 1800
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
       FLAGSCALE_TREE: '{target}'
   - name: flaggems-include-dispatch
     script: tests/test_flaggems_dispatch.py
@@ -74,6 +78,8 @@ validation:
     timeout_seconds: 900
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
   - name: flaggems-enable-benchmark
     script: tests/bench_flaggems_enable.py
     args:
@@ -83,6 +89,8 @@ validation:
     timeout_seconds: 900
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
 notes:
 - 目标包是 flagscale（同 adamw-fused）；本修复只改 enable_flaggems 的注册
   路径选择，未设置 flaggems_include 时行为与基线逐字节一致（语义回归第 2/3

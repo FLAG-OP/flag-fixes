@@ -62,18 +62,24 @@ validation:
     timeout_seconds: 900
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
   - name: adamw-numerics
     script: tests/test_adamw_numerics.py
     level: regression
     timeout_seconds: 1800
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
   - name: adamw-selection-matrix
     script: tests/test_adamw_selection.py
     level: dispatch
     timeout_seconds: 1800
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
   - name: adamw-impl-benchmark
     script: tests/bench_adamw_impls.py
     args:
@@ -83,6 +89,8 @@ validation:
     timeout_seconds: 1800
     env:
       PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
 notes:
 - 目标包是 flagscale（不是 flag_gems）；FlagScale 仓库布局是根下 flagscale/
   包，verify 的 PYTHONPATH 预置 target/src 不存在但无害，命令 env 里用
