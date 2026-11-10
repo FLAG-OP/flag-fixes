@@ -392,24 +392,35 @@ def family_cases(family):
     raise ValueError(family)
 
 
-def hit_probe_cases(family):
-    """Representative (name, fn) pairs for non-timed dispatch verification."""
-    x = torch.randn(64, 64, dtype=torch.float32, device=DEVICE).to(
-        torch.complex64)
+def build_probe_tensors():
+    """All probe tensors are created BEFORE any registration so native
+    creation paths are used (dtype-changing .to() on complex under full
+    registration hits another pre-existing fill gap and would abort the
+    run)."""
+    return {
+        "xc64": torch.randn(64, 64, dtype=torch.float32,
+                            device=DEVICE).to(torch.complex64),
+        "xfp32": torch.randn(2, 3, 16, 16, device=DEVICE),
+        "wc": torch.randn(4, 3, 3, 3, device=DEVICE),
+        "wl": torch.randn(5, 4, device=DEVICE),
+    }
+
+
+def hit_probe_cases(family, T):
+    """Representative (name, fn) pairs for non-timed dispatch verification
+    over pre-built tensors."""
+    x = T["xc64"]
     if family == "a-sum-abs":
         return [
             ("sum/inner/c64", lambda: x.sum(dim=1)),
             ("abs/c64", lambda: torch.abs(x)),
         ]
     if family == "b-linear":
-        xi = torch.randn(2, 3, 16, 16, device=DEVICE)
-        w = torch.randn(4, 3, 3, 3, device=DEVICE)
-        wl = torch.randn(5, 4, device=DEVICE)
         return [
-            ("conv2d/fp32", lambda: torch.nn.functional.conv2d(xi, w,
-                                                               padding=1)),
+            ("conv2d/fp32", lambda: torch.nn.functional.conv2d(
+                T["xfp32"], T["wc"], padding=1)),
             ("linear/fp32", lambda: torch.nn.functional.linear(
-                xi.permute(0, 2, 3, 1), wl)),
+                T["xfp32"].permute(0, 2, 3, 1), T["wl"])),
         ]
     if family == "zeros":
         return [
@@ -425,15 +436,18 @@ def run_group(family, group, out_path, seed=20261110, quick=False):
         print("ERROR: no CUDA device", flush=True)
         sys.exit(2)
     rec = sm.set_determinism(0, "fp32")
+    # build all tensors BEFORE registration so case/probe construction uses
+    # native paths in every group
+    cases, build_errors = family_cases(family)
+    probe_tensors = build_probe_tensors()
     prov = register_group(group, family)
     if group != "n":
-        for desc, fn in hit_probe_cases(family):
+        for desc, fn in hit_probe_cases(family, probe_tensors):
             try:
                 prov["hit_verification"][desc] = verify_hit(desc, fn)
             except Exception as e:
                 prov["hit_verification"][desc] = {
                     "fn": desc, "error": f"{type(e).__name__}: {e}"}
-    cases, build_errors = family_cases(family)
     for name, err in build_errors.items():
         print(f"[{family}/{group}] BUILD-SKIP {name}: {err['type']}: "
               f"{err['message'][:120]}", flush=True)
