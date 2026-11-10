@@ -1,0 +1,10 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+Traceback (most recent call last):
+  File "/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/repro_flaggems_full_enable.py", line 55, in <module>
+    sys.exit(main())
+  File "/workspace/flag-fixes/fixes/flaggems-selective-enable/tests/repro_flaggems_full_enable.py", line 22, in main
+    from flagscale.train.utils.flaggems import enable_flaggems
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/xpytorch_import_hook.py", line 141, in _custom_import
+    module = builtins.__origin__import__(
+ModuleNotFoundError: No module named 'flagscale'
