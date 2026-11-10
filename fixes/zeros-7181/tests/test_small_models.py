@@ -81,7 +81,7 @@ def register_group(group, model, include_override=None):
         "include": None,
         "registered_ops": [],
         "registered_keys": [],
-        "hits": {},
+        "registered_target_keys": {},
     }
     if group == "n":
         return prov
@@ -102,9 +102,15 @@ def register_group(group, model, include_override=None):
     except Exception as e:  # recording must not kill the run
         prov["record_error"] = f"{type(e).__name__}: {e}"
     keys = set(prov["registered_keys"])
-    prov["hits"] = {k: (k in keys) for k in HIT_KEYS_FOR_MODEL[model]}
+    # registered != called: this records which target keys are ENABLED in
+    # this process; actual call-path hits need separate (non-timed)
+    # verification evidence
+    prov["registered_target_keys"] = {
+        k: (k in keys) for k in HIT_KEYS_FOR_MODEL[model]
+    }
     if group == "f_target" and include_override is None:
-        missing = [k for k, v in prov["hits"].items() if not v]
+        missing = [k for k, v in prov["registered_target_keys"].items()
+                   if not v]
         if missing:
             _die(f"f_target missing expected registrations: {missing}")
     return prov
@@ -262,8 +268,26 @@ DEVICE = "cuda"
 
 # ---------------------------------------------------------------- compare ---
 
+INTER_KEYS = ("u", "v", "h", "out", "loss", "conv", "act")
+
+
 def _to64_stats(val, ref, atol, rtol):
-    """max abs err / relative L2 / allclose pass, complex split real/imag."""
+    """Structural checks FIRST (shape/dtype must match exactly — no
+    broadcasting, dtype must not be silently upcast), then float64 stats
+    with complex split real/imag."""
+    if not isinstance(ref, torch.Tensor) or not isinstance(val, torch.Tensor):
+        return {"pass": False, "fail": "non-tensor checkpoint"}
+    if val.shape != ref.shape:
+        return {
+            "pass": False,
+            "fail": f"shape mismatch val={tuple(val.shape)} "
+                    f"ref={tuple(ref.shape)}",
+        }
+    if val.dtype != ref.dtype:
+        return {
+            "pass": False,
+            "fail": f"dtype mismatch val={val.dtype} ref={ref.dtype}",
+        }
     if ref.is_complex():
         vr, rr = val.real.to(torch.float64), ref.real.to(torch.float64)
         vi, ri = val.imag.to(torch.float64), ref.imag.to(torch.float64)
@@ -275,7 +299,7 @@ def _to64_stats(val, ref, atol, rtol):
     rel2_den = 0.0
     ok = True
     worst_flat = 0
-    worst_tensor = ""
+    worst_part = ""
     for pi, (v, r) in enumerate(parts):
         d = (v - r).abs()
         ma = float(d.max().item()) if d.numel() else 0.0
@@ -291,21 +315,27 @@ def _to64_stats(val, ref, atol, rtol):
             idx = int(d.argmax().item())
             if ma == max_abs:
                 worst_flat = idx
-                worst_tensor = f"part{pi}"
+                worst_part = f"part{pi}"
     rel2 = (rel2_num ** 0.5) / max(rel2_den ** 0.5, 1e-30)
     return {
         "max_abs": max_abs,
         "rel_l2": rel2,
         "pass": ok,
         "worst_flat_index": worst_flat,
-        "worst_part": worst_tensor,
+        "worst_part": worst_part,
     }
 
 
 def _grad_pair_check(ref_g, val_g, tier, out, key):
-    """Hard existence rule: native has a finite grad -> fix group must too."""
+    """Hard rule: gradients expected to participate in the loss graph must
+    exist and be finite in BOTH groups. A missing/non-finite NATIVE grad
+    invalidates the reference experiment (recorded as ref-invalid failure),
+    never a skip-as-pass."""
     if ref_g is None:
-        out[key] = {"skipped": "ref grad absent"}
+        out[key] = {
+            "pass": False,
+            "fail": "reference grad absent (ref experiment invalid)",
+        }
         return
     if val_g is None:
         out[key] = {
@@ -314,7 +344,10 @@ def _grad_pair_check(ref_g, val_g, tier, out, key):
         }
         return
     if not bool(torch.isfinite(ref_g).all().item()):
-        out[key] = {"skipped": "ref grad not finite"}
+        out[key] = {
+            "pass": False,
+            "fail": "reference grad non-finite (ref experiment invalid)",
+        }
         return
     if not bool(torch.isfinite(val_g).all().item()):
         out[key] = {"pass": False, "fail": "fix grad non-finite"}
@@ -322,58 +355,124 @@ def _grad_pair_check(ref_g, val_g, tier, out, key):
     out[key] = _to64_stats(val_g, ref_g, tier["atol"], tier["rtol"])
 
 
-def do_compare(args):
-    ref = torch.load(args.ref, weights_only=True)
-    val = torch.load(args.val, weights_only=True)
-    thr = sm.read_json(args.thresholds)
-    tiers = thr[args.dtype]
+def _check_key_sets(rs, vs, vres, prefix):
+    """The fix group must carry exactly the same checkpoint key sets as the
+    reference (missing or extra keys both fail)."""
+    ok = True
+    for sect in ("grads", "params_after"):
+        rks, vks = set(rs[sect].keys()), set(vs.get(sect, {}).keys())
+        if rks != vks:
+            vres[f"{prefix}.{sect}.keys"] = {
+                "pass": False,
+                "fail": f"{sect} key set mismatch "
+                        f"missing={sorted(rks - vks)} extra={sorted(vks - rks)}",
+            }
+            ok = False
+    return ok
+
+
+def _check_train_structure(rt_, vt_, vres):
+    """Steps count, step-ID sequence (strictly 0..n-1, same order, no
+    duplicates) and per-step key sets must match; returns ok flag."""
+    ok = True
+    rl, vl = rt_["losses"], vt_["losses"]
+    if len(rl) != len(vl):
+        vres["train.length"] = {
+            "pass": False,
+            "fail": f"losses length ref={len(rl)} val={len(vl)}",
+        }
+        ok = False
+    rids = [s["step"] for s in rt_["steps"]]
+    vids = [s["step"] for s in vt_["steps"]]
+    if rids != list(range(len(rids))):
+        vres["train.ref_step_ids"] = {
+            "pass": False,
+            "fail": f"reference step IDs not 0..n-1: {rids[:5]}...",
+        }
+        ok = False
+    if rids != vids:
+        vres["train.step_ids"] = {
+            "pass": False,
+            "fail": f"step ID sequence mismatch ref={rids[:5]}... "
+                    f"val={vids[:5]}... (len r={len(rids)} v={len(vids)})",
+        }
+        ok = False
+    if len(rids) != len(set(rids)) or len(vids) != len(set(vids)):
+        vres["train.step_ids_dup"] = {
+            "pass": False, "fail": "duplicate step IDs"}
+        ok = False
+    for i, (rs_, vs_) in enumerate(zip(rt_["steps"], vt_["steps"])):
+        if set(rs_["grads"].keys()) != set(vs_["grads"].keys()):
+            vres[f"train.step{i}.grad.keys"] = {
+                "pass": False, "fail": "grad key set mismatch"}
+            ok = False
+        if set(rs_["params"].keys()) != set(vs_["params"].keys()):
+            vres[f"train.step{i}.param.keys"] = {
+                "pass": False, "fail": "param key set mismatch"}
+            ok = False
+    return ok
+
+
+def compare_dumps(ref, val, ref_task, val_task, thresholds, dtype):
+    """Pure comparator: returns the verdict dict. No file IO, no exit —
+    reusable for re-scoring saved dumps and for negative self-tests."""
+    tiers = thresholds[dtype]
     inter_t, grad_t = tiers["inter"], tiers["grad"]
     out = {
-        "ref": args.ref,
-        "val": args.val,
-        "dtype": args.dtype,
+        "dtype": dtype,
         "tiers": tiers,
+        "comparator": "structural-checks-v2 (shape/dtype/keys/step-ids/"
+                      "ref-validity)",
         "variants": {},
         "input_identity": {},
         "first_fail": None,
         "pass": True,
     }
+
+    def fail(msg):
+        out["pass"] = False
+        if out["first_fail"] is None:
+            out["first_fail"] = msg
+
     # serialized inputs must be bit-identical across groups
-    rt = torch.load(args.ref_task, weights_only=True)
-    vt = torch.load(args.val_task, weights_only=True)
-    same_x = bool(torch.equal(rt["X"], vt["X"]))
-    same_p = all(torch.equal(rt["params"][k], vt["params"][k])
-                 for k in rt["params"])
-    same_t = bool(torch.equal(rt["target"], vt["target"]))
+    same_x = bool(torch.equal(ref_task["X"], val_task["X"]))
+    same_p = all(torch.equal(ref_task["params"][k], val_task["params"][k])
+                 for k in ref_task["params"])
+    same_t = bool(torch.equal(ref_task["target"], val_task["target"]))
     out["input_identity"] = {"X": same_x, "params": same_p, "target": same_t}
     if not (same_x and same_p and same_t):
-        out["pass"] = False
-        out["first_fail"] = "serialized inputs differ across groups"
-        sm.write_json(args.out, out)
-        sys.exit(1)
+        fail("serialized inputs differ across groups")
+        return out
 
     for variant in ref["single"]:
         if variant not in val.get("single", {}):
-            out["pass"] = False
-            out["first_fail"] = f"variant {variant} missing in val"
+            fail(f"variant {variant} missing in val")
             continue
         rs, vs = ref["single"][variant], val["single"][variant]
         vres = {}
-        for name in ("u", "v", "h", "out", "loss"):
-            if name in rs and name in vs:
+        # intermediates: expected key set derived from the reference; every
+        # expected key must exist in the val dump (no silent skips)
+        expected = [k for k in INTER_KEYS if k in rs]
+        for name in expected:
+            if name not in vs:
+                vres[name] = {"pass": False, "fail": "missing in val"}
+                fail(f"single/{variant}/{name}")
+            else:
                 vres[name] = _to64_stats(vs[name], rs[name],
                                          inter_t["atol"], inter_t["rtol"])
-        for name in ("u", "v", "h", "out", "loss"):
-            r = vres.get(name)
-            if r and not r["pass"] and out["first_fail"] is None:
-                out["first_fail"] = f"single/{variant}/{name}"
+                if not vres[name]["pass"]:
+                    fail(f"single/{variant}/{name}")
+        _check_key_sets(rs, vs, vres, "single")
+        if not vres.get("single.grads.keys", {}).get("pass", True) or \
+                not vres.get("single.params_after.keys", {}).get("pass",
+                                                                 True):
+            fail(f"single/{variant}/key-sets")
         # grads + updated params (grad tier)
         for gname, rg in rs["grads"].items():
             _grad_pair_check(rg, vs["grads"].get(gname), grad_t, vres,
                              f"grad.{gname}")
-            r = vres.get(f"grad.{gname}")
-            if r and r.get("pass") is False and out["first_fail"] is None:
-                out["first_fail"] = f"single/{variant}/grad.{gname}"
+            if not vres[f"grad.{gname}"].get("pass"):
+                fail(f"single/{variant}/grad.{gname}")
         for pname, rp in rs["params_after"].items():
             vp = vs["params_after"].get(pname)
             if vp is None:
@@ -382,37 +481,40 @@ def do_compare(args):
             else:
                 vres[f"params_after.{pname}"] = _to64_stats(
                     vp, rp, grad_t["atol"], grad_t["rtol"])
-            r = vres[f"params_after.{pname}"]
-            if not r.get("pass") and out["first_fail"] is None:
-                out["first_fail"] = f"single/{variant}/params_after.{pname}"
+            if not vres[f"params_after.{pname}"].get("pass"):
+                fail(f"single/{variant}/params_after.{pname}")
         # training
         rt_, vt_ = ref["train"].get(variant), val["train"].get(variant)
         if rt_ is None or vt_ is None:
-            out["pass"] = False
-            out["first_fail"] = out["first_fail"] or (
-                f"train/{variant} missing"
-                + ("" if vt_ is None else " in ref"))
+            vres["train.missing"] = {
+                "pass": False,
+                "fail": "train missing in " + ("val" if rt_ is not None
+                                               else "ref"),
+            }
+            fail(f"train/{variant} missing")
         else:
+            struct_ok = _check_train_structure(rt_, vt_, vres)
+            if not struct_ok:
+                fail(f"train/{variant}/structure")
             rl, vl = rt_["losses"], vt_["losses"]
-            if len(rl) != len(vl):
-                out["pass"] = False
-                out["first_fail"] = out["first_fail"] or "train length"
-            else:
+            if len(rl) == len(vl) and rl:
                 lt = _to64_stats(
                     torch.tensor(vl, dtype=torch.float64),
                     torch.tensor(rl, dtype=torch.float64),
                     inter_t["atol"], inter_t["rtol"],
                 )
                 vres["train.losses"] = lt
-                if not lt["pass"] and out["first_fail"] is None:
-                    out["first_fail"] = f"train/{variant}/losses"
+                if not lt["pass"]:
+                    fail(f"train/{variant}/losses")
             for rs_, vs_ in zip(rt_["steps"], vt_["steps"]):
+                if set(rs_["grads"].keys()) != set(vs_["grads"].keys()):
+                    continue  # structure check already failed this step
                 for gname, rg in rs_["grads"].items():
                     key = f"train.step{rs_['step']}.grad.{gname}"
                     _grad_pair_check(rg, vs_["grads"].get(gname), grad_t,
                                      vres, key)
-                    if not vres[key].get("pass") and out["first_fail"] is None:
-                        out["first_fail"] = key
+                    if not vres[key].get("pass"):
+                        fail(key)
                 for pname, rp in rs_["params"].items():
                     key = f"train.step{rs_['step']}.param.{pname}"
                     vp = vs_["params"].get(pname)
@@ -421,12 +523,24 @@ def do_compare(args):
                     else:
                         vres[key] = _to64_stats(vp, rp, grad_t["atol"],
                                                 grad_t["rtol"])
-                    if not vres[key].get("pass") and out["first_fail"] is None:
-                        out["first_fail"] = key
+                    if not vres[key].get("pass"):
+                        fail(key)
         for k, r in vres.items():
             if isinstance(r, dict) and r.get("pass") is False:
                 out["pass"] = False
         out["variants"][variant] = vres
+    return out
+
+
+def do_compare(args):
+    ref = torch.load(args.ref, weights_only=True)
+    val = torch.load(args.val, weights_only=True)
+    thr = sm.read_json(args.thresholds)
+    rt = torch.load(args.ref_task, weights_only=True)
+    vt = torch.load(args.val_task, weights_only=True)
+    out = compare_dumps(ref, val, rt, vt, thr, args.dtype)
+    out["ref"] = args.ref
+    out["val"] = args.val
     sm.write_json(args.out, out)
     print(
         f"COMPARE {os.path.basename(args.ref)} vs "
