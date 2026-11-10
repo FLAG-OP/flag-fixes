@@ -1,0 +1,100 @@
+schema_version: 1
+template_version: 1
+id: adamw-fused
+title: AdamW fused=True 单内核更新（BGE-M3 形状 2.4x，launch 4x 减少）
+owner: null
+status: draft
+deployable: false
+source:
+  kind: local
+  path: fixes/adamw-fused
+  commit: null
+  repository: null
+target:
+  package: flagscale
+  baseline_version: null
+  baseline_commit: 89f342e690053e07dda845f1365089ec00464e09
+patches:
+- path: patches/adamw-fused.patch
+  sha256: dbd6e8d8db9f78b8bffe7161a62c130d7a1ed3569eda4b81ce8a64a047e2b58d
+targets:
+- path: flagscale/train/train_retrieval.py
+  before_sha256: 5ee57573698129e1a2e3d5f7cdb6b5e8768fe9fc60c59369c95cc52eb51127df
+  after_sha256: 96fc52a9c5f93205479c0026817f6cbf989aa958aabdf5d1cf1b43b34d5c84bf
+  after_source: src/flagscale/train/train_retrieval.py
+backends:
+- kunlunxin
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - 根因：KunlunXIN 厂商 torch 把 foreach AdamW 也分解成逐参数 kernel
+    （BGE-M3 形状 336 张量：stock 3,024 launches vs foreach 2,688，device 时间
+    26.9/25.7 ms 几乎不变），只有 fused=True 走单支多张量 kernel。平台文档
+    差距表 "other" 104.3 ms/58.1x 里 AdamW 占 41.8 ms（problem29/ATTRIBUTION.md
+    §二，重建负载 kernel 级与文档对照偏差 <=10%）。
+  - 2026-11-10 本地 KunlunXIN 环境（P800/XPU3，torch 2.9.0+cu129，
+    torch_xmlir shim）实测：build_optimizer 27.6 -> 11.5 ms/步（2.4x）、
+    launches 2,688 -> 672、device 25.7 -> 8.9 ms（336 张量 bf16 参数集）。
+    归因口径（389 张量真实参数集）41.8 -> 17.3 ms（2.4x）。原始数据
+    results/bench-{base,fixed}-2026-11-10.json。
+  - 数值：5 步同梯度序列 vs stock AdamW，bf16 max|diff| 3.05e-05（1 ulp）、
+    fp32 2.98e-08，allclose 全通过；exit 1（基线无 fused 选择）-> 0。
+  - 选择护栏：DTensor（FSDP2 分片）与 CPU/非支持 dtype 参数强制 stock；
+    FLAGSCALE_ADAMW_FUSED=0 强制关闭、=1 表达意愿（护栏仍生效）、auto（默认）
+    自动判断；构造期 torch 拒绝 fused kwarg 时回退 stock 并记 log。
+    tests/test_adamw_selection.py 9 例矩阵 exit 0。
+  - 复现：tests/repro_adamw_unfused.py 基线 exit 1（fused=False，31.5 ms/步），
+    修复后 exit 0（fused=True，11.0 ms，ratio 0.354）。
+  - 范围限制：只改 flagscale/train/train_retrieval.py 的 AdamW 分支；
+    Adafactor 与 scheduler 不动；clip_grad_norm_ 的逐参数 cast+reduce
+    （9.8 ms）未覆盖（foreach 实测只省 ~2 ms，需厂商 multi-tensor reduce）；
+    真实 FSDP2/DTensor 环境未测（无多卡 dist 环境）。
+  - hardware_status 保持 unverified：平台整模型训练（含 reranker FSDP2）未执行
+    （本机无 /flagos-retrieval-* 模型/数据与平台 runner）；deployable=false、
+    owner=null。预期整步收益 ~25 ms 墙钟（clip+optimizer 62 -> ~37 ms，
+    平台文档口径），为 kernel 实测推算、非平台实测。
+  commands:
+  - name: adamw-unfused-repro
+    script: tests/repro_adamw_unfused.py
+    level: repro
+    timeout_seconds: 900
+    env:
+      PYTHONPATH: '{target}'
+  - name: adamw-numerics
+    script: tests/test_adamw_numerics.py
+    level: regression
+    timeout_seconds: 1800
+    env:
+      PYTHONPATH: '{target}'
+  - name: adamw-selection-matrix
+    script: tests/test_adamw_selection.py
+    level: dispatch
+    timeout_seconds: 1800
+    env:
+      PYTHONPATH: '{target}'
+  - name: adamw-impl-benchmark
+    script: tests/bench_adamw_impls.py
+    args:
+    - --iters
+    - '30'
+    level: benchmark
+    timeout_seconds: 1800
+    env:
+      PYTHONPATH: '{target}'
+notes:
+- 目标包是 flagscale（不是 flag_gems）；FlagScale 仓库布局是根下 flagscale/
+  包，verify 的 PYTHONPATH 预置 target/src 不存在但无害，命令 env 里用
+  PYTHONPATH={target} 保证 import flagscale 生效。
+- fused AdamW 是 torch 官方实现路径（非厂商 hack）；KunlunXIN 上 foreach
+  已实测无融合收益，因此选 fused 而不是 foreach。A100/CUDA 上 stock 默认
+  foreach 本就有 `_foreach_*`，auto 护栏下同样会选 fused（更少的 kernel），
+  但未在其他后端实测，backends 只登记 kunlunxin。
+- FSDP2/DTensor 参数路径保持 stock：fused 不感知 DTensor 分片；护栏按
+  type(param).__module__ 前缀判断，单测以替身覆盖，真实 DTensor 未测。
+- 本修复是性能修复，不改变 lr/wd/dtype 语义；无 requires/conflicts。
+- 普通 CI（无设备 runner）只做 validate / pytest / compileall，不执行四个
+  硬件脚本；设备缺失时脚本退出码 2，跳过不算通过。
+installation_status: source-checked
+upstream_issue: null

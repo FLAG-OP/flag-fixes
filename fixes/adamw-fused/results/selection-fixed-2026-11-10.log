@@ -1,0 +1,18 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+ok   auto, dtensor-like (FSDP2 guard): kwargs={} expected={}
+ok   auto, empty parameter list: kwargs={} expected={}
+ok   auto, cpu params: kwargs={} expected={}
+FLAGSCALE_ADAMW_FUSED requested but parameters are DTensors; keeping stock AdamW
+ok   forced 1, dtensor-like (still guarded): kwargs={} expected={}
+FLAGSCALE_ADAMW_FUSED requested but parameters are not CUDA fp32/bf16/fp16; keeping stock AdamW
+ok   forced 1, cpu params: kwargs={} expected={}
+ok   forced 0: kwargs={} expected={}
+ok   forced 0, empty list: kwargs={} expected={}
+FLAGSCALE_ADAMW_FUSED='nonsense' is not recognised; keeping stock AdamW
+ok   unrecognised value: kwargs={} expected={}
+ok   forced 1, cuda bf16: kwargs={'fused': True} expected={'fused': True}
+ok   auto, cuda bf16: kwargs={'fused': True} expected={'fused': True}
+ok   build_optimizer honours 0 on cuda: fused=None
+ok   build_optimizer auto on cuda: fused=True
+PASS: selection matrix matches the documented behaviour

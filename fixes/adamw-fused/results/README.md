@@ -1,0 +1,36 @@
+# 结果
+
+本目录保存小型 JSON / 日志，均为 2026-11-10 在本机（P800 OAM / XPU3）实测。
+没有凭据、机器备份或模型缓存。全部文件合计 < 60 KB。
+
+## 文件清单
+
+| 文件 | 内容 |
+| --- | --- |
+| `bench-base-2026-11-10.json` / `.log` | 基线树 `tests/bench_adamw_impls.py --iters 30`：stock 31.2 ms/3,024 launches、foreach 27.5 ms/2,688、build_optimizer（foreach）27.6 ms/2,688 |
+| `bench-fixed-2026-11-10.json` / `.log` | 修复树同口径：build_optimizer（fused）**11.5 ms / 672 launches**、device 8.9 ms |
+| `repro-base-2026-11-10.log` | `tests/repro_adamw_unfused.py` 在基线：**exit 1**（fused=False，31.5 ms/步） |
+| `repro-fixed-2026-11-10.log` | 同一脚本修复后：**exit 0**（fused=True，11.0 ms，ratio 0.354） |
+| `numerics-base-2026-11-10.log` | `tests/test_adamw_numerics.py` 在基线：exit 1（基线不选 fused） |
+| `numerics-fixed-2026-11-10.log` | 修复后：exit 0（bf16 max\|diff\| 3.05e-05、fp32 2.98e-08，allclose 全通过） |
+| `selection-base-2026-11-10.log` | `tests/test_adamw_selection.py` 在基线：exit 1（`adamw_impl_kwargs` 不存在） |
+| `selection-fixed-2026-11-10.log` | 修复后：exit 0（9 例选择矩阵全对，含 DTensor/CPU/env 护栏） |
+
+## 判定
+
+| 项目 | 判定 |
+| --- | --- |
+| 复现（exit 1 → exit 0） | ✅ |
+| 数值回归（bf16/fp32 allclose） | ✅（fixed exit 0；基线 exit 1 是"未选 fused"的预期失败） |
+| 选择矩阵 | ✅（fixed exit 0） |
+| 性能前后对照（同参数集/同梯度/同计时） | ✅ 2.4× 墙钟、4× launch |
+| 平台整模型验收 | ❌ not-run（无平台 runner/模型/数据），`hardware_status=unverified` |
+
+## 口径说明
+
+- 参数集为 **336 张量的 BGE-M3 transformer 块形状**（不含 250002×1024 embedding，
+  它对逐参数/融合的差异没有贡献）；归因报告里的 41.8→17.3 ms 是 389 张量
+  真实参数集（含 embedding），两套数字都保留并注明。
+- `--iters 30`、median-of-N、每步 `torch.cuda.synchronize()`。
+- 日志保留了厂商栈的环境告警（`SYMBOL_REWRITE`、XCCL 加载），grep 过滤后
+  的关键行见 WORKFLOW.md 表格。
