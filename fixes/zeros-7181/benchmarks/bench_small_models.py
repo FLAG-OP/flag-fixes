@@ -222,7 +222,7 @@ def model_cases():
         # Model A medium: B=8, L=256, D=64, H=64, out=8 (A_CFGS["large"])
         task_a = sm.gen_task("a", "large", 0, "fp32")
         for variant in ("contig", "conj"):
-            x, params, _ = sm.to_device(task_a, DEVICE)
+            x, params, tgt_a = sm.to_device(task_a, DEVICE)
             x0 = x.detach().clone()
             p0 = {k: v.detach().clone() for k, v in params.items()}
 
@@ -232,19 +232,22 @@ def model_cases():
                     p.data.copy_(p0[k])
                 sm.zero_grads(x, params)
 
-            def fwd(x=x, params=params, v=variant):
+            def fwd(x=x, params=params, v=variant, tg=tgt_a):
+                sm.set_target(tg)  # per-model target (shared module global)
                 sm.zero_grads(x, params)
                 out, loss, _ = sm.forward("a", "large", x, params, v)
                 return out, loss
             cases.append((f"modelA/{variant}/fwd", fwd, restore))
 
-            def fwdbwd(x=x, params=params, v=variant):
+            def fwdbwd(x=x, params=params, v=variant, tg=tgt_a):
+                sm.set_target(tg)
                 sm.zero_grads(x, params)
                 out, loss, _ = sm.forward("a", "large", x, params, v)
                 loss.backward()
             cases.append((f"modelA/{variant}/fwd+bwd", fwdbwd, restore))
 
-            def step(x=x, params=params, v=variant):
+            def step(x=x, params=params, v=variant, tg=tgt_a):
+                sm.set_target(tg)
                 sm.zero_grads(x, params)
                 out, loss, _ = sm.forward("a", "large", x, params, v)
                 loss.backward()
@@ -260,7 +263,7 @@ def model_cases():
     try:
         # Model B medium: N=8, Cin=3, H=W=32, Cout=32 (B_CFGS["large"])
         task_b = sm.gen_task("b", "large", 0, "fp32")
-        x, params, _ = sm.to_device(task_b, DEVICE)
+        x, params, tgt_b = sm.to_device(task_b, DEVICE)
         x0b = x.detach().clone()
         p0b = {k: v.detach().clone() for k, v in params.items()}
 
@@ -270,15 +273,18 @@ def model_cases():
                 p.data.copy_(p0[k])
             sm.zero_grads(x, params)
 
-        def b_fwd(x=x, params=params):
+        def b_fwd(x=x, params=params, tg=tgt_b):
+            sm.set_target(tg)  # per-model target (shared module global)
             sm.zero_grads(x, params)
             out, loss, _ = sm.forward("b", "large", x, params, "default")
             return out, loss
-        def b_fwdbwd(x=x, params=params):
+        def b_fwdbwd(x=x, params=params, tg=tgt_b):
+            sm.set_target(tg)
             sm.zero_grads(x, params)
             out, loss, _ = sm.forward("b", "large", x, params, "default")
             loss.backward()
-        def b_step(x=x, params=params):
+        def b_step(x=x, params=params, tg=tgt_b):
+            sm.set_target(tg)
             sm.zero_grads(x, params)
             out, loss, _ = sm.forward("b", "large", x, params, "default")
             loss.backward()
