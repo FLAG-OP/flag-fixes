@@ -1,0 +1,11 @@
+OK  control/identical: pass=True
+OK  neg/wrong-dtype-same-values: pass=False first_fail=single/contig/out
+OK  neg/broadcastable-wrong-shape: pass=False first_fail=single/contig/out
+OK  neg/missing-trailing-checkpoint: pass=False first_fail=train/contig/structure
+OK  neg/duplicate-step-id: pass=False first_fail=train/contig/structure
+OK  neg/out-of-order-step-ids: pass=False first_fail=train/contig/structure
+OK  neg/missing-grad-key: pass=False first_fail=single/contig/key-sets
+OK  neg/ref-grad-nonfinite: pass=False first_fail=single/contig/grad.x
+OK  neg/fix-grad-nonfinite: pass=False first_fail=single/contig/grad.W
+OK  neg/value-beyond-threshold: pass=False first_fail=single/contig/out
+COMPARATOR NEGATIVE SELFTEST: PASS (10 cases)

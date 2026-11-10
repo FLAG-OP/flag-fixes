@@ -1,0 +1,16 @@
+/tmp/opencode/flagfix-e2ebase/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::mse_loss_backward(Tensor grad_output, Tensor self, Tensor target, int reduction) -> Tensor
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:8434
+       new kernel: registered at /tmp/opencode/flagfix-e2ebase/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+full-tensor grad_output, mean: max_abs=0.000e+00
+scalar grad_output, mean: mismatched=39/40
+elem0 fg/ref: -0.05527442693710327 -0.05527442693710327
+elem1 fg/ref: 0.0 0.0063459365628659725
+reduction=0 max_abs: 0.0
+reduction=2 max_abs: 0.0

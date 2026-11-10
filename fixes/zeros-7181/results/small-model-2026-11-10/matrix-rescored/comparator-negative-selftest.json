@@ -1,0 +1,77 @@
+{
+  "all_ok": true,
+  "n_cases": 10,
+  "cases": [
+    {
+      "case": "control/identical",
+      "expect_pass": true,
+      "got_pass": true,
+      "ok": true,
+      "first_fail": null
+    },
+    {
+      "case": "neg/wrong-dtype-same-values",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "single/contig/out"
+    },
+    {
+      "case": "neg/broadcastable-wrong-shape",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "single/contig/out"
+    },
+    {
+      "case": "neg/missing-trailing-checkpoint",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "train/contig/structure"
+    },
+    {
+      "case": "neg/duplicate-step-id",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "train/contig/structure"
+    },
+    {
+      "case": "neg/out-of-order-step-ids",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "train/contig/structure"
+    },
+    {
+      "case": "neg/missing-grad-key",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "single/contig/key-sets"
+    },
+    {
+      "case": "neg/ref-grad-nonfinite",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "single/contig/grad.x"
+    },
+    {
+      "case": "neg/fix-grad-nonfinite",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "single/contig/grad.W"
+    },
+    {
+      "case": "neg/value-beyond-threshold",
+      "expect_pass": false,
+      "got_pass": false,
+      "ok": true,
+      "first_fail": "single/contig/out"
+    }
+  ],
+  "comparator": "structural-checks-v2"
+}

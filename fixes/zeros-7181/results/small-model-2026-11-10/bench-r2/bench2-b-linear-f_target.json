@@ -1,0 +1,193 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "errors": {},
+  "family": "b-linear",
+  "group": "f_target",
+  "protocol": {
+    "blocks": 5,
+    "first_call_separate": true,
+    "hit_verification": "torch.profiler CUDA kernel-name capture on representative calls, outside timed regions",
+    "iters": 100,
+    "memory": "baseline recorded before timed window; peak within window (includes compile+warmup); delta is a lower bound under shared process residency",
+    "order": "seeded-random (seed 20261110)",
+    "p95": "quantile estimate of per-block mean per-iter time (5 blocks), not per-request tail latency",
+    "throughput": "calls_per_s = 1000 / ms_per_iter_median; samples_per_s = batch * calls_per_s (model cases only)",
+    "timing": "cuda events + synced wall clock",
+    "warmup": 20,
+    "zero_restore": "per-block restore timed as separate case"
+  },
+  "provenance": {
+    "family": "b-linear",
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "f_target",
+    "hit_verification": {
+      "conv2d/fp32": {
+        "cuda_kernels": [
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+          "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1} const&)::{lambda(int)#1})",
+          "conv2d_forward_kernel"
+        ],
+        "fn": "conv2d/fp32"
+      },
+      "linear/fp32": {
+        "cuda_kernels": [
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+          "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}>(at::TensorIteratorBase&, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1} const&)::{lambda(int)#1})",
+          "linear_kernel"
+        ],
+        "fn": "linear/fp32"
+      }
+    },
+    "include": [
+      "conv2d",
+      "linear",
+      "linear_backward"
+    ],
+    "registered_keys": [
+      "conv2d",
+      "conv2d.padding",
+      "linear",
+      "linear_backward"
+    ],
+    "registered_ops": [
+      "conv2d",
+      "linear",
+      "linear_backward"
+    ],
+    "registered_target_keys": {
+      "conv2d": true,
+      "linear": true,
+      "linear_backward": true
+    }
+  },
+  "results": {
+    "modelB/default/fwd": {
+      "block_device_ms": [
+        23.585599899291992,
+        23.354320526123047,
+        23.993240356445312,
+        23.509559631347656,
+        23.214439392089844
+      ],
+      "block_device_ms_cv_pct": 1.254420575925272,
+      "block_mean_p95_ms_per_iter": 0.24278588676452637,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        23.616371676325798,
+        23.382604122161865,
+        24.02279246598482,
+        23.534558713436127,
+        23.240056820213795
+      ],
+      "blocks": 5,
+      "calls_per_s": 4253.588819531096,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.23509559631347657,
+      "first_call": {
+        "device_ms": 0.4498000144958496,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.48473477363586426
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 2.64794921875,
+      "mem_baseline_reserved_mb": 264.0,
+      "mem_delta_alloc_mb": 3.05712890625,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 5.705078125,
+      "mem_peak_reserved_mb": 264.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 0,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.23534558713436127,
+      "warmup": 20
+    },
+    "modelB/default/fwd+bwd": {
+      "block_device_ms": [
+        116.049560546875,
+        116.02496337890625,
+        116.14911651611328,
+        116.14927673339844,
+        116.02543640136719
+      ],
+      "block_device_ms_cv_pct": 0.055343785749308,
+      "block_mean_p95_ms_per_iter": 1.1614938888549804,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        116.08158703893423,
+        116.04616604745388,
+        116.17087014019489,
+        116.17036629468203,
+        116.04764219373465
+      ],
+      "blocks": 5,
+      "calls_per_s": 861.7008072133782,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 1.16049560546875,
+      "first_call": {
+        "device_ms": 1.7929600477218628,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 1.8167337402701378
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 2.548828125,
+      "mem_baseline_reserved_mb": 264.0,
+      "mem_delta_alloc_mb": 4.626953125,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 7.17578125,
+      "mem_peak_reserved_mb": 264.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 1,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 1.1608158703893423,
+      "warmup": 20
+    },
+    "modelB/default/train-step": {
+      "block_device_ms": [
+        117.4751205444336,
+        117.37671661376953,
+        117.61055755615234,
+        117.53167724609375,
+        117.5129165649414
+      ],
+      "block_device_ms_cv_pct": 0.07271564369487704,
+      "block_mean_p95_ms_per_iter": 1.1766577377319336,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        117.50435456633568,
+        117.39987228065729,
+        117.63250641524792,
+        117.55296308547258,
+        117.534046061337
+      ],
+      "blocks": 5,
+      "calls_per_s": 850.9702841452054,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 1.175129165649414,
+      "first_call": {
+        "device_ms": 3608.387939453125,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 3608.463034965098
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 0.408203125,
+      "mem_baseline_reserved_mb": 264.0,
+      "mem_delta_alloc_mb": 260.39990234375,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 260.80810546875,
+      "mem_peak_reserved_mb": 264.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 2,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 1.17534046061337,
+      "warmup": 20
+    }
+  },
+  "torch_version": "2.10.0"
+}

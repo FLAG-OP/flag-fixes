@@ -1,0 +1,519 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "errors": {},
+  "family": "zeros",
+  "group": "n",
+  "protocol": {
+    "blocks": 5,
+    "first_call_separate": true,
+    "hit_verification": "torch.profiler CUDA kernel-name capture on representative calls, outside timed regions",
+    "iters": 100,
+    "memory": "baseline recorded before timed window; peak within window (includes compile+warmup); delta is a lower bound under shared process residency",
+    "order": "seeded-random (seed 20261110)",
+    "p95": "quantile estimate of per-block mean per-iter time (5 blocks), not per-request tail latency",
+    "throughput": "calls_per_s = 1000 / ms_per_iter_median; samples_per_s = batch * calls_per_s (model cases only)",
+    "timing": "cuda events + synced wall clock",
+    "warmup": 20,
+    "zero_restore": "per-block restore timed as separate case"
+  },
+  "provenance": {
+    "family": "zeros",
+    "flag_gems_path": null,
+    "group": "n",
+    "hit_verification": {},
+    "include": null,
+    "registered_keys": [],
+    "registered_ops": [],
+    "registered_target_keys": {}
+  },
+  "results": {
+    "zero_/c128/n1024": {
+      "block_device_ms": [
+        0.3916400074958801,
+        0.39476001262664795,
+        0.3951199948787689,
+        0.39711999893188477,
+        0.3962399959564209
+      ],
+      "block_device_ms_cv_pct": 0.527906707857251,
+      "block_mean_p95_ms_per_iter": 0.003977360010147094,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        0.40568411350250244,
+        0.4080934450030327,
+        0.40821824222803116,
+        0.41024480015039444,
+        0.4093050956726074
+      ],
+      "blocks": 5,
+      "calls_per_s": 253087.6728490597,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.003951199948787689,
+      "first_call": {
+        "device_ms": 0.014399999752640724,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.030608847737312317
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 7,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.004082182422280312,
+      "warmup": 20
+    },
+    "zero_/c128/n1048576": {
+      "block_device_ms": [
+        0.5375199913978577,
+        0.5371999740600586,
+        0.5368000268936157,
+        0.5355600118637085,
+        0.5376399755477905
+      ],
+      "block_device_ms_cv_pct": 0.15631397465892954,
+      "block_mean_p95_ms_per_iter": 0.005377239644527435,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        0.5508856847882271,
+        0.5505215376615524,
+        0.549868680536747,
+        0.5488721653819084,
+        0.5509704351425171
+      ],
+      "blocks": 5,
+      "calls_per_s": 186150.4185196034,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.005371999740600586,
+      "first_call": {
+        "device_ms": 0.015320000238716602,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.032252632081508636
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 11,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.005505215376615524,
+      "warmup": 20
+    },
+    "zero_/c128/n65536": {
+      "block_device_ms": [
+        0.4052799940109253,
+        0.3989199995994568,
+        0.40143999457359314,
+        0.4002799987792969,
+        0.40119999647140503
+      ],
+      "block_device_ms_cv_pct": 0.5907958989057426,
+      "block_mean_p95_ms_per_iter": 0.004079679936170578,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        0.4189293831586838,
+        0.41170045733451843,
+        0.41470490396022797,
+        0.4132632166147232,
+        0.4141125828027725
+      ],
+      "blocks": 5,
+      "calls_per_s": 249252.24546238838,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.00401199996471405,
+      "first_call": {
+        "device_ms": 0.014120000414550304,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.03060232847929001
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 9,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.004141125828027725,
+      "warmup": 20
+    },
+    "zero_/c64/n1024": {
+      "block_device_ms": [
+        0.40004000067710876,
+        0.4022800028324127,
+        0.39724001288414,
+        0.4002400040626526,
+        0.400160014629364
+      ],
+      "block_device_ms_cv_pct": 0.44897356239176933,
+      "block_mean_p95_ms_per_iter": 0.004037080019712448,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        0.4136543720960617,
+        0.41826721280813217,
+        0.41047390550374985,
+        0.41338056325912476,
+        0.4131374880671501
+      ],
+      "blocks": 5,
+      "calls_per_s": 249900.0308479645,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.0040016001462936405,
+      "first_call": {
+        "device_ms": 0.014560000039637089,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.030960887670516968
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 1,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.0041338056325912476,
+      "warmup": 20
+    },
+    "zero_/c64/n1048576": {
+      "block_device_ms": [
+        0.399399995803833,
+        0.39719998836517334,
+        0.3930799961090088,
+        0.3980399966239929,
+        0.39287999272346497
+      ],
+      "block_device_ms_cv_pct": 0.7504822735771888,
+      "block_mean_p95_ms_per_iter": 0.004003519952297211,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        0.4135472699999809,
+        0.41058193892240524,
+        0.40660612285137177,
+        0.41094981133937836,
+        0.4063127562403679
+      ],
+      "blocks": 5,
+      "calls_per_s": 251762.34372913197,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.003971999883651734,
+      "first_call": {
+        "device_ms": 0.014639999717473984,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.03806035965681076
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 5,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.004105819389224052,
+      "warmup": 20
+    },
+    "zero_/c64/n65536": {
+      "block_device_ms": [
+        0.6669999957084656,
+        0.6436399817466736,
+        0.4445599913597107,
+        0.4453999996185303,
+        0.42396000027656555
+      ],
+      "block_device_ms_cv_pct": 22.7924565335396,
+      "block_mean_p95_ms_per_iter": 0.0068335200548171994,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        0.6901463493704796,
+        0.6599258631467819,
+        0.45907776802778244,
+        0.46023447066545486,
+        0.43835677206516266
+      ],
+      "blocks": 5,
+      "calls_per_s": 224517.2880234543,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.004453999996185303,
+      "first_call": {
+        "device_ms": 0.1846799999475479,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 7041.019916534424
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 3,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.004602344706654549,
+      "warmup": 20
+    },
+    "zeros/c128/n1024": {
+      "block_device_ms": [
+        1.0590800046920776,
+        1.0545200109481812,
+        1.0530400276184082,
+        1.0589200258255005,
+        1.053760051727295
+      ],
+      "block_device_ms_cv_pct": 0.27567406198471506,
+      "block_mean_p95_ms_per_iter": 0.010591919898986817,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        1.0739481076598167,
+        1.0677669197320938,
+        1.0665664449334145,
+        1.0722335427999496,
+        1.0675247758626938
+      ],
+      "blocks": 5,
+      "calls_per_s": 94829.87421934657,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.010545200109481812,
+      "first_call": {
+        "device_ms": 0.02443999983370304,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.042049214243888855
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.015625,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.1005859375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 6,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.010677669197320938,
+      "warmup": 20
+    },
+    "zeros/c128/n1048576": {
+      "block_device_ms": [
+        1.0738400220870972,
+        1.0740400552749634,
+        1.0725599527359009,
+        1.0711599588394165,
+        1.072119951248169
+      ],
+      "block_device_ms_cv_pct": 0.1123811605666828,
+      "block_mean_p95_ms_per_iter": 0.010741800785064697,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        1.087627373635769,
+        1.0873200371861458,
+        1.0854024440050125,
+        1.0844310745596886,
+        1.085350289940834
+      ],
+      "blocks": 5,
+      "calls_per_s": 93234.881411448,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.01072559952735901,
+      "first_call": {
+        "device_ms": 0.02768000029027462,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.04672538489103317
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 16.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 67.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 10,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.010854024440050125,
+      "warmup": 20
+    },
+    "zeros/c128/n65536": {
+      "block_device_ms": [
+        1.0626399517059326,
+        1.059559941291809,
+        1.0598399639129639,
+        1.0612800121307373,
+        1.0569599866867065
+      ],
+      "block_device_ms_cv_pct": 0.20040870275867584,
+      "block_mean_p95_ms_per_iter": 0.010635919094085693,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        1.0779444128274918,
+        1.0759057477116585,
+        1.0730177164077759,
+        1.0742750018835068,
+        1.0712658986449242
+      ],
+      "blocks": 5,
+      "calls_per_s": 94353.86794700279,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.01059839963912964,
+      "first_call": {
+        "device_ms": 0.12668000161647797,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.15044957399368286
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 1.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 52.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 8,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.010742750018835068,
+      "warmup": 20
+    },
+    "zeros/c64/n1024": {
+      "block_device_ms": [
+        1.0736000537872314,
+        1.0704799890518188,
+        1.0715199708938599,
+        1.067080020904541,
+        1.0701600313186646
+      ],
+      "block_device_ms_cv_pct": 0.22124071380562144,
+      "block_mean_p95_ms_per_iter": 0.010750561118125916,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        1.0889200493693352,
+        1.0843323543667793,
+        1.0846108198165894,
+        1.0801823809742928,
+        1.0834336280822754
+      ],
+      "blocks": 5,
+      "calls_per_s": 93416.03862074557,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.010704799890518188,
+      "first_call": {
+        "device_ms": 0.028279999271035194,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.04775542765855789
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.0078125,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.0927734375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 0,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.010843323543667793,
+      "warmup": 20
+    },
+    "zeros/c64/n1048576": {
+      "block_device_ms": [
+        1.063439965248108,
+        1.0713200569152832,
+        1.0601600408554077,
+        1.0506000518798828,
+        1.0673199892044067
+      ],
+      "block_device_ms_cv_pct": 0.7424838510023409,
+      "block_mean_p95_ms_per_iter": 0.010741201043128968,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        1.0774163529276848,
+        1.084386371076107,
+        1.073620282113552,
+        1.064026728272438,
+        1.080595888197422
+      ],
+      "blocks": 5,
+      "calls_per_s": 94034.4572969564,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.010634399652481079,
+      "first_call": {
+        "device_ms": 0.024000000208616257,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.04143454134464264
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 8.0,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 59.0849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 4,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.010774163529276848,
+      "warmup": 20
+    },
+    "zeros/c64/n65536": {
+      "block_device_ms": [
+        1.0761200189590454,
+        1.067520022392273,
+        1.0639599561691284,
+        1.068079948425293,
+        1.0667999982833862
+      ],
+      "block_device_ms_cv_pct": 0.4255580606707272,
+      "block_mean_p95_ms_per_iter": 0.01081748068332672,
+      "block_mean_p95_note": "quantile estimate of per-block mean per-iter time over 5 blocks; not a per-request tail latency",
+      "block_wall_ms": [
+        1.0909931734204292,
+        1.0810820385813713,
+        1.0771797969937325,
+        1.0816045105457306,
+        1.079862006008625
+      ],
+      "blocks": 5,
+      "calls_per_s": 93675.05798711268,
+      "calls_per_s_note": "1000 / ms_per_iter_median",
+      "device_ms_per_iter_median": 0.01067520022392273,
+      "first_call": {
+        "device_ms": 0.06004000082612038,
+        "note": "includes JIT/autotune; cache state = cold-process (per-family process)",
+        "wall_ms": 0.08736550807952881
+      },
+      "iters_per_block": 100,
+      "mem_baseline_alloc_mb": 51.0849609375,
+      "mem_baseline_reserved_mb": 88.0,
+      "mem_delta_alloc_mb": 0.5,
+      "mem_delta_reserved_mb": 0.0,
+      "mem_peak_alloc_mb": 51.5849609375,
+      "mem_peak_reserved_mb": 88.0,
+      "mem_window": "first-call compile + warmup + timed blocks; delta is a lower bound (case inputs coexist in the process)",
+      "order_index": 2,
+      "timing": "cuda events device time + synced wall clock",
+      "wall_ms_per_iter_median": 0.010810820385813713,
+      "warmup": 20
+    }
+  },
+  "torch_version": "2.10.0"
+}

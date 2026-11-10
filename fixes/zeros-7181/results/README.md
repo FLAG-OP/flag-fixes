@@ -11,6 +11,8 @@
 
 | 文件 | 内容 |
 | --- | --- |
+| `small-model-2026-11-10/matrix-rescored/` | 第五轮：比较器结构加固（shape/dtype/键集合/step ID/参考无效判 fail）后用已存 .pt 重评分 20 对+噪声对（f_target 9/9+noise PASS 维持，原始 compare 不改写）；不依赖设备负例自测 10/10；mse 与 complex-fill 复现在修复树与修复前对照树的双树日志（预存归因隔离对照） |
+| `small-model-2026-11-10/bench-r2/` | 第五轮性能（跑在干净提交 `dd5ebea`）：按族×组独立进程注册（f_target 期望键断言）+ profiler kernel 名命中验证 + calls_per_s 公式修正 + 块均值 P95 + 显存 baseline/peak/delta + 候选旗标计数 115（自动生成）+ 正确性失败配置标 diagnostic；`bench2-summary.json`/`bench2-table.md` |
 | `small-model-2026-11-10/matrix/` | 第四轮准确性：冻结 `thresholds.json`、`lr.json`（0.1/0.1）、`fd_*.json`（PASS）、`summary.json`（29 run / 20 对比 / 噪声门 max_abs=0.0）、逐 run `.pt`+`.meta.json`（确定性/注册范围/布局前提/异常全记录）、全部 compare JSON；f_target 9/9 PASS（fp32≤4.8e-7、fp64≤8.9e-16），b 组崩溃形态与 f_all 首分歧节点见 meta |
 | `small-model-2026-11-10/bench/` | 第四轮性能：`bench-{n,f_target,f_all,b,n_rep}.json`（5 块×100 迭代原始块计时、首调单独记、峰值显存）、`bench-summary.json`（58 项 >10% 回归旗标）、`bench-table.md` |
 | `small-model-2026-11-10/mse-scalar-repro.log` | f_all-B 首分歧最小复现输出：`mse_loss_backward` 标量 grad_output 不广播（39/40 错、第 0 元素精确、全量张量精确、none/sum 精确）；脚本 `tests/repro_mse_scalar_grad.py` |

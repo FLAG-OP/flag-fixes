@@ -23,6 +23,13 @@
   CompilationError；B：`mse_loss_backward` 不广播标量 grad_output 致静默错梯度，
   含最小复现）；scoped 性能首轮只报告不作加速声明。详见
   `reports/small-model-evaluation.md` 与 `results/small-model-2026-11-10/`。
+- 第五轮评审修正（2026-11-10，意见 6766490204）：(1) bench 按族拆分注册+期望键
+  断言+kernel 名命中验证（registered≠called）——modelB f_target 重测 2.42–2.93×
+  （四轮 1.07× 系未注册目标算子，作废）；(2) 比较器结构加固+负例自测 10/10+已存
+  .pt 重评分 f_target 9/9 维持；(3) 吞吐公式/P95 命名/显存口径/候选旗标（计数
+  115 自动生成，旧 58 作废）/正确性失败配置标 diagnostic；(4) 报告三态重生成，
+  另立修复项 `reports/follow-up-fix-items.md`，两缺口在修复前对照树逐位复现
+  （预存归因有隔离对照支撑）。状态与验收口径不变。
 
 ## 一句话版本
 

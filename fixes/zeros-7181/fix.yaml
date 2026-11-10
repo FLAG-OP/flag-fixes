@@ -269,5 +269,21 @@ notes:
   scoped 性能首轮只报告不作加速声明（complex sum/abs 慢于原生 1.06–21×，
   zeros/zero_ 0.83–1.00×，>10% 回归 58 项打旗标，崩溃路径 N/A）；
   证据 results/small-model-2026-11-10/，报告 reports/small-model-evaluation.md。
+- |-
+  第五轮评审修正（2026-11-10，意见 6766490204）全部落地：(1) bench 按族拆分
+  进程注册（a-sum-abs/b-linear/zeros 各自 include + 期望注册键断言），
+  registered≠called 由 torch.profiler kernel 名非计时命中验证（zero_ 命中原生
+  fill=修复刻意走原生 copy_(0)，b 树探针崩溃逐条记录）——modelB f_target 重测
+  fwd 2.42×/fwd+bwd 2.93×/step 2.52×（四轮 1.07× 系未注册目标算子，作废）；
+  (2) 比较器结构加固（shape/dtype 严格相等、键集合、step ID 序列、参考无效
+  判 fail 非 skip）+ 不依赖设备负例自测 10/10 + 已存 .pt 重评分 f_target 9/9
+  与 noise 维持 PASS（原始证据未改写）；(3) calls_per_s 公式修正（旧
+  samples_per_s 多乘 100 撤回）、P95 改名块均值分位、显存 baseline/peak/delta、
+  旗标改候选语义且计数从数据生成=115（旧 58 作废）、f_all-B 定性 diagnostic；
+  (4) 报告三态重生成（bench 版本统一 dd5ebea），另立修复项
+  reports/follow-up-fix-items.md（mse 标量广播优先、complex pointwise/fill/
+  FP64 编译），并补同路径隔离对照：两缺口在修复前对照树逐位复现
+  （mse 39/40、complex fill 5/5，含 abs 前向），预存归因不依赖文件位置论证。
+  原始 fix 维持 draft/deployable=false/hardware_status=unverified/owner=null。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

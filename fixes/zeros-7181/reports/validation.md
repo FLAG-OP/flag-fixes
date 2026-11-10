@@ -212,6 +212,23 @@ PASS、lr 校准 0.1（候选 1e-1 为按评审"调任务再校准"条款新增�
 `tests/test_small_models.py` 逐字节一致，`git diff` 为空）；完整报告
 `reports/small-model-evaluation.md`。结论限定于这两个模型与当前后端构建。
 
+## 第五轮评审修正（2026-11-10，意见 comment `6766490204`，基于 `5e02b3b`）
+
+评审确认隔离组 9/9 证据有效；四项修正全部完成（代码 `fac401c`/`dd5ebea`，证据见
+`results/small-model-2026-11-10/{matrix-rescored,bench-r2}/`，报告已重生成替换）：
+
+| 意见 | 处理 | 验证 |
+| --- | --- | --- |
+| P1 性能 f_target 注册范围错（固定 model="a"，B/清零未注册目标算子） | bench 重写为按族×组独立进程（a-sum-abs / b-linear / zeros 各自 include），f_target 期望注册键**断言**缺失即失败；`registered_target_keys` 改名并在注册之外用 torch.profiler 捕获 CUDA kernel 名做**非计时命中验证**（sum/abs/conv2d/linear 命中 triton kernel；`zero_` 命中原生 fill = 修复刻意走原生 `copy_(0)`；b 树探针崩溃逐条记录） | bench-r2 15 组全 rc=0；`bench2-{family}-{group}.json` provenance 含注册键断言与 kernel 名；**modelB f_target 重测 fwd 2.42×/fwd+bwd 2.93×/step 2.52×**（四轮的 1.07× 系未注册目标算子所致，作废） |
+| P2 比较器缺结构检查 | `compare_dumps` 纯函数化；先查 shape/dtype 严格相等（禁广播、禁静默升 dtype）、inter/grads/params 键集合、训练步数+step ID 序列（0..n-1、无重复、两端一致）；native 参考梯度缺失/非有限 → **判参考实验无效（fail）而非 skip** | 负例自测 `tests/test_comparator_negative.py` 10/10（对照过、错 dtype/可广播错 shape/缺尾 checkpoint/重复/错序 step/缺梯度键/参考非有限/修复侧非有限/超阈值 全部按预期失败）；20 对 + 噪声对用已存 .pt 重评分：**f_target 9/9 + noise PASS 维持**，原始运行证据未改写 |
+| P2 吞吐公式多乘 100 / P95 命名 / 显存口径 | `calls_per_s = 1000/ms_per_iter`（模型级另加 `samples_per_s = batch×calls_per_s`，旧 `samples_per_s` 字段撤回）；P95 改名 `block_mean_p95_ms_per_iter` 并注明"5 块均值的分位估计，非单请求尾延迟"；显存记录 case 前 baseline、窗口内 peak（含编译+预热）与 delta（共享驻留下界） | bench-r2 JSON 字段与协议说明同步；报告措辞替换 |
+| P2 "稳定退化"与计数 58；f_all-B 定性 | 旗标改名 `*_candidate_regression_gt10pct`（仅中位比值判据，非稳定性结论），**计数从数据自动生成 = 115**（四轮报告的 58 作废）；bench 驱动读 accuracy summary，正确性失败配置（f_all/b 模型级）标 `diagnostic only`，不计入有效性能 | `bench2-summary.json` 字段 `candidate_regression_gt10pct_count=115`；表格含 correctness 标注 |
+| 推进顺序 3/4：报告三态、bench commit 统一、另立修复项 | 报告重生成：目标隔离组通过 / 全量组失败 / 性能已复验三态；bench 版本统一到实际证据 `dd5ebea`（四轮 bench 目录保留为历史）；**另立修复项** `reports/follow-up-fix-items.md`（FIX-ITEM-1 mse 标量广播优先、FIX-ITEM-2 complex pointwise/fill/zeros 尺寸分支/to_copy + FP64 编译），并补齐**同路径隔离对照**：mse 39/40 错与 complex 5/5 KeyError 在修复前对照树逐位复现（`matrix-rescored/repro-{mse-scalar,complex-fill}-{btree,fixed}.log`）——预存归因不依赖"文件不在 patch 内"单独成立 | 复现脚本入库（`tests/repro_complex_fill.py` 扩展组装张量探针；触发条件 = `torch.complex(p,q)` 组装张量，cast 张量不触发）；四轮原始证据不改写 |
+
+未执行口径不变：原始 fix 维持 `draft / deployable=false / hardware_status=unverified /
+owner=null`；小模型结论不替代大模型完整梯度与容器平台验收；两项新缺口各自独立建包，
+修复前后证据在其自身轮次补齐。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models
