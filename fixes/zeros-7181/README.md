@@ -14,6 +14,15 @@
   前向 loss 与原生逐位一致（rel=0，单次模型前向、有日志支持）；除 complex 支持外，
   本 patch 亦修正 sum 的 dtype/out 推断、bool 转换与空输入语义——已列出的实数回归
   用例通过，未覆盖输入与后端不作逐位一致保证（第三轮评审口径）。
+- 第四轮小模型评估（2026-11-10，评审意见 6756872311）：随机权重小模型四组对照
+  （n / f_target / f_all / b）。仅注册目标算子的 f_target 9/9 全 PASS
+  （fp32 max_abs≤4.8e-7、fp64≤8.9e-16，阈值先冻结、原生噪声门位级一致、FD 抽检
+  PASS）；修复前对照树在修复目标路径崩溃（complex sum_dim、NHWC 非连续
+  linear_backward view）证明修复真实命中；全量注册的两个失败均为预存缺口且不在
+  本 patch 8 目标文件内（A：sgn/fill triton complex64 KeyError 与 fp64
+  CompilationError；B：`mse_loss_backward` 不广播标量 grad_output 致静默错梯度，
+  含最小复现）；scoped 性能首轮只报告不作加速声明。详见
+  `reports/small-model-evaluation.md` 与 `results/small-model-2026-11-10/`。
 
 ## 一句话版本
 

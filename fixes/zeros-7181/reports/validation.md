@@ -191,6 +191,27 @@ loss rel=0）、错树前置 exit 2、缺依赖/缺设备 exit 2、CLI 六项退
 在 `1fa248d` 干净树上 `passed: true` 3/3、`source_dirty: false`、regression
 210/0/210 → `results/verify-2026-11-10.json`（单独提交）；文档调整不重复硬件运行。
 
+## 第四轮评审：随机权重小模型数值一致性与性能评估（2026-11-10，评审意见 comment `6756872311`）
+
+按评审方案自建两个小模型（A：复数 sum/abs 全反向路径；B：conv2d + NHWC 非连续
+linear 反向路径），四组进程隔离（n 原生 / f_target 仅注册目标算子 / f_all 全量注册 /
+b 修复前对照树 = base+linear-5379），种子 0/1/2、fp32（A 另有 fp64/c128）、确定性设置
+逐 run 记录、阈值按评审表先冻结（原生噪声门 max_abs=0.0 位级一致）、有限差分抽检
+PASS、lr 校准 0.1（候选 1e-1 为按评审"调任务再校准"条款新增，理由记录在案）。
+
+| 结论 | 数据 |
+| --- | --- |
+| **f_target（修复声明范围）9/9 全 PASS** | fp32 max_abs 1.19e-7–4.77e-7（阈值 1e-5）；fp64/c128 max_abs 4.4e-16–8.9e-16（阈值 1e-10）；单步中间量/全部梯度/SGD 更新后参数/20 步训练逐 checkpoint 通过，梯度存在性硬校验无白名单 |
+| **b（修复前对照）两模型均在修复目标路径崩溃** | A：`sum_dim_comm`→`fill_scalar_` `KeyError: 'complex64'`（正是本修复目标）；B：旧 `linear_backward.py:170` NHWC 非连续 `.view()` RuntimeError（修复树已改 `reshape`，f_target 通过）→ 证明修复在真实模型路径生效且被实际命中 |
+| **f_all（全量注册）失败，首个分歧节点已定位（均为预存、不在本 patch 8 目标文件内）** | A fp32：abs 反向 `sgn.py:149` `empty_like`(complex64)→triton `canonicalize_dtype` KeyError；fp64：triton CompilationError（累加器 fp32/fp64）；B：**静默错梯度**——`mse_loss_backward` 不广播 0 维标量 grad_output（autograd 对标量 loss 的传参），最小复现 `tests/repro_mse_scalar_grad.py`：39/40 元素错、第 0 元素精确、全量张量 grad_output 时精确、none/sum reduction 精确；该文件与修复前树逐字节相同（预存） |
+| **性能（首轮只报告，不作加速声明）** | 75 用例（sum 全/内/外、abs、zeros/zero_，c64/c128 × 2^10/2^16/2^20 × 连续/跨步 + fwd+bwd；模型级 fwd/fwd+bwd/整训练步）：本构建上 f_target 的 complex sum/abs **慢于**原生（sum 3–21×、abs 1.06–1.7×），zeros/zero_ 持平到略快（0.83–0.96×）；模型级 f_target 1.07–2.36×；f_all/b 可跑路径 10.5–12.7× 慢；>10% 稳定回归 58 项已打旗标；崩溃路径一律记 N/A 不计加速 |
+
+产物：`results/small-model-2026-11-10/`（`matrix/`=阈值+校准+29 run+20 对比+fd+summary，
+`bench/`=5 组原始块计时+汇总表，`mse-scalar-repro.log`，`provenance.json`）；
+矩阵跑在干净提交 `968d624`，bench 跑在 `d236d5a`（两者 `tests/small_models.py`/
+`tests/test_small_models.py` 逐字节一致，`git diff` 为空）；完整报告
+`reports/small-model-evaluation.md`。结论限定于这两个模型与当前后端构建。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models
@@ -200,6 +221,7 @@ loss rel=0）、错树前置 exit 2、缺依赖/缺设备 exit 2、CLI 六项退
   `flag-fixes apply` 按设计拒绝。
 - **上游 PR**：未向 flagos-ai/FlagGems 提交 PR（跟踪 issue #7181）。
 - **性能基准**：崩溃修复，无同口径修复前耗时（修复前该路径根本跑不完），
-  `benchmarks/` 不伪造数据。
+  `benchmarks/` 不伪造数据。（第四轮已完成 scoped 的小模型口径性能评估，见上节；
+  容器整模型同口径仍属未执行。）
 - **未修的 complex 缺口**：`mean`/`full`/`ones` 及 `ComplexMode=NONE` 的 pointwise
   （`eq`/`where` 等）不在本 patch（m2-bert 反向不需要），见 `reports/diagnosis.md`。

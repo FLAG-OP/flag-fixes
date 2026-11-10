@@ -5,10 +5,16 @@
 （测试与文档小修后，当前代码）；`*-2026-11-09.log` 为评审第二轮（11-10 回归日志
 的前身，测试样例修订前，其余命令仍为当前）**；`*-2026-11-08.log` 为评审第一轮
 （139 用例口径）；`*-2026-11-07.log` 为初版历史原文，不改写。
-判定与命令见 `reports/validation.md`。
+第四轮（评审意见 6756872311）的小模型评估证据整体放在
+`small-model-2026-11-10/`（矩阵跑在干净提交 `968d624`、bench 跑在 `d236d5a`，
+两提交间被测 tests 文件逐字节一致），判定见 `reports/small-model-evaluation.md`。
 
 | 文件 | 内容 |
 | --- | --- |
+| `small-model-2026-11-10/matrix/` | 第四轮准确性：冻结 `thresholds.json`、`lr.json`（0.1/0.1）、`fd_*.json`（PASS）、`summary.json`（29 run / 20 对比 / 噪声门 max_abs=0.0）、逐 run `.pt`+`.meta.json`（确定性/注册范围/布局前提/异常全记录）、全部 compare JSON；f_target 9/9 PASS（fp32≤4.8e-7、fp64≤8.9e-16），b 组崩溃形态与 f_all 首分歧节点见 meta |
+| `small-model-2026-11-10/bench/` | 第四轮性能：`bench-{n,f_target,f_all,b,n_rep}.json`（5 块×100 迭代原始块计时、首调单独记、峰值显存）、`bench-summary.json`（58 项 >10% 回归旗标）、`bench-table.md` |
+| `small-model-2026-11-10/mse-scalar-repro.log` | f_all-B 首分歧最小复现输出：`mse_loss_backward` 标量 grad_output 不广播（39/40 错、第 0 元素精确、全量张量精确、none/sum 精确）；脚本 `tests/repro_mse_scalar_grad.py` |
+| `small-model-2026-11-10/provenance.json` | 两组运行的 commit、分组定义、阈值冻结与校准、bench 协议 |
 | `regression-baseline-2026-11-10.log` | 修复前 `test_complex_ops.py`（第三轮测试，含非连续 conj 样例）：`TOTAL: 33 passed, 177 failed, 210 total`，exit 1 |
 | `regression-fixed-2026-11-10.log` | 修复后 `test_complex_ops.py`（同上）：`TOTAL: 210 passed, 0 failed, 210 total`，exit 0；20 个 conj 用例（含非连续 direct/dispatch）全 PASS |
 | `verify-2026-11-10.json` | 第三轮提交（`1fa248d`）后的干净 `flag-fixes verify`（3/3，`source_dirty: false`） |

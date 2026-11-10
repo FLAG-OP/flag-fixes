@@ -258,5 +258,16 @@ notes:
 - |-
   普通 CI（无设备 runner）只做 flag-fixes validate、pytest 与本地 fix 脚本语法检查
   （compileall），不执行三个硬件脚本；语法检查通过不等于硬件验证通过。
+- |-
+  第四轮评审（2026-11-10，意见 6756872311）随机权重小模型评估完成：f_target
+  （仅注册目标算子）9/9 全 PASS（fp32 max_abs≤4.8e-7、fp64≤8.9e-16，阈值先冻结、
+  原生噪声门位级一致、FD 抽检 PASS）；修复前对照树在修复目标路径崩溃（complex
+  sum_dim KeyError、NHWC 非连续 linear_backward view RuntimeError）证明修复被真实
+  命中；全量注册的两个失败均为预存且不在本 patch 8 目标文件内（A：sgn/fill 的
+  triton complex64 KeyError 与 fp64 CompilationError；B：mse_loss_backward 不广播
+  标量 grad_output 致静默错梯度，最小复现 tests/repro_mse_scalar_grad.py）；
+  scoped 性能首轮只报告不作加速声明（complex sum/abs 慢于原生 1.06–21×，
+  zeros/zero_ 0.83–1.00×，>10% 回归 58 项打旗标，崩溃路径 N/A）；
+  证据 results/small-model-2026-11-10/，报告 reports/small-model-evaluation.md。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

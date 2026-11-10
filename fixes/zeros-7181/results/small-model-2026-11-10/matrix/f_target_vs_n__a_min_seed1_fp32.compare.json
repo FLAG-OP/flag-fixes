@@ -1,0 +1,5889 @@
+{
+  "dtype": "fp32",
+  "first_fail": null,
+  "input_identity": {
+    "X": true,
+    "params": true,
+    "target": true
+  },
+  "pass": true,
+  "ref": "/tmp/opencode/small-model-clean/n__a_min_seed1_fp32.pt",
+  "tiers": {
+    "grad": {
+      "atol": 1e-05,
+      "rtol": 0.001
+    },
+    "inter": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "val": "/tmp/opencode/small-model-clean/f_target__a_min_seed1_fp32.pt",
+  "variants": {
+    "conj": {
+      "grad.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 3.6044353613047274e-08,
+        "worst_flat_index": 10,
+        "worst_part": "part0"
+      },
+      "grad.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.224841386849062e-08,
+        "worst_flat_index": 51,
+        "worst_part": "part0"
+      },
+      "grad.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.511775462352237e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.4121964708625e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "grad.bi": {
+        "max_abs": 8.195638656616211e-08,
+        "pass": true,
+        "rel_l2": 1.8836816894948048e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 9.240150517631406e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "grad.x": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 9.309491946512172e-08,
+        "worst_flat_index": 85,
+        "worst_part": "part0"
+      },
+      "h": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.1979232869864594e-08,
+        "worst_flat_index": 10,
+        "worst_part": "part0"
+      },
+      "loss": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "out": {
+        "max_abs": 2.384185791015625e-07,
+        "pass": true,
+        "rel_l2": 7.490887586938883e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "params_after.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.7114547095571445e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "params_after.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2102212646964893e-08,
+        "worst_flat_index": 37,
+        "worst_part": "part0"
+      },
+      "params_after.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.226283408055061e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "params_after.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.015245510933312e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "params_after.bi": {
+        "max_abs": 8.381903171539307e-09,
+        "pass": true,
+        "rel_l2": 1.9932188753321815e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "params_after.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.44779350884293e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.losses": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 5.999847346454344e-09,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 3.6044353613047274e-08,
+        "worst_flat_index": 10,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.224841386849062e-08,
+        "worst_flat_index": 51,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.511775462352237e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.4121964708625e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.bi": {
+        "max_abs": 8.195638656616211e-08,
+        "pass": true,
+        "rel_l2": 1.8836816894948048e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 9.240150517631406e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.x": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 9.309491946512172e-08,
+        "worst_flat_index": 85,
+        "worst_part": "part0"
+      },
+      "train.step0.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.7114547095571445e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2102212646964893e-08,
+        "worst_flat_index": 37,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.226283408055061e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "train.step0.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.015245510933312e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.param.bi": {
+        "max_abs": 8.381903171539307e-09,
+        "pass": true,
+        "rel_l2": 1.9932188753321815e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step0.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.44779350884293e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.W2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 1.6239461465645564e-07,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 2.19541327146721e-07,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wr": {
+        "max_abs": 2.1420419216156006e-08,
+        "pass": true,
+        "rel_l2": 2.540332235390861e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.b2": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 1.3814596968404755e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.bi": {
+        "max_abs": 2.60770320892334e-08,
+        "pass": true,
+        "rel_l2": 2.6477818953088607e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 7.242854001419696e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.x": {
+        "max_abs": 4.190951585769653e-09,
+        "pass": true,
+        "rel_l2": 3.6145691253601566e-07,
+        "worst_flat_index": 135,
+        "worst_part": "part0"
+      },
+      "train.step1.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.794147119445524e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3434176172350303e-08,
+        "worst_flat_index": 37,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.331620234740639e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "train.step1.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.96292484954557e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.568677535864013e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 8.860072296545793e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.W2": {
+        "max_abs": 5.681067705154419e-08,
+        "pass": true,
+        "rel_l2": 1.6201198235240268e-05,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wi": {
+        "max_abs": 1.4319084584712982e-08,
+        "pass": true,
+        "rel_l2": 4.2345166342034165e-06,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wr": {
+        "max_abs": 1.8102582544088364e-08,
+        "pass": true,
+        "rel_l2": 4.947298730995365e-06,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.b2": {
+        "max_abs": 3.725290298461914e-08,
+        "pass": true,
+        "rel_l2": 2.729710870306367e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.bi": {
+        "max_abs": 1.234002411365509e-08,
+        "pass": true,
+        "rel_l2": 1.876355154241155e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.br": {
+        "max_abs": 2.561137080192566e-08,
+        "pass": true,
+        "rel_l2": 2.9825840073886824e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.x": {
+        "max_abs": 4.190951585769653e-09,
+        "pass": true,
+        "rel_l2": 3.179576286105368e-06,
+        "worst_flat_index": 80,
+        "worst_part": "part0"
+      },
+      "train.step10.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 6.11634877113094e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.501670807467139e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.543952499156625e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step10.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.374276062867871e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step10.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.2432816751129622e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step10.param.br": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 1.6312709502160967e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.W2": {
+        "max_abs": 9.607174433767796e-08,
+        "pass": true,
+        "rel_l2": 1.776891504383943e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wi": {
+        "max_abs": 2.828892320394516e-08,
+        "pass": true,
+        "rel_l2": 5.53087303967191e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wr": {
+        "max_abs": 2.1187588572502136e-08,
+        "pass": true,
+        "rel_l2": 5.688917251750368e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.0779112717100144e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.bi": {
+        "max_abs": 3.3527612686157227e-08,
+        "pass": true,
+        "rel_l2": 3.557411541603348e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.br": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 1.1281214000445403e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.x": {
+        "max_abs": 5.0640664994716644e-09,
+        "pass": true,
+        "rel_l2": 3.2482530481568453e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step11.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 5.8496491211836194e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.525944058955165e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.5484327714171234e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step11.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2318832091403955e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step11.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.2205084609595606e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step11.param.br": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 1.6516527606784136e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.W2": {
+        "max_abs": 3.3527612686157227e-08,
+        "pass": true,
+        "rel_l2": 7.237382794366737e-06,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wi": {
+        "max_abs": 2.270098775625229e-08,
+        "pass": true,
+        "rel_l2": 4.652577197398356e-06,
+        "worst_flat_index": 16,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wr": {
+        "max_abs": 1.8277205526828766e-08,
+        "pass": true,
+        "rel_l2": 5.410083576833209e-06,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.b2": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 1.1811983970578329e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.bi": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 2.846471140723732e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.br": {
+        "max_abs": 4.0512531995773315e-08,
+        "pass": true,
+        "rel_l2": 4.350410475003025e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.x": {
+        "max_abs": 5.791662260890007e-09,
+        "pass": true,
+        "rel_l2": 4.741481798892952e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step12.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 6.383423309114575e-08,
+        "worst_flat_index": 31,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.5282766415024645e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.8175912612614867e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step12.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2300477692423126e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step12.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.2359434144674742e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step12.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.0271295803135494e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.W2": {
+        "max_abs": 9.543146006762981e-08,
+        "pass": true,
+        "rel_l2": 1.758038034227919e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wi": {
+        "max_abs": 2.223532646894455e-08,
+        "pass": true,
+        "rel_l2": 5.135217764333221e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wr": {
+        "max_abs": 2.3632310330867767e-08,
+        "pass": true,
+        "rel_l2": 5.921702342489388e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.0022808621145437e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.bi": {
+        "max_abs": 1.909211277961731e-08,
+        "pass": true,
+        "rel_l2": 2.507880761744354e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.br": {
+        "max_abs": 1.816079020500183e-08,
+        "pass": true,
+        "rel_l2": 2.4310260740852653e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.x": {
+        "max_abs": 2.6775524020195007e-09,
+        "pass": true,
+        "rel_l2": 2.611994146101903e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step13.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 6.465567459916036e-08,
+        "worst_flat_index": 31,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.5327351867630104e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.81760539798697e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step13.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.230458837144577e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step13.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4865730098969665e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.145353415319087e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.W2": {
+        "max_abs": 1.4339457266032696e-07,
+        "pass": true,
+        "rel_l2": 2.939940814537136e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wi": {
+        "max_abs": 3.3207470551133156e-08,
+        "pass": true,
+        "rel_l2": 8.131795338357267e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wr": {
+        "max_abs": 3.899913281202316e-08,
+        "pass": true,
+        "rel_l2": 1.001544327802681e-05,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.0518361245055746e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.bi": {
+        "max_abs": 3.4226104617118835e-08,
+        "pass": true,
+        "rel_l2": 4.135615080501601e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.br": {
+        "max_abs": 1.3969838619232178e-08,
+        "pass": true,
+        "rel_l2": 1.5678507724872356e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.x": {
+        "max_abs": 5.034962669014931e-09,
+        "pass": true,
+        "rel_l2": 4.150376078100287e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step14.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.420066154088582e-08,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.6802786198220285e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.0166988009532295e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step14.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.716858974432668e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step14.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 1.9434199336376056e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.param.br": {
+        "max_abs": 3.958120942115784e-09,
+        "pass": true,
+        "rel_l2": 9.036551952944173e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.W2": {
+        "max_abs": 2.395245246589184e-07,
+        "pass": true,
+        "rel_l2": 4.5029667836053466e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wi": {
+        "max_abs": 4.98257577419281e-08,
+        "pass": true,
+        "rel_l2": 1.2185818203415708e-05,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wr": {
+        "max_abs": 5.8731529861688614e-08,
+        "pass": true,
+        "rel_l2": 1.5311790859259462e-05,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.b2": {
+        "max_abs": 1.4901161193847656e-07,
+        "pass": true,
+        "rel_l2": 7.70170465638123e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.bi": {
+        "max_abs": 5.471520125865936e-08,
+        "pass": true,
+        "rel_l2": 6.998173935223758e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.br": {
+        "max_abs": 2.514570951461792e-08,
+        "pass": true,
+        "rel_l2": 3.6109370496713025e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.x": {
+        "max_abs": 7.30506144464016e-09,
+        "pass": true,
+        "rel_l2": 6.687758727445232e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step15.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.648681757014911e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.44753327805006e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.935749540604678e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step15.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2402678288521386e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5090324037335268e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 1.2721765071214175e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.W2": {
+        "max_abs": 9.578070603311062e-08,
+        "pass": true,
+        "rel_l2": 2.0325784465331804e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wi": {
+        "max_abs": 2.0256265997886658e-08,
+        "pass": true,
+        "rel_l2": 5.03816160509662e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wr": {
+        "max_abs": 2.5262124836444855e-08,
+        "pass": true,
+        "rel_l2": 6.298278260505491e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.451951274250792e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.bi": {
+        "max_abs": 2.0489096641540527e-08,
+        "pass": true,
+        "rel_l2": 2.7269867575031965e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.br": {
+        "max_abs": 1.83936208486557e-08,
+        "pass": true,
+        "rel_l2": 2.6411642385356123e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.x": {
+        "max_abs": 2.764863893389702e-09,
+        "pass": true,
+        "rel_l2": 2.797016010775785e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step16.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.891969923721201e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.546008989039026e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.936645700778633e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step16.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.335886178219642e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step16.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 1.7813188348984373e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3680908749991505e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.W2": {
+        "max_abs": 1.4356919564306736e-07,
+        "pass": true,
+        "rel_l2": 3.024752657244368e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wi": {
+        "max_abs": 3.923196345567703e-08,
+        "pass": true,
+        "rel_l2": 8.997632966701712e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wr": {
+        "max_abs": 3.4458935260772705e-08,
+        "pass": true,
+        "rel_l2": 1.0464423772938897e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.0718315211720676e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.bi": {
+        "max_abs": 3.213062882423401e-08,
+        "pass": true,
+        "rel_l2": 4.231193542810184e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.br": {
+        "max_abs": 1.6065314412117004e-08,
+        "pass": true,
+        "rel_l2": 2.776843677029498e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.x": {
+        "max_abs": 5.6461431086063385e-09,
+        "pass": true,
+        "rel_l2": 4.772508709527093e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step17.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 8.672908220382473e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.809426262102141e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.056894349037579e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step17.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2342575632518746e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step17.param.bi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 2.2770088400985815e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 1.1867121085232727e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.W2": {
+        "max_abs": 5.058245733380318e-08,
+        "pass": true,
+        "rel_l2": 1.524620610036402e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wi": {
+        "max_abs": 1.0826624929904938e-08,
+        "pass": true,
+        "rel_l2": 2.863438458533599e-06,
+        "worst_flat_index": 16,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wr": {
+        "max_abs": 1.2223608791828156e-08,
+        "pass": true,
+        "rel_l2": 3.2227067957361723e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.5095779356709298e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.bi": {
+        "max_abs": 1.5366822481155396e-08,
+        "pass": true,
+        "rel_l2": 1.8589909164060066e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.br": {
+        "max_abs": 1.1641532182693481e-08,
+        "pass": true,
+        "rel_l2": 1.6741951577512544e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.x": {
+        "max_abs": 2.561137080192566e-09,
+        "pass": true,
+        "rel_l2": 2.117588340520404e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step18.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 8.795757853853025e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.809499635730065e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.057245183852845e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step18.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3696850846895304e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.param.bi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 2.3495864204735902e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step18.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3753934440222284e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.W2": {
+        "max_abs": 9.639188647270203e-08,
+        "pass": true,
+        "rel_l2": 2.6307008559720472e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wi": {
+        "max_abs": 3.282912075519562e-08,
+        "pass": true,
+        "rel_l2": 6.894504122275751e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wr": {
+        "max_abs": 2.87545844912529e-08,
+        "pass": true,
+        "rel_l2": 8.350050860119986e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.591102136516168e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.bi": {
+        "max_abs": 3.562308847904205e-08,
+        "pass": true,
+        "rel_l2": 4.7895794503683234e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.br": {
+        "max_abs": 1.0943040251731873e-08,
+        "pass": true,
+        "rel_l2": 1.566877168882394e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.x": {
+        "max_abs": 5.908077582716942e-09,
+        "pass": true,
+        "rel_l2": 4.028491052568078e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step19.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 9.06988440846833e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.81543956356748e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.9098962820867636e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step19.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.489250090253596e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step19.param.bi": {
+        "max_abs": 1.862645149230957e-08,
+        "pass": true,
+        "rel_l2": 2.737422691311617e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step19.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3958421746179424e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.W2": {
+        "max_abs": 9.685754776000977e-08,
+        "pass": true,
+        "rel_l2": 9.793766824692736e-07,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wi": {
+        "max_abs": 1.210719347000122e-08,
+        "pass": true,
+        "rel_l2": 7.175105378395633e-07,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wr": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 6.760847208222302e-07,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 1.0032830396238849e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.bi": {
+        "max_abs": 1.955777406692505e-08,
+        "pass": true,
+        "rel_l2": 8.724346339629818e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.br": {
+        "max_abs": 2.3283064365386963e-08,
+        "pass": true,
+        "rel_l2": 1.3150008692338105e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.x": {
+        "max_abs": 2.240994945168495e-09,
+        "pass": true,
+        "rel_l2": 9.071349581212436e-07,
+        "worst_flat_index": 116,
+        "worst_part": "part0"
+      },
+      "train.step2.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.0601134662965436e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.0887448943126417e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.332460076105003e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "train.step2.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.408504552316647e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4993304299329004e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.param.br": {
+        "max_abs": 5.122274160385132e-09,
+        "pass": true,
+        "rel_l2": 1.2118039049346473e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.W2": {
+        "max_abs": 1.4435499906539917e-07,
+        "pass": true,
+        "rel_l2": 6.063785333226651e-06,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wi": {
+        "max_abs": 3.227614797651768e-08,
+        "pass": true,
+        "rel_l2": 5.307130350087026e-06,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wr": {
+        "max_abs": 4.057073965668678e-08,
+        "pass": true,
+        "rel_l2": 7.080710727934233e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 6.359277819322043e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.bi": {
+        "max_abs": 3.189779818058014e-08,
+        "pass": true,
+        "rel_l2": 3.797842323201351e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.br": {
+        "max_abs": 3.2014213502407074e-08,
+        "pass": true,
+        "rel_l2": 2.7937484275296777e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.x": {
+        "max_abs": 7.596099749207497e-09,
+        "pass": true,
+        "rel_l2": 4.318660155329304e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step3.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.933423221866446e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.690261684755419e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.5682911406834246e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step3.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.970409057971234e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 2.0496999360679862e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.param.br": {
+        "max_abs": 5.122274160385132e-09,
+        "pass": true,
+        "rel_l2": 1.03997543826361e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.W2": {
+        "max_abs": 8.847564458847046e-08,
+        "pass": true,
+        "rel_l2": 9.460980907609184e-06,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wi": {
+        "max_abs": 2.0256265997886658e-08,
+        "pass": true,
+        "rel_l2": 3.802789157232312e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wr": {
+        "max_abs": 1.6065314412117004e-08,
+        "pass": true,
+        "rel_l2": 4.165648105609685e-06,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.b2": {
+        "max_abs": 5.21540641784668e-08,
+        "pass": true,
+        "rel_l2": 1.3280918837348668e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.bi": {
+        "max_abs": 2.584420144557953e-08,
+        "pass": true,
+        "rel_l2": 2.8744788245363497e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.br": {
+        "max_abs": 1.862645149230957e-08,
+        "pass": true,
+        "rel_l2": 1.3642978099656173e-06,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.x": {
+        "max_abs": 3.3178366720676422e-09,
+        "pass": true,
+        "rel_l2": 2.398221964377079e-06,
+        "worst_flat_index": 224,
+        "worst_part": "part0"
+      },
+      "train.step4.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.937564681490262e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.029055464798088e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.354413556325833e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step4.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.695779325298362e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step4.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 2.151591484287098e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.param.br": {
+        "max_abs": 5.122274160385132e-09,
+        "pass": true,
+        "rel_l2": 1.2136692676977057e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.W2": {
+        "max_abs": 1.9525032257661223e-07,
+        "pass": true,
+        "rel_l2": 2.9895505814608003e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wi": {
+        "max_abs": 4.586763679981232e-08,
+        "pass": true,
+        "rel_l2": 9.2966568069658e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wr": {
+        "max_abs": 5.21540641784668e-08,
+        "pass": true,
+        "rel_l2": 1.0549012489958292e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.785630295965726e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.bi": {
+        "max_abs": 4.6798959374427795e-08,
+        "pass": true,
+        "rel_l2": 4.544388825400187e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.br": {
+        "max_abs": 4.6566128730773926e-08,
+        "pass": true,
+        "rel_l2": 4.19882403592306e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.x": {
+        "max_abs": 7.479684427380562e-09,
+        "pass": true,
+        "rel_l2": 4.3268117177781665e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step5.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.61924757688539e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.189468673745247e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.408722818819745e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step5.param.b2": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 3.067469837765614e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step5.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6030356785379968e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.param.br": {
+        "max_abs": 4.889443516731262e-09,
+        "pass": true,
+        "rel_l2": 1.1018179249319233e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.W2": {
+        "max_abs": 4.7963112592697144e-08,
+        "pass": true,
+        "rel_l2": 8.549457293735167e-06,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wi": {
+        "max_abs": 1.0011717677116394e-08,
+        "pass": true,
+        "rel_l2": 1.9157607732903843e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wr": {
+        "max_abs": 1.3067619875073433e-08,
+        "pass": true,
+        "rel_l2": 2.4110604811008386e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.592354428450253e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.bi": {
+        "max_abs": 1.7462298274040222e-08,
+        "pass": true,
+        "rel_l2": 1.659219783143422e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 8.35631350881599e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.x": {
+        "max_abs": 2.473825588822365e-09,
+        "pass": true,
+        "rel_l2": 1.425544889771649e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step6.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.798457636417577e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.1896848108384015e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.4087381299047244e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step6.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.8206737247706e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5481676446642157e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step6.param.br": {
+        "max_abs": 3.958120942115784e-09,
+        "pass": true,
+        "rel_l2": 1.0242511478612075e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.W2": {
+        "max_abs": 8.498318493366241e-08,
+        "pass": true,
+        "rel_l2": 1.3941724279327603e-05,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wi": {
+        "max_abs": 9.953510016202927e-09,
+        "pass": true,
+        "rel_l2": 1.9702145544390344e-06,
+        "worst_flat_index": 38,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wr": {
+        "max_abs": 1.234002411365509e-08,
+        "pass": true,
+        "rel_l2": 2.880368450525941e-06,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.b2": {
+        "max_abs": 5.21540641784668e-08,
+        "pass": true,
+        "rel_l2": 2.3608019678459798e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.bi": {
+        "max_abs": 1.234002411365509e-08,
+        "pass": true,
+        "rel_l2": 1.4237562667596276e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.br": {
+        "max_abs": 8.381903171539307e-09,
+        "pass": true,
+        "rel_l2": 8.213205397644796e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.x": {
+        "max_abs": 1.5133991837501526e-09,
+        "pass": true,
+        "rel_l2": 1.3338523016404847e-06,
+        "worst_flat_index": 213,
+        "worst_part": "part0"
+      },
+      "train.step7.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.949599221919616e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.1897117947794655e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.408752970486676e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step7.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 7.023345318256382e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.param.bi": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.285667987657766e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step7.param.br": {
+        "max_abs": 4.6566128730773926e-09,
+        "pass": true,
+        "rel_l2": 1.1859601115459598e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.W2": {
+        "max_abs": 9.627547115087509e-08,
+        "pass": true,
+        "rel_l2": 2.349348826147297e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wi": {
+        "max_abs": 3.6670826375484467e-08,
+        "pass": true,
+        "rel_l2": 6.066154600004616e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wr": {
+        "max_abs": 2.735760062932968e-08,
+        "pass": true,
+        "rel_l2": 6.42608715821519e-06,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.986324116667121e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.bi": {
+        "max_abs": 4.423782229423523e-08,
+        "pass": true,
+        "rel_l2": 3.7898431810197193e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.br": {
+        "max_abs": 1.862645149230957e-08,
+        "pass": true,
+        "rel_l2": 1.927192689911606e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.x": {
+        "max_abs": 3.7834979593753815e-09,
+        "pass": true,
+        "rel_l2": 3.0922816746311114e-06,
+        "worst_flat_index": 103,
+        "worst_part": "part0"
+      },
+      "train.step8.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.860910206506891e-08,
+        "worst_flat_index": 31,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.192776553129628e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.414112090783506e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step8.param.b2": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 3.72378063192389e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step8.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5774030494050772e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 7.899792181358835e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.W2": {
+        "max_abs": 1.442967914044857e-07,
+        "pass": true,
+        "rel_l2": 3.53759839906164e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wi": {
+        "max_abs": 5.436595529317856e-08,
+        "pass": true,
+        "rel_l2": 1.0325264170472474e-05,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wr": {
+        "max_abs": 5.157198756933212e-08,
+        "pass": true,
+        "rel_l2": 1.111729212020379e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.887823230566193e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.bi": {
+        "max_abs": 5.2386894822120667e-08,
+        "pass": true,
+        "rel_l2": 4.887569940865217e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.br": {
+        "max_abs": 3.771856427192688e-08,
+        "pass": true,
+        "rel_l2": 3.6758271772423313e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.x": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 4.738409030434356e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step9.param.W2": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 6.212881398940537e-08,
+        "worst_flat_index": 26,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.3636325219193775e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.4589414663923746e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step9.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.971403521819832e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step9.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.1234497485591432e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step9.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5016621220587673e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "u": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.514822060188571e-08,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "v": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.1008619937475e-08,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      }
+    },
+    "contig": {
+      "grad.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 3.6044353613047274e-08,
+        "worst_flat_index": 10,
+        "worst_part": "part0"
+      },
+      "grad.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.224841386849062e-08,
+        "worst_flat_index": 51,
+        "worst_part": "part0"
+      },
+      "grad.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.511775462352237e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.4121964708625e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "grad.bi": {
+        "max_abs": 8.195638656616211e-08,
+        "pass": true,
+        "rel_l2": 1.8836816894948048e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 9.240150517631406e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "grad.x": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 9.309491946512172e-08,
+        "worst_flat_index": 85,
+        "worst_part": "part0"
+      },
+      "h": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.1979232869864594e-08,
+        "worst_flat_index": 10,
+        "worst_part": "part0"
+      },
+      "loss": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "out": {
+        "max_abs": 2.384185791015625e-07,
+        "pass": true,
+        "rel_l2": 7.490887586938883e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "params_after.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.7114547095571445e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "params_after.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2102212646964893e-08,
+        "worst_flat_index": 37,
+        "worst_part": "part0"
+      },
+      "params_after.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.226283408055061e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "params_after.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.015245510933312e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "params_after.bi": {
+        "max_abs": 8.381903171539307e-09,
+        "pass": true,
+        "rel_l2": 1.9932188753321815e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "params_after.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.44779350884293e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.losses": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 5.999847346454344e-09,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 3.6044353613047274e-08,
+        "worst_flat_index": 10,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.224841386849062e-08,
+        "worst_flat_index": 51,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.511775462352237e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.4121964708625e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.bi": {
+        "max_abs": 8.195638656616211e-08,
+        "pass": true,
+        "rel_l2": 1.8836816894948048e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 9.240150517631406e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.x": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 9.309491946512172e-08,
+        "worst_flat_index": 85,
+        "worst_part": "part0"
+      },
+      "train.step0.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.7114547095571445e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2102212646964893e-08,
+        "worst_flat_index": 37,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.226283408055061e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "train.step0.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.015245510933312e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.param.bi": {
+        "max_abs": 8.381903171539307e-09,
+        "pass": true,
+        "rel_l2": 1.9932188753321815e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step0.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.44779350884293e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.W2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 1.6239461465645564e-07,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 2.19541327146721e-07,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wr": {
+        "max_abs": 2.1420419216156006e-08,
+        "pass": true,
+        "rel_l2": 2.540332235390861e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.b2": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 1.3814596968404755e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.bi": {
+        "max_abs": 2.60770320892334e-08,
+        "pass": true,
+        "rel_l2": 2.6477818953088607e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 7.242854001419696e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.x": {
+        "max_abs": 4.190951585769653e-09,
+        "pass": true,
+        "rel_l2": 3.6145691253601566e-07,
+        "worst_flat_index": 135,
+        "worst_part": "part0"
+      },
+      "train.step1.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.794147119445524e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3434176172350303e-08,
+        "worst_flat_index": 37,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.331620234740639e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "train.step1.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.96292484954557e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.568677535864013e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 8.860072296545793e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.W2": {
+        "max_abs": 5.681067705154419e-08,
+        "pass": true,
+        "rel_l2": 1.6201198235240268e-05,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wi": {
+        "max_abs": 1.4319084584712982e-08,
+        "pass": true,
+        "rel_l2": 4.2345166342034165e-06,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wr": {
+        "max_abs": 1.8102582544088364e-08,
+        "pass": true,
+        "rel_l2": 4.947298730995365e-06,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.b2": {
+        "max_abs": 3.725290298461914e-08,
+        "pass": true,
+        "rel_l2": 2.729710870306367e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.bi": {
+        "max_abs": 1.234002411365509e-08,
+        "pass": true,
+        "rel_l2": 1.876355154241155e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.br": {
+        "max_abs": 2.561137080192566e-08,
+        "pass": true,
+        "rel_l2": 2.9825840073886824e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.x": {
+        "max_abs": 4.190951585769653e-09,
+        "pass": true,
+        "rel_l2": 3.179576286105368e-06,
+        "worst_flat_index": 80,
+        "worst_part": "part0"
+      },
+      "train.step10.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 6.11634877113094e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.501670807467139e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.543952499156625e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step10.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.374276062867871e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step10.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.2432816751129622e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step10.param.br": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 1.6312709502160967e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.W2": {
+        "max_abs": 9.607174433767796e-08,
+        "pass": true,
+        "rel_l2": 1.776891504383943e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wi": {
+        "max_abs": 2.828892320394516e-08,
+        "pass": true,
+        "rel_l2": 5.53087303967191e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wr": {
+        "max_abs": 2.1187588572502136e-08,
+        "pass": true,
+        "rel_l2": 5.688917251750368e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.0779112717100144e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.bi": {
+        "max_abs": 3.3527612686157227e-08,
+        "pass": true,
+        "rel_l2": 3.557411541603348e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.br": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 1.1281214000445403e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.x": {
+        "max_abs": 5.0640664994716644e-09,
+        "pass": true,
+        "rel_l2": 3.2482530481568453e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step11.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 5.8496491211836194e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.525944058955165e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.5484327714171234e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step11.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2318832091403955e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step11.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.2205084609595606e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step11.param.br": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 1.6516527606784136e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.W2": {
+        "max_abs": 3.3527612686157227e-08,
+        "pass": true,
+        "rel_l2": 7.237382794366737e-06,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wi": {
+        "max_abs": 2.270098775625229e-08,
+        "pass": true,
+        "rel_l2": 4.652577197398356e-06,
+        "worst_flat_index": 16,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wr": {
+        "max_abs": 1.8277205526828766e-08,
+        "pass": true,
+        "rel_l2": 5.410083576833209e-06,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.b2": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 1.1811983970578329e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.bi": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 2.846471140723732e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.br": {
+        "max_abs": 4.0512531995773315e-08,
+        "pass": true,
+        "rel_l2": 4.350410475003025e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.x": {
+        "max_abs": 5.791662260890007e-09,
+        "pass": true,
+        "rel_l2": 4.741481798892952e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step12.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 6.383423309114575e-08,
+        "worst_flat_index": 31,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.5282766415024645e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.8175912612614867e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step12.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2300477692423126e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step12.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.2359434144674742e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step12.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.0271295803135494e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.W2": {
+        "max_abs": 9.543146006762981e-08,
+        "pass": true,
+        "rel_l2": 1.758038034227919e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wi": {
+        "max_abs": 2.223532646894455e-08,
+        "pass": true,
+        "rel_l2": 5.135217764333221e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wr": {
+        "max_abs": 2.3632310330867767e-08,
+        "pass": true,
+        "rel_l2": 5.921702342489388e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.0022808621145437e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.bi": {
+        "max_abs": 1.909211277961731e-08,
+        "pass": true,
+        "rel_l2": 2.507880761744354e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.br": {
+        "max_abs": 1.816079020500183e-08,
+        "pass": true,
+        "rel_l2": 2.4310260740852653e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.x": {
+        "max_abs": 2.6775524020195007e-09,
+        "pass": true,
+        "rel_l2": 2.611994146101903e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step13.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 6.465567459916036e-08,
+        "worst_flat_index": 31,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.5327351867630104e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.81760539798697e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step13.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.230458837144577e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step13.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4865730098969665e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.145353415319087e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.W2": {
+        "max_abs": 1.4339457266032696e-07,
+        "pass": true,
+        "rel_l2": 2.939940814537136e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wi": {
+        "max_abs": 3.3207470551133156e-08,
+        "pass": true,
+        "rel_l2": 8.131795338357267e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wr": {
+        "max_abs": 3.899913281202316e-08,
+        "pass": true,
+        "rel_l2": 1.001544327802681e-05,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.0518361245055746e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.bi": {
+        "max_abs": 3.4226104617118835e-08,
+        "pass": true,
+        "rel_l2": 4.135615080501601e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.br": {
+        "max_abs": 1.3969838619232178e-08,
+        "pass": true,
+        "rel_l2": 1.5678507724872356e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.x": {
+        "max_abs": 5.034962669014931e-09,
+        "pass": true,
+        "rel_l2": 4.150376078100287e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step14.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.420066154088582e-08,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.6802786198220285e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.0166988009532295e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step14.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.716858974432668e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step14.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 1.9434199336376056e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.param.br": {
+        "max_abs": 3.958120942115784e-09,
+        "pass": true,
+        "rel_l2": 9.036551952944173e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.W2": {
+        "max_abs": 2.395245246589184e-07,
+        "pass": true,
+        "rel_l2": 4.5029667836053466e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wi": {
+        "max_abs": 4.98257577419281e-08,
+        "pass": true,
+        "rel_l2": 1.2185818203415708e-05,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wr": {
+        "max_abs": 5.8731529861688614e-08,
+        "pass": true,
+        "rel_l2": 1.5311790859259462e-05,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.b2": {
+        "max_abs": 1.4901161193847656e-07,
+        "pass": true,
+        "rel_l2": 7.70170465638123e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.bi": {
+        "max_abs": 5.471520125865936e-08,
+        "pass": true,
+        "rel_l2": 6.998173935223758e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.br": {
+        "max_abs": 2.514570951461792e-08,
+        "pass": true,
+        "rel_l2": 3.6109370496713025e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.x": {
+        "max_abs": 7.30506144464016e-09,
+        "pass": true,
+        "rel_l2": 6.687758727445232e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step15.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.648681757014911e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.44753327805006e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.935749540604678e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step15.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2402678288521386e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5090324037335268e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 1.2721765071214175e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.W2": {
+        "max_abs": 9.578070603311062e-08,
+        "pass": true,
+        "rel_l2": 2.0325784465331804e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wi": {
+        "max_abs": 2.0256265997886658e-08,
+        "pass": true,
+        "rel_l2": 5.03816160509662e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wr": {
+        "max_abs": 2.5262124836444855e-08,
+        "pass": true,
+        "rel_l2": 6.298278260505491e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.451951274250792e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.bi": {
+        "max_abs": 2.0489096641540527e-08,
+        "pass": true,
+        "rel_l2": 2.7269867575031965e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.br": {
+        "max_abs": 1.83936208486557e-08,
+        "pass": true,
+        "rel_l2": 2.6411642385356123e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.x": {
+        "max_abs": 2.764863893389702e-09,
+        "pass": true,
+        "rel_l2": 2.797016010775785e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step16.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.891969923721201e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.546008989039026e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.936645700778633e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step16.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.335886178219642e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step16.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 1.7813188348984373e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3680908749991505e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.W2": {
+        "max_abs": 1.4356919564306736e-07,
+        "pass": true,
+        "rel_l2": 3.024752657244368e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wi": {
+        "max_abs": 3.923196345567703e-08,
+        "pass": true,
+        "rel_l2": 8.997632966701712e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wr": {
+        "max_abs": 3.4458935260772705e-08,
+        "pass": true,
+        "rel_l2": 1.0464423772938897e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.0718315211720676e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.bi": {
+        "max_abs": 3.213062882423401e-08,
+        "pass": true,
+        "rel_l2": 4.231193542810184e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.br": {
+        "max_abs": 1.6065314412117004e-08,
+        "pass": true,
+        "rel_l2": 2.776843677029498e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.x": {
+        "max_abs": 5.6461431086063385e-09,
+        "pass": true,
+        "rel_l2": 4.772508709527093e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step17.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 8.672908220382473e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.809426262102141e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.056894349037579e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step17.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2342575632518746e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step17.param.bi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 2.2770088400985815e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 1.1867121085232727e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.W2": {
+        "max_abs": 5.058245733380318e-08,
+        "pass": true,
+        "rel_l2": 1.524620610036402e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wi": {
+        "max_abs": 1.0826624929904938e-08,
+        "pass": true,
+        "rel_l2": 2.863438458533599e-06,
+        "worst_flat_index": 16,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wr": {
+        "max_abs": 1.2223608791828156e-08,
+        "pass": true,
+        "rel_l2": 3.2227067957361723e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.5095779356709298e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.bi": {
+        "max_abs": 1.5366822481155396e-08,
+        "pass": true,
+        "rel_l2": 1.8589909164060066e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.br": {
+        "max_abs": 1.1641532182693481e-08,
+        "pass": true,
+        "rel_l2": 1.6741951577512544e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.x": {
+        "max_abs": 2.561137080192566e-09,
+        "pass": true,
+        "rel_l2": 2.117588340520404e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step18.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 8.795757853853025e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.809499635730065e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.057245183852845e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step18.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3696850846895304e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.param.bi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 2.3495864204735902e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step18.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3753934440222284e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.W2": {
+        "max_abs": 9.639188647270203e-08,
+        "pass": true,
+        "rel_l2": 2.6307008559720472e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wi": {
+        "max_abs": 3.282912075519562e-08,
+        "pass": true,
+        "rel_l2": 6.894504122275751e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wr": {
+        "max_abs": 2.87545844912529e-08,
+        "pass": true,
+        "rel_l2": 8.350050860119986e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.591102136516168e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.bi": {
+        "max_abs": 3.562308847904205e-08,
+        "pass": true,
+        "rel_l2": 4.7895794503683234e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.br": {
+        "max_abs": 1.0943040251731873e-08,
+        "pass": true,
+        "rel_l2": 1.566877168882394e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.x": {
+        "max_abs": 5.908077582716942e-09,
+        "pass": true,
+        "rel_l2": 4.028491052568078e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step19.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 9.06988440846833e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.81543956356748e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.9098962820867636e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step19.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.489250090253596e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step19.param.bi": {
+        "max_abs": 1.862645149230957e-08,
+        "pass": true,
+        "rel_l2": 2.737422691311617e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step19.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3958421746179424e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.W2": {
+        "max_abs": 9.685754776000977e-08,
+        "pass": true,
+        "rel_l2": 9.793766824692736e-07,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wi": {
+        "max_abs": 1.210719347000122e-08,
+        "pass": true,
+        "rel_l2": 7.175105378395633e-07,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wr": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 6.760847208222302e-07,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 1.0032830396238849e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.bi": {
+        "max_abs": 1.955777406692505e-08,
+        "pass": true,
+        "rel_l2": 8.724346339629818e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.br": {
+        "max_abs": 2.3283064365386963e-08,
+        "pass": true,
+        "rel_l2": 1.3150008692338105e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.x": {
+        "max_abs": 2.240994945168495e-09,
+        "pass": true,
+        "rel_l2": 9.071349581212436e-07,
+        "worst_flat_index": 116,
+        "worst_part": "part0"
+      },
+      "train.step2.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.0601134662965436e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.0887448943126417e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wr": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.332460076105003e-09,
+        "worst_flat_index": 29,
+        "worst_part": "part0"
+      },
+      "train.step2.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.408504552316647e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4993304299329004e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.param.br": {
+        "max_abs": 5.122274160385132e-09,
+        "pass": true,
+        "rel_l2": 1.2118039049346473e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.W2": {
+        "max_abs": 1.4435499906539917e-07,
+        "pass": true,
+        "rel_l2": 6.063785333226651e-06,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wi": {
+        "max_abs": 3.227614797651768e-08,
+        "pass": true,
+        "rel_l2": 5.307130350087026e-06,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wr": {
+        "max_abs": 4.057073965668678e-08,
+        "pass": true,
+        "rel_l2": 7.080710727934233e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 6.359277819322043e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.bi": {
+        "max_abs": 3.189779818058014e-08,
+        "pass": true,
+        "rel_l2": 3.797842323201351e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.br": {
+        "max_abs": 3.2014213502407074e-08,
+        "pass": true,
+        "rel_l2": 2.7937484275296777e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.x": {
+        "max_abs": 7.596099749207497e-09,
+        "pass": true,
+        "rel_l2": 4.318660155329304e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step3.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.933423221866446e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.690261684755419e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.5682911406834246e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step3.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.970409057971234e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 2.0496999360679862e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.param.br": {
+        "max_abs": 5.122274160385132e-09,
+        "pass": true,
+        "rel_l2": 1.03997543826361e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.W2": {
+        "max_abs": 8.847564458847046e-08,
+        "pass": true,
+        "rel_l2": 9.460980907609184e-06,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wi": {
+        "max_abs": 2.0256265997886658e-08,
+        "pass": true,
+        "rel_l2": 3.802789157232312e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wr": {
+        "max_abs": 1.6065314412117004e-08,
+        "pass": true,
+        "rel_l2": 4.165648105609685e-06,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.b2": {
+        "max_abs": 5.21540641784668e-08,
+        "pass": true,
+        "rel_l2": 1.3280918837348668e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.bi": {
+        "max_abs": 2.584420144557953e-08,
+        "pass": true,
+        "rel_l2": 2.8744788245363497e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.br": {
+        "max_abs": 1.862645149230957e-08,
+        "pass": true,
+        "rel_l2": 1.3642978099656173e-06,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.x": {
+        "max_abs": 3.3178366720676422e-09,
+        "pass": true,
+        "rel_l2": 2.398221964377079e-06,
+        "worst_flat_index": 224,
+        "worst_part": "part0"
+      },
+      "train.step4.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.937564681490262e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.029055464798088e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.354413556325833e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step4.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.695779325298362e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step4.param.bi": {
+        "max_abs": 1.1175870895385742e-08,
+        "pass": true,
+        "rel_l2": 2.151591484287098e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.param.br": {
+        "max_abs": 5.122274160385132e-09,
+        "pass": true,
+        "rel_l2": 1.2136692676977057e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.W2": {
+        "max_abs": 1.9525032257661223e-07,
+        "pass": true,
+        "rel_l2": 2.9895505814608003e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wi": {
+        "max_abs": 4.586763679981232e-08,
+        "pass": true,
+        "rel_l2": 9.2966568069658e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wr": {
+        "max_abs": 5.21540641784668e-08,
+        "pass": true,
+        "rel_l2": 1.0549012489958292e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.785630295965726e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.bi": {
+        "max_abs": 4.6798959374427795e-08,
+        "pass": true,
+        "rel_l2": 4.544388825400187e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.br": {
+        "max_abs": 4.6566128730773926e-08,
+        "pass": true,
+        "rel_l2": 4.19882403592306e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.x": {
+        "max_abs": 7.479684427380562e-09,
+        "pass": true,
+        "rel_l2": 4.3268117177781665e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step5.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.61924757688539e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.189468673745247e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.408722818819745e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step5.param.b2": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 3.067469837765614e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step5.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6030356785379968e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.param.br": {
+        "max_abs": 4.889443516731262e-09,
+        "pass": true,
+        "rel_l2": 1.1018179249319233e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.W2": {
+        "max_abs": 4.7963112592697144e-08,
+        "pass": true,
+        "rel_l2": 8.549457293735167e-06,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wi": {
+        "max_abs": 1.0011717677116394e-08,
+        "pass": true,
+        "rel_l2": 1.9157607732903843e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wr": {
+        "max_abs": 1.3067619875073433e-08,
+        "pass": true,
+        "rel_l2": 2.4110604811008386e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.592354428450253e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.bi": {
+        "max_abs": 1.7462298274040222e-08,
+        "pass": true,
+        "rel_l2": 1.659219783143422e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 8.35631350881599e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.x": {
+        "max_abs": 2.473825588822365e-09,
+        "pass": true,
+        "rel_l2": 1.425544889771649e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step6.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.798457636417577e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.1896848108384015e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.4087381299047244e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step6.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.8206737247706e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5481676446642157e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step6.param.br": {
+        "max_abs": 3.958120942115784e-09,
+        "pass": true,
+        "rel_l2": 1.0242511478612075e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.W2": {
+        "max_abs": 8.498318493366241e-08,
+        "pass": true,
+        "rel_l2": 1.3941724279327603e-05,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wi": {
+        "max_abs": 9.953510016202927e-09,
+        "pass": true,
+        "rel_l2": 1.9702145544390344e-06,
+        "worst_flat_index": 38,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wr": {
+        "max_abs": 1.234002411365509e-08,
+        "pass": true,
+        "rel_l2": 2.880368450525941e-06,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.b2": {
+        "max_abs": 5.21540641784668e-08,
+        "pass": true,
+        "rel_l2": 2.3608019678459798e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.bi": {
+        "max_abs": 1.234002411365509e-08,
+        "pass": true,
+        "rel_l2": 1.4237562667596276e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.br": {
+        "max_abs": 8.381903171539307e-09,
+        "pass": true,
+        "rel_l2": 8.213205397644796e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.x": {
+        "max_abs": 1.5133991837501526e-09,
+        "pass": true,
+        "rel_l2": 1.3338523016404847e-06,
+        "worst_flat_index": 213,
+        "worst_part": "part0"
+      },
+      "train.step7.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.949599221919616e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.1897117947794655e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.408752970486676e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step7.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 7.023345318256382e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.param.bi": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.285667987657766e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step7.param.br": {
+        "max_abs": 4.6566128730773926e-09,
+        "pass": true,
+        "rel_l2": 1.1859601115459598e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.W2": {
+        "max_abs": 9.627547115087509e-08,
+        "pass": true,
+        "rel_l2": 2.349348826147297e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wi": {
+        "max_abs": 3.6670826375484467e-08,
+        "pass": true,
+        "rel_l2": 6.066154600004616e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wr": {
+        "max_abs": 2.735760062932968e-08,
+        "pass": true,
+        "rel_l2": 6.42608715821519e-06,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.986324116667121e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.bi": {
+        "max_abs": 4.423782229423523e-08,
+        "pass": true,
+        "rel_l2": 3.7898431810197193e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.br": {
+        "max_abs": 1.862645149230957e-08,
+        "pass": true,
+        "rel_l2": 1.927192689911606e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.x": {
+        "max_abs": 3.7834979593753815e-09,
+        "pass": true,
+        "rel_l2": 3.0922816746311114e-06,
+        "worst_flat_index": 103,
+        "worst_part": "part0"
+      },
+      "train.step8.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.860910206506891e-08,
+        "worst_flat_index": 31,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.192776553129628e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.414112090783506e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step8.param.b2": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 3.72378063192389e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step8.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5774030494050772e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 7.899792181358835e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.W2": {
+        "max_abs": 1.442967914044857e-07,
+        "pass": true,
+        "rel_l2": 3.53759839906164e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wi": {
+        "max_abs": 5.436595529317856e-08,
+        "pass": true,
+        "rel_l2": 1.0325264170472474e-05,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wr": {
+        "max_abs": 5.157198756933212e-08,
+        "pass": true,
+        "rel_l2": 1.111729212020379e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.887823230566193e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.bi": {
+        "max_abs": 5.2386894822120667e-08,
+        "pass": true,
+        "rel_l2": 4.887569940865217e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.br": {
+        "max_abs": 3.771856427192688e-08,
+        "pass": true,
+        "rel_l2": 3.6758271772423313e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.x": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 4.738409030434356e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step9.param.W2": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 6.212881398940537e-08,
+        "worst_flat_index": 26,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 3.3636325219193775e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.4589414663923746e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step9.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.971403521819832e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step9.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.1234497485591432e-07,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step9.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5016621220587673e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "u": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 7.514822060188571e-08,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "v": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.1008619937475e-08,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      }
+    },
+    "noncontig": {
+      "grad.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 2.3288497193281447e-08,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "grad.Wi": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "grad.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.4357842406064476e-08,
+        "worst_flat_index": 44,
+        "worst_part": "part0"
+      },
+      "grad.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 7.169053991515332e-09,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "grad.bi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 6.77675627420957e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 6.327174038430508e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "grad.x": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 2.2385102014393337e-08,
+        "worst_flat_index": 197,
+        "worst_part": "part0"
+      },
+      "h": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 2.556285831717004e-08,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "loss": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "out": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 2.7537051482197417e-08,
+        "worst_flat_index": 4,
+        "worst_part": "part0"
+      },
+      "params_after.W2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 7.655031013138414e-09,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "params_after.Wi": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "params_after.Wr": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "params_after.b2": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "params_after.bi": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 7.79595185784701e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "params_after.br": {
+        "max_abs": 1.862645149230957e-09,
+        "pass": true,
+        "rel_l2": 3.409496169220208e-08,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.losses": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 5.713971291306272e-09,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 2.3288497193281447e-08,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wi": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "train.step0.grad.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.4357842406064476e-08,
+        "worst_flat_index": 44,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 7.169053991515332e-09,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.bi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 6.77675627420957e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.br": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 6.327174038430508e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.x": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 2.2385102014393337e-08,
+        "worst_flat_index": 197,
+        "worst_part": "part0"
+      },
+      "train.step0.param.W2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 7.655031013138414e-09,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wi": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "train.step0.param.Wr": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "train.step0.param.b2": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "train.step0.param.bi": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 7.79595185784701e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step0.param.br": {
+        "max_abs": 1.862645149230957e-09,
+        "pass": true,
+        "rel_l2": 3.409496169220208e-08,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.W2": {
+        "max_abs": 1.4901161193847656e-07,
+        "pass": true,
+        "rel_l2": 2.832170008578241e-07,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wi": {
+        "max_abs": 3.725290298461914e-08,
+        "pass": true,
+        "rel_l2": 4.638202044210662e-07,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wr": {
+        "max_abs": 3.725290298461914e-08,
+        "pass": true,
+        "rel_l2": 4.5981444392541484e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 3.0809504951860063e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.bi": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 5.20413673651104e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.br": {
+        "max_abs": 2.60770320892334e-08,
+        "pass": true,
+        "rel_l2": 5.829939367748553e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.x": {
+        "max_abs": 7.683411240577698e-09,
+        "pass": true,
+        "rel_l2": 6.040093144199521e-07,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step1.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.4412906208979537e-08,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wi": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 6.51118117579074e-09,
+        "worst_flat_index": 27,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2053378459854573e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step1.param.b2": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 3.459905317493751e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step1.param.bi": {
+        "max_abs": 4.6566128730773926e-09,
+        "pass": true,
+        "rel_l2": 1.0488813390047689e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step1.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.409660013505088e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.W2": {
+        "max_abs": 1.9485014490783215e-07,
+        "pass": true,
+        "rel_l2": 3.578457977240252e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wi": {
+        "max_abs": 4.7963112592697144e-08,
+        "pass": true,
+        "rel_l2": 1.1281576899790562e-05,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wr": {
+        "max_abs": 5.296897143125534e-08,
+        "pass": true,
+        "rel_l2": 1.2800897045013336e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.8876811204234506e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.bi": {
+        "max_abs": 4.563480615615845e-08,
+        "pass": true,
+        "rel_l2": 4.681944475345326e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.br": {
+        "max_abs": 3.5390257835388184e-08,
+        "pass": true,
+        "rel_l2": 3.5888108975128466e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.x": {
+        "max_abs": 8.41100700199604e-09,
+        "pass": true,
+        "rel_l2": 5.31845324551595e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step10.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 1.0016397906012538e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.07228467083691e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.674641711318766e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step10.param.b2": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 1.908914509764348e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step10.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6348876378751756e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step10.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.2738226857325037e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.W2": {
+        "max_abs": 5.820766091346741e-08,
+        "pass": true,
+        "rel_l2": 1.1507049171917497e-05,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wi": {
+        "max_abs": 1.3969838619232178e-08,
+        "pass": true,
+        "rel_l2": 3.734752183351556e-06,
+        "worst_flat_index": 16,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wr": {
+        "max_abs": 1.0943040251731873e-08,
+        "pass": true,
+        "rel_l2": 3.5470285039594023e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.b2": {
+        "max_abs": 3.725290298461914e-08,
+        "pass": true,
+        "rel_l2": 1.9544660175994378e-05,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.bi": {
+        "max_abs": 2.3748725652694702e-08,
+        "pass": true,
+        "rel_l2": 2.7823645705715857e-06,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.br": {
+        "max_abs": 3.4924596548080444e-08,
+        "pass": true,
+        "rel_l2": 3.6797530808634522e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.x": {
+        "max_abs": 4.48198989033699e-09,
+        "pass": true,
+        "rel_l2": 3.6418211173015173e-06,
+        "worst_flat_index": 36,
+        "worst_part": "part0"
+      },
+      "train.step11.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 1.0175531017358934e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.061845610282709e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.6783625592205503e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step11.param.b2": {
+        "max_abs": 4.470348358154297e-08,
+        "pass": true,
+        "rel_l2": 2.1724115027460916e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step11.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5028263830780672e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step11.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.1943126350697146e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.W2": {
+        "max_abs": 2.45578121393919e-07,
+        "pass": true,
+        "rel_l2": 4.368980272561913e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wi": {
+        "max_abs": 5.762558430433273e-08,
+        "pass": true,
+        "rel_l2": 1.3416972702401208e-05,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wr": {
+        "max_abs": 6.05359673500061e-08,
+        "pass": true,
+        "rel_l2": 1.548007260595838e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.b2": {
+        "max_abs": 1.4901161193847656e-07,
+        "pass": true,
+        "rel_l2": 7.160792580636935e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.bi": {
+        "max_abs": 5.448237061500549e-08,
+        "pass": true,
+        "rel_l2": 6.287867308318331e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.br": {
+        "max_abs": 4.7963112592697144e-08,
+        "pass": true,
+        "rel_l2": 5.734100758350793e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.x": {
+        "max_abs": 1.076841726899147e-08,
+        "pass": true,
+        "rel_l2": 6.797167351867944e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step12.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 9.781190108735784e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.3494099117483957e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.57833268005954e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step12.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.7154000223330018e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step12.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.2172742587424655e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step12.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6020433622935495e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.W2": {
+        "max_abs": 1.0113581083714962e-07,
+        "pass": true,
+        "rel_l2": 1.958744588120356e-05,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wi": {
+        "max_abs": 2.8172507882118225e-08,
+        "pass": true,
+        "rel_l2": 6.422101844318965e-06,
+        "worst_flat_index": 40,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wr": {
+        "max_abs": 2.782326191663742e-08,
+        "pass": true,
+        "rel_l2": 7.3442427019120085e-06,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.172719088285029e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.bi": {
+        "max_abs": 2.468004822731018e-08,
+        "pass": true,
+        "rel_l2": 3.3091499451214404e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.br": {
+        "max_abs": 2.7474015951156616e-08,
+        "pass": true,
+        "rel_l2": 3.172323114140016e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.x": {
+        "max_abs": 5.558831617236137e-09,
+        "pass": true,
+        "rel_l2": 3.5153133121184597e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step13.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 1.0334845586542683e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.351684741933574e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.775622724944513e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step13.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.7143506183060393e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step13.param.bi": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.1061753878246905e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step13.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.3729158111520752e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.W2": {
+        "max_abs": 1.4435499906539917e-07,
+        "pass": true,
+        "rel_l2": 2.8489883320520608e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wi": {
+        "max_abs": 4.540197551250458e-08,
+        "pass": true,
+        "rel_l2": 8.994173466474563e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wr": {
+        "max_abs": 3.294553607702255e-08,
+        "pass": true,
+        "rel_l2": 9.669955977980242e-06,
+        "worst_flat_index": 32,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 4.976802890934234e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.bi": {
+        "max_abs": 5.145557224750519e-08,
+        "pass": true,
+        "rel_l2": 6.102497912497742e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.br": {
+        "max_abs": 2.8870999813079834e-08,
+        "pass": true,
+        "rel_l2": 2.594086386045699e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.x": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 5.475320116536335e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step14.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 1.1219511459730403e-07,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wi": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.590475198202585e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.849932789722701e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step14.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.368023029741733e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step14.param.bi": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 8.120757059634865e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step14.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.1983163647572297e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.W2": {
+        "max_abs": 2.399901859462261e-07,
+        "pass": true,
+        "rel_l2": 4.742747579911179e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wi": {
+        "max_abs": 6.426125764846802e-08,
+        "pass": true,
+        "rel_l2": 1.3970441896875723e-05,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wr": {
+        "max_abs": 5.78584149479866e-08,
+        "pass": true,
+        "rel_l2": 1.5219938601658325e-05,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.b2": {
+        "max_abs": 1.4901161193847656e-07,
+        "pass": true,
+        "rel_l2": 8.102612697963126e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.bi": {
+        "max_abs": 7.264316082000732e-08,
+        "pass": true,
+        "rel_l2": 8.18964780614166e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.br": {
+        "max_abs": 2.3515895009040833e-08,
+        "pass": true,
+        "rel_l2": 3.431399367885879e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.x": {
+        "max_abs": 7.62520357966423e-09,
+        "pass": true,
+        "rel_l2": 6.550400247241288e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step15.param.W2": {
+        "max_abs": 1.7881393432617188e-07,
+        "pass": true,
+        "rel_l2": 1.1169377233241876e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.656380991268031e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.802539955525827e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.7154495404741644e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step15.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.561848781869247e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step15.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.729628582099672e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.W2": {
+        "max_abs": 2.874876372516155e-07,
+        "pass": true,
+        "rel_l2": 5.395276273035691e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wi": {
+        "max_abs": 6.868503987789154e-08,
+        "pass": true,
+        "rel_l2": 1.62138969080243e-05,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wr": {
+        "max_abs": 6.880145519971848e-08,
+        "pass": true,
+        "rel_l2": 1.9058372422231305e-05,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.b2": {
+        "max_abs": 1.7881393432617188e-07,
+        "pass": true,
+        "rel_l2": 9.32581782196504e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.bi": {
+        "max_abs": 7.241033017635345e-08,
+        "pass": true,
+        "rel_l2": 8.562827400427452e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.br": {
+        "max_abs": 3.213062882423401e-08,
+        "pass": true,
+        "rel_l2": 3.626861206451593e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.x": {
+        "max_abs": 1.0011717677116394e-08,
+        "pass": true,
+        "rel_l2": 8.402994040395866e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step16.param.W2": {
+        "max_abs": 1.7881393432617188e-07,
+        "pass": true,
+        "rel_l2": 1.1462459669686218e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.595904640664347e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.876001389742517e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3379720657581493e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step16.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.2440275210104045e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step16.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4233095651663401e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.W2": {
+        "max_abs": 1.438602339476347e-07,
+        "pass": true,
+        "rel_l2": 3.181952571197287e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wi": {
+        "max_abs": 3.041350282728672e-08,
+        "pass": true,
+        "rel_l2": 7.11124071634893e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wr": {
+        "max_abs": 2.87545844912529e-08,
+        "pass": true,
+        "rel_l2": 8.137358691971467e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 5.461251728191203e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.bi": {
+        "max_abs": 3.864988684654236e-08,
+        "pass": true,
+        "rel_l2": 5.07435284745817e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.br": {
+        "max_abs": 1.4668330550193787e-08,
+        "pass": true,
+        "rel_l2": 2.1170936075459244e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.x": {
+        "max_abs": 4.423782229423523e-09,
+        "pass": true,
+        "rel_l2": 4.033895474014725e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step17.param.W2": {
+        "max_abs": 1.7881393432617188e-07,
+        "pass": true,
+        "rel_l2": 1.1780197550582327e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.739923531317248e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wr": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.09032256821248e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3713221349758375e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step17.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.457573255944619e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step17.param.br": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 9.20177224048109e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.W2": {
+        "max_abs": 9.624636732041836e-08,
+        "pass": true,
+        "rel_l2": 2.1108565342102134e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wi": {
+        "max_abs": 2.7706846594810486e-08,
+        "pass": true,
+        "rel_l2": 6.215248619622431e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wr": {
+        "max_abs": 2.3981556296348572e-08,
+        "pass": true,
+        "rel_l2": 6.961884384484121e-06,
+        "worst_flat_index": 17,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 3.642135706639655e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.bi": {
+        "max_abs": 3.4226104617118835e-08,
+        "pass": true,
+        "rel_l2": 3.837678345308522e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.br": {
+        "max_abs": 1.955777406692505e-08,
+        "pass": true,
+        "rel_l2": 2.640484026232091e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.x": {
+        "max_abs": 3.4924596548080444e-09,
+        "pass": true,
+        "rel_l2": 3.5146962922433006e-06,
+        "worst_flat_index": 36,
+        "worst_part": "part0"
+      },
+      "train.step18.param.W2": {
+        "max_abs": 1.7881393432617188e-07,
+        "pass": true,
+        "rel_l2": 1.1813209604716725e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.739864719216918e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wr": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.014021888505807e-08,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step18.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 9.090379360078168e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step18.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.2024568201133723e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step18.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.1390982353888923e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.W2": {
+        "max_abs": 1.4374381862580776e-07,
+        "pass": true,
+        "rel_l2": 2.8868472017526325e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wi": {
+        "max_abs": 3.3993273973464966e-08,
+        "pass": true,
+        "rel_l2": 8.010111868858293e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wr": {
+        "max_abs": 3.457535058259964e-08,
+        "pass": true,
+        "rel_l2": 9.466021046385487e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.b2": {
+        "max_abs": 8.940696716308594e-08,
+        "pass": true,
+        "rel_l2": 4.9829086828286904e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.bi": {
+        "max_abs": 3.795139491558075e-08,
+        "pass": true,
+        "rel_l2": 4.896064469203223e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.br": {
+        "max_abs": 1.5832483768463135e-08,
+        "pass": true,
+        "rel_l2": 2.138922976145302e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.x": {
+        "max_abs": 4.918547347187996e-09,
+        "pass": true,
+        "rel_l2": 4.325574201256764e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step19.param.W2": {
+        "max_abs": 1.7881393432617188e-07,
+        "pass": true,
+        "rel_l2": 1.1857716908747564e-07,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wi": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 6.746110732201956e-08,
+        "worst_flat_index": 60,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wr": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.918583446057466e-08,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step19.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.2529325762507915e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step19.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.603142431361214e-07,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step19.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.1035100247270916e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.932492501973605e-07,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wi": {
+        "max_abs": 1.83936208486557e-08,
+        "pass": true,
+        "rel_l2": 1.2786977789147288e-06,
+        "worst_flat_index": 16,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wr": {
+        "max_abs": 2.60770320892334e-08,
+        "pass": true,
+        "rel_l2": 1.2257974679129779e-06,
+        "worst_flat_index": 41,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.520978667710656e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.bi": {
+        "max_abs": 3.5390257835388184e-08,
+        "pass": true,
+        "rel_l2": 1.5770266834348462e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.br": {
+        "max_abs": 4.284083843231201e-08,
+        "pass": true,
+        "rel_l2": 2.9179957225275387e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.x": {
+        "max_abs": 4.598405212163925e-09,
+        "pass": true,
+        "rel_l2": 1.9417597236274573e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step2.param.W2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.5576818072887092e-08,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3068632011692515e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3540112719128428e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step2.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 9.031903686629693e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step2.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.1256669654119603e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step2.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6917360722482952e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.W2": {
+        "max_abs": 4.842877388000488e-08,
+        "pass": true,
+        "rel_l2": 2.1708941572594124e-06,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wi": {
+        "max_abs": 1.7695128917694092e-08,
+        "pass": true,
+        "rel_l2": 2.3294688260941847e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wr": {
+        "max_abs": 1.3562384992837906e-08,
+        "pass": true,
+        "rel_l2": 2.346365516440058e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.392142279806489e-06,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.bi": {
+        "max_abs": 1.7695128917694092e-08,
+        "pass": true,
+        "rel_l2": 1.4665140295252303e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.br": {
+        "max_abs": 1.5832483768463135e-08,
+        "pass": true,
+        "rel_l2": 1.1674544331113523e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.x": {
+        "max_abs": 2.8230715543031693e-09,
+        "pass": true,
+        "rel_l2": 1.6824720022430767e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step3.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.092759428510216e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.7276389838578725e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3536238984001767e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step3.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.428169253954799e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step3.param.bi": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 9.914245793932736e-08,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step3.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5250475551768977e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.W2": {
+        "max_abs": 3.8067810237407684e-08,
+        "pass": true,
+        "rel_l2": 4.441472475160277e-06,
+        "worst_flat_index": 28,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wi": {
+        "max_abs": 6.402842700481415e-09,
+        "pass": true,
+        "rel_l2": 1.3133588626814813e-06,
+        "worst_flat_index": 38,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wr": {
+        "max_abs": 7.8580342233181e-09,
+        "pass": true,
+        "rel_l2": 1.6351484906595574e-06,
+        "worst_flat_index": 62,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.b2": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 6.420491417717663e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.bi": {
+        "max_abs": 6.984919309616089e-09,
+        "pass": true,
+        "rel_l2": 6.547955523416464e-07,
+        "worst_flat_index": 4,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.br": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 9.239184133749481e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.x": {
+        "max_abs": 2.0954757928848267e-09,
+        "pass": true,
+        "rel_l2": 1.0786372571097156e-06,
+        "worst_flat_index": 80,
+        "worst_part": "part0"
+      },
+      "train.step4.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 4.0616931526847797e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.0648793945252534e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.353610368823998e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step4.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.41712168797077e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step4.param.bi": {
+        "max_abs": 6.51925802230835e-09,
+        "pass": true,
+        "rel_l2": 1.1364111507398859e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step4.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.7060788875785788e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.W2": {
+        "max_abs": 9.546056389808655e-08,
+        "pass": true,
+        "rel_l2": 1.3598635953120022e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wi": {
+        "max_abs": 2.2351741790771484e-08,
+        "pass": true,
+        "rel_l2": 4.309947544289979e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wr": {
+        "max_abs": 2.4971086531877518e-08,
+        "pass": true,
+        "rel_l2": 4.922294890059359e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.b2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 2.838283901110481e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.bi": {
+        "max_abs": 2.9336661100387573e-08,
+        "pass": true,
+        "rel_l2": 2.8600299982011656e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.br": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 1.4419271317764056e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.x": {
+        "max_abs": 4.71482053399086e-09,
+        "pass": true,
+        "rel_l2": 2.6188539058509746e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step5.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.066164816985517e-08,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.0643213050242143e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3534042804338024e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.417068016392972e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step5.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4237266857475795e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step5.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.5450111816031885e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.W2": {
+        "max_abs": 4.871981218457222e-08,
+        "pass": true,
+        "rel_l2": 1.1729613261592635e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wi": {
+        "max_abs": 1.6530975699424744e-08,
+        "pass": true,
+        "rel_l2": 3.3328476193679593e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wr": {
+        "max_abs": 1.7462298274040222e-08,
+        "pass": true,
+        "rel_l2": 3.482846049811566e-06,
+        "worst_flat_index": 55,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.213641178811816e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.bi": {
+        "max_abs": 1.885928213596344e-08,
+        "pass": true,
+        "rel_l2": 2.1903984594501216e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.br": {
+        "max_abs": 1.210719347000122e-08,
+        "pass": true,
+        "rel_l2": 1.323821627199377e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.x": {
+        "max_abs": 3.725290298461914e-09,
+        "pass": true,
+        "rel_l2": 2.193120133878679e-06,
+        "worst_flat_index": 80,
+        "worst_part": "part0"
+      },
+      "train.step6.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.92617198718299e-08,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.0836731787505957e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.381663670241486e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step6.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3661632544600427e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step6.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.3683529280902792e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step6.param.br": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.3410596653329272e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.W2": {
+        "max_abs": 5.681067705154419e-08,
+        "pass": true,
+        "rel_l2": 1.2606817054060081e-05,
+        "worst_flat_index": 24,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wi": {
+        "max_abs": 1.885928213596344e-08,
+        "pass": true,
+        "rel_l2": 4.335829236605347e-06,
+        "worst_flat_index": 33,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wr": {
+        "max_abs": 1.1641532182693481e-08,
+        "pass": true,
+        "rel_l2": 4.404939474033951e-06,
+        "worst_flat_index": 8,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.1371314563046474e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.bi": {
+        "max_abs": 2.468004822731018e-08,
+        "pass": true,
+        "rel_l2": 2.3868608810550523e-06,
+        "worst_flat_index": 5,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.br": {
+        "max_abs": 2.3283064365386963e-08,
+        "pass": true,
+        "rel_l2": 2.2153655139880095e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.x": {
+        "max_abs": 5.034962669014931e-09,
+        "pass": true,
+        "rel_l2": 3.6659101167090252e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step7.param.W2": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 5.309044421346755e-08,
+        "worst_flat_index": 9,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.1783655702295224e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3821053616263745e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step7.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3666710232424293e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step7.param.bi": {
+        "max_abs": 5.587935447692871e-09,
+        "pass": true,
+        "rel_l2": 1.1302472335841816e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step7.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6748773652425738e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.W2": {
+        "max_abs": 1.920561771839857e-07,
+        "pass": true,
+        "rel_l2": 3.329695907266135e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wi": {
+        "max_abs": 4.9942173063755035e-08,
+        "pass": true,
+        "rel_l2": 9.457344040250515e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wr": {
+        "max_abs": 4.156026989221573e-08,
+        "pass": true,
+        "rel_l2": 1.1088914762708815e-05,
+        "worst_flat_index": 32,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.6253952779274434e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.bi": {
+        "max_abs": 5.8673322200775146e-08,
+        "pass": true,
+        "rel_l2": 5.3719210683015835e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.br": {
+        "max_abs": 2.10711732506752e-08,
+        "pass": true,
+        "rel_l2": 2.6386136960501432e-06,
+        "worst_flat_index": 6,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.x": {
+        "max_abs": 6.344635039567947e-09,
+        "pass": true,
+        "rel_l2": 4.803674026136894e-06,
+        "worst_flat_index": 247,
+        "worst_part": "part0"
+      },
+      "train.step8.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 7.874808276906279e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.1796032620491907e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.4019295675495786e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.param.b2": {
+        "max_abs": 1.4901161193847656e-08,
+        "pass": true,
+        "rel_l2": 8.968051691462326e-08,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step8.param.bi": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.4954030954781505e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step8.param.br": {
+        "max_abs": 7.450580596923828e-09,
+        "pass": true,
+        "rel_l2": 1.6658779249222577e-07,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.W2": {
+        "max_abs": 1.918815542012453e-07,
+        "pass": true,
+        "rel_l2": 3.162028846444339e-05,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wi": {
+        "max_abs": 4.6333298087120056e-08,
+        "pass": true,
+        "rel_l2": 9.072478725257837e-06,
+        "worst_flat_index": 56,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wr": {
+        "max_abs": 4.618777893483639e-08,
+        "pass": true,
+        "rel_l2": 1.0958700327731075e-05,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.b2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 5.4464479257671e-05,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.bi": {
+        "max_abs": 5.192123353481293e-08,
+        "pass": true,
+        "rel_l2": 5.692844735405908e-06,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.br": {
+        "max_abs": 3.306195139884949e-08,
+        "pass": true,
+        "rel_l2": 2.9774287036097444e-06,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.x": {
+        "max_abs": 7.188646122813225e-09,
+        "pass": true,
+        "rel_l2": 5.247479558933206e-06,
+        "worst_flat_index": 71,
+        "worst_part": "part0"
+      },
+      "train.step9.param.W2": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 7.998241247593327e-08,
+        "worst_flat_index": 15,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wi": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 2.0521129117906418e-08,
+        "worst_flat_index": 34,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wr": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.4710878193583793e-08,
+        "worst_flat_index": 1,
+        "worst_part": "part0"
+      },
+      "train.step9.param.b2": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 1.3737758740464546e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "train.step9.param.bi": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 1.5081379333513105e-07,
+        "worst_flat_index": 3,
+        "worst_part": "part0"
+      },
+      "train.step9.param.br": {
+        "max_abs": 9.313225746154785e-09,
+        "pass": true,
+        "rel_l2": 1.9321433353110428e-07,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "u": {
+        "max_abs": 2.9802322387695312e-08,
+        "pass": true,
+        "rel_l2": 4.0672426946759396e-08,
+        "worst_flat_index": 7,
+        "worst_part": "part0"
+      },
+      "v": {
+        "max_abs": 1.1920928955078125e-07,
+        "pass": true,
+        "rel_l2": 2.4889657946946346e-08,
+        "worst_flat_index": 12,
+        "worst_part": "part0"
+      }
+    }
+  }
+}

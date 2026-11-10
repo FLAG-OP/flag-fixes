@@ -1,0 +1,379 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 1,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "conj": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 7.9933334669061935,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.8221942667789537,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.9994640783894508,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 2.0785394032138296,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.5920620759926113,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6258778316283514,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6337019514453075,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "contig": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 7.9933334669061935,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.8221942667789537,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.9994640783894508,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 2.0785394032138296,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.5920620759926113,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6258778316283514,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6337019514453075,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "noncontig": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 7.9933334669061935,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.8221942667789537,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.9994640783894508,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 2.0785394032138296,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.5920620759926113,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6258778316283514,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6337019514453075,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_conj": 4.340263843536377,
+    "single_contig": 4.340263843536377,
+    "single_noncontig": 4.340263843536377,
+    "train_conj": [
+      4.340263843536377,
+      0.11546110361814499,
+      0.009485380724072456,
+      0.0032500422094017267,
+      0.002763135824352503,
+      0.002635048469528556,
+      0.002535061677917838,
+      0.0024413028731942177,
+      0.002352027455344796,
+      0.002266871277242899,
+      0.0021855863742530346,
+      0.0021079506259411573,
+      0.002033751690760255,
+      0.001962806563824415,
+      0.0018949294462800026,
+      0.0018299585208296776,
+      0.0017677436117082834,
+      0.001708134775981307,
+      0.0016510135028511286,
+      0.0015962552279233932
+    ],
+    "train_contig": [
+      4.340263843536377,
+      0.11546110361814499,
+      0.009485380724072456,
+      0.0032500422094017267,
+      0.002763135824352503,
+      0.002635048469528556,
+      0.002535061677917838,
+      0.0024413028731942177,
+      0.002352027455344796,
+      0.002266871277242899,
+      0.0021855863742530346,
+      0.0021079506259411573,
+      0.002033751690760255,
+      0.001962806563824415,
+      0.0018949294462800026,
+      0.0018299585208296776,
+      0.0017677436117082834,
+      0.001708134775981307,
+      0.0016510135028511286,
+      0.0015962552279233932
+    ],
+    "train_noncontig": [
+      4.340263843536377,
+      0.11546110361814499,
+      0.009485380724072456,
+      0.0032500422094017267,
+      0.002763135824352503,
+      0.002635048469528556,
+      0.002535061677917838,
+      0.0024413028731942177,
+      0.002352027455344796,
+      0.002266871277242899,
+      0.0021855863742530346,
+      0.0021079506259411573,
+      0.002033751690760255,
+      0.001962806563824415,
+      0.0018949294462800026,
+      0.0018299585208296776,
+      0.0017677436117082834,
+      0.001708134775981307,
+      0.0016510135028511286,
+      0.0015962552279233932
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "f_target",
+    "hits": {
+      "abs": true,
+      "absolute": true,
+      "sum": true,
+      "sum.dim_IntList": true
+    },
+    "include": [
+      "sum",
+      "sum_dim",
+      "sum_out",
+      "sum_dim_out",
+      "abs",
+      "absolute"
+    ],
+    "registered_keys": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum.IntList_out",
+      "sum.dim_IntList",
+      "sum.out"
+    ],
+    "registered_ops": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum_dim",
+      "sum_dim_out",
+      "sum_out"
+    ]
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp32",
+    "group": "f_target",
+    "lr": 0.1,
+    "model": "a",
+    "pythonpath": "/tmp/opencode/flagfix-fixed/src",
+    "seed": 1,
+    "steps": 20,
+    "variants": [
+      "contig",
+      "noncontig",
+      "conj"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/a_min_seed1_fp32.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      16,
+      8
+    ],
+    "stride": [
+      128,
+      8,
+      1
+    ]
+  }
+}

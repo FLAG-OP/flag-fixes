@@ -1,0 +1,379 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "conj": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 2.4340296562716217,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.24900361019075828,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.25446101121414383,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6861407488425426,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.27728920459698636,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.1705799033240343,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.0904905325827202,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "contig": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 2.4340296562716217,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.24900361019075828,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.25446101121414383,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6861407488425426,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.27728920459698636,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.1705799033240343,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.0904905325827202,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "noncontig": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 2.4340296562716217,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.24900361019075828,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.25446101121414383,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.6861407488425426,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.27728920459698636,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.1705799033240343,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.0904905325827202,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_conj": 0.5003041625022888,
+    "single_contig": 0.5003041625022888,
+    "single_noncontig": 0.5003041625022888,
+    "train_conj": [
+      0.5003041625022888,
+      0.06588705629110336,
+      0.023098889738321304,
+      0.018496274948120117,
+      0.017602525651454926,
+      0.01707625389099121,
+      0.016598954796791077,
+      0.01613984815776348,
+      0.015695370733737946,
+      0.015264654532074928,
+      0.014847077429294586,
+      0.014442089945077896,
+      0.014049196615815163,
+      0.013667868450284004,
+      0.0132976695895195,
+      0.012938156723976135,
+      0.012588903307914734,
+      0.012249523773789406,
+      0.011919667944312096,
+      0.011598964221775532
+    ],
+    "train_contig": [
+      0.5003041625022888,
+      0.06588705629110336,
+      0.023098889738321304,
+      0.018496274948120117,
+      0.017602525651454926,
+      0.01707625389099121,
+      0.016598954796791077,
+      0.01613984815776348,
+      0.015695370733737946,
+      0.015264654532074928,
+      0.014847077429294586,
+      0.014442089945077896,
+      0.014049196615815163,
+      0.013667868450284004,
+      0.0132976695895195,
+      0.012938156723976135,
+      0.012588903307914734,
+      0.012249523773789406,
+      0.011919667944312096,
+      0.011598964221775532
+    ],
+    "train_noncontig": [
+      0.5003041625022888,
+      0.06588705629110336,
+      0.023098889738321304,
+      0.018496274948120117,
+      0.017602525651454926,
+      0.01707625389099121,
+      0.016598954796791077,
+      0.01613984815776348,
+      0.015695370733737946,
+      0.015264654532074928,
+      0.014847077429294586,
+      0.014442089945077896,
+      0.014049196615815163,
+      0.013667868450284004,
+      0.0132976695895195,
+      0.012938156723976135,
+      0.012588903307914734,
+      0.012249523773789406,
+      0.011919667944312096,
+      0.011598964221775532
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "f_target",
+    "hits": {
+      "abs": true,
+      "absolute": true,
+      "sum": true,
+      "sum.dim_IntList": true
+    },
+    "include": [
+      "sum",
+      "sum_dim",
+      "sum_out",
+      "sum_dim_out",
+      "abs",
+      "absolute"
+    ],
+    "registered_keys": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum.IntList_out",
+      "sum.dim_IntList",
+      "sum.out"
+    ],
+    "registered_ops": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum_dim",
+      "sum_dim_out",
+      "sum_out"
+    ]
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp32",
+    "group": "f_target",
+    "lr": 0.1,
+    "model": "a",
+    "pythonpath": "/tmp/opencode/flagfix-fixed/src",
+    "seed": 0,
+    "steps": 20,
+    "variants": [
+      "contig",
+      "noncontig",
+      "conj"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/a_min_seed0_fp32.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      16,
+      8
+    ],
+    "stride": [
+      128,
+      8,
+      1
+    ]
+  }
+}
