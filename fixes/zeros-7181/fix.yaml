@@ -167,6 +167,17 @@ validation:
     repro 1→0、错树前置/缺依赖/缺设备/CLI 退出码全达标
     （results/*-2026-11-09.log）。
   - |-
+    第三轮评审小修（2026-11-10，基于 b5a2cc8；仅测试与文档，源码零改动）：
+    (1) strided conj 样例 _cbase[::2] 首维为 1 实际仍连续，改为
+    _cbase[:,::2].conj()（stride (2,2) 真正非连续）并在 enable 前断言
+    is_conj/非连续前提，direct+dispatch 双入口保留；(2) "实数路径逐位不变"
+    过强表述统一改写（README/WORKFLOW/diagnosis/PR 描述：含实数语义修正，
+    已列用例通过、未覆盖输入与后端不作逐位一致保证；单次模型前向 loss rel=0
+    结论保留）。测试变更后在干净提交 1fa248d 重跑：regression
+    33/177/210 → 210/0/210（20 conj 用例全 PASS），
+    results/regression-{baseline,fixed}-2026-11-10.log；flag-fixes verify
+    3/3 passed、source_dirty=false → results/verify-2026-11-10.json。
+  - |-
     管理工具 requires 强制实测：check/plan/apply/status 必须同时给出
     linear-5379 zeros-7181（results/cli-check-2026-11-09.log 等 exit 0）；
     只给 zeros-7181 时 exit 2 "include required fixes: ['linear-5379']"

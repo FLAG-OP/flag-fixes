@@ -76,7 +76,7 @@ linear-5379 的 after hash `ddec3383…`（9 文件与 `e2e_precondition` 一致
 | 命令 / 脚本 | 修复前（`flagfix-noncplx` / 基线） | 修复后（`flagfix-fixed` / 基线） |
 | --- | --- | --- |
 | `tests/repro_complex64.py`（issue #7181 形态 + torch 入口） | **exit 1**：`ISSUE REPRODUCED`，`KeyError: 'complex64'` → `results/repro-baseline-2026-11-09.log` | **exit 0** → `results/repro-fixed-2026-11-09.log` |
-| `tests/test_complex_ops.py`（**210 用例**矩阵，第二轮扩含 bool/complex→bool/空输入/conj） | **exit 1**：`TOTAL: 33 passed, 177 failed, 210 total`（137 条 complex KeyError；其余为 strided `zero_` 断言、交叉 dtype 静默分歧、bool out 拒绝、conj 直调等修复缺失行为）→ `results/regression-baseline-2026-11-09.log` | **exit 0**：`TOTAL: 210 passed, 0 failed, 210 total` → `results/regression-fixed-2026-11-09.log`（第一轮 139 口径见 `results/regression-*-2026-11-08.log`：18/121/139 → 139/0/139） |
+| `tests/test_complex_ops.py`（**210 用例**矩阵，第二轮扩含 bool/complex→bool/空输入/conj；第三轮修订 strided conj 样例） | **exit 1**：`TOTAL: 33 passed, 177 failed, 210 total`（137 条 complex KeyError；其余为 strided `zero_` 断言、交叉 dtype 静默分歧、bool out 拒绝、conj 直调等修复缺失行为）→ `results/regression-baseline-2026-11-10.log` | **exit 0**：`TOTAL: 210 passed, 0 failed, 210 total` → `results/regression-fixed-2026-11-10.log`（第二轮样例修订前原文 `results/regression-*-2026-11-09.log` 同口径 33/177/210 → 210/0/210；第一轮 139 口径 `results/regression-*-2026-11-08.log`：18/121/139 → 139/0/139） |
 | `tests/test_m2_bert_backward.py`（12L/768/12/3072/8192，问题原配置） | **阶段一** `flagfix-e2ebase` exit 1：`_thead/ops/linear_backward.py:170` view `RuntimeError` → `results/e2e-linearblocker-baseline-2026-11-07.log`；**阶段二** `flagfix-noncplx` exit 1：前向 `FORWARD OK` loss rel=0.0，反向 `ops/sum.py:385 → KeyError: 'complex64'`（= problem.md 签名）→ `results/e2e-problem-path-noncomplex-2026-11-07.log` | **exit 0**：`E2E OK: loss_native=1.000000000e+00 loss_gems=1.000000000e+00 rel=0.000e+00 grads_present_finite=161 grads_missing_known_gap=384` → `results/e2e-fixed-2026-11-09.log` |
 | 同脚本，强制无设备（`CUDA_VISIBLE_DEVICES=`） | exit 2（缺设备） | exit 2（缺设备）→ `results/nocuda-regression-2026-11-09.log` |
 | 同脚本，隔离 `transformers` import 后 | exit 2：`MISSING DEPENDENCY: transformers -> exit 2` | exit 2 → `results/e2e-missing-dep-2026-11-09.log` |
@@ -176,6 +176,20 @@ native 参照在 `flag_gems.enable()` **之前**捕获（enable 后 call-site �
 regression 33/177/210→210/0/210、e2e `E2E OK`（前置 9 文件新哈希、161/384、
 loss rel=0）、错树前置 exit 2、缺依赖/缺设备 exit 2、CLI 六项退出码与第一轮一致、
 `compileall`/`pytest`(26) 通过；patch/快照/`fix.yaml` 三者 hash 一致（`validate`+`check`/`plan`）。
+
+## 第三轮评审小修（2026-11-10，基于 `b5a2cc8`）
+
+评审结论：无阻塞性问题，可作为 `draft / deployable=false / hardware_status=unverified`
+条目合入；剩两项非阻塞小修，本轮完成（仅测试与文档，源码零改动）：
+
+| 建议项 | 处理 | 验证 |
+| --- | --- | --- |
+| strided conj 样例实际仍连续（`_cbase[::2]` 首维长度为 1） | 改为 `_cbase[:, ::2].conj()`（stride `(2,2)`，真正非连续），enable 前加 `assert _pc.is_conj()` / `assert not _pcs.is_contiguous()` / `assert _pcs.is_conj()` 断言前提；direct + torch dispatch 双入口对照保留 | 干净提交 `1fa248d` 上设备重跑：20 个 conj 用例（`abs`/`abs_strided`/`sum`/`sum_dim0`/`sum_strided` × c64/c128 × direct/dispatch）全 PASS，`results/regression-fixed-2026-11-10.log`；基线同套件 KeyError 失败形态不变（33/177/210） |
+| “实数路径逐位不变”表述过强 | README（首段/改动表/验证表）、`WORKFLOW.md` 登记行、`reports/diagnosis.md`、PR 描述统一改为：分支在 `is_complex()` 处短路但含实数语义修正（cast-first、float→bool 非零、out dtype 推断、空输入），已列实数回归用例通过、**未覆盖输入与后端不作逐位一致保证**；单次模型前向 loss rel=0 结论保留（有日志支持），不推广 | 文档 diff 自查；历史原始日志不改写 |
+
+复验（测试脚本变更，评审要求在干净提交上重跑并关联 commit）：`flag-fixes verify`
+在 `1fa248d` 干净树上 `passed: true` 3/3、`source_dirty: false`、regression
+210/0/210 → `results/verify-2026-11-10.json`（单独提交）；文档调整不重复硬件运行。
 
 ## 未执行（如实登记，不算通过）
 

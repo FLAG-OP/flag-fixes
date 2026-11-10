@@ -1,16 +1,21 @@
 # 结果
 
 本机（PPU / thead / torch 2.10.0 / triton 3.6.0）实测，工具与脚本原文、未脱敏。
-**权威日志为 `*-2026-11-09.log`（评审第二轮，当前代码）**；`*-2026-11-08.log` 为
-评审第一轮（139 用例口径，已被第二轮取代，原文保留）；`*-2026-11-07.log` 为初版
-历史原文，不改写。判定与命令见 `reports/validation.md`。
+**权威日志：`regression-*-2026-11-10.log` 与 `verify-2026-11-10.json` 为评审第三轮
+（测试与文档小修后，当前代码）；`*-2026-11-09.log` 为评审第二轮（11-10 回归日志
+的前身，测试样例修订前，其余命令仍为当前）**；`*-2026-11-08.log` 为评审第一轮
+（139 用例口径）；`*-2026-11-07.log` 为初版历史原文，不改写。
+判定与命令见 `reports/validation.md`。
 
 | 文件 | 内容 |
 | --- | --- |
+| `regression-baseline-2026-11-10.log` | 修复前 `test_complex_ops.py`（第三轮测试，含非连续 conj 样例）：`TOTAL: 33 passed, 177 failed, 210 total`，exit 1 |
+| `regression-fixed-2026-11-10.log` | 修复后 `test_complex_ops.py`（同上）：`TOTAL: 210 passed, 0 failed, 210 total`，exit 0；20 个 conj 用例（含非连续 direct/dispatch）全 PASS |
+| `verify-2026-11-10.json` | 第三轮提交（`1fa248d`）后的干净 `flag-fixes verify`（3/3，`source_dirty: false`） |
 | `repro-baseline-2026-11-09.log` | 修复前 `repro_complex64.py`：exit 1，`KeyError: 'complex64'` |
 | `repro-fixed-2026-11-09.log` | 修复后 `repro_complex64.py`：exit 0 |
-| `regression-baseline-2026-11-09.log` | 修复前 `test_complex_ops.py`：`TOTAL: 33 passed, 177 failed, 210 total` |
-| `regression-fixed-2026-11-09.log` | 修复后 `test_complex_ops.py`：`TOTAL: 210 passed, 0 failed, 210 total` |
+| `regression-baseline-2026-11-09.log` | （第二轮历史）修复前 `test_complex_ops.py`（样例修订前）：`TOTAL: 33 passed, 177 failed, 210 total` |
+| `regression-fixed-2026-11-09.log` | （第二轮历史）修复后 `test_complex_ops.py`（样例修订前）：`TOTAL: 210 passed, 0 failed, 210 total` |
 | `e2e-fixed-2026-11-09.log` | e2e 修复后：precondition OK（9 文件）、revision pin、`E2E OK` loss rel=0.000e+00、161 梯度 present+finite、384 缺口与 fixture 双向断言 |
 | `e2e-precondition-baseline-2026-11-09.log` | e2e 跑在基线树：模型工作前 exit 2 `MISSING PRECONDITION`（linear.py 失配） |
 | `e2e-precondition-linearonly-2026-11-09.log` | e2e 跑在仅 linear-5379 树：exit 2 `MISSING PRECONDITION`（sum.py 等逐条失配） |

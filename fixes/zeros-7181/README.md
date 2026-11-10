@@ -213,7 +213,9 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 
 ## 验证结果摘要
 
-（2026-11-09 评审第二轮，日志见 `results/*-2026-11-09.log`；第一轮 139 用例口径见
+（2026-11-10 评审第三轮：回归日志见 `results/regression-*-2026-11-10.log`、干净
+verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
+`results/*-2026-11-09.log`；第一轮 139 用例口径见
 `results/*-2026-11-08.log`）
 
 | 项目 | 修复前 | 修复后 |
