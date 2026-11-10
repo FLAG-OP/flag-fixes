@@ -139,133 +139,161 @@ def bench_case(fn, setup=None, warmup=20, blocks=5, iters=100):
 
 
 def op_cases():
-    """Op-level cases: sum full/inner/outer, abs, zeros/zero_, fwd+bwd."""
-    cases = []
+    """Op-level cases: sum full/inner/outer, abs, zeros/zero_, fwd+bwd.
+
+    Built per-dtype-block: under full registration any complex tensor
+    creation can crash (pre-existing triton complex64 gap), so each dtype
+    block is isolated and a setup failure is recorded instead of killing
+    the whole group run."""
+    cases, build_errors = [], {}
     for dname, dt in CDTYPES.items():
-        real_dt = torch.float32 if dt == torch.complex64 else torch.float64
-        for n in SIZES:
-            r, c = factor2(n)
-            tag = f"{dname}/n{n}"
-            x1 = torch.randn(n, dtype=torch.float32,
-                             device=DEVICE).to(dt)
-            x1s = make_strided(x1)
-            x2 = x1.reshape(r, c)
-            x2s = make_strided(x2)
-            # separate leaf tensors for backward cases (forward-only timings
-            # must not pay autograd overhead)
-            xb = x2.detach().clone().requires_grad_(True)
-            xbs = x2s.detach().clone().requires_grad_(True)
-            g1 = torch.randn(r, dtype=dt, device=DEVICE)
-            gc = torch.randn(r, c, dtype=real_dt, device=DEVICE)
+        try:
+            real_dt = (torch.float32 if dt == torch.complex64
+                       else torch.float64)
+            for n in SIZES:
+                r, c = factor2(n)
+                tag = f"{dname}/n{n}"
+                x1 = torch.randn(n, dtype=torch.float32,
+                                 device=DEVICE).to(dt)
+                x1s = make_strided(x1)
+                x2 = x1.reshape(r, c)
+                x2s = make_strided(x2)
+                # separate leaf tensors for backward cases (forward-only
+                # timings must not pay autograd overhead)
+                xb = x2.detach().clone().requires_grad_(True)
+                xbs = x2s.detach().clone().requires_grad_(True)
+                g1 = torch.randn(r, dtype=dt, device=DEVICE)
+                gc = torch.randn(r, c, dtype=real_dt, device=DEVICE)
 
-            cases.append((f"sum/full/{tag}",
-                          lambda x=x1: x.sum()))
-            cases.append((f"sum/inner/{tag}",
-                          lambda x=x2: x.sum(dim=1)))
-            cases.append((f"sum/outer/{tag}",
-                          lambda x=x2: x.sum(dim=0)))
-            cases.append((f"sum/inner/strided/{tag}",
-                          lambda x=x2s: x.sum(dim=1)))
-            cases.append((f"abs/{tag}", lambda x=x2: torch.abs(x)))
-            cases.append((f"abs/strided/{tag}",
-                          lambda x=x2s: torch.abs(x)))
+                cases.append((f"sum/full/{tag}",
+                              lambda x=x1: x.sum()))
+                cases.append((f"sum/inner/{tag}",
+                              lambda x=x2: x.sum(dim=1)))
+                cases.append((f"sum/outer/{tag}",
+                              lambda x=x2: x.sum(dim=0)))
+                cases.append((f"sum/inner/strided/{tag}",
+                              lambda x=x2s: x.sum(dim=1)))
+                cases.append((f"abs/{tag}", lambda x=x2: torch.abs(x)))
+                cases.append((f"abs/strided/{tag}",
+                              lambda x=x2s: torch.abs(x)))
 
-            # fwd+bwd chains (graph built per iteration); abs maps
-            # complex->real so its upstream grad is real-dtyped
-            def sum_inner_bwd(x=xb, g=g1):
-                y = x.sum(dim=1)
-                y.backward(g)
-            def sum_inner_bwd_s(x=xbs, g=g1):
-                y = x.sum(dim=1)
-                y.backward(g)
-            def abs_bwd(x=xb, g=gc):
-                y = torch.abs(x)
-                y.backward(g)
-            cases.append((f"sum/inner/fwd+bwd/{tag}", sum_inner_bwd))
-            cases.append((f"sum/inner/fwd+bwd/strided/{tag}",
-                          sum_inner_bwd_s))
-            cases.append((f"abs/fwd+bwd/{tag}", abs_bwd))
+                # fwd+bwd chains (graph built per iteration); abs maps
+                # complex->real so its upstream grad is real-dtyped
+                def sum_inner_bwd(x=xb, g=g1):
+                    y = x.sum(dim=1)
+                    y.backward(g)
+                def sum_inner_bwd_s(x=xbs, g=g1):
+                    y = x.sum(dim=1)
+                    y.backward(g)
+                def abs_bwd(x=xb, g=gc):
+                    y = torch.abs(x)
+                    y.backward(g)
+                cases.append((f"sum/inner/fwd+bwd/{tag}", sum_inner_bwd))
+                cases.append((f"sum/inner/fwd+bwd/strided/{tag}",
+                              sum_inner_bwd_s))
+                cases.append((f"abs/fwd+bwd/{tag}", abs_bwd))
 
-            # zeros creation and zero_ (restore measured separately)
-            cases.append((f"zeros/{tag}",
-                          lambda s=(r, c), d=dt: torch.zeros(s, dtype=d,
-                                                             device=DEVICE)))
-            src = x2.clone()
-            xz = torch.empty_like(x2)
-            cases.append((f"zero_/{tag}",
-                          lambda t=xz: t.zero_(),
-                          lambda t=xz, s=src: t.copy_(s)))
-    return cases
+                # zeros creation and zero_ (restore measured separately)
+                cases.append((f"zeros/{tag}",
+                              lambda s=(r, c), d=dt: torch.zeros(
+                                  s, dtype=d, device=DEVICE)))
+                src = x2.clone()
+                xz = torch.empty_like(x2)
+                cases.append((f"zero_/{tag}",
+                              lambda t=xz: t.zero_(),
+                              lambda t=xz, s=src: t.copy_(s)))
+        except Exception as e:
+            build_errors[f"opblock/{dname}"] = {
+                "type": type(e).__name__, "message": str(e),
+                "phase": "case-build",
+            }
+    return cases, build_errors
 
 
 def model_cases():
-    """Model-level cases: A (c64 core) and B (fp32) at medium sizes."""
-    cases = []
-    # Model A medium: B=8, L=256, D=64, H=64, out=8 (A_CFGS["large"])
-    task_a = sm.gen_task("a", "large", 0, "fp32")
-    lr = 1e-2
-    for variant in ("contig", "conj"):
-        x, params, _ = sm.to_device(task_a, DEVICE)
-        x0 = x.detach().clone()
-        p0 = {k: v.detach().clone() for k, v in params.items()}
+    """Model-level cases: A (c64 core) and B (fp32) at medium sizes.
 
-        def restore(x=x, params=params, x0=x0, p0=p0):
+    Built per-model: the complex-core model A can fail to even construct
+    under full registration (complex gap); the all-real model B stays
+    measurable, which is exactly the comparison the review asks for."""
+    cases, build_errors = [], {}
+    lr = 1e-2
+    try:
+        # Model A medium: B=8, L=256, D=64, H=64, out=8 (A_CFGS["large"])
+        task_a = sm.gen_task("a", "large", 0, "fp32")
+        for variant in ("contig", "conj"):
+            x, params, _ = sm.to_device(task_a, DEVICE)
+            x0 = x.detach().clone()
+            p0 = {k: v.detach().clone() for k, v in params.items()}
+
+            def restore(x=x, params=params, x0=x0, p0=p0):
+                x.data.copy_(x0)
+                for k, p in params.items():
+                    p.data.copy_(p0[k])
+                sm.zero_grads(x, params)
+
+            def fwd(x=x, params=params, v=variant):
+                sm.zero_grads(x, params)
+                out, loss, _ = sm.forward("a", "large", x, params, v)
+                return out, loss
+            cases.append((f"modelA/{variant}/fwd", fwd, restore))
+
+            def fwdbwd(x=x, params=params, v=variant):
+                sm.zero_grads(x, params)
+                out, loss, _ = sm.forward("a", "large", x, params, v)
+                loss.backward()
+            cases.append((f"modelA/{variant}/fwd+bwd", fwdbwd, restore))
+
+            def step(x=x, params=params, v=variant):
+                sm.zero_grads(x, params)
+                out, loss, _ = sm.forward("a", "large", x, params, v)
+                loss.backward()
+                with torch.no_grad():
+                    for p in params.values():
+                        p -= lr * p.grad
+            cases.append((f"modelA/{variant}/train-step", step, restore))
+    except Exception as e:
+        build_errors["modelA"] = {
+            "type": type(e).__name__, "message": str(e),
+            "phase": "case-build",
+        }
+    try:
+        # Model B medium: N=8, Cin=3, H=W=32, Cout=32 (B_CFGS["large"])
+        task_b = sm.gen_task("b", "large", 0, "fp32")
+        x, params, _ = sm.to_device(task_b, DEVICE)
+        x0b = x.detach().clone()
+        p0b = {k: v.detach().clone() for k, v in params.items()}
+
+        def restore_b(x=x, params=params, x0=x0b, p0=p0b):
             x.data.copy_(x0)
             for k, p in params.items():
                 p.data.copy_(p0[k])
             sm.zero_grads(x, params)
 
-        def fwd(x=x, params=params, v=variant):
+        def b_fwd(x=x, params=params):
             sm.zero_grads(x, params)
-            out, loss, _ = sm.forward("a", "large", x, params, v)
+            out, loss, _ = sm.forward("b", "large", x, params, "default")
             return out, loss
-        cases.append((f"modelA/{variant}/fwd", fwd, restore))
-
-        def fwdbwd(x=x, params=params, v=variant):
+        def b_fwdbwd(x=x, params=params):
             sm.zero_grads(x, params)
-            out, loss, _ = sm.forward("a", "large", x, params, v)
+            out, loss, _ = sm.forward("b", "large", x, params, "default")
             loss.backward()
-        cases.append((f"modelA/{variant}/fwd+bwd", fwdbwd, restore))
-
-        def step(x=x, params=params, v=variant):
+        def b_step(x=x, params=params):
             sm.zero_grads(x, params)
-            out, loss, _ = sm.forward("a", "large", x, params, v)
+            out, loss, _ = sm.forward("b", "large", x, params, "default")
             loss.backward()
             with torch.no_grad():
                 for p in params.values():
                     p -= lr * p.grad
-        cases.append((f"modelA/{variant}/train-step", step, restore))
-    # Model B medium: N=8, Cin=3, H=W=32, Cout=32 (B_CFGS["large"])
-    task_b = sm.gen_task("b", "large", 0, "fp32")
-    x, params, _ = sm.to_device(task_b, DEVICE)
-    x0b = x.detach().clone()
-    p0b = {k: v.detach().clone() for k, v in params.items()}
-
-    def restore_b(x=x, params=params, x0=x0b, p0=p0b):
-        x.data.copy_(x0)
-        for k, p in params.items():
-            p.data.copy_(p0[k])
-        sm.zero_grads(x, params)
-
-    def b_fwd(x=x, params=params):
-        sm.zero_grads(x, params)
-        out, loss, _ = sm.forward("b", "large", x, params, "default")
-        return out, loss
-    def b_fwdbwd(x=x, params=params):
-        sm.zero_grads(x, params)
-        out, loss, _ = sm.forward("b", "large", x, params, "default")
-        loss.backward()
-    def b_step(x=x, params=params):
-        sm.zero_grads(x, params)
-        out, loss, _ = sm.forward("b", "large", x, params, "default")
-        loss.backward()
-        with torch.no_grad():
-            for p in params.values():
-                p -= lr * p.grad
-    cases.append(("modelB/default/fwd", b_fwd, restore_b))
-    cases.append(("modelB/default/fwd+bwd", b_fwdbwd, restore_b))
-    cases.append(("modelB/default/train-step", b_step, restore_b))
-    return cases
+        cases.append(("modelB/default/fwd", b_fwd, restore_b))
+        cases.append(("modelB/default/fwd+bwd", b_fwdbwd, restore_b))
+        cases.append(("modelB/default/train-step", b_step, restore_b))
+    except Exception as e:
+        build_errors["modelB"] = {
+            "type": type(e).__name__, "message": str(e),
+            "phase": "case-build",
+        }
+    return cases, build_errors
 
 
 def run_group(group, out_path, seed=20261110, quick=False):
@@ -275,14 +303,20 @@ def run_group(group, out_path, seed=20261110, quick=False):
     rec = sm.set_determinism(0, "fp32")
     model = "a"
     prov = register_group(group, model)
-    cases = op_cases() + model_cases()
+    op_c, op_err = op_cases()
+    md_c, md_err = model_cases()
+    cases = op_c + md_c
+    build_errors = {**op_err, **md_err}
+    for name, err in build_errors.items():
+        print(f"[{group}] BUILD-SKIP {name}: {err['type']}: "
+              f"{err['message'][:120]}", flush=True)
     if quick:
         cases = [c for c in cases if "/n2^20/" not in c[0]][:12]
     rng = random.Random(seed)
     order = list(range(len(cases)))
     rng.shuffle(order)
     results = {}
-    errors = {}
+    errors = dict(build_errors)
     for i in order:
         name = cases[i][0]
         fn = cases[i][1]
