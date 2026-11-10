@@ -11,7 +11,9 @@
 - 问题与修复后行为：`flag_gems.enable()` 下跑 m2-bert 反向必抛
   `KeyError: 'complex64'`（triton `type_canonicalisation_dict` 无 complex 条目），
   issue #7181 的 `flag_gems.zeros(complex)` / `flag_gems.abs` 同签名；修复后反向完整跑完、
-  前向 loss 与原生逐位一致（rel=0），实数路径逐位不变。
+  前向 loss 与原生逐位一致（rel=0，单次模型前向、有日志支持）；除 complex 支持外，
+  本 patch 亦修正 sum 的 dtype/out 推断、bool 转换与空输入语义——已列出的实数回归
+  用例通过，未覆盖输入与后端不作逐位一致保证（第三轮评审口径）。
 
 ## 一句话版本
 
@@ -75,7 +77,7 @@ linear_backward，验收 = 最小复现 + e2e 剥洋葱链）；C 类 = 后端/�
 
 | 文件 | 机制 |
 | --- | --- |
-| `ops/sum.py` | `_COMPLEX_TO_REAL` + `torch.view_as_real` 降维复用现有实数 kernel，结果按映射 dtype 转回；4 个入口前置分支，实数路径短路逐位不变；交叉 dtype out 语义对齐 ATen（`sum_dim_out(dtype=None)` 采用 `out.dtype`、显式不符逐字抛错、`sum` 系 cast-first） |
+| `ops/sum.py` | `_COMPLEX_TO_REAL` + `torch.view_as_real` 降维复用现有实数 kernel，结果按映射 dtype 转回；4 个入口前置分支；除 complex 支持外亦修正实数语义（cast-first、float→bool 非零转换、out dtype 推断、空输入归约——已列实数回归用例通过，未覆盖输入与后端不作逐位一致保证）；交叉 dtype out 语义对齐 ATen（`sum_dim_out(dtype=None)` 采用 `out.dtype`、显式不符逐字抛错、`sum` 系 cast-first） |
 | `ops/zeros.py` / `ops/zero.py` | complex 一律 `x.copy_(0); return x`——ATen 原生 redispatch，**stride 正确**（切片/视图/转置的稀疏存储也被清零），保持 dtype 与"返回同一张量"语义 |
 | `ops/zeros_like.py` | complex 分支调 `zero_(out)` 继承 strides/dtype/布局（`zeros_like` 语义天然正确） |
 | `ops/abs.py` / `ops/absolute.py` | `abs()` complex 委托已有 `_absolute_complex_kernel` 的 `absolute()`；模长用**缩放 hypot**（`m=max(\|re\|,\|im\|)` 归一后开方，inf 优先于 NaN、NaN 传播、防大数溢出）；`abs_()`/`absolute_()` 按 native 原样抛 `RuntimeError`（逐字比对） |
@@ -221,7 +223,7 @@ python3 run_model.py --models "togethercomputer/m2-bert-80M-8k-retrieval" \
 | `test_m2_bert_backward.py`（e2e） | 阶段一：linear_backward `view` RuntimeError；阶段二：反向 `sum.py:385 KeyError: 'complex64'`（problem.md 签名） | exit 0，`E2E OK`，precondition 9 文件 OK，loss rel=0.000e+00，161 梯度存在且有限，384 缺口与 fixture 双向断言一致 |
 | e2e 前置哈希（基线树 / 仅 linear 树） | — | 均 exit 2 `MISSING PRECONDITION`（模型工作之前） |
 | 前向对照 | （阶段二）loss rel=0.0 | loss rel=0.0（与原生逐位一致） |
-| 实数路径回归 | 通过 | 通过，逐位不变 |
+| 实数路径回归 | 通过 | 通过（已列用例；未覆盖输入与后端不作逐位一致保证） |
 | `flag-fixes validate/check/plan` | — | exit 0（9 文件 hash、patch 应用、快照一致；须同时给两个 ID） |
 | `flag-fixes check zeros-7181`（漏依赖） | — | exit 2 `include required fixes: ['linear-5379']` |
 | `flag-fixes apply` | — | exit 2（`deployable=false` 按设计拒绝） |

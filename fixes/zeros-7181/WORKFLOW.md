@@ -4,7 +4,7 @@
 
 | 步骤 | 状态 | 内容与完成条件 | 证据/原因 |
 | --- | --- | --- | --- |
-| 1 登记 | done | ID `zeros-7181`（沿用 算子-issue 号命名）；owner 保持 `null`（无既有负责人，不虚构）；上游 issue #7181；预期行为：complex `zeros` 保 dtype 清零、`abs` 返回模长或前置拒绝、m2-bert 反向不再 `KeyError` 中断；边界：实数路径逐位不变、8 文件（`ops/linear.py` 归 linear-5379） | `fix.yaml`、`README.md` |
+| 1 登记 | done | ID `zeros-7181`（沿用 算子-issue 号命名）；owner 保持 `null`（无既有负责人，不虚构）；上游 issue #7181；预期行为：complex `zeros` 保 dtype 清零、`abs` 返回模长或前置拒绝、m2-bert 反向不再 `KeyError` 中断；边界：分支在 `is_complex()` 处短路，但含实数语义修正（dtype/out、bool 转换、空输入），已列实数回归用例通过、未覆盖输入与后端不作逐位一致保证；8 文件（`ops/linear.py` 归 linear-5379） | `fix.yaml`、`README.md` |
 | 2 基线 | done | FlagGems commit `29e14822f6dfabf990973c41f7c2df7811a6f60f`（`git describe` `v5.3.5-46-g29e14822`）；8 个目标文件 before sha256 记录于 `fix.yaml`/README；软件栈 torch 2.10.0 / triton 3.6.0 / Python 3.12.3 / transformers 4.57.0 / PPU-ZW810E thead；四个工作树可按 `reports/validation.md` 的构造命令重建（重建后 `diff -rq` 逐字节一致） | `reports/validation.md` 环境表、目标树构造 |
 | 3 复现 | done | `tests/repro_complex64.py`（issue #7181 直接调用形态 + torch 入口）；修复前 exit 1 `ISSUE REPRODUCED` + `KeyError: 'complex64'`，错误自 `triton/_utils.py type_canonicalisation_dict`；真实模型反向（阶段二树）复现 problem.md 同款 `sum.py:385` 堆栈 | `results/repro-baseline-2026-11-08.log`、`results/e2e-problem-path-noncomplex-2026-11-07.log`（原文未脱敏） |
 | 4 诊断 | done | 根因：triton 无 complex mangle 条目，`sum/zeros 族/abs` 把 complex 送进实数 kernel；同链路两个预存阻塞：conv2d `input_c_stride[None]` constexpr 崩溃（标量 1 特化）、thead linear_backward `view` 非连续崩溃；方案与影响见 diagnosis（三类改动 A/B/C 及各自验收）；预存梯度缺口（0 个 `register_autograd`）双树同形态，不属于本 patch | `reports/diagnosis.md`、`results/gradgap-probe-*.log` |

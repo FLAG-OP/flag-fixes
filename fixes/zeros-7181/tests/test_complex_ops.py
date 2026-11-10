@@ -472,7 +472,13 @@ for _dt in (torch.complex64, torch.complex128):
         [[1 + 2j, 5 + 6j], [3 + 4j, 7 + 8j]], dtype=_dt, device=DEV
     )
     _pc = _cbase.conj()
-    _pcs = _cbase[::2].conj()
+    # round 3: _cbase[::2] leaves one row, which torch still counts as
+    # contiguous; a column slice is genuinely non-contiguous, so assert
+    # both strided-sample premises before enable.
+    _pcs = _cbase[:, ::2].conj()
+    assert _pc.is_conj()
+    assert not _pcs.is_contiguous()
+    assert _pcs.is_conj()
     _conj[(_dt, "abs")] = (_pc, torch.abs(_pc))
     _conj[(_dt, "abs_strided")] = (_pcs, torch.abs(_pcs))
     _conj[(_dt, "sum")] = (_pc, torch.sum(_pc))
