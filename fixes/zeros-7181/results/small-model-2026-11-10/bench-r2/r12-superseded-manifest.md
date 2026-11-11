@@ -8,3 +8,5 @@
 | "c128 contiguous 约 3µs 收益"（候选 A 选型依据） | withdrawn（数据来自 c64 误标） | r12 registered PATH 数据（B 占优或持平全部已测布局） |
 
 历史文件保留原文不改写；以上替代关系供机器/人工检索。
+
+| `baseline/diff-details.json`（round-11/12 批：c128 ULP 误报 0、bit_list 复数 numel 未翻倍/缺 cpu/conj resolve） | superseded | round-14 重跑（提交 7a691c8）：dtype-aware ULP（c128 float64 位型 1–4 ULP）、NaN case 用基线构造位级解释（out_checksum 差异 = 输出 NaN payload 位型、输入一致）——见 `baseline/diff-details.json`、`ulp-mapping-selftest.json` |

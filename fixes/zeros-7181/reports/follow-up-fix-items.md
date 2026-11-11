@@ -245,3 +245,13 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   NaN 数值全同、payload 位不保证。详见 `baseline/diff-details.json` 与
   `baseline/ulp-mapping-selftest.json`。
 - B-only 首选结论不变；"本轮已测试布局中最优"限定语维持。
+
+
+## round-14 补充（评审 6797761554）
+
+- 差异明细工具 `diff_details.py` 重写：NaN 用例与基线构造同源（NaN+NaN·j）、
+  位级 payload 比较、分类完备（类不一致=失败）、±0 策略显式、有序 ULP 映射
+  精确断言。FIX-ITEM-3 相关的 8 项 numeric_diff 定稿：conj ≤4 float64 ULP、
+  abs ≤2 float32 ULP / ≤2 float64 ULP、abs extreme 1 ULP、abs/c128/nan =
+  输出 NaN payload 位型差异（输入位级一致，掩码一致，策略不要求 payload）。
+- FIX-ITEM-4/5 不受本工具修正影响，维持独立跟踪。

@@ -61,5 +61,12 @@
     "diff_details_rerun": "baseline/diff-details.json (c64 f32 mapping 1-2 ULP; c128 f64 mapping 1-4 ULP; NaN values identical, payload bits not guaranteed)",
     "baseline_summary_synced": "strict final batch (50 numeric_equal + 8 numeric_diff) copied to baseline/baseline-summary.json; r10 originals archived as *.r10-superseded",
     "file_mapping_check": "run-commits round12_additions.final_clean_run_commit=fc71b82 <-> baseline-freeze-final.log <-> baseline/* (strict) <-> diff-details.json"
+  },
+  "round14_additions": {
+    "harness_commit": "7a691c8",
+    "diff_details_rewrite": "NaN case uses baseline construction (NaN+NaN*j, bit-level payload comparison); classification-complete metrics; ordered ULP mapping with signed-zero policy",
+    "final": {
+      "numeric_diff_8_cases": "conj sum/abs <=4 float64 ULP / <=2 float32 ULP; abs extreme 1 ULP; abs/c128/nan = output NaN payload bits differ (inputs identical, both NaN, mask match -> payload not a pass condition)"
+    }
   }
 }

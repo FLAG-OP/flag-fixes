@@ -393,3 +393,24 @@ validation.
 - B-only remains the priority candidate under real c64/c128 (registered B
   wins or ties all tested layouts). Historical raw artifacts preserved;
   PR2 stays `draft / deployable=false / hardware_status=unverified`.
+
+## 9. Round-14 addendum: NaN case explained, classification-complete metrics, ordered ULP
+
+- The NaN numeric_diff case is **explained**: with the EXACT baseline input
+  (NaN + NaN*j), inputs are bit-identical across trees (`in_bits_equal`),
+  both outputs are NaN, and the committed checksum difference comes from
+  **output NaN payload bits** (scaled-hypot vs native NaN generation) —
+  per policy, payload is not a pass condition.
+- Metrics rewritten to be classification-complete: per-component
+  nan/inf±/zero±/finite classes must match, else the case FAILS (the
+  reviewer's two false-pass reproductions — `1.0` vs `inf`,
+  `(1+nanj)` vs `(1+0j)` — are now caught by selftest); NaN payloads are
+  compared from actual bits; +/-0 policy explicit (same numeric point,
+  sign-bit diff flagged).
+- ULP uses the ordered bit mapping with exact expected-value selftests
+  (f32/f64, +/-0, adjacent values, cross-zero min-subnormal) — final
+  numbers: conj sum/abs ≤ 4 float64 ULP (c128) / ≤ 2 float32 ULP (c64),
+  abs 1–2 ULP; the "1 ULP 级" wording is refined to per-dtype values.
+- Tool-bug found by selftest and fixed: the classifier's exponent mask/
+  mantissa didn't follow dtype and included exponent bits (inf classified
+  as nan). Old diff-details batches superseded (see manifest).

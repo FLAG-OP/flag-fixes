@@ -345,3 +345,10 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   round-10 旧产物 .r10-superseded 归档，README 两处旧口径加 superseded
   标注并替换为当前口径（50 equal + 8 numeric_diff），run-commits 补
   commit↔文件映射。状态与验收口径不变。
+- 第十四轮（2026-11-11，意见 6797761554）：diff_details 重写——NaN 用例
+  与基线构造同源（NaN+NaN·j）+ 位级 payload 比较 + 分类完备（类不一致=
+  失败；修复合并探针暴露的 inf 误判 nan 分类 bug）+ 有序 ULP 映射（±0
+  策略显式）+ 精确断言自测 17/17。8 项 numeric_diff 定稿：conj ≤4 float64
+  ULP、abs 1–2 ULP、abs/c128/nan = 输出 NaN payload 位型差异（输入位级
+  一致、掩码一致，策略不要求 payload）。旧 diff-details 批次 superseded。
+  状态与验收口径不变。

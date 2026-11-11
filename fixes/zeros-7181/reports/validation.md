@@ -357,6 +357,17 @@ prefix 58/58 全崩——与首轮（工作树批）完全一致；性能中位�
 PR2 范围维持 PPU/thead；三平台属 PR3。功能 fix 维持 `draft / deployable=false /
 hardware_status=unverified`。
 
+## 第十四轮：NaN 对照同输入化、分类完备指标与 ULP 有序映射修正（2026-11-11，意见 comment `6797761554`，基于 `ff673ce`；harness 修正提交 `7a691c8`）
+
+两项 P2 全部落地：
+
+| 评审项 | 处理 | 结果 |
+| --- | --- | --- |
+| P2-a NaN 差异解释用不同输入 + 分类不完备 | `diff_details.py` 重写：NaN 用例复用**基线构造**（NaN + NaN·j，经 full(nan)/full(nan·0.5)）；逐分量**分类完备**（nan/inf+/inf−/zero±/finite），类不一致（含 Inf 符号、NaN vs 非 NaN）计为**失败**而非跳过；NaN payload 用**实际位型**比较（repr 不可分辨）；输入/输出位型与 in/out_bits_equal 全记录；修复合并探针暴露的分类 bug（exp_mask 未按 dtype、mant 误含指数位 → inf 曾误判 nan） | **自测 17/17 全过**（含评审的两个假阴性复现：`1.0 vs inf`、`(1+nanj) vs (1+0j)` 现均判 class_mismatch；±inf 符号不匹配判失败；NaN payload 位差异经 bits 标记）。`diff-details.json` 重生成：**8 例全部解释**——7 例 1–4 ULP 舍入类（conj c128 4/c64 2、abs extreme 1、abs conj 2）；**abs/c128/nan = 输出 NaN payload 位型差异**（scaled-hypot vs native 生成；**输入位级一致 in_bits_equal=True、双方均 NaN、掩码一致**——按策略 payload 不作为通过条件）。"待确认"项已解释完成 |
+| P2-b ULP 有序映射跨符号/±0 | `_ulp_distance` 改为**标准有序位型映射**（正数过中点、负数镜像），显式 **±0 策略**（数值 ULP 同零点距离 0，符号位差异单列 flag）；selftest 补**精确预期断言**：f32/f64 的 ±0、±min_sub、相邻值（含负数相邻）、跨零最小次正规数（距离=3），不再只断言 ≥1；并修正 selftest 标签错配（f64 相邻对被标成 float32 1-ULP，改用真正 f32 相邻对断言 ==1，另保留旧对 f32 映射=0 的检查） | 精确断言全过：f32 `+0.0→0x80000000`、`−0.0→0x7FFFFFFF`、`±min_sub` 距离=2（跨零=3）、f64 同构；同号有限值 1–4 ULP 结论维持（c128 conj 4 ULP 为 float64 位型真实值） |
+
+历史 `diff-details`（round-11/12 批）标注 superseded（`r12-superseded-manifest.md` 追加）；8 项 numeric_diff 的定性由"1 ULP 级"细化为**按 dtype 位型的 1–4 ULP**。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models
