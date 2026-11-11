@@ -154,3 +154,15 @@ harness：`tests/test_gelu_boundary.py`（dumper + 双树 diff 用法见 tests/R
 | −3 | −0.0115842 | 1.30e-7 | 1.30e-7 | 139.8* | 139.8* |
 
 \* 相对近零值的 ULP 计量放大；绝对误差一致，补丁未引入额外误差。
+
+
+## 边界证据的可重复入口（PR3 三轮评审 P2 闭环）
+
+边界对比已注册为 verify 第 5 个命令（`gelu-boundary-compare`，
+level=regression）：`tests/verify_gelu_boundary.py` 以目标树 flag_gems
+dump 边界输出，对比**已提交基线** `results/boundary-base-2026-11-11.json`
+（FlagGems @4e08b44e9 未打补丁、dumper v3、P800/XPU3）；旧 schema/缺
+字段/基线缺失均返回非零。独立 fp64 参考由 v3 dumps 再生成
+（`boundary-fp64ref-2026-11-11.json`），±3 处 base/fixed 绝对误差完全相同
+（pow→x*x 未引入额外误差）。本轮 verify（5 命令，组合树）rc=0：
+`results/verify-2026-11-11-combo.json`（source_dirty 以推送提交为准）。
