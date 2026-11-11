@@ -96,9 +96,10 @@ notes:
   包，verify 的 PYTHONPATH 预置 target/src 不存在但无害，命令 env 里用
   PYTHONPATH={target} 保证 import flagscale 生效。
 - fused AdamW 是 torch 官方实现路径（非厂商 hack）；KunlunXIN 上 foreach
-  已实测无融合收益，因此选 fused 而不是 foreach。A100/CUDA 上 stock 默认
-  foreach 本就有 `_foreach_*`，auto 护栏下同样会选 fused（更少的 kernel），
-  但未在其他后端实测，backends 只登记 kunlunxin。
+  已实测无融合收益，因此选 fused 而不是 foreach。**vendor 护栏（PR3 评审修订）**：
+  fused 选择仅在 KunlunXIN 平台启用（`_FUSED_ADAMW_VALIDATED_VENDORS`），
+  其它平台 auto 与显式请求均回退 stock 并记录原因，backends 只登记 kunlunxin。
+  A100/CUDA 等平台的收益、可用性与数值均未实测。
 - FSDP2/DTensor 参数路径保持 stock：fused 不感知 DTensor 分片；护栏按
   type(param).__module__ 前缀判断，单测以替身覆盖，真实 DTensor 未测。
 - 本修复是性能修复，不改变 lr/wd/dtype 语义；无 requires/conflicts。

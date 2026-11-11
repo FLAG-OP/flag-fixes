@@ -65,7 +65,7 @@ ratio 0.332，确定性通过）；CUPTI 关闭时 exit 2=skip。历史 wall 数
 
 ## 工具链校验
 
-- `flag-fixes --root . validate`：valid（12 fixes = 9 external + 3 local）
+- `flag-fixes --root . validate`：valid（13 fixes = 9 external + 4 local）
 - `flag-fixes check adamw-fused --target <base 树>` / `plan`：exit 0
   （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply adamw-fused --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
