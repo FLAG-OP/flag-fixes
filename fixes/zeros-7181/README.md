@@ -51,6 +51,15 @@
   superseded by bench-r2]** 标记；"当前有效口径"唯一化（zeros/zero_ 2^20
   ≈97–290×、sum forward 3.95–22.92×/fwd+bwd ≈3×、modelB f_target
   2.42–2.93×；观测不外推、不构成加速承诺）。状态与验收口径不变。
+- 第八轮评审收尾（2026-11-11，意见 6786286552）：(1) 构造标签更正——探针
+  单次 CUDA event 实测 device-标量创建 **0.3358 ms**、50 次平均 **0.0145 ms**
+  （原 0.0139 ms 系 50 次平均被误标"一次性"）；copy-only 净成本 0.0071/
+  0.0069 ms 不变。(2) 旧证据同步收尾——results/README 头注（968d624..d236d5a
+  区间一致 + fac401c 226 行加固）、0.02ms 行、validation 第六轮表
+  0.017–0.020 ms 加 historical 标记；报告 §4 机制段与生成器同步替换并重
+  生成 perf-section-auto.md。FIX-ITEM-3 登记候选评估协议与多平台复验要求
+  （昆仑芯/昇腾/平头哥）。功能 fix 维持 draft/deployable=false/
+  hardware_status=unverified；本轮结束证据审阅。
 
 ## 一句话版本
 

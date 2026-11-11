@@ -209,7 +209,9 @@ PASS、lr 校准 0.1（候选 1e-1 为按评审"调任务再校准"条款新增�
 产物：`results/small-model-2026-11-10/`（`matrix/`=阈值+校准+29 run+20 对比+fd+summary，
 `bench/`=5 组原始块计时+汇总表，`mse-scalar-repro.log`，`provenance.json`）；
 矩阵跑在干净提交 `968d624`，bench 跑在 `d236d5a`（两者 `tests/small_models.py`/
-`tests/test_small_models.py` 逐字节一致，`git diff` 为空）；完整报告
+`tests/test_small_models.py` 逐字节一致，`git diff` 为空【该表述仅限
+968d624..d236d5a 区间；后续 fac401c 对该文件加固比较器 226 行差异并对已存
+dumps 重评分，见第六轮节】）；完整报告
 `reports/small-model-evaluation.md`。结论限定于这两个模型与当前后端构建。
 
 ## 第五轮评审修正（2026-11-10，意见 comment `6766490204`，基于 `5e02b3b`）
@@ -234,7 +236,7 @@ owner=null`；小模型结论不替代大模型完整梯度与容器平台验收
 | 意见 | 处理 | 验证 |
 | --- | --- | --- |
 | P1 报告沿用旧清零结论（0.89–0.96×/0.83–1.00×）与 bench-r2 实测（2^20 达 97–290×）矛盾 | 旧表述**撤回**；性能节改为由 `benchmarks/gen_perf_section.py` 从 `bench2-summary.json` **自动生成**（`bench-r2/perf-section-auto.md`，报告内嵌），旗标计数 115、比值与舍入全部出自数据；sum "大尺寸仅 1.1–2×" 同步撤回（实测 forward 3.95–22.92×、fwd+bwd ≈3×） | 自动生成文件 + 报告内嵌一致；机器可复核 |
-| P1 后续定位：zero_ 的 copy_(0) 追踪 | 根因完成：**native ATen complex-标量 copy 本身经全量张量可分页 HtoD 中转**——native `copy_(0)` 0.74–0.85 ms ≈ f_target 0.90 ms（同路径）；native `zero_()` 0.005 ms 设备 memset；设备端 0 维源 0.017–0.020 ms。profiler 全事件：f_target `zero_` 仅 Memcpy HtoD、`zeros` 为 native FillFunctor+HtoD、无 Triton kernel。→ **FIX-ITEM-3**（`reports/follow-up-fix-items.md`），候选方向（设备端 0 维源/real 视图清零）已列，不承诺优化比例 | `benchmarks/zero_staging_probe.py` → `bench-r2/zero-staging-attribution.log`；`benchmarks/zeros_hitprobe.py` → `bench-r2/zeros-hitprobe-{f_target,native}.json`（全事件清单+分类+dtype/shape/入口/同步方式） |
+| P1 后续定位：zero_ 的 copy_(0) 追踪 | 根因完成：**native ATen complex-标量 copy 本身经全量张量可分页 HtoD 中转**——native `copy_(0)` 0.74–0.85 ms ≈ f_target 0.90 ms（同路径）；native `zero_()` 0.005 ms 设备 memset；设备端 0 维源 0.017–0.020 ms **[historical / superseded：该值混入每次 `.cuda()` 构造，第七轮预建后拷贝净成本 0.0071/0.0069 ms，见第七轮节]**。profiler 全事件：f_target `zero_` 仅 Memcpy HtoD、`zeros` 为 native FillFunctor+HtoD、无 Triton kernel。→ **FIX-ITEM-3**（`reports/follow-up-fix-items.md`），候选方向（设备端 0 维源/real 视图清零）已列，不承诺优化比例 | `benchmarks/zero_staging_probe.py` → `bench-r2/zero-staging-attribution.log`；`benchmarks/zeros_hitprobe.py` → `bench-r2/zeros-hitprobe-{f_target,native}.json`（全事件清单+分类+dtype/shape/入口/同步方式） |
 | P2 profiler 命中说明与 JSON 不符 | 三分法表述：**registered（断言）/ probe-hit（kernel 事件）/ timed-case（尺寸标度）**；round-5 回复"zeros 命中 Triton"系 `vectorized_elementwise_kernel` 子串误判，**更正为 native FillFunctor+HtoD、无 Triton kernel**；无法识别的 kernel 名标 unknown、原始名逐字保留 | `zeros-hitprobe-*.json` 全事件清单；报告与回复同步更正 |
 | P2 provenance 不准确（"tests 文件逐字节一致 968d624..fac401c"不实） | 更正：`test_small_models.py` 在该区间 **226 行差异（170+/56−，比较器加固）**；准确表述 = 设备运行在 `968d624`（当时 harness）、`fac401c` 加固比较器并对**已保存 dumps** 重评分（设备数据未重跑）；`tests/small_models.py` 确无变化。新增 `bench-r2/run-commits.json` 机器可读清单，报告 provenance 表自动对应 | `git diff --stat 968d624..fac401c` 记录于清单；报告 provenance 表重写 |
 
@@ -249,7 +251,7 @@ owner=null`；小模型结论不替代大模型完整梯度与容器平台验收
 
 | 意见 | 处理 | 验证 |
 | --- | --- | --- |
-| P2 设备端 0 维标量对照混入每次 `.cuda()` 构造成本 | `benchmarks/zero_staging_probe.py` 修正：设备标量**预建在计时之外**，单列 device-标量构造（一次性 0.0139 ms）/ 拷贝净成本 / 设备 memset / 同步边界；补 c128 确认 | 修正探针实测（2^20）：`copy_(0)` 0.83/1.50 ms（继承路径）vs **`copy_(预建 device-0dim)` 0.0071/0.0069 ms（拷贝净成本）** vs `zero_()` 0.0042/0.0055 ms——host staging 与设备路径差距 ≈117×，原 0.02 ms 系混入构造成本、已更正；报告与 FIX-ITEM-3 同步 |
+| P2 设备端 0 维标量对照混入每次 `.cuda()` 构造成本 | `benchmarks/zero_staging_probe.py` 修正：设备标量**预建在计时之外**，单列 device-标量构造（0.0139 ms，**round-8 更正标签：此为 50 次平均；单次 CUDA event 实测 0.3358 ms**）/ 拷贝净成本 / 设备 memset / 同步边界；补 c128 确认 | 修正探针实测（2^20）：`copy_(0)` 0.83/1.50 ms（继承路径）vs **`copy_(预建 device-0dim)` 0.0071/0.0069 ms（拷贝净成本）** vs `zero_()` 0.0042/0.0055 ms——host staging 与设备路径差距 ≈117×，原 0.02 ms 系混入构造成本、已更正；报告与 FIX-ITEM-3 同步 |
 | P2 历史性能段落未标 superseded | 四处旧口径加 **[historical / superseded by bench-r2]** 标记（原日志不改写，仅加标记）：`fix.yaml` 第四轮 bullet、`reports/validation.md` 第四轮性能行、`results/README.md` bench/ 行、（报告 §4 的撤回清单本已内嵌）；`README` 的 withdraw 表述本身无需改 | grep 复核：旧数字仅存于历史节/撤回说明/带标记处 |
 
 **当前有效口径（唯一，机器读取以此为准；观测仅限当前后端与计时协议，不外推、不构成加速承诺）**：
@@ -261,6 +263,21 @@ FIX-ITEM-3 按评审框定**三条候选路径**独立跟踪（native memset 基
 标量 copy / real-view 或逐元素设备 kernel），三者均须通过同一正确性矩阵
 （contiguous、slice/transpose、storage offset、c64/c128、未选中 storage 不污染）；
 候选实现只有在正确性回归、非连续视图与大尺寸性能全部通过后才考虑独立建优化 fix。
+
+## 第八轮评审修正（2026-11-11，意见 comment `6786286552`，基于 `4b71e9a`）
+
+评审确认无新功能回归；两项 P2 收尾（均系文档/标签一致性）：
+
+| 意见 | 处理 | 验证 |
+| --- | --- | --- |
+| P2 "一次性创建成本"标签不准（`bench()` 为 warmup+50 次平均） | 探针改为**单次 CUDA event 测量 + 明确标注 50 次平均**，两个数值都报告 | 单次 0.3358 ms（含冷启动）/ 50 次平均 0.0145 ms / copy-only 净成本 0.0089 ms（本次运行）——`bench-r2/zero-staging-attribution.log` 已更新；FIX-ITEM-3 表格加 round-8 更正说明 |
+| P2 旧证据未完全同步（results/README"逐字节一致"与 0.02ms、validation 第六轮表 0.017–0.020 ms、报告旧 0.02 ms 描述） | 全部统一到当前口径：results/README 头注改为"968d624..d236d5a 区间一致 + fac401c 后续 226 行加固"并更新 0.02ms 行；validation 第六轮表 0.017–0.020 ms 加 **[historical / superseded]**；报告 §4 机制段替换为 round-7/8 修正措辞（生成器 `gen_perf_section.py` 同步修改并重生成 `perf-section-auto.md`）；Round-7/8 correction 段加 historical 标记 | grep 复核：旧值仅存于带标记处与原始日志；`copy_(预建 device-0dim)` 0.0071/0.0069 ms、native `zero_()` 0.0042/0.0055 ms 为唯一当前口径 |
+
+评审的**后续实施建议**已登记：FIX-ITEM-3 候选评估协议（每候选记录正确性/非连续
+视图行为/大尺寸耗时/内存变化）与多平台复验要求（优化实现完成后在昆仑芯/昇腾/
+平头哥复跑同一矩阵，不将 PPU/thead 归因外推）已写入 `follow-up-fix-items.md`。
+功能 fix 维持 `draft / deployable=false / hardware_status=unverified`；9/9 与
+比较器负例保留；全量组两缺口继续独立跟踪。
 
 ## 未执行（如实登记，不算通过）
 

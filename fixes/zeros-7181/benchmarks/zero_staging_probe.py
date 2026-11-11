@@ -39,12 +39,22 @@ print("native x.copy_(0) (python scalar)     : %.4f ms"
 print("native copy_(cpu-0dim c64 tensor)     : %.4f ms"
       % bench(lambda: xc.copy_(c0)))
 print("[device-side alternatives]")
-# creation cost of the device scalar, measured ONCE separately (round-7)
-print("device-scalar creation (c0.cuda())    : %.4f ms (one-off, not in "
-      "steady-state copy)" % bench(lambda: c0.cuda()))
+# creation cost of the device scalar: single-shot CUDA-event measurement
+# (round-8 review: bench() averages warmup+50 iterations, which is NOT a
+# one-off cost; both numbers are reported and clearly labelled)
+e0, e1 = torch.cuda.Event(True), torch.cuda.Event(True)
+torch.cuda.synchronize()
+e0.record()
+c0_once = c0.cuda()
+e1.record()
+torch.cuda.synchronize()
+print("device-scalar creation (c0.cuda()), SINGLE-SHOT: %.4f ms"
+      % e0.elapsed_time(e1))
 c0_device = c0.cuda()
 torch.cuda.synchronize()
-print("native copy_(PRE-BUILT device-0dim)   : %.4f ms"
+print("device-scalar creation (c0.cuda()), 50-iter average: %.4f ms"
+      % bench(lambda: c0.cuda()))
+print("native copy_(PRE-BUILT device-0dim), copy-only: %.4f ms"
       % bench(lambda: xc.copy_(c0_device)))
 print("native x.zero_() (device memset)      : %.4f ms"
       % bench(lambda: xc.zero_()))

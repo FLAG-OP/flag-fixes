@@ -56,22 +56,27 @@ def main():
                      f"{ms(r, 'f_target')} | {ratio(r, 'f_target')} | "
                      f"{ms(r, 'f_all')} | {ms(r, 'b')} |")
     L.append("")
-    L.append("**Reading (mechanism, round-6 root-cause)**: the f_target "
-             "overhead grows linearly with tensor bytes (~9–14 GB/s "
-             "signature, fixed ~15 µs at 2^10). Event capture attributes "
-             "it: the fix routes complex `zero_` to `x.copy_(0)` and "
-             "complex `zeros` to `empty` + that same path; **native ATen "
-             "complex-scalar copy itself stages the value through a "
-             "full-tensor pageable HtoD** — profiler memcpy ≈ 570 µs at "
-             "2^20 c64 under registration, and the same overhead appears "
-             "NATIVE without flag_gems (`copy_(0)` 0.74–0.85 ms vs "
-             "native `zero_()` 0.005 ms device memset; a device-side "
-             "0-dim source cuts it to ~0.02 ms, see "
-             "`zero-staging-attribution.log`, `zeros-hitprobe-*.json`). "
-             "So the dominant cost is the inherited ATen complex-scalar "
+    L.append("**Reading (mechanism, round-6 root-cause, round-7/8 "
+             "corrected probe)**: the f_target overhead grows linearly "
+             "with tensor bytes (~9–14 GB/s signature, fixed ~15 µs at "
+             "2^10). Event capture attributes it: the fix routes complex "
+             "`zero_` to `x.copy_(0)` and complex `zeros` to `empty` + "
+             "that same path; **native ATen complex-scalar copy itself "
+             "stages the value through a full-tensor pageable HtoD** — "
+             "profiler memcpy ≈ 570 µs at 2^20 c64 under registration, "
+             "and the same overhead appears NATIVE without flag_gems "
+             "(`copy_(0)` 0.82–0.83 ms vs native `zero_()` 0.004–0.006 ms "
+             "device memset; with the round-7/8 corrected probe the "
+             "PRE-BUILT device-scalar copy-only net cost is **0.0071/"
+             "0.0069 ms** (c64/c128) — the earlier ~0.02 ms figure mixed "
+             "in per-call `.cuda()` construction and is superseded; "
+             "device-scalar creation is 0.336 ms single-shot / 0.015 ms "
+             "50-iter average, one-off outside any steady-state copy; "
+             "see `zero-staging-attribution.log`, `zeros-hitprobe-*.json`)"
+             ". So the dominant cost is the inherited ATen complex-scalar "
              "copy path, not extra FlagGems compute; it is a candidate "
-             "performance follow-up (FIX-ITEM-3), with no optimization "
-             "number promised.")
+             "performance follow-up (FIX-ITEM-3, three candidate paths + "
+             "correctness matrix), with no optimization number promised.")
     L.append("")
     L.append("### sum / abs (a-sum-abs family, forward)")
 

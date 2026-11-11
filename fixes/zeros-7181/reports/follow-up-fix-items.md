@@ -69,9 +69,15 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   | `copy_(0)` python 标量（修复继承路径） | 0.8276 ms | 1.4955 ms |
   | `copy_(cpu 0-dim)` | 0.8150 ms | - |
   | **`copy_(预建 device 0-dim)`（拷贝净成本）** | **0.0071 ms** | **0.0069 ms** |
-  | device 标量构造一次性成本（`c0.cuda()`） | 0.0139 ms | - |
+  | device 标量构造（一次性） | 0.0139 ms | - |
   | `zero_()` 设备 memset | 0.0042 ms | 0.0055 ms |
   | `torch.zeros(c64)` 创建参照 | 0.0079 ms | - |
+
+  **round-8 更正（构造标签）**：上表"构造一次性 0.0139 ms"实为 `bench()`
+  warmup+50 次迭代的**平均**创建成本；单次 CUDA event 实测为 **0.3358 ms**
+  （含冷启动/首launch）。当前口径：预建设备标量 copy-only 净成本
+  **0.0071/0.0069 ms**（c64/c128）、构造单次 0.336 ms / 50 次平均 0.015 ms、
+  native memset 0.004–0.006 ms（`zero-staging-attribution.log` 已同步）。
 
   round-5/6 探针的 0.02 ms 混入了每次 `.cuda()` 构造成本，已按修正探针更正；
   host staging 与设备路径净成本差距 ≈ **117×（c64）**。profiler 全事件
@@ -91,6 +97,10 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   视图、storage offset、complex64/complex128，并检查**未选中 storage 不被
   污染**；候选实现只有在正确性回归、非连续视图与大尺寸性能全部通过后，才
   考虑独立建优化 fix。
+- **候选评估协议（round-8 评审补充）**：每个候选方案同时记录——正确性、
+  非连续视图行为、大尺寸耗时、内存变化；优化实现完成后，分别在**昆仑芯、
+  昇腾、平头哥**三类平台复跑同一矩阵，避免把 PPU/thead 上的归因直接外推到
+  其他后端。
 - **状态**：proposed（未实现）。修复前后证据在独立修复包轮次补齐。
 
 ## 跟进原则
