@@ -251,13 +251,19 @@ owner=null`；小模型结论不替代大模型完整梯度与容器平台验收
 
 | 意见 | 处理 | 验证 |
 | --- | --- | --- |
-| P2 设备端 0 维标量对照混入每次 `.cuda()` 构造成本 | `benchmarks/zero_staging_probe.py` 修正：设备标量**预建在计时之外**，单列 device-标量构造（0.0139 ms，**round-8 更正标签：此为 50 次平均；单次 CUDA event 实测 0.3358 ms**）/ 拷贝净成本 / 设备 memset / 同步边界；补 c128 确认 | 修正探针实测（2^20）：`copy_(0)` 0.83/1.50 ms（继承路径）vs **`copy_(预建 device-0dim)` 0.0071/0.0069 ms（拷贝净成本）** vs `zero_()` 0.0042/0.0055 ms——host staging 与设备路径差距 ≈117×，原 0.02 ms 系混入构造成本、已更正；报告与 FIX-ITEM-3 同步 |
+| P2 设备端 0 维标量对照混入每次 `.cuda()` 构造成本 | `benchmarks/zero_staging_probe.py` 修正：设备标量**预建在计时之外**，单列 device-标量构造（0.0139 ms，**round-8 更正标签：此为 50 次平均；单次 CUDA event 实测 0.3358 ms**）/ 拷贝净成本 / 设备 memset / 同步边界；补 c128 确认 | 修正探针实测（2^20，round-7 批次）：`copy_(0)` 0.83/1.50 ms（继承路径）vs **`copy_(预建 device-0dim)` 0.0071/0.0069 ms（拷贝净成本，round-7 批；round-8 批复测 0.0089/0.0067 ms，批间为计时波动）** vs `zero_()` 0.0042/0.0055 ms——host staging 与设备路径差距 ≈117×，原 0.02 ms 系混入构造成本、已更正；报告与 FIX-ITEM-3 同步 |
 | P2 历史性能段落未标 superseded | 四处旧口径加 **[historical / superseded by bench-r2]** 标记（原日志不改写，仅加标记）：`fix.yaml` 第四轮 bullet、`reports/validation.md` 第四轮性能行、`results/README.md` bench/ 行、（报告 §4 的撤回清单本已内嵌）；`README` 的 withdraw 表述本身无需改 | grep 复核：旧数字仅存于历史节/撤回说明/带标记处 |
 
-**当前有效口径（唯一，机器读取以此为准；观测仅限当前后端与计时协议，不外推、不构成加速承诺）**：
+**当前有效口径（机器读取以此为准；观测仅限当前后端与计时协议，不外推、不构成加速承诺）**：
 - complex `zeros/zero_` bench-r2 2^20 实测约为 native 的 **97–290×**（随字节数线性，host staging 机制）；
 - complex `sum` forward 约 **3.95–22.92×**、fwd+bwd 约 **3×**；
 - modelB f_target 重测 fwd **2.42×** / fwd+bwd **2.93×** / step **2.52×**（第五轮重测口径）。
+
+**round-9 口径细化（copy-only 双批次）**：预建设备标量 copy-only 净成本按探针批次标注——
+**round-7 批 0.0071/0.0069 ms、round-8 批 0.0089/0.0067 ms**（c64/c128；批间为计时
+波动与复测差异，非功能差异；批/设备/协议 provenance 见
+`zero-staging-attribution-r7-batch.log` 与 `zero-staging-attribution.log`）；不再宣称
+单一"唯一口径"。单次创建 0.3358 ms 一律保留**含冷启动**说明，与稳态拷贝成本区分。
 
 FIX-ITEM-3 按评审框定**三条候选路径**独立跟踪（native memset 基准 / 预存设备 0 维
 标量 copy / real-view 或逐元素设备 kernel），三者均须通过同一正确性矩阵
@@ -274,8 +280,27 @@ FIX-ITEM-3 按评审框定**三条候选路径**独立跟踪（native memset 基
 | P2 旧证据未完全同步（results/README"逐字节一致"与 0.02ms、validation 第六轮表 0.017–0.020 ms、报告旧 0.02 ms 描述） | 全部统一到当前口径：results/README 头注改为"968d624..d236d5a 区间一致 + fac401c 后续 226 行加固"并更新 0.02ms 行；validation 第六轮表 0.017–0.020 ms 加 **[historical / superseded]**；报告 §4 机制段替换为 round-7/8 修正措辞（生成器 `gen_perf_section.py` 同步修改并重生成 `perf-section-auto.md`）；Round-7/8 correction 段加 historical 标记 | grep 复核：旧值仅存于带标记处与原始日志；`copy_(预建 device-0dim)` 0.0071/0.0069 ms、native `zero_()` 0.0042/0.0055 ms 为唯一当前口径 |
 
 评审的**后续实施建议**已登记：FIX-ITEM-3 候选评估协议（每候选记录正确性/非连续
-视图行为/大尺寸耗时/内存变化）与多平台复验要求（优化实现完成后在昆仑芯/昇腾/
-平头哥复跑同一矩阵，不将 PPU/thead 归因外推）已写入 `follow-up-fix-items.md`。
+视图行为/大尺寸耗时/内存变化）~~与多平台复验要求（优化实现完成后在昆仑芯/昇腾/
+平头哥复跑同一矩阵，不将 PPU/thead 归因外推）~~【**round-9 评审更正：三平台复验
+属 PR3 problem29 性能 bundle 范围，PR2 不要求，该条撤回**；FIX-ITEM-3 若扩展到
+其它后端应另建平台适配/优化条目再分别定义验证范围】已写入 `follow-up-fix-items.md`。
+
+## 第九轮评审收尾（2026-11-11，意见 comment `6787003142` + 更正 `6787034891`，基于 `78bece4`）
+
+评审确认无新功能回归；一项 P2 收尾 + 一处范围更正：
+
+| 项 | 处理 |
+| --- | --- |
+| P2 copy-only 双批数值并存易混淆 | **批次口径**：round-7 探针批 0.0071/0.0069 ms、round-8 探针批 0.0089/0.0067 ms（c64/c128）——批间为计时波动与复测差异，非功能差异；汇总引用须标明批次来源，不再宣称单一"唯一口径"。round-7 批日志自 git 历史归档为 `zero-staging-attribution-r7-batch.log`，round-8 批为 `zero-staging-attribution.log`；生成器 `gen_perf_section.py` 同步改写并重生成 `perf-section-auto.md`，报告/validation/results·README/FIX-ITEM-3 全部按批标注 |
+| 单次创建 0.3358 ms | 生成段与各文档一律保留**含冷启动**说明，与稳态拷贝成本区分 |
+| 多平台复验范围更正（撤回） | 按评审更正：**昆仑芯/昇腾/平头哥三平台复验属 PR3 problem29 性能 bundle，PR2 不要求**；validation 第八轮表该句划线撤回、FIX-ITEM-3 同步；FIX-ITEM-3 若扩展到其它后端另建平台适配/优化条目 |
+
+收尾确认（评审原文）：CI 通过、探针标签与 provenance 闭环、无新功能阻塞；剩余仅
+可选的历史数值标注清理（本节完成）。功能 fix 维持 `draft / deployable=false /
+hardware_status=unverified`；9/9 与比较器负例保留；FIX-ITEM-1/2/3 独立推进
+（FIX-ITEM-3 正确性矩阵与每候选记录要求不变，仅多平台项撤回）。
+
+
 功能 fix 维持 `draft / deployable=false / hardware_status=unverified`；9/9 与
 比较器负例保留；全量组两缺口继续独立跟踪。
 

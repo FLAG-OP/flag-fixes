@@ -143,7 +143,7 @@ stability verdict): **115** (auto-counted).
 | zeros/c64/n1048576 | 0.0105 | 1.0277 | 97.42x | - | - |
 | zeros/c64/n65536 | 0.0105 | 0.1462 | 13.90x | - | - |
 
-**Reading (mechanism, round-6 root-cause, round-7/8 corrected probe)**:
+**Reading (mechanism, round-6 root-cause, round-7/8/9 corrected probe)**:
 the f_target overhead grows linearly with tensor bytes (~9–14 GB/s
 signature, fixed ~15 µs at 2^10). Event capture attributes it: the fix
 routes complex `zero_` to `x.copy_(0)` and complex `zeros` to `empty` +
@@ -151,20 +151,27 @@ that same path; **native ATen complex-scalar copy itself stages the value
 through a full-tensor pageable HtoD** — profiler memcpy ≈ 570 µs at 2^20
 c64 under registration, and the same overhead appears NATIVE without
 flag_gems (`copy_(0)` 0.82–0.83 ms vs native `zero_()` 0.004–0.006 ms
-device memset; with the round-7/8 corrected probe the PRE-BUILT
-device-scalar copy-only net cost is **0.0071/0.0069 ms** (c64/c128) — the
-earlier ~0.02 ms figure mixed in per-call `.cuda()` construction and is
-superseded; device-scalar creation is 0.336 ms single-shot / 0.015 ms
+device memset). PRE-BUILT device-scalar copy-only net cost, **by probe
+batch** (timing variation between runs, not a functional difference;
+batch/device/protocol provenance in the logs): **round-7 batch
+0.0071/0.0069 ms, round-8 batch 0.0089/0.0067 ms** (c64/c128; archives
+`zero-staging-attribution-r7-batch.log` and
+`zero-staging-attribution.log`). The earlier ~0.02 ms figure mixed in
+per-call `.cuda()` construction and is superseded; device-scalar creation
+is 0.336 ms single-shot (含冷启动/first-launch overhead) / 0.015 ms
 50-iter average, one-off outside any steady-state copy; see
-`zero-staging-attribution.log`, `zeros-hitprobe-*.json`). So the dominant
-cost is the inherited ATen complex-scalar copy path, not extra FlagGems
-compute; it is a candidate performance follow-up (FIX-ITEM-3, three
-candidate paths + correctness matrix), with no optimization number
+`zero-staging-attribution*.log`, `zeros-hitprobe-*.json`). So the
+dominant cost is the inherited ATen complex-scalar copy path, not extra
+FlagGems compute; it is a candidate performance follow-up (FIX-ITEM-3,
+three candidate paths + correctness matrix), with no optimization number
 promised.
 
 **Round-7/8 probe correction** [historical / superseded: the "~0.02 ms"
 and "one-off 0.0139 ms" figures below are the round-7 wording; round-8
-relabels creation as 50-iter average and adds the single-shot value]:
+relabels creation as 50-iter average and adds the single-shot value;
+round-9 note — the copy-only numbers below are the round-7 BATCH, the
+round-8 batch measured 0.0089/0.0067 ms, see the batch-labeled paragraph
+above]:
 the earlier "0.02 ms" device-scalar figure included a per-call
 `.cuda()` construction inside the timed lambda. With the device scalar
 PRE-BUILT outside timing, the copy-only net cost is **0.0071 ms (c64) /

@@ -60,6 +60,12 @@
   生成 perf-section-auto.md。FIX-ITEM-3 登记候选评估协议与多平台复验要求
   （昆仑芯/昇腾/平头哥）。功能 fix 维持 draft/deployable=false/
   hardware_status=unverified；本轮结束证据审阅。
+- 第九轮评审收尾（2026-11-11，意见 6787003142 + 更正 6787034891）：copy-only
+  双批口径（round-7 批 0.0071/0.0069 ms、round-8 批 0.0089/0.0067 ms，批间
+  计时波动，引用须标批次；r7 批日志归档）；单次创建 0.336 ms 保留"含冷启动"
+  说明；按评审更正撤回多平台复验要求（属 PR3 problem29 bundle，PR2 不要求）。
+  收尾确认：无新功能阻塞；功能 fix 维持 draft/deployable=false/
+  hardware_status=unverified。
 
 ## 一句话版本
 

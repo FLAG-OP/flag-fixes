@@ -15,7 +15,7 @@ dumps 重评分——设备运行用的是当时 harness，见 run-commits.json 
 | 文件 | 内容 |
 | --- | --- |
 | `small-model-2026-11-10/bench-r2/zeros-hitprobe-{f_target,native}.json` | 第六轮：zeros 族 profiler **全事件清单**（分类、计数、设备时间；dtype/shape/调用入口/同步方式记录）——f_target 下 `zero_` 仅 Memcpy HtoD、`zeros` 为 native FillFunctor+HtoD、无 Triton kernel；native 下 `zero_` 为 3µs memset |
-| `small-model-2026-11-10/bench-r2/zero-staging-attribution.log` | 第六轮根因归因（原生无注册；**round-8 更新**：设备标量构造分列单次/50 次平均）：`copy_(0)` 0.82–0.83ms ≈ f_target 0.90ms（ATen complex-标量拷贝 host 中转固有）；native `zero_` 0.004–0.006ms；**预建 device-0dim copy 净成本 0.0071/0.0069ms**（旧"0.02ms"系混入 `.cuda()` 构造，已 superseded）→ FIX-ITEM-3 |
+| `small-model-2026-11-10/bench-r2/zero-staging-attribution.log`（round-8 探针批）+ `zero-staging-attribution-r7-batch.log`（round-7 批归档） | 第九轮批次口径，根因归因（原生无注册）：`copy_(0)` 0.82–0.83ms ≈ f_target 0.90ms（ATen complex-标量拷贝 host 中转固有）；native `zero_` 0.004–0.006ms；**预建 device-0dim copy 净成本按批标注：round-7 批 0.0071/0.0069ms、round-8 批 0.0089/0.0067ms**（批间计时波动，非功能差异；单次创建 0.336ms 含冷启动；旧"0.02ms"系混入 `.cuda()` 构造，已 superseded）→ FIX-ITEM-3 |
 | `small-model-2026-11-10/bench-r2/perf-section-auto.md` + `run-commits.json` | 第六轮：性能节由 gen_perf_section.py 从 bench2-summary.json 自动生成（旗标 115、比值、撤回清单）；机器可读 run provenance 清单 |
 | `small-model-2026-11-10/matrix-rescored/` | 第五轮：比较器结构加固（shape/dtype/键集合/step ID/参考无效判 fail）后用已存 .pt 重评分 20 对+噪声对（f_target 9/9+noise PASS 维持，原始 compare 不改写）；不依赖设备负例自测 10/10；mse 与 complex-fill 复现在修复树与修复前对照树的双树日志（预存归因隔离对照） |
 | `small-model-2026-11-10/bench-r2/` | 第五轮性能（跑在干净提交 `dd5ebea`）：按族×组独立进程注册（f_target 期望键断言）+ profiler kernel 名命中验证 + calls_per_s 公式修正 + 块均值 P95 + 显存 baseline/peak/delta + 候选旗标计数 115（自动生成）+ 正确性失败配置标 diagnostic；`bench2-summary.json`/`bench2-table.md` |

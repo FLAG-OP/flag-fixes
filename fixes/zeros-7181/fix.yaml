@@ -328,5 +328,15 @@ notes:
   正确性/非连续视图/大尺寸耗时/内存）与多平台复验要求（优化完成后昆仑芯/
   昇腾/平头哥复跑同一矩阵，不外推 PPU/thead 归因）。功能 fix 维持
   draft/deployable=false/hardware_status=unverified；本轮结束证据审阅。
+- |-
+  第九轮评审收尾（2026-11-11，意见 6787003142 + 更正 6787034891）：(1) copy-only
+  双批口径——round-7 探针批 0.0071/0.0069 ms、round-8 探针批 0.0089/0.0067 ms
+  （c64/c128），批间为计时波动非功能差异，汇总须标批次来源，不再宣称单一
+  "唯一口径"；round-7 批日志自 git 历史归档为 zero-staging-attribution-r7-batch.log，
+  生成器与报告/validation/results·README/FIX-ITEM-3 全部按批标注。(2) 单次创建
+  0.3358 ms 一律保留"含冷启动"说明。(3) 按评审更正撤回多平台复验要求（昆仑芯/
+  昇腾/平头哥属 PR3 problem29 bundle，PR2 不要求；FIX-ITEM-3 扩展到其它后端
+  另建条目）。收尾确认：无新功能阻塞，剩余仅可选历史标注清理（已完成）。
+  功能 fix 维持 draft/deployable=false/hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181
