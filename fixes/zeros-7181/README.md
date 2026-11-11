@@ -42,6 +42,15 @@
   误判，更正）。(3) provenance 更正：test_small_models.py 在
   968d624..fac401c 间 226 行差异，设备运行在旧 harness、比较器随后加固并重
   评分已存 dumps；run-commits.json 机器可读清单。状态与验收口径不变。
+- 第七轮评审修正（2026-11-11，意见 6785197539）：(1) 归因探针按评审修正——
+  设备标量预建在计时之外：`copy_(预建 device-0dim)` 拷贝净成本 **0.0071/
+  0.0069 ms**（此前 0.02 ms 混入了每次 `.cuda()` 构造，一次性构造 0.0139 ms），
+  与 host staging 路径（0.83/1.50 ms）差距 ≈117×；FIX-ITEM-3 框定三条候选
+  路径与正确性矩阵（contiguous/slice-transpose/storage offset/c64-c128/
+  未选中 storage 不污染）。(2) 四处历史性能口径加 **[historical /
+  superseded by bench-r2]** 标记；"当前有效口径"唯一化（zeros/zero_ 2^20
+  ≈97–290×、sum forward 3.95–22.92×/fwd+bwd ≈3×、modelB f_target
+  2.42–2.93×；观测不外推、不构成加速承诺）。状态与验收口径不变。
 
 ## 一句话版本
 

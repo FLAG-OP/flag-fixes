@@ -51,31 +51,46 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   complex 指针支持；FP64 需 triton 侧累加器 dtype 修正。修复前后证据在独立
   修复包中补齐。
 
-## FIX-ITEM-3：complex zeros/zero_ 重派生路径的性能（round-6 新立）
+## FIX-ITEM-3：complex zeros/zero_ 重派生路径的性能（round-6 新立，round-7 对照加固）
 
 - **症状**：f_target 下 complex `zero_`/`zeros` 开销随张量字节数线性增长
   （~9–14 GB/s 主机中转特征；2^20 c64/c128 达 **233×/290×**（`zero_`）、
   **97×/175×**（`zeros`）；2^10 仅 2.7–4.7×）——bench-r2 实测，第六轮评审指出
   旧"接近原生"结论与之矛盾，已撤回并修正报告。
-- **机制（已根因定位）**：修复为保 stride 正确性将 complex `zero_` 重派生到
-  `x.copy_(0)`、`zeros` 到 `empty + zero_`；而 **native ATen 的 complex-标量
-  copy 本身经全量张量可分页 HtoD 中转**：
-  - 归因实验（`benchmarks/zero_staging_probe.py`，原生无注册，
-    `zero-staging-attribution.log`）：native `copy_(0)` = 0.74–0.85 ms ≈
-    f_target 0.90 ms（同路径）；native `zero_()` = 0.005 ms（设备 memset）；
-    **设备端 0 维源** `copy_(device-0dim)` = 0.017–0.020 ms；native
-    `torch.zeros(c64)` 创建 = 0.008–0.011 ms。
-  - profiler 全事件（`benchmarks/zeros_hitprobe.py` →
-    `zeros-hitprobe-{f_target,native}.json`）：f_target 下 `zero_` 仅
-    `Memcpy HtoD (Pageable)`、`zeros` 为 native FillFunctor + HtoD，
-    **无 Triton kernel**（round-5 回复中"zeros 命中 Triton"系子串误判，
-    已更正）；native 下 `zero_` 仅 3 µs memset、无 memcpy。
+- **机制（已根因定位，round-7 修正探针后确认）**：修复为保 stride 正确性将
+  complex `zero_` 重派生到 `x.copy_(0)`、`zeros` 到 `empty + zero_`；而
+  **native ATen 的 complex-标量 copy 本身经全量张量可分页 HtoD 中转**。
+  归因实验（`benchmarks/zero_staging_probe.py`，原生无注册，2^20；
+  `zero-staging-attribution.log`；round-7 按评审要求把设备标量**预建在计时
+  之外**，并单列构造 / 拷贝净成本 / memset / 同步边界）：
+
+  | 路径（2^20，原生无注册） | c64 (8MB) | c128 (16MB) |
+  |---|---:|---:|
+  | `copy_(0)` python 标量（修复继承路径） | 0.8276 ms | 1.4955 ms |
+  | `copy_(cpu 0-dim)` | 0.8150 ms | - |
+  | **`copy_(预建 device 0-dim)`（拷贝净成本）** | **0.0071 ms** | **0.0069 ms** |
+  | device 标量构造一次性成本（`c0.cuda()`） | 0.0139 ms | - |
+  | `zero_()` 设备 memset | 0.0042 ms | 0.0055 ms |
+  | `torch.zeros(c64)` 创建参照 | 0.0079 ms | - |
+
+  round-5/6 探针的 0.02 ms 混入了每次 `.cuda()` 构造成本，已按修正探针更正；
+  host staging 与设备路径净成本差距 ≈ **117×（c64）**。profiler 全事件
+  （`benchmarks/zeros_hitprobe.py` → `zeros-hitprobe-{f_target,native}.json`）：
+  f_target 下 `zero_` 仅 `Memcpy HtoD (Pageable)`、`zeros` 为 native
+  FillFunctor + HtoD，**无 Triton kernel**（round-5 回复中"zeros 命中 Triton"
+  系子串误判，已更正）；native 下 `zero_` 仅 3 µs memset、无 memcpy。
 - **结论**：开销主体是被 `copy_(0)` 重派生继承的 **ATen complex-标量拷贝
   host 中转路径**，非 FlagGems 额外计算；正确性不受影响（stride 正确是
-  round-2 选择该路径的原因）。
-- **候选方向（不承诺优化比例）**：设备端 0 维标量源（0.02 ms 级）、或对
-  real 视图分别清零（需复核 round-2 放弃 view_as_real 的原始正确性理由：
-  conj/neg 位与 stride 场景）。是否立项由维护者依据已量化的成本决定。
+  round-2 选择该路径的原因）。定位方向获评审确认（"native complex scalar
+  copy 存在 host staging"），具体数值以 round-7 修正探针为准。
+- **三条候选路径（round-7 评审框定，独立跟踪）**：
+  1. `zero_()` 原生设备 memset（native 基准）；
+  2. 预存设备 0 维 complex 标量的 `copy_`（round-7 修正探针净成本 0.007 ms 级）；
+  3. candidate real-view/逐元素设备 kernel。
+  三者实现时都必须通过同一**正确性矩阵**：contiguous、slice/transpose 非连续
+  视图、storage offset、complex64/complex128，并检查**未选中 storage 不被
+  污染**；候选实现只有在正确性回归、非连续视图与大尺寸性能全部通过后，才
+  考虑独立建优化 fix。
 - **状态**：proposed（未实现）。修复前后证据在独立修复包轮次补齐。
 
 ## 跟进原则

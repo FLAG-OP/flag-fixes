@@ -267,7 +267,9 @@ notes:
   triton complex64 KeyError 与 fp64 CompilationError；B：mse_loss_backward 不广播
   标量 grad_output 致静默错梯度，最小复现 tests/repro_mse_scalar_grad.py）；
   scoped 性能首轮只报告不作加速声明（complex sum/abs 慢于原生 1.06–21×，
-  zeros/zero_ 0.83–1.00×，>10% 回归 58 项打旗标，崩溃路径 N/A）；
+  zeros/zero_ 0.83–1.00×，>10% 回归 58 项打旗标，崩溃路径 N/A；
+  **[historical / superseded by bench-r2，见下方第六轮 bullet：zeros/zero_ 与
+  旗标计数结论已撤回，当前有效口径以第六轮 bullet 为准]**）；
   证据 results/small-model-2026-11-10/，报告 reports/small-model-evaluation.md。
 - |-
   第五轮评审修正（2026-11-10，意见 6766490204）全部落地：(1) bench 按族拆分
@@ -292,12 +294,27 @@ notes:
   增长；根因完成：修复的 complex zero_→copy_(0) 重派生**继承了 native ATen
   complex-标量 copy 的全量张量可分页 HtoD host 中转**（native copy_(0) 0.74–
   0.85ms ≈ f_target 0.90ms；native zero_ 0.005ms 设备 memset；设备端 0 维源
-  0.02ms），登记 FIX-ITEM-3，不承诺优化比例；sum"大尺寸 1.1–2×"同步撤回
+  0.02ms【该 0.02ms 数值已于第七轮更正：混入每次 .cuda() 构造，预建后
+  拷贝净成本为 0.0071/0.0069 ms，见下方第七轮 bullet】），登记 FIX-ITEM-3，
+  不承诺优化比例；sum"大尺寸 1.1–2×"同步撤回
   （实测 3.95–22.92×）。(2) P2 命中说明修正：三分法 registered/probe-hit/
   timed-case；profiler 全事件清单入库（zeros_hitprobe.py），zeros 族无 Triton
   kernel（round-5"命中 Triton"系子串误判，更正为 native FillFunctor+HtoD）。
   (3) P2 provenance 更正：test_small_models.py 在 968d624..fac401c 间 226 行
   差异（非逐字节一致），准确表述=设备运行在旧 harness、比较器随后加固并对已存
   dumps 重评分；新增 run-commits.json 机器可读清单。状态与验收口径不变。
+- |-
+  第七轮评审修正（2026-11-11，意见 6785197539）两项落地：(1) zero_staging_probe
+  按评审修正——设备标量预建在计时之外并单列构造/拷贝净成本/memset 边界：
+  copy_(0) 0.83/1.50 ms（继承路径）vs copy_(预建 device-0dim) 0.0071/0.0069 ms
+  （拷贝净成本）vs zero_() 0.0042/0.0055 ms，host staging 与设备路径差距约 117×，
+  此前 0.02 ms 系混入构造成本已更正；FIX-ITEM-3 框定三条候选路径（native memset
+  基准 / 预存设备 0 维标量 copy / real-view 或逐元素设备 kernel），均须通过
+  正确性矩阵（contiguous/slice-transpose/storage offset/c64-c128/未选中 storage
+  不污染）后才考虑独立建优化 fix。(2) 四处历史性能口径加 [historical /
+  superseded by bench-r2] 标记（fix.yaml 第四轮 bullet、validation.md 第四轮
+  性能行、results/README bench/ 行；原日志不改写）；"当前有效口径"唯一化：
+  zeros/zero_ 2^20 ≈97–290×、sum forward 3.95–22.92×/fwd+bwd 约 3×、
+  modelB f_target 2.42–2.93×，观测不外推、不构成加速承诺。状态与验收口径不变。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

@@ -204,7 +204,7 @@ PASS、lr 校准 0.1（候选 1e-1 为按评审"调任务再校准"条款新增�
 | **f_target（修复声明范围）9/9 全 PASS** | fp32 max_abs 1.19e-7–4.77e-7（阈值 1e-5）；fp64/c128 max_abs 4.4e-16–8.9e-16（阈值 1e-10）；单步中间量/全部梯度/SGD 更新后参数/20 步训练逐 checkpoint 通过，梯度存在性硬校验无白名单 |
 | **b（修复前对照）两模型均在修复目标路径崩溃** | A：`sum_dim_comm`→`fill_scalar_` `KeyError: 'complex64'`（正是本修复目标）；B：旧 `linear_backward.py:170` NHWC 非连续 `.view()` RuntimeError（修复树已改 `reshape`，f_target 通过）→ 证明修复在真实模型路径生效且被实际命中 |
 | **f_all（全量注册）失败，首个分歧节点已定位（均为预存、不在本 patch 8 目标文件内）** | A fp32：abs 反向 `sgn.py:149` `empty_like`(complex64)→triton `canonicalize_dtype` KeyError；fp64：triton CompilationError（累加器 fp32/fp64）；B：**静默错梯度**——`mse_loss_backward` 不广播 0 维标量 grad_output（autograd 对标量 loss 的传参），最小复现 `tests/repro_mse_scalar_grad.py`：39/40 元素错、第 0 元素精确、全量张量 grad_output 时精确、none/sum reduction 精确；该文件与修复前树逐字节相同（预存） |
-| **性能（首轮只报告，不作加速声明）** | 75 用例（sum 全/内/外、abs、zeros/zero_，c64/c128 × 2^10/2^16/2^20 × 连续/跨步 + fwd+bwd；模型级 fwd/fwd+bwd/整训练步）：本构建上 f_target 的 complex sum/abs **慢于**原生（sum 3–21×、abs 1.06–1.7×），zeros/zero_ 持平到略快（0.83–0.96×）；模型级 f_target 1.07–2.36×；f_all/b 可跑路径 10.5–12.7× 慢；>10% 稳定回归 58 项已打旗标；崩溃路径一律记 N/A 不计加速 |
+| **性能（首轮只报告，不作加速声明）** | 75 用例（sum 全/内/外、abs、zeros/zero_，c64/c128 × 2^10/2^16/2^20 × 连续/跨步 + fwd+bwd；模型级 fwd/fwd+bwd/整训练步）：本构建上 f_target 的 complex sum/abs **慢于**原生（sum 3–21×、abs 1.06–1.7×），zeros/zero_ 持平到略快（0.83–0.96×）；模型级 f_target 1.07–2.36×；f_all/b 可跑路径 10.5–12.7× 慢；>10% 稳定回归 58 项已打旗标；崩溃路径一律记 N/A 不计加速 **[historical / superseded by bench-r2（第六轮）：zeros/zero_ 结论、58 旗标计数、模型级 1.07× 归因均已撤回，当前有效口径见第六轮/第七轮节]** |
 
 产物：`results/small-model-2026-11-10/`（`matrix/`=阈值+校准+29 run+20 对比+fd+summary，
 `bench/`=5 组原始块计时+汇总表，`mse-scalar-repro.log`，`provenance.json`）；
@@ -242,6 +242,25 @@ owner=null`；小模型结论不替代大模型完整梯度与容器平台验收
 广播、complex pointwise/fill）继续作为独立修复项；性能定位为"修正归因后的观测报告"，
 **清零路径大幅开销已如实量化并根因（FIX-ITEM-3）**，是否另立优化项交维护者决定。
 状态口径不变：`draft / deployable=false / hardware_status=unverified / owner=null`。
+
+## 第七轮评审修正（2026-11-11，意见 comment `6785197539`，基于 `236fbfd`）
+
+两项 P2 全部落地：
+
+| 意见 | 处理 | 验证 |
+| --- | --- | --- |
+| P2 设备端 0 维标量对照混入每次 `.cuda()` 构造成本 | `benchmarks/zero_staging_probe.py` 修正：设备标量**预建在计时之外**，单列 device-标量构造（一次性 0.0139 ms）/ 拷贝净成本 / 设备 memset / 同步边界；补 c128 确认 | 修正探针实测（2^20）：`copy_(0)` 0.83/1.50 ms（继承路径）vs **`copy_(预建 device-0dim)` 0.0071/0.0069 ms（拷贝净成本）** vs `zero_()` 0.0042/0.0055 ms——host staging 与设备路径差距 ≈117×，原 0.02 ms 系混入构造成本、已更正；报告与 FIX-ITEM-3 同步 |
+| P2 历史性能段落未标 superseded | 四处旧口径加 **[historical / superseded by bench-r2]** 标记（原日志不改写，仅加标记）：`fix.yaml` 第四轮 bullet、`reports/validation.md` 第四轮性能行、`results/README.md` bench/ 行、（报告 §4 的撤回清单本已内嵌）；`README` 的 withdraw 表述本身无需改 | grep 复核：旧数字仅存于历史节/撤回说明/带标记处 |
+
+**当前有效口径（唯一，机器读取以此为准；观测仅限当前后端与计时协议，不外推、不构成加速承诺）**：
+- complex `zeros/zero_` bench-r2 2^20 实测约为 native 的 **97–290×**（随字节数线性，host staging 机制）；
+- complex `sum` forward 约 **3.95–22.92×**、fwd+bwd 约 **3×**；
+- modelB f_target 重测 fwd **2.42×** / fwd+bwd **2.93×** / step **2.52×**（第五轮重测口径）。
+
+FIX-ITEM-3 按评审框定**三条候选路径**独立跟踪（native memset 基准 / 预存设备 0 维
+标量 copy / real-view 或逐元素设备 kernel），三者均须通过同一正确性矩阵
+（contiguous、slice/transpose、storage offset、c64/c128、未选中 storage 不污染）；
+候选实现只有在正确性回归、非连续视图与大尺寸性能全部通过后才考虑独立建优化 fix。
 
 ## 未执行（如实登记，不算通过）
 

@@ -157,6 +157,16 @@ cost is the inherited ATen complex-scalar copy path, not extra FlagGems
 compute; it is a candidate performance follow-up (FIX-ITEM-3), with no
 optimization number promised.
 
+**Round-7 probe correction**: the earlier "0.02 ms" device-scalar figure
+included a per-call `.cuda()` construction inside the timed lambda. With
+the device scalar PRE-BUILT outside timing, the copy-only net cost is
+**0.0071 ms (c64) / 0.0069 ms (c128)** at 2^20 (one-off device-scalar
+creation 0.0139 ms; native memset 0.004–0.006 ms) — the ~117× gap versus
+the host-staging path (0.83/1.50 ms) is confirmed with the corrected
+probe; FIX-ITEM-3 now lists the three candidate paths and their required
+correctness matrix (contiguous / slice-transpose / storage offset /
+c64-c128 / unselected-storage).
+
 ### sum / abs (a-sum-abs family, forward)
 
 | case | n ms/iter | f_target | ratio |

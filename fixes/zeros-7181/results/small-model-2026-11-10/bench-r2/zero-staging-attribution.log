@@ -1,6 +1,14 @@
 == NATIVE (no flag_gems), c64 2^20 = 8MB ==
-native x.copy_(0)          : 0.7417 ms
-native x.zero_()           : 0.0049 ms
-native copy_(cpu-0dim c64) : 0.7306 ms
-native copy_(device-0dim)  : 0.0165 ms
-native torch.zeros((32,32), c64) creation: 0.0079 ms
+[fix's inherited path]
+native x.copy_(0) (python scalar)     : 0.8276 ms
+native copy_(cpu-0dim c64 tensor)     : 0.8150 ms
+[device-side alternatives]
+device-scalar creation (c0.cuda())    : 0.0139 ms (one-off, not in steady-state copy)
+native copy_(PRE-BUILT device-0dim)   : 0.0071 ms
+native x.zero_() (device memset)      : 0.0042 ms
+[creation reference]
+native torch.zeros(c64) creation      : 0.0079 ms
+== c128 2^20 = 16MB ==
+native x128.copy_(0)                  : 1.4955 ms
+native x128.copy_(PRE-BUILT device)   : 0.0069 ms
+native x128.zero_()                   : 0.0055 ms
