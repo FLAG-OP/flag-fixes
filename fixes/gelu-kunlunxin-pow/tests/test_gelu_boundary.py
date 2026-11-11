@@ -82,11 +82,11 @@ def build_inputs(dtype):
             candidates.append(int_to_float(v))
             candidates.append(-int_to_float(v))
     candidates += [float(finfo.tiny), -float(finfo.tiny)]   # min normal ±
-    # nextafter(min_normal, 0): first subnormal below the min normal
-    if width == 32:
-        nm1 = int_to_float((1 << 30))                       # 0x00800000
-    else:
-        nm1 = int_to_float((1 << (width - 9)) if width == 16 else (1 << 23))
+    # nextafter(min_normal, 0)：最大次正规数（位型按 dtype 精确给出）
+    #   fp32 0x007fffff / bf16 0x007f / fp16 0x03ff
+    nm1_bits = {32: 0x007FFFFF, 16: 0x007F}[width]
+    nm1 = int_to_float(nm1_bits)
+    assert 0.0 < nm1 < float(finfo.tiny), f"nm1 construction broken: {nm1!r}"
     candidates += [nm1]
     candidates += [1e-30, -1e-30]                            # may FTZ in fp16/bf16
     candidates += [1e30, -1e30, 3.0, -3.0, 0.5, -0.5]
