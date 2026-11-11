@@ -164,6 +164,16 @@ def enable_flaggems(hardware: Any, device: Any, platform: Any = None) -> bool:
         include = [str(name) for name in include] or None
     if isinstance(include, str) and include.strip().lower() in {"", "none"}:
         include = None
+    # Precedence: include wins (matches flag_gems.use_gems semantics: when
+    # include is not None, exclude is not processed).  Flag it loudly rather
+    # than silently dropping a half of the configuration.
+    if include and exclude:
+        print(
+            "[flaggems] WARNING: flaggems_include takes precedence; "
+            f"flaggems_exclude={exclude} is ignored in include mode",
+            flush=True,
+        )
+        exclude = None
 
     record = bool(get("flaggems_record", False))
     log_path = get("flaggems_log_path", None)

@@ -1,8 +1,8 @@
 diff --git a/flagscale/train/utils/flaggems.py b/flagscale/train/utils/flaggems.py
-index ef8f690..2d3fe62 100644
+index ef8f690..51fcabb 100644
 --- a/flagscale/train/utils/flaggems.py
 +++ b/flagscale/train/utils/flaggems.py
-@@ -152,13 +152,31 @@ def enable_flaggems(hardware: Any, device: Any, platform: Any = None) -> bool:
+@@ -152,13 +152,41 @@ def enable_flaggems(hardware: Any, device: Any, platform: Any = None) -> bool:
          exclude = [str(name) for name in exclude] or None
      if isinstance(exclude, str) and exclude.strip().lower() in {"", "none"}:
          exclude = None
@@ -18,6 +18,16 @@ index ef8f690..2d3fe62 100644
 +        include = [str(name) for name in include] or None
 +    if isinstance(include, str) and include.strip().lower() in {"", "none"}:
 +        include = None
++    # Precedence: include wins (matches flag_gems.use_gems semantics: when
++    # include is not None, exclude is not processed).  Flag it loudly rather
++    # than silently dropping a half of the configuration.
++    if include and exclude:
++        print(
++            "[flaggems] WARNING: flaggems_include takes precedence; "
++            f"flaggems_exclude={exclude} is ignored in include mode",
++            flush=True,
++        )
++        exclude = None
 +
      record = bool(get("flaggems_record", False))
      log_path = get("flaggems_log_path", None)
@@ -36,7 +46,7 @@ index ef8f690..2d3fe62 100644
          if required:
              raise RuntimeError(message) from exc
          print(f"[flaggems] WARNING: {message}", flush=True)
-@@ -168,7 +186,9 @@ def enable_flaggems(hardware: Any, device: Any, platform: Any = None) -> bool:
+@@ -168,7 +196,9 @@ def enable_flaggems(hardware: Any, device: Any, platform: Any = None) -> bool:
      print(
          f"[flaggems] enabled vendor={os.environ.get('GEMS_VENDOR', 'auto-detect')} "
          f"version={getattr(flag_gems, '__version__', '?')} "

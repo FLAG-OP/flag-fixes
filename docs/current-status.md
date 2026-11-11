@@ -50,6 +50,12 @@ fix 名称链接到本仓库清单；历史说明固定到当前 submodule commi
 | 2026-11-10 新增本地 fix `adamw-fused` | 本仓库第 3 项本地修复（fix 索引合计 12 项 = 9 项外部 + 3 项本地），**目标包为 flagscale**（首个非 FlagGems 本地修复）：`build_optimizer` 的 AdamW 在普通 CUDA fp32/bf16/fp16 参数上改用 `fused=True`（厂商栈 foreach 无融合收益，仍逐参数分解）；BGE-M3 形状 336 张量 27.6→11.5 ms/步（2.4×）、launch 2,688→672，bf16 数值差 1 ulp；DTensor(FSDP2)/CPU 护栏 + env 覆盖 + 构造期回退；`deployable=false`、`hardware_status=unverified`（平台整模型未跑），`apply` 会拒绝 | [fix 目录](../fixes/adamw-fused/)、[诊断](../fixes/adamw-fused/reports/diagnosis.md)、[验证记录](../fixes/adamw-fused/reports/validation.md)、[性能数据](../fixes/adamw-fused/benchmarks/README.md)、[verify 结果](../fixes/adamw-fused/results/)、归因背景 problem29/ATTRIBUTION.md |
 | 2026-11-10 新增本地 fix `flaggems-selective-enable` | 本仓库第 4 项本地修复（fix 索引合计 13 项 = 9 项外部 + 4 项本地，目标包 flagscale）：新增 `flaggems_include` 配置走 `only_enable` 选择性注册。背景：昆仑芯全量 enable 是净负收益（10 算子 9 慢），且 FlagGems `unused` 过滤对 cpp_patched_ops（gelu）不生效。include=[gelu, gelu_backward] + gelu-kunlunxin-pow + adamw-fused 三件套同装，重建负载整步 2,665.9 → 2,291.2 ms（-14.0%），全链路走 enable_flaggems 集成路径；`deployable=false`、`hardware_status=unverified`，`apply` 会拒绝 | [fix 目录](../fixes/flaggems-selective-enable/)、[诊断](../fixes/flaggems-selective-enable/reports/diagnosis.md)、[验证记录](../fixes/flaggems-selective-enable/reports/validation.md)、[性能数据](../fixes/flaggems-selective-enable/benchmarks/README.md)、[verify 结果](../fixes/flaggems-selective-enable/results/)、归因文档 [kunlunxin-gelu-attribution](kunlunxin-gelu-attribution.md) |
 
+**平台范围说明（PR #3 评审补充）**：三个本地性能修复的设备证据只覆盖
+昆仑芯 P800/XPU3 单卡（重建负载 + 组合验收）；problem29 亦覆盖昇腾 910C
+与平头哥 ZW810E——这两者**未实现、未验证**，需要独立 fix 条目与验收，
+`-15.3%` 不得外推为三平台结论。平台矩阵见
+`bundles/kunlunxin-bge-perf/README.md`。
+
 本地 fix 不进入上节 catalog 表。普通 CI 对本地 fix 脚本只做语法检查（`python -m compileall -q fixes`）、`flag-fixes validate` 的 schema、各声明文件的 hash 和脚本存在性检查与管理工具 pytest。`validate` 不应用补丁，也不证明基线经 patch 后等于修复快照；该关系由针对目标树的 `check`/`plan` 单独验证。三个硬件脚本只在带设备的环境运行，语法检查通过不等于硬件验证通过。
 
 ## 后续工作

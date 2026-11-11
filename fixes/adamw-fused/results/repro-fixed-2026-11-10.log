@@ -2,7 +2,7 @@ XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/to
 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
 params: 336 tensors
 build_optimizer fused flag : True
-build_optimizer step       : 10.999 ms
-stock AdamW step           : 31.059 ms
-ratio chosen/stock         : 0.354
-PASS: fused AdamW selected and faster than stock
+build_optimizer device time: 8.970 ms
+stock AdamW device time    : 27.012 ms
+ratio chosen/stock (device): 0.332
+PASS: fused AdamW selected and faster than stock (device time)

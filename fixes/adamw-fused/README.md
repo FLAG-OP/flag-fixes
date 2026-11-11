@@ -21,9 +21,16 @@
 | 条件 | 选择 |
 |---|---|
 | `FLAGSCALE_ADAMW_FUSED=0/false/off` | stock（强制关闭） |
-| `=1/true/on` | fused（即使 CPU/DTensor，也仅作意愿表达，护栏仍生效） |
-| 未设置 / `auto`（默认） | 参数全部是 CUDA fp32/bf16/fp16 且非 DTensor → fused；否则 stock |
+| **vendor 非 KunlunXIN**（NVIDIA/thead/ascend/未知） | **stock + 记录原因**（auto 与 `=1` 均回退；fused 未在这些平台验证——PR #3 评审修订） |
+| `=1/true/on`（KunlunXIN + CUDA fp32/bf16/fp16 + 非 DTensor） | fused（意愿表达，护栏仍生效） |
+| 未设置 / `auto`（默认，KunlunXIN） | 参数全部是 CUDA fp32/bf16/fp16 且非 DTensor → fused；否则 stock |
+| 混合 dtype（bf16+fp32 等，均在支持集合内） | fused（torch 按 dtype 分组调用） |
+| DTensor / CPU / 空 / 不支持的 dtype | stock（记 log） |
 | 构造时 torch 拒绝 `fused` kwarg | 捕获后回退 stock（记 log） |
+
+vendor 检测顺序：`FLAGSCALE_VENDOR` → `GEMS_VENDOR` → `torch_xmlir` shim
+存在性（`_detect_vendor()`）；已验证集合 `_FUSED_ADAMW_VALIDATED_VENDORS`
+当前仅含 `kunlunxin`，其它平台完成独立验证后在集合中加入即可。
 
 FSDP2/DTensor 分片参数强制走 stock（fused 不感知 DTensor），因此
 reranker 8B 的 FSDP2 路径不受影响、不冒险。

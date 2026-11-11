@@ -1,7 +1,7 @@
 """Single semantic case, spawned fresh by test_flaggems_semantics.py.
 
 Prints one JSON line: {"n_ops": int|"full"|"full_minus_1", "has_gelu": bool,
-"has_layer_norm": bool, "returned": bool}.
+"has_layer_norm": bool, "returned": bool, "warn": bool}.
 """
 
 import json
@@ -17,6 +17,31 @@ def main():
     import flag_gems
 
     mode = os.environ["CASE_MODE"]
+
+    if mode == "include_exclude_both":
+        # PR review: include+exclude 同时设置 —— include 胜出并打印 WARNING
+        hw = OmegaConf.create({
+            "use_flaggems": True,
+            "flaggems_include": ["gelu", "gelu_backward"],
+            "flaggems_exclude": ["layer_norm"],
+        })
+        import contextlib
+        import io
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            returned = enable_flaggems(hw, "cuda")
+        warn = "takes precedence" in buf.getvalue()
+        ops = flag_gems.all_registered_ops()
+        names = {o if isinstance(o, str) else getattr(o, "__name__", str(o)) for o in ops}
+        print(json.dumps({
+            "n_ops": len(names) if len(names) <= 50 else "full",
+            "has_gelu": any("gelu" in n for n in names),
+            "has_layer_norm": any("layer_norm" in n or "layernorm" in n for n in names),
+            "returned": bool(returned),
+            "warn": warn,
+        }))
+        return
+
     cases = {
         "include_list": {"use_flaggems": True,
                          "flaggems_include": ["gelu", "gelu_backward"]},
@@ -36,14 +61,16 @@ def main():
         return
     ops = flag_gems.all_registered_ops()
     names = {o if isinstance(o, str) else getattr(o, "__name__", str(o)) for o in ops}
-    has_gelu = any("gelu" in n for n in names)
-    has_ln = any("layer_norm" in n or "layernorm" in n for n in names)
     if len(names) > 50:
-        n_ops = "full_minus_1" if not has_gelu else "full"
+        n_ops = "full_minus_1" if not any("gelu" in nm for nm in names) else "full"
     else:
         n_ops = len(names)
-    print(json.dumps({"n_ops": n_ops, "has_gelu": has_gelu,
-                      "has_layer_norm": has_ln, "returned": True}))
+    print(json.dumps({
+        "n_ops": n_ops,
+        "has_gelu": any("gelu" in n for n in names),
+        "has_layer_norm": any("layer_norm" in n or "layernorm" in n for n in names),
+        "returned": bool(returned),
+    }))
 
 
 if __name__ == "__main__":

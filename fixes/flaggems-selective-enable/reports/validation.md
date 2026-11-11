@@ -14,8 +14,8 @@ hash（fix.yaml 记录同值）：
 
 ```
 before  cff9890b022a8ec548619a5302f0e38a9ddd4a949665bffa82dd4702b20a1cd2  flagscale/train/utils/flaggems.py
-after   10e20e5ffd72f20871b1b33468a3e162bdbd6c590ac9a357d1c3034066c43801  flagscale/train/utils/flaggems.py
-patch   bba9c4f3859d6c952659060068520e487eb7a4cfbbd179558dca6817ad262c67  patches/flaggems-selective-enable.patch
+after   725d26f9af01ccd70316ed3fa00289f541719b43e932e6fdb5ece23f4ef47e13  flagscale/train/utils/flaggems.py
+patch   2e3ad7ab6abcfdd1e31c06937db59cb2cdb592e50ed7501a91cf7bae61d0e92f  patches/flaggems-selective-enable.patch
 ```
 
 ## 命令与结果（2026-11-10）
@@ -37,6 +37,16 @@ patch   bba9c4f3859d6c952659060068520e487eb7a4cfbbd179558dca6817ad262c67  patche
 2. include 模式整步（E 变体，AdamW fused + 本修复 + FlagGems 补丁，全链路走
    `enable_flaggems` 集成路径）：**2,665.9 → 2,291.2 ms/step（-14.0%）**，
    与直接 `only_enable`（D 变体 2,296.6）一致。
+
+## 评审修订（PR #3，2026-11-10）
+
+- `fix.yaml` 声明 `requires: [gelu-kunlunxin-pow]`：select() 强制与 FlagGems
+  补丁同装（check/plan 需同时选择两个 ID）；未打补丁时 include 注册的
+  gelu_backward 含 libdevice pow（pair 10.8 ms）；
+- include 与 exclude 同时设置：include 优先并打印 WARNING
+  （与 flag_gems.use_gems 语义一致），语义测试新增该用例
+  （`results/semantics-fixed-2026-11-10.log`，7 例 / exit 0；基线 4 例失败
+  = 差异所在）。
 
 ## 工具链校验
 

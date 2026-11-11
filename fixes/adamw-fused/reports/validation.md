@@ -15,8 +15,8 @@ hash（fix.yaml 记录同值）：
 
 ```
 before  5ee57573698129e1a2e3d5f7cdb6b5e8768fe9fc60c59369c95cc52eb51127df  flagscale/train/train_retrieval.py
-after   96fc52a9c5f93205479c0026817f6cbf989aa958aabdf5d1cf1b43b34d5c84bf  flagscale/train/train_retrieval.py
-patch   dbd6e8d8db9f78b8bffe7161a62c130d7a1ed3569eda4b81ce8a64a047e2b58d  patches/adamw-fused.patch
+after   40f1e4c4dc42c60e1d53c2fa9b74c5b38fba08e616bed26849675567b54ce394  flagscale/train/train_retrieval.py
+patch   774473b5acf5aa642060816107d90fc6aa2d2dc458f4d95af4e3ea415c8c1498  patches/adamw-fused.patch
 ```
 
 ## 命令与结果（2026-11-10）
@@ -45,6 +45,23 @@ fused"：**2.4× 墙钟、4× launch、2.9× device**。
 换算到 BGE-M3 真实负载（389 张量、每步 1 次 step）：
 ATTRIBUTION 实测 41.8→17.3 ms kernel，对应平台文档 "clip+optimizer 62 ms"
 → 预期 ~37 ms 墙钟（预估，未在平台验证）。
+
+## 评审修订（PR #3，2026-11-10）
+
+**测量口径变更**：共享主机的 launch 路径（cudaLaunchKernel CPU）当日出现
+7 µs → 0.9–2.5 ms/次 的漂移，曾使 wall 对照在两次运行间反转（stock 30↔9,965 ms）。
+repro 的性能判定已改为 torch.profiler **device time**（fused 8.97 vs stock 27.0 ms，
+ratio 0.332，确定性通过）；CUPTI 关闭时 exit 2=skip。历史 wall 数字（11.0 ms 等）
+为快速窗口期测得，保留作参考。
+
+- 新增 vendor/platform 护栏：`_detect_vendor()`（FLAGSCALE_VENDOR →
+  GEMS_VENDOR → torch_xmlir shim 探测）+ `_FUSED_ADAMW_VALIDATED_VENDORS`
+  = {kunlunxin}；非 KunlunXIN 平台 auto 与显式请求均回退 stock 并记录原因；
+- 选择矩阵扩至 13 例：新增 GEMS_VENDOR=nvidia/thead/kunlunxin、显式覆盖、
+  混合 dtype（均受支持 → fused）、torch_xmlir 探测等断言
+  （`results/selection-fixed-2026-11-10.log`，13 ok / exit 0）；
+- repro/numerics 在更新后的树上复跑全过（日志 results/ 下 *-fixed2 已覆盖
+  归档为 *-fixed）。
 
 ## 工具链校验
 

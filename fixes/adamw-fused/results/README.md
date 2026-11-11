@@ -20,6 +20,12 @@
 
 ## 判定
 
+**测量口径（PR #3 评审后修订）**：共享主机的 launch 路径（cudaLaunchKernel
+CPU 时间）在一天内出现过 7 µs → 0.9–2.5 ms/次的漂移，会把 launch 重的
+wall 对照反转。因此 repro 的性能判定改用 **torch.profiler 的 device time**
+（需要 XPU_ENABLE_PROFILER_TRACING=1；CUPTI 不可用时 exit 2=skip，不算
+通过）。
+
 | 项目 | 判定 |
 | --- | --- |
 | 复现（exit 1 → exit 0） | ✅ |

@@ -35,6 +35,13 @@ hardware:
 未设置 `flaggems_include` 时保持旧行为（全量 + `flaggems_exclude`），
 不对既有用户产生任何变化。
 
+## 依赖与优先级（PR #3 评审修订）
+
+- `fix.yaml` 声明 `requires: [gelu-kunlunxin-pow]`：check/plan/apply 强制与 FlagGems 补丁同装
+  （include 注册的 gelu_backward 含 pow 时反向 10.3 ms/次，反而严重劣化）；
+- `flaggems_include` 与 `flaggems_exclude` 同时设置时 **include 优先**并打印 WARNING
+  （与 flag_gems.use_gems 语义一致），不会静默忽略一半配置。
+
 ## 边界
 
 - `deployable=false`、`hardware_status=unverified`（平台整模型未跑）；

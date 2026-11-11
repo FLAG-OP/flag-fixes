@@ -468,6 +468,33 @@ def reduce_metrics(total_loss: float, count: int, device: torch.device) -> float
     return float(values[0].item() / max(values[1].item(), 1.0))
 
 
+_FUSED_ADAMW_VALIDATED_VENDORS = {"kunlunxin"}
+
+
+def _detect_vendor() -> str | None:
+    """Best-effort vendor detection for the fused-AdamW platform guard.
+
+    Order: explicit ``FLAGSCALE_VENDOR``, then ``GEMS_VENDOR`` (set by the
+    kunlunxin run scripts and by ``enable_flaggems``), then the presence of
+    the ``torch_xmlir`` shim module (the KunlunXIN torch build).  On a stock
+    NVIDIA host none of these apply and the vendor is unknown.
+    """
+    explicit = os.environ.get("FLAGSCALE_VENDOR", "").strip().lower()
+    if explicit:
+        return explicit
+    gems = os.environ.get("GEMS_VENDOR", "").strip().lower()
+    if gems:
+        return gems
+    try:
+        import importlib.util
+
+        if importlib.util.find_spec("torch_xmlir") is not None:
+            return "kunlunxin"
+    except Exception:
+        pass
+    return None
+
+
 def adamw_impl_kwargs(parameters: list[nn.Parameter]) -> dict:
     """Pick AdamW implementation flags for this parameter set.
 
@@ -476,11 +503,19 @@ def adamw_impl_kwargs(parameters: list[nn.Parameter]) -> dict:
     step for the 389 parameter tensors of BGE-M3, versus 17.3 ms (2.4x
     faster) with ``fused=True``; weights stay equal within bf16 rounding
     (max |diff| 7.6e-5 over 5 steps, problem29/ATTRIBUTION.md section 2).
-    ``fused`` requires plain CUDA tensors of a supported dtype, so DTensor
-    sharding (FSDP2) and CPU/master-weight layouts must stay on the stock
+
+    Platform guard: the fused selection is **only validated on KunlunXIN**
+    (``_FUSED_ADAMW_VALIDATED_VENDORS``).  On any other vendor (NVIDIA,
+    thead, ascend, unknown) both ``auto`` and an explicit request keep the
+    stock path and log the reason -- fused availability, performance and
+    numerics have not been measured there (PR review, flaggems#3).
+
+    ``fused`` further requires plain CUDA tensors of a supported dtype, so
+    DTensor sharding (FSDP2) and CPU/master-weight layouts stay on the stock
     path.  ``FLAGSCALE_ADAMW_FUSED`` overrides the auto choice: ``0``/
-    ``false``/``off`` force stock, ``1``/``true``/``on`` force fused, any
-    other value (including unset, i.e. ``auto``) uses the detection below.
+    ``false``/``off`` force stock, ``1``/``true``/``on`` expresses intent
+    (every platform/dtype/DTensor guard still applies), unset i.e. ``auto``
+    uses the detection below.
     """
 
     mode = os.environ.get("FLAGSCALE_ADAMW_FUSED", "auto").strip().lower()
@@ -490,6 +525,15 @@ def adamw_impl_kwargs(parameters: list[nn.Parameter]) -> dict:
         log(f"FLAGSCALE_ADAMW_FUSED={mode!r} is not recognised; keeping stock AdamW")
         return {}
     forced = mode != "auto"
+    vendor = _detect_vendor()
+    if vendor not in _FUSED_ADAMW_VALIDATED_VENDORS:
+        if forced:
+            log(
+                f"FLAGSCALE_ADAMW_FUSED=1 requested but vendor {vendor!r} is not "
+                f"validated for fused AdamW (validated: {sorted(_FUSED_ADAMW_VALIDATED_VENDORS)}); "
+                "keeping stock AdamW"
+            )
+        return {}
     params = list(parameters)
     if not params:
         return {}

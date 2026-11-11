@@ -44,7 +44,8 @@ def case(label, mode, expect):
     ok = (result["n_ops"] == expect["n_ops"]
           and result["has_gelu"] == expect["has_gelu"]
           and result["has_layer_norm"] == expect["has_layer_norm"]
-          and result["returned"] == expect["returned"])
+          and result["returned"] == expect["returned"]
+          and result.get("warn", False) == expect.get("warn", False))
     print(f"{'ok  ' if ok else 'FAIL'} {label}: n_ops={result['n_ops']} "
           f"gelu={result['has_gelu']} ln={result['has_layer_norm']} "
           f"returned={result['returned']} (expect n_ops={expect['n_ops']} "
@@ -76,6 +77,11 @@ def main():
          {"n_ops": "full", "has_gelu": True, "has_layer_norm": True, "returned": True})
     case("use_flaggems=false -> no-op", "off",
          {"n_ops": 0, "has_gelu": False, "has_layer_norm": False, "returned": False})
+    # PR review: include+exclude 同时设置时定义优先级（include 胜出并告警，
+    # 与 flag_gems.use_gems 语义一致），不得静默忽略其中一半配置
+    case("include+exclude both -> include wins with WARNING", "include_exclude_both",
+         {"n_ops": 2, "has_gelu": True, "has_layer_norm": False, "returned": True,
+          "warn": True})
 
     if FAILURES:
         print(f"FAILED: {FAILURES} case(s)", file=sys.stderr)

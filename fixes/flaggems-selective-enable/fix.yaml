@@ -16,15 +16,16 @@ target:
   baseline_commit: 89f342e690053e07dda845f1365089ec00464e09
 patches:
 - path: patches/flaggems-selective-enable.patch
-  sha256: bba9c4f3859d6c952659060068520e487eb7a4cfbbd179558dca6817ad262c67
+  sha256: 2e3ad7ab6abcfdd1e31c06937db59cb2cdb592e50ed7501a91cf7bae61d0e92f
 targets:
 - path: flagscale/train/utils/flaggems.py
   before_sha256: cff9890b022a8ec548619a5302f0e38a9ddd4a949665bffa82dd4702b20a1cd2
-  after_sha256: 10e20e5ffd72f20871b1b33468a3e162bdbd6c590ac9a357d1c3034066c43801
+  after_sha256: 725d26f9af01ccd70316ed3fa00289f541719b43e932e6fdb5ece23f4ef47e13
   after_source: src/flagscale/train/utils/flaggems.py
 backends:
 - kunlunxin
-requires: []
+requires:
+- gelu-kunlunxin-pow
 conflicts: []
 validation:
   hardware_status: unverified
@@ -53,6 +54,11 @@ validation:
   - 整步验证（重建负载，AdamW fused + 本修复 + 打补丁 FlagGems，全链路走
     enable_flaggems 集成路径）：2,665.9 -> 2,291.2 ms/step（**-14.0%**），
     与直接 only_enable 的 D 变体一致。数据 results/step-E-final.json。
+  - 评审修订（PR3）：声明 requires 依赖 gelu-kunlunxin-pow（check/plan/apply
+    的 select() 强制组合——未打补丁时 include 注册的 gelu_backward 含
+    libdevice pow，pair 10.8 ms）；include 与 exclude 同时设置时 include
+    优先并打印 WARNING（与 flag_gems.use_gems 语义一致），语义测试新增
+    该用例。
   - 硬件状态保持 unverified：平台整模型训练未跑；deployable=false、owner=null。
   commands:
   - name: flaggems-full-enable-repro

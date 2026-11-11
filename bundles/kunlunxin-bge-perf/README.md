@@ -63,3 +63,19 @@ gemm(env) -32.7，其余类目零变化——**修复只动了该动的地方**�
   崩溃 bug（最小复现在 problem29/probes/）。
 - 真实多卡 FSDP2：`cluster_cast_kl3`（12,399 次/步）单卡复现不出，需真实
   节点归因。
+
+## 平台状态矩阵（PR #3 评审补充）
+
+problem29 覆盖三个平台；**本 bundle 当前的证据只覆盖昆仑芯单卡**，
+`-15.3%` 不得外推为三平台结论。昇腾/平头哥需要独立建立 fix 条目
+（torch/npu 注册路径、dispatch、性能基线与数值门槛各不相同）。
+
+| 平台 | 当前状态 | 后续动作 |
+|---|---|---|
+| 昆仑芯 P800/XPU3 | 本 PR 有单卡重建负载证据（整步 A/B 矩阵 + 组合验收）；整模型平台验收未完成 | 完成 x-benchmark、owner 审核与多卡/FSDP2 验收 |
+| 昇腾 910C | 未实现、未验证（仅微基线数据存在于平台文档） | 单独建立 backend/fix 条目；确认 torch/npu 与算子注册路径 |
+| 平头哥 ZW810E | 未实现、未验证（平台文档：FlagGems 13 算子 12 慢） | 单独建立 backend/fix 条目；确认设备 dispatch、性能基线与数值门槛 |
+
+`adamw-fused` 的 fused 选择已按评审加入 vendor 护栏：非 KunlunXIN 平台
+默认 stock（显式请求也回退并记录原因），后续平台验证完成后再加入
+`_FUSED_ADAMW_VALIDATED_VENDORS` 集合。
