@@ -48,9 +48,10 @@ def case(label, mode, expect):
           and result.get("warn", False) == expect.get("warn", False))
     print(f"{'ok  ' if ok else 'FAIL'} {label}: n_ops={result['n_ops']} "
           f"gelu={result['has_gelu']} ln={result['has_layer_norm']} "
-          f"returned={result['returned']} (expect n_ops={expect['n_ops']} "
-          f"gelu={expect['has_gelu']} ln={expect['has_layer_norm']} "
-          f"returned={expect['returned']})")
+          f"returned={result['returned']} warn={result.get('warn', False)} "
+          f"(expect n_ops={expect['n_ops']} gelu={expect['has_gelu']} "
+          f"ln={expect['has_layer_norm']} returned={expect['returned']} "
+          f"warn={expect.get('warn', False)})")
     if not ok:
         FAILURES += 1
 
