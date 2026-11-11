@@ -34,3 +34,16 @@
 
 原始环境：torch 2.9.0+cu129（torch_xmlir）、triton 3.0.0、`GEMS_VENDOR=kunlunxin`、
 XPU-SMI 5.0.21.47 / XPU-RT 5.13.0、8× P800 OAM。详见 `../reports/validation.md`。
+
+## 边界语义证据（PR3 三轮评审，dumper v3）
+
+| 文件 | 内容 |
+| --- | --- |
+| `boundary-base-2026-11-11.json/.log` | FlagGems @4e08b44e9（未打补丁）在 P800/XPU3 的边界输出（v3 dumper，含设备输入位型/FTZ），作为已提交基线 |
+| `boundary-fixed-2026-11-11.json/.log` | 打补丁树同口径输出（verify_gelu_boundary.py 捕获，带 provenance） |
+| `boundary-compare-2026-11-11.json` | compare_gelu_boundary.py 对比报告：结构/NaN 掩码/Inf 符号/±0 符号位/位型 + 冻结容差（fp32 gelu_tanh_bwd atol=2e-7）全部通过 |
+| `boundary-fp64ref-2026-11-11.json` | 独立 fp64 参考对照（±3：base/fixed 绝对误差完全相同，pow→x*x 未引入额外误差） |
+| `history/` | 旧 schema（无输入位型）的早期文件，已标记 superseded，仅存档 |
+
+可重复入口：`tests/verify_gelu_boundary.py`（wrapper，5 命令之一，
+`PYTHONPATH=<FlagGems-fixed 树>`），旧 schema/缺字段返回非零。

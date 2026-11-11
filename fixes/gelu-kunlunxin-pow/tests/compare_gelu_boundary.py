@@ -175,13 +175,16 @@ def self_test(base_path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", required=True)
-    ap.add_argument("--fixed", required=True)
+    ap.add_argument("--fixed", default=None)
     ap.add_argument("--report", default=None)
     ap.add_argument("--self-test", action="store_true",
                     help="run negative cases against the comparator")
     a = ap.parse_args()
 
     if a.self_test:
+        if not a.base:
+            print('--base required for --self-test', file=sys.stderr)
+            return 2
         if not self_test(a.base):
             print("SELF-TEST FAILED", file=sys.stderr)
             return 1

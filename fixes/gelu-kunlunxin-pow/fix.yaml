@@ -68,6 +68,14 @@ validation:
     script: tests/test_gelu_family_dispatch.py
     level: dispatch
     timeout_seconds: 1800
+  - name: gelu-boundary-compare
+    script: tests/verify_gelu_boundary.py
+    level: regression
+    timeout_seconds: 900
+    env:
+      PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
   - name: gelu-family-benchmark
     script: tests/bench_gelu_family.py
     args:
