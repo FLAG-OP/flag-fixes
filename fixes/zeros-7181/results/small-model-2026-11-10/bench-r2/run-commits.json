@@ -8,8 +8,39 @@
       "tests/small_models.py": "unchanged (git diff empty)"
     }
   },
-  "bench_r2_run": {"commit": "dd5ebea"},
-  "rescoring_commit": {"commit": "fac401c"},
-  "evidence_commits": ["5e02b3b (round-4)", "fb13007 (round-5)"],
-  "round6_additions": ["zeros_hitprobe.py runs", "zero_staging_probe.py run (native attribution)", "gen_perf_section.py output"]
+  "bench_r2_run": {
+    "commit": "dd5ebea"
+  },
+  "rescoring_commit": {
+    "commit": "fac401c"
+  },
+  "evidence_commits": [
+    "5e02b3b (round-4)",
+    "fb13007 (round-5)"
+  ],
+  "round6_additions": [
+    "zeros_hitprobe.py runs",
+    "zero_staging_probe.py run (native attribution)",
+    "gen_perf_section.py output"
+  ],
+  "round10_additions": {
+    "zero_candidates_screening": {
+      "initial_batch": "working tree at 2a0753a (script content byte-identical to 59301a1)",
+      "confirmation_batch": "clean commit 59301a1 rerun",
+      "outcome": "matrix 60/60 both batches; perf medians within ~3% across batches",
+      "files": [
+        "bench-r2/zero-candidates.json (initial)",
+        "bench-r2/zero-candidates-59301a1-confirmation.json"
+      ]
+    },
+    "baseline_freeze": {
+      "initial_batch": "working tree at 2a0753a",
+      "confirmation_batch": "clean commit 59301a1 rerun",
+      "outcome": "52/58 bitwise-equal, prefix 58/58 crashes — identical both batches",
+      "files": [
+        "baseline/baseline-{n,fix,prefix}.json (initial)",
+        "baseline/*-59301a1-confirmation.json"
+      ]
+    }
+  }
 }

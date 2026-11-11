@@ -315,6 +315,11 @@ hardware_status=unverified`；9/9 与比较器负例保留；FIX-ITEM-1/2/3 独�
 
 功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
+**round-10 确认批**（干净提交 `59301a1` 重跑，`run-commits.json` round10_additions）：
+候选矩阵 **60/60**、基线 **52/58 位级一致 + prefix 58/58 全崩**——与首轮
+（工作树批）完全一致；性能中位数批间偏差 ≤~3%（首轮数值为引用口径，确认批
+JSON 以 `-59301a1-confirmation` 后缀归档）。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models
