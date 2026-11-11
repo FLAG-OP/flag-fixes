@@ -3,7 +3,7 @@
   "passed": true,
   "scope": "declared commands only; does not promote catalog hardware status",
   "target": "/tmp/opencode/combined-fixed",
-  "source_commit": "4052ef37527cdfc0d36051dbb838e9ee1e76414b",
+  "source_commit": "c3c555b0fa09814b28bb11adb9b87dc6642ea58f",
   "source_dirty": false,
   "results": [
     {
@@ -15,7 +15,7 @@
       ],
       "returncode": 0,
       "passed": true,
-      "stdout": "params: 336 tensors\nbuild_optimizer fused flag : True\nbuild_optimizer device time: 8.962 ms\nstock AdamW device time    : 27.020 ms\nratio chosen/stock (device): 0.332\nPASS: fused AdamW selected and faster than stock (device time)\n",
+      "stdout": "params: 336 tensors\nbuild_optimizer fused flag : True\nbuild_optimizer device time: 8.959 ms\nstock AdamW device time    : 27.025 ms\nratio chosen/stock (device): 0.332\nPASS: fused AdamW selected and faster than stock (device time)\n",
       "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n"
     },
     {
@@ -53,7 +53,7 @@
       ],
       "returncode": 0,
       "passed": true,
-      "stdout": "stock            9965.787 ms/step  launches  3024  device  27.041 ms  fused=False\nforeach            27.861 ms/step  launches  2688  device  25.846 ms  fused=False\nbuild_optimizer  2432.963 ms/step  launches   672  device   8.959 ms  fused=True\n",
+      "stdout": "stock            9965.702 ms/step  launches  3024  device  27.027 ms  fused=False\nforeach          8756.138 ms/step  launches  2688  device  25.842 ms  fused=False\nbuild_optimizer  2433.010 ms/step  launches   672  device   8.977 ms  fused=True\n",
       "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n"
     }
   ]
