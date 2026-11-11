@@ -33,27 +33,29 @@ PERF_LAYOUTS = ("contig", "slice_stride", "transpose")
 
 
 def make_view(layout, dtype, n=1024):
-    """Complex tensors are ASSEMBLED via torch.complex (cast via .to()
-    would hit the pre-existing to_copy/fill gap under registered groups —
-    see FIX-ITEM-2)."""
-    def mk(shape):
-        p = torch.randn(shape, dtype=torch.float32, device=DEVICE)
-        q = torch.randn(shape, dtype=torch.float32, device=DEVICE)
+    """Complex tensors are ASSEMBLED via torch.complex in the requested
+    dtype (round-12: the previous float32-hardcoded assembly made c128
+    entries run c64; cast via .to() would hit the pre-existing
+    to_copy/fill gap under registered groups — see FIX-ITEM-2)."""
+    def mk(shape, dtype):
+        real = torch.float32 if dtype == torch.complex64 else torch.float64
+        p = torch.randn(shape, dtype=real, device=DEVICE)
+        q = torch.randn(shape, dtype=real, device=DEVICE)
         return torch.complex(p, q)
     if layout == "contig":
-        base = mk((n, n))
+        base = mk((n, n), dtype)
         return base, base
     if layout == "slice_stride":
-        base = mk((n, 2 * n))
+        base = mk((n, 2 * n), dtype)
         return base[:, ::2], base
     if layout == "narrow":
-        base = mk((4 * n,))
+        base = mk((4 * n,), dtype)
         return base[2:2 + n], base
     if layout == "transpose":
-        base = mk((n, n))
+        base = mk((n, n), dtype)
         return base.t(), base
     if layout == "offset":
-        base = mk((2 * n + 5,))
+        base = mk((2 * n + 5,), dtype)
         return base[5:5 + n], base
     raise ValueError(layout)
 
@@ -109,16 +111,20 @@ def run_zero_case(op, dt, layout_kind):
     res = {"op": op, "layout": layout_kind, "dtype": str(dt)}
     try:
         if layout_kind == "conj":
-            p = torch.randn(16, 16, dtype=torch.float32, device=DEVICE)
-            q = torch.randn(16, 16, dtype=torch.float32, device=DEVICE)
+            real = torch.float32 if dt == torch.complex64 \
+                else torch.float64
+            p = torch.randn(16, 16, dtype=real, device=DEVICE)
+            q = torch.randn(16, 16, dtype=real, device=DEVICE)
             base = torch.complex(p, q)
             x = base.conj()
         elif layout_kind == "empty":
             x = torch.zeros(0, dtype=dt, device=DEVICE)
             base = x
         elif layout_kind == "zerodim":
-            p = torch.full((), 1.0, dtype=torch.float32, device=DEVICE)
-            q = torch.full((), 0.5, dtype=torch.float32, device=DEVICE)
+            real = torch.float32 if dt == torch.complex64 \
+                else torch.float64
+            p = torch.full((), 1.0, dtype=real, device=DEVICE)
+            q = torch.full((), 0.5, dtype=real, device=DEVICE)
             x = torch.complex(p, q)
             base = x
         else:
@@ -177,15 +183,17 @@ def run_edge_case(op, dt, payload):
         if payload == "empty":
             x = torch.zeros(0, dtype=dt, device=DEVICE)
         elif payload == "conj":
-            p = torch.randn(8, 8, dtype=torch.float32, device=DEVICE)
-            q = torch.randn(8, 8, dtype=torch.float32, device=DEVICE)
+            real = torch.float32 if dt == torch.complex64 \
+                else torch.float64
+            p = torch.randn(8, 8, dtype=real, device=DEVICE)
+            q = torch.randn(8, 8, dtype=real, device=DEVICE)
             x = torch.complex(p, q).conj()
         else:
             v = payload if isinstance(payload, float) else float(payload)
-            p = torch.full((16, 16), v, dtype=torch.float32,
-                           device=DEVICE)
-            q = torch.full((16, 16), v * 0.5, dtype=torch.float32,
-                           device=DEVICE)
+            real = torch.float32 if dt == torch.complex64 \
+                else torch.float64
+            p = torch.full((16, 16), v, dtype=real, device=DEVICE)
+            q = torch.full((16, 16), v * 0.5, dtype=real, device=DEVICE)
             x = torch.complex(p, q)
         if op == "sum":
             y = x.sum()
@@ -195,9 +203,13 @@ def run_edge_case(op, dt, payload):
             # exceptions in 10 committed edge rows)
             xg = x.clone().requires_grad_(True)
             y = torch.abs(xg)
+        # grad applicability is EXPLICIT (round-12): abs carries an
+        # input-grad checkpoint except for empty/conj; sum does not
+        grad_applicable = (op == "abs" and payload != "empty"
+                           and not x.is_conj())
         res["out_checksum"], res["out_byte_sum"] = checksum(
             y.detach() if not isinstance(y, torch.Tensor) else y)
-        if res["grad_applicable"]:
+        if grad_applicable:
             y.backward(torch.ones_like(y))
             res["grad_checksum"], res["grad_byte_sum"] = checksum(xg.grad)
     except Exception as e:
@@ -206,11 +218,8 @@ def run_edge_case(op, dt, payload):
         return res
     res["status"] = "ok"
     res["shape"] = list(y.shape)
-    # grad applicability is EXPLICIT: abs carries an input-grad checkpoint,
-    # sum does not (round-12: missing fields may not stand in for a pass)
-    res["grad_applicable"] = (op == "abs" and payload != "empty"
-                              and not x.is_conj())
-    if not res["grad_applicable"]:
+    res["grad_applicable"] = grad_applicable
+    if not grad_applicable:
         res["grad"] = "N/A"
     return res
 
@@ -498,10 +507,13 @@ def do_matrix(args):
     }
     sm.write_json(os.path.join(out, "baseline-summary.json"), summary)
     with open(os.path.join(out, "baseline-table.md"), "w") as f:
-        f.write("| case | fix | native | bitwise_equal |\n|---|---|---|---|\n")
+        f.write("| case | category | detail |\n|---|---|---|\n")
         for c in compare:
-            f.write(f"| {c['case']} | {c['fix_status']} | "
-                    f"{c['native_status']} | {c['bitwise_equal']} |\n")
+            detail = c.get("detail", "")
+            if isinstance(detail, dict):
+                detail = json.dumps(detail)
+            f.write(f"| {c['case']} | {c['category']} | "
+                    f"{str(detail)[:80]} |\n")
     print(json.dumps({"bitwise_equal": n_equal, "total": len(compare),
                       "prefix_crashes": len(summary["prefix_crashes"])},
                      indent=1))
