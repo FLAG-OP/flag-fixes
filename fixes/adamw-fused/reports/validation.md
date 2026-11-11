@@ -57,7 +57,7 @@ ratio 0.332，确定性通过）；CUPTI 关闭时 exit 2=skip。历史 wall 数
 - 新增 vendor/platform 护栏：`_detect_vendor()`（FLAGSCALE_VENDOR →
   GEMS_VENDOR → torch_xmlir shim 探测）+ `_FUSED_ADAMW_VALIDATED_VENDORS`
   = {kunlunxin}；非 KunlunXIN 平台 auto 与显式请求均回退 stock 并记录原因；
-- 选择矩阵扩至 13 例：新增 GEMS_VENDOR=nvidia/thead/kunlunxin、显式覆盖、
+- （历史，一轮修订时）选择矩阵当时扩至 13 例：新增 GEMS_VENDOR=nvidia/thead/kunlunxin、显式覆盖、
   混合 dtype（均受支持 → fused）、torch_xmlir 探测等断言
   （`results/selection-fixed-2026-11-10.log`，13 ok / exit 0）；
 - repro/numerics 在更新后的树上复跑全过（日志 results/ 下 *-fixed2 已覆盖
@@ -89,7 +89,7 @@ ratio 0.332，确定性通过）；CUPTI 关闭时 exit 2=skip。历史 wall 数
 
 ## 二轮评审修订复验（2026-11-11）
 
-最新 clean verify 绑定提交 `4052ef37`
+最新 clean verify verify 运行时 flag-fixes HEAD = `c3c555b0`（机器可读 provenance，见 JSON `source_commit`；patch/source 主体提交 = `4052ef37`）
 （`results/verify-2026-11-11-clean.json`，source_dirty=false，4/4 rc=0）；
 选择矩阵扩至 18 例（含 vendor nvidia/thead/kunlunxin、显式 forced=1 回退日志断言、
 混合 dtype）。性能判定口径为 torch.profiler device time。

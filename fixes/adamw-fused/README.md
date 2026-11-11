@@ -32,7 +32,7 @@ vendor 检测顺序：`FLAGSCALE_VENDOR` → `GEMS_VENDOR` → `torch_xmlir` shi
 存在性（`_detect_vendor()`）；已验证集合 `_FUSED_ADAMW_VALIDATED_VENDORS`
 当前仅含 `kunlunxin`，其它平台完成独立验证后在集合中加入即可。
 
-选择矩阵共 **13 例**（PR #3 评审后扩至含 vendor nvidia/thead、显式 forced、
+选择矩阵共 **18 例**（PR #3 二轮评审后含 vendor nvidia/thead/kunlunxin、显式 forced=1 回退日志断言、
 混合 dtype、torch_xmlir 探测等断言）。
 
 FSDP2/DTensor 分片参数强制走 stock（fused 不感知 DTensor），因此

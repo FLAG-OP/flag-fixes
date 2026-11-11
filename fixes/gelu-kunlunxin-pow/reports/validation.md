@@ -113,3 +113,12 @@ verified；平台验收仍需单独执行。
 - **环境异常（与修复无关）**：FlagGems 的 `copy_` 对非连续张量会 redispatch 到
   `CompositeExplicitAutograd` 并报 `CUDA error: invalid device function`，未启用
   FlagGems 时同样复现；因此所有检查函数先 `.cpu()` 再归约，测试不依赖该路径。
+
+## 边界语义验证（PR #3 三轮评审，2026-11-11）
+
+pow→乘法替换的边界语义：±0/±Inf/NaN/subnormal（5e-324/1e-300）/±1e30 大值 ×
+fp32/bf16/fp16 × none/tanh × 前反向，补丁前后 FlagGems 输出 **NaN 感知逐位比较**：
+仅 fp32 `gelu_tanh_bwd` 在 |x|=3 处 1 ulp 舍入差（pow 与 x*x 的相邻舍入）；
+bf16/fp16 及其余 kernel 逐位一致；NaN 传播与 ±0 相等断言通过。
+数据：`results/boundary-{base,fixed,compare}-2026-11-11.json|log`；
+harness：`tests/test_gelu_boundary.py`（dumper + 双树 diff 用法见 tests/README）。

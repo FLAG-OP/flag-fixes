@@ -67,6 +67,6 @@ patch   2e3ad7ab6abcfdd1e31c06937db59cb2cdb592e50ed7501a91cf7bae61d0e92f  patche
 
 ## 二轮评审修订复验（2026-11-11）
 
-最新 clean verify 绑定提交 `4052ef37`
+最新 clean verify verify 运行时 flag-fixes HEAD = `c3c555b0`（机器可读 provenance，见 JSON `source_commit`；patch/source 主体提交 = `4052ef37`）
 （`results/verify-2026-11-11-clean.json`，source_dirty=false，4/4 rc=0）；
 语义矩阵扩至 7 例（含 include+exclude 优先级与 WARNING 断言）。

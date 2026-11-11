@@ -42,8 +42,9 @@ validation:
   - 基线复现：enable_flaggems(include=[gelu, gelu_backward]) 注册 **349 个**
     op（含 layer_norm）；修复后注册 **2 个**（repro exit 1 -> 0）。
   - 语义回归 7 例（子进程隔离）：include 列表 / 缺省全量 / "none" 归一化 /
-    ListConfig / exclude 路径 / use_flaggems=false，fixed exit 0。基线 2 例
-    失败（include 被忽略）即差异所在。
+    ListConfig / exclude 路径 / use_flaggems=false / include+exclude 优先级
+    （WARNING 断言），fixed exit 0。基线 3 例失败（include 被忽略 ×2 +
+    优先级用例）即差异所在。
   - dispatch 验证：include 模式下 gelu 前反向实际派发 FlagGems Triton kernel
     （gelu_none_kernel_rank_1 / gelu_backward_none_kernel_rank_1），不再走
     厂商 gelu_highprecision_nv。

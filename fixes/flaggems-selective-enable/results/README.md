@@ -4,7 +4,7 @@
 | --- | --- |
 | `repro-base-2026-11-10.log` | 基线：include 被忽略，**349 个 op** 全量注册，exit 1 |
 | `repro-fixed-2026-11-10.log` | 修复后：2 个 op，exit 0 |
-| `semantics-base-2026-11-10.log` | 语义 6 例：基线 2 例失败（include 忽略） |
+| `semantics-base-2026-11-10.log` | （历史，7 例口径前）语义矩阵基线运行：include 忽略相关用例失败，exit 1；最新对照见 `semantics-base-2026-11-11`（本轮 regen 见 `verify-2026-11-11-clean.json` stdout） |
 | `semantics-fixed-2026-11-10.log` | 修复后 6 例全对，exit 0 |
 | `dispatch-base-2026-11-10.log` | 基线 dispatch（全量注册同样重定向 gelu），exit 0 |
 | `dispatch-fixed-2026-11-10.log` | include 模式派发 FlagGems kernel，exit 0 |
@@ -14,4 +14,4 @@
 判定：复现 1→0、语义 fixed exit 0、dispatch 机制成立、整步 -14.0%。
 平台整模型验收 not-run（hardware_status=unverified）。
 
-| `verify-2026-11-11-clean.json` | 绑定当前提交 `4052ef37`（PR #3 二轮评审修订）的干净树复跑，`source_dirty=false`，生成时间 2026-11-11。adamw 含 vendor nvidia/thead/kunlunxin、显式 forced=1、混合 dtype 断言；flaggems 含 7 例语义矩阵与 WARNING 断言。 |
+| `verify-2026-11-11-clean.json` | 干净树复跑，`source_dirty=false`；JSON `source_commit`=`c3c555b0`（verify 运行时 flag-fixes HEAD，机器可读 provenance），patch/source 主体提交=`4052ef37`，生成时间 2026-11-11。adamw 含 vendor nvidia/thead/kunlunxin、显式 forced=1、混合 dtype 断言；flaggems 含 7 例语义矩阵与 WARNING 断言。 |

@@ -28,3 +28,8 @@ python3 tests/<script>.py
 - 各脚本自行把 native 参考在启用 FlagGems 之前算好，避免参考也被 patch 影响。
 - 基准脚本的判定同时包含精度；出现 `ACCURACY FAIL` 时 exit 1，不会把“跑完”当通过。
 - 清单 `fix.yaml` 的 4 个 `validation.commands` 与上表一一对应。
+
+| `test_gelu_boundary.py` | boundary | pow→乘法替换的边界语义：±0/±Inf/NaN/subnormal/大值 × fp32/bf16/fp16 × none/tanh × 前反向（dumper 模式，双树 diff） | — | 补丁前后输出逐位一致（仅 fp32 gelu_tanh_bwd @±3 相邻值 1 ulp；NaN 传播/±0 相等断言通过） | 600 s |
+
+用法：分别以 FlagGems-base 与 FlagGems-fixed 的 `src` 为 PYTHONPATH 各跑一次（`--out base.json` / `--out fixed.json`），NaN 感知 diff 逐位比较；归档结果见 `results/boundary-*.json|log`。需要 XPU_ENABLE_PROFILER_TRACING=1 与
+XPU_CUPTI_ENABLE_DEVICE=0（本仓 verify 同款 env）。
