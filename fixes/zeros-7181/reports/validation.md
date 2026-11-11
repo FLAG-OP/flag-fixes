@@ -307,7 +307,7 @@ hardware_status=unverified`；9/9 与比较器负例保留；FIX-ITEM-1/2/3 独�
 
 | 评审节 | 落地 | 结果 |
 | --- | --- | --- |
-| §一 基线冻结 | 新增 `benchmarks/baseline_freeze.py`（三组进程：native / fix[注册 zeros+sum+abs 族] / prefix[修复前对照树]）；zeros/zero_ × {contig, slice-stride, narrow, transpose, storage-offset} × c64/c128 + conj/empty/0-dim 边缘 + sum/abs 数值边缘（NaN/Inf/±Inf/1e38/1e-38/empty/conj，位级 checksum 交叉对比）；provenance（tree/torch/device/determinism/注册键）逐 JSON 记录 | `results/small-model-2026-11-10/baseline/`：**fix vs native 52/58 位级一致**；6 例为声明内 1ulp 级差异（conj 归约顺序 ×4、abs scaled-hypot ×2，`abs(1e-38)` 1.11803383 vs 1.11803397）；**prefix 58/58 全崩**逐例记录；探针过程中发现 FIX-ITEM-4（见下） |
+| §一 基线冻结 | 新增 `benchmarks/baseline_freeze.py`（三组进程：native / fix[注册 zeros+sum+abs 族] / prefix[修复前对照树]）；zeros/zero_ × {contig, slice-stride, narrow, transpose, storage-offset} × c64/c128 + conj/empty/0-dim 边缘 + sum/abs 数值边缘（NaN/Inf/±Inf/1e38/1e-38/empty/conj，位级 checksum 交叉对比）；provenance（tree/torch/device/determinism/注册键）逐 JSON 记录 | `results/small-model-2026-11-10/baseline/`：~~fix vs native 52/58 位级一致；6 例 1ulp 级差异~~ **[historical / superseded by round-12 严格比较器（截断 checksum 与双 exception 判等缺陷）：r12 重跑 50 numeric_equal + 8 numeric_diff，ULP/误差已量化（conj ≤2 ULP、scaled-hypot 1 ULP 级、NaN payload 位不保证），见第十二轮节]**；**prefix 58/58 全崩**逐例记录；探针过程中发现 FIX-ITEM-4（见下） |
 | §二 zero_/zeros 三候选 | 新增 `benchmarks/zero_candidates.py`（原生 harness，不改动本 patch）：正确性矩阵 6 布局 × c64/c128 × 5 实现（含未选中 storage 位级保持、native 逐位一致）+ 2^20 三布局性能（首调/5×100/events/显存） | **矩阵 60/60 全过**（候选 A conj 回退首轮暴露即修正）；2^20 c64 contig：当前 0.6674 ms → **A 0.0083 / B 0.0050（最优全布局）/ C 0.0154 / native 0.0042 ms**；独立优化 fix 建议按 A→B→C 落地（可组合 A 快路径 + B 兜底），过验收门槛后另行提交 |
 | §三 sum/abs 探索 | 登记为探索计划（`follow-up-fix-items.md` round-10 节）：real/imag 分累加、四类 reduction 分别分析、fwd/bwd 分测、数值边缘扩展（基线已含首批）、每候选记录 max_abs/相对误差/梯度误差/kernel 数 | 探索过程中**发现 FIX-ITEM-4**：FlagGems `sum` 对 uint8 返回 uint8 dtype 且按 256 回绕（`[200,100,50,7].sum()`=101 vs native 357/int64）——最小复现与归因要求（对照树实测）已登记 |
 | §四 独立跟踪 | FIX-ITEM-1/2/3 维持独立；新增 FIX-ITEM-4 | `follow-up-fix-items.md` |
@@ -316,9 +316,9 @@ hardware_status=unverified`；9/9 与比较器负例保留；FIX-ITEM-1/2/3 独�
 功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
 **round-10 确认批**（干净提交 `59301a1` 重跑，`run-commits.json` round10_additions）：
-候选矩阵 **60/60**、基线 **52/58 位级一致 + prefix 58/58 全崩**——与首轮
-（工作树批）完全一致；性能中位数批间偏差 ≤~3%（首轮数值为引用口径，确认批
-JSON 以 `-59301a1-confirmation` 后缀归档）。
+候选矩阵 **60/60**、基线 ~~52/58 位级一致~~（**superseded by round-12**）+
+prefix 58/58 全崩——与首轮（工作树批）完全一致；性能中位数批间偏差 ≤~3%
+（首轮数值为引用口径，确认批 JSON 以 `-59301a1-confirmation` 后缀归档）。
 
 ## 第十一轮：候选矩阵扩展、注册环境复测与两项新缺口（2026-11-11，意见 comment `6788210724`，基于 `9723734`）
 
@@ -331,6 +331,18 @@ JSON 以 `-59301a1-confirmation` 后缀归档）。
 
 "B 全布局最优"已限定为"**在本轮已测试布局中最优**"。功能 fix 维持
 `draft / deployable=false / hardware_status=unverified`。
+
+## 第十二轮：harness 缺陷修正与严格比较器定稿（2026-11-11，意见 comment `6793416880`，基于 `4eb4cb6`）
+
+三项 P2 全部落地（harness 修正提交 `51642d8`/`fc71b82`，干净提交重跑为最终批）：
+
+| 评审项 | 处理 | 最终结果（干净提交 `fc71b82` 重跑） |
+| --- | --- | --- |
+| P2-c dtype 贯穿 | `zero_candidates.py` 与 `baseline_freeze.py` 全部构造路径按传入 dtype 组装（c64→float32、c128→float64）；执行前断言并记录 actual_dtype/conj/stride/offset；设备标量按 dtype 匹配 | 原生候选矩阵 **260/260**（真实 c64/c128）；注册 **224 过 + 36 C 失败**（全部为 FIX-ITEM-5 稠密写，含新建 contiguous 的 C 内部跨步 select 视图）；c128 性能/路径为真实 float64 数据 |
+| P2-b uint8 小样例 | `u8sum_repro.py` 显式 `dtype=torch.uint8` 并断言；非连续用例先建 uint8 base 再切片断言非连续 | **修复树 7/8 失败、prefix 同型 7/8**（真 uint8 下连 4 元素小例也回绕 357→101；仅显式 int64 正确）——"4 元素小例侥幸正确"与尺寸分支归因**撤回**；仅非连续用例按评审改为 uint8 base 直切片 |
+| P2-a 严格比较器 | `compare_case` 重写：numeric 比较要求双方 status=ok + 全部适用 checksum 字段（grad 按 grad_applicable 显式 N/A）齐全；双 exception/单 exception/缺参考/缺字段为独立类别；checksum 改**全字节 sha256** + dtype/shape 检查；abs 前向改用梯度克隆（修正 10 行 spurious exception）；负例自测 8 项（双 exception/缺字段/仅第 32 字节后差异/dtype 不符等均不得判过）随 --matrix 前置强制执行 | 基线重跑定论：**50 numeric_equal + 8 numeric_diff**；8 例全部量化（`baseline/diff-details.json`，实际输出计算）：conj sum/abs ≤**2 ULP**（归约顺序）、abs scaled-hypot **1 ULP 级**（`abs/c64/extreme_low` max_abs=1.4e-45、`abs/c128/extreme_high` rel=1.69e-16）、NaN 传播正确但 **payload 位不保证**（sha256 位级不同、数值均为 NaN）——全部属 round-2/3 已声明的"逐位不保证"舍入类，无功能问题 |
+
+~~评审此前对"52/58 位级一致"的认可~~ 由评审自行更正撤回；该口径作废，替换为上行定论。registered 模式 `native_ref` 更名说明为 **registered-path reference（当前修复路径）**（基线的 native 参考本就来自独立未注册进程，命名问题不否定其正确性检查）。历史原始 JSON/日志保留，`bench-r2/r12-superseded-manifest.md` 标注新旧批次对应。B-only 仍为优先候选；真实 c64/c128 布局/0 维/空/conj/alias/未选中 storage 检查已按本批补齐后，再评估是否单独提交优化 fix；性能区分标量构造成本（单次 0.336 ms 含冷启动 / 50 次平均 0.0145 ms）、稳态拷贝净成本（0.0071/0.0069 与 0.0089/0.0067 双批）与整体调用成本（0.005–0.009 ms），注册路径事件已验证。三平台要求属 PR3。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
 ## 未执行（如实登记，不算通过）
 

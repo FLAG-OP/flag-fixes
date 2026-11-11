@@ -42,5 +42,17 @@
         "baseline/*-59301a1-confirmation.json"
       ]
     }
+  },
+  "round12_additions": {
+    "harness_fix_commit": "51642d8",
+    "table_writer_fix_commit": "fc71b82",
+    "final_clean_run_commit": "fc71b82",
+    "results": {
+      "zero_candidates_native": "260/260 (real c64/c128)",
+      "zero_candidates_registered": "224 pass + 36 C-failures (FIX-ITEM-5)",
+      "baseline_strict": "50 numeric_equal + 8 numeric_diff (1-2 ULP class; NaN payload bits differ, propagation correct)",
+      "u8sum_repro": "7/8 fail both trees (identical failure set)"
+    },
+    "superseded": "see r12-superseded-manifest.md"
   }
 }

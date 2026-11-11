@@ -370,3 +370,26 @@ validation.
   future optimization fix.
 - New items: FIX-ITEM-5 (strided-real zero_ dense write) — see
   `reports/follow-up-fix-items.md`.
+
+## 8. Round-12 addendum: harness corrections and final strict-comparator numbers
+
+- **dtype threading** (candidates + baseline construction): c128 entries
+  previously ran float32-assembled data; corrected and asserted
+  (actual_dtype recorded). Clean-commit rerun: native matrix **260/260**,
+  registered **224 + 36 C-failures (FIX-ITEM-5)**.
+- **uint8 repro corrected** (explicit `dtype=torch.uint8`, non-contig via
+  uint8 base slicing): fix tree **7/8 fail**, pre-fix tree identical 7/8 —
+  the earlier "4-element small case accidentally passes" claim is
+  **withdrawn** (that sample was int64); only explicit int64 passes.
+- **Strict comparator** (full-byte sha256, explicit exception/missing
+  categories, grad N/A explicit, 8 negative selftests enforced before the
+  matrix): baseline final numbers **50 numeric_equal + 8 numeric_diff**;
+  the 8 diffs quantified from actual outputs — conj sum/abs ≤ **2 ULP**
+  (reduction order), abs scaled-hypot **1 ULP class** (e.g. c128
+  extreme_high rel 1.69e-16), NaN propagation correct but NaN **payload
+  bits** differ (sha256-observed). The round-10/11 "52/58 bitwise-equal"
+  statement is **withdrawn** (truncated checksum + both-exception equality
+ 缺陷), superseded mapping in `bench-r2/r12-superseded-manifest.md`.
+- B-only remains the priority candidate under real c64/c128 (registered B
+  wins or ties all tested layouts). Historical raw artifacts preserved;
+  PR2 stays `draft / deployable=false / hardware_status=unverified`.

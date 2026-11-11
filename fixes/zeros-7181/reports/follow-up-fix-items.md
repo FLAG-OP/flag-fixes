@@ -157,14 +157,17 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
 - **发现路径**：round-10 基线冻结的 checksum 辅助函数在注册组出现
   byte_sum 回绕（28173→255），定位为 uint8 sum 累加器问题（探针 artifact
   已改用 `sum(dtype=torch.int64)` 规避）。
-- **预存归因（round-11 闭环）**：专项复现脚本 `benchmarks/u8sum_repro.py`
-  按评审清单（1d/多维、默认/显式 dtype、>255 累加、empty、不同 reduction
-  维、连续/非连续）双树对照——**修复树 6/8 用例失败、修复前对照树同型
-  6/8 失败**（1d/large、2d/full、2d/dim0、2d/dim1、非连续 view、empty 的
-  dtype 错误；仅 4 元素小例 `[200,100,50,7]` 侥幸走对路径），失败集合逐项
-  一致 → 预存归因由同路径基线直接证明。日志
-  `bench-r2/u8sum-repro-{fix,prefix}.log`。checksum 回绕仅作发现线索
-  （已按评审要求不以之为归因证据）。
+- **预存归因（round-12 修正探针后闭环）**：专项复现脚本
+  `benchmarks/u8sum_repro.py` 按评审清单（1d/多维、默认/显式 dtype、>255
+  累加、empty、不同 reduction 维、连续/非连续）双树对照。**round-12 修正**：
+  原脚本 4 元素样例未指定 dtype（实为 int64），"4 元素小例侥幸正确"与尺寸
+  分支归因**撤回**；非连续用例改为先建 uint8 base 再切片。修正后（真
+  uint8）：**修复树 7/8 失败、修复前对照树同型 7/8 失败**（仅显式
+  dtype=int64 一例正确；连 4 元素小例也回绕 357→101），失败集合逐项一致 →
+  预存归因由同路径基线直接证明。日志
+  `bench-r2/u8sum-repro-{fix,prefix}-final.log`。checksum 回绕仅作发现
+  线索（已按评审要求不以之为归因证据）。输入 dtype/stride 与输出值/dtype
+  已按评审要求记录（results JSON `_inputs` 行）。
 - **影响面**：所有经 FlagGems sum 的 uint8 归约（大值/多元素必回绕；
   4 元素小例路径侥幸正确）。
 - **状态**：proposed（未实现）。修复方向：uint8/int8 等小整型归约按 ATen

@@ -328,3 +328,12 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   双树同型 6/8 失败（预存归因闭环）；(4) 复杂度评估建议独立优化 fix 首选
   B-only（0.005–0.007 ms 接近 native），A 仅 c128 contig ~3µs 收益作可选
   增强。状态与验收口径不变。
+- 第十二轮（2026-11-11，意见 6793416880）harness 缺陷修正与定稿：(1) 候选/
+  基线构造 dtype 贯穿（c128 条目此前实际跑 c64，已修正并断言 actual_dtype）；
+  (2) u8sum 复现显式 uint8——修正后 **7/8 双树同型失败**（"4 元素小例侥幸
+  正确"撤回；仅显式 int64 正确）；(3) 基线改**严格比较器**（全字节 sha256、
+  双 exception/缺字段独立分类、grad 显式 N/A、负例 8 项前置强制）——定论
+  **50 numeric_equal + 8 numeric_diff**（conj ≤2 ULP、scaled-hypot 1 ULP、
+  NaN payload 位不保证但传播正确；"52/58 位级一致"撤回）；(4) B-only 仍为
+  优化首选（真实 c64/c128 下注册 B 占优或持平全部已测布局）。历史产物标注
+  superseded 对应关系（r12-superseded-manifest.md）。状态与验收口径不变。
