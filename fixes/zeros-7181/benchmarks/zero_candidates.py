@@ -1,30 +1,33 @@
-# Round-10 (review 6787395475 section 2): zero_/zeros complex candidate
-# screening. The three candidate implementations for a FUTURE optimization
-# fix are evaluated against the native oracle on the reviewer's correctness
-# matrix — this harness does NOT modify the zeros-7181 patch.
+# Round-10/11: zero_/zeros complex candidate screening (reviews
+# 6787395475 + 6788210724). The candidate implementations for a FUTURE
+# optimization fix are evaluated against the native oracle — this harness
+# does NOT modify the zeros-7181 patch.
 #
-# Candidates:
-#   current   : x.copy_(0)            (emulates the shipped fix branch;
-#                                      known host-staging perf cost)
-#   A         : full-storage contiguous -> uint8-view fill_(0) (device
-#               memset); otherwise falls back to candidate B
-#   B         : x.copy_(pre-built device 0-dim scalar)
-#   C         : view_as_real -> per-channel select(-1, i).zero_()
-#               (stride-correct native fill on the real view; conj-bit
-#               inputs fall back to B because view_as_real rejects them)
-#   native_ref: x.zero_()             (oracle)
+# Round-11 extensions (review section 1/2/4):
+#   - matrix adds: zeros CREATION path (alloc + candidate zeroing), empty
+#     and 0-dim tensors, combined layouts (storage-offset x transpose x
+#     slice x conj), broader alias/overlap checks; negative strides are
+#     recorded N/A (torch disallows them);
+#   - --registered mode: reruns the matrix + path verification under the
+#     REAL registration environment (zeros family only_enable on the fix
+#     tree), capturing profiler events per candidate so "expected path"
+#     claims are bound to observed kernels (A must not be polluted by the
+#     FlagGems fill path or FIX-ITEM-4; B must not reintroduce host
+#     staging; events must match the native-harness conclusion);
+#   - complexity: guard-branch cost measured; A+B combo (= candidate A as
+#     implemented: A fast path, B fallback) vs B-only compared per layout.
 #
-# Correctness matrix (review section 2): contiguous full tensor; x[::2],
-# narrow, transpose, storage offset; c64/c128; only the selected view is
-# zeroed (unselected storage bitwise unchanged); alias/view observations
-# match native.
-#
-# Run: CUDA_VISIBLE_DEVICES=0 PYTHONPATH="" python3 benchmarks/zero_candidates.py --out <path>
+# Run (native):  CUDA_VISIBLE_DEVICES=0 PYTHONPATH="" \
+#                  python3 benchmarks/zero_candidates.py --out <path>
+# Run (registered, fix tree): CUDA_VISIBLE_DEVICES=0 \
+#                  PYTHONPATH=<tree>/src python3 benchmarks/zero_candidates.py \
+#                  --registered --out <path>
 import argparse
+import json
+import statistics
 import sys
 import os
 import time
-import statistics
 
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "tests"))
@@ -36,43 +39,59 @@ DEVICE = "cuda"
 DTYPES = {"c64": torch.complex64, "c128": torch.complex128}
 
 
-def make_layout(layout, dtype, n_small=32, n_big=None):
-    """Returns (view, base_buffer) for each matrix layout."""
-    n = n_small if n_big is None else n_big
+def mk_complex(shape):
+    p = torch.randn(shape, dtype=torch.float32, device=DEVICE)
+    q = torch.randn(shape, dtype=torch.float32, device=DEVICE)
+    return torch.complex(p, q)
+
+
+def make_layout(layout, dtype, n=32):
+    """(view, base) pairs. Complex tensors assembled via torch.complex
+    (cast via .to() hits the FIX-ITEM-2 to_copy/fill gap under
+    registration)."""
     if layout == "contig":
-        base = torch.randn(n, n, dtype=torch.float32,
-                           device=DEVICE).to(dtype)
+        base = mk_complex((n, n))
         return base, base
     if layout == "slice_stride":
-        base = torch.randn(n, 2 * n, dtype=torch.float32,
-                           device=DEVICE).to(dtype)
+        base = mk_complex((n, 2 * n))
         return base[:, ::2], base
     if layout == "narrow":
-        base = torch.randn(4 * n, dtype=torch.float32,
-                           device=DEVICE).to(dtype)
+        base = mk_complex((4 * n,))
         return base[2:2 + n], base
     if layout == "transpose":
-        base = torch.randn(n, n, dtype=torch.float32,
-                           device=DEVICE).to(dtype)
-        return base.t().contiguous().t(), base
+        base = mk_complex((n, n))
+        return base.t(), base
     if layout == "storage_offset":
-        base = torch.randn(2 * n + 3, dtype=torch.float32,
-                           device=DEVICE).to(dtype)
+        base = mk_complex((2 * n + 3,))
         return base[3:3 + n], base
     if layout == "conj":
-        base = torch.randn(n, n, dtype=torch.float32,
-                           device=DEVICE).to(dtype)
+        base = mk_complex((n, n))
         return base.conj(), base
+    # round-11 combined layouts
+    if layout == "offset_transpose":
+        base = mk_complex((n + 3, n))
+        return base[3:, :].t(), base
+    if layout == "offset_slice":
+        base = mk_complex((n + 5, 2 * n))
+        return base[5:, ::2], base
+    if layout == "transpose_conj":
+        base = mk_complex((n, n))
+        return base.t().conj(), base
+    if layout == "slice_conj":
+        base = mk_complex((n, 2 * n))
+        return base[:, ::2].conj(), base
+    if layout == "offset_transpose_conj":
+        base = mk_complex((n + 3, n))
+        return base[3:, :].t().conj(), base
     raise ValueError(layout)
 
 
 def apply_candidate(name, x, scalars):
-    """Applies one candidate in-place; returns a short outcome string."""
     if name == "current":
         x.copy_(0)
         return "ok"
     if name == "A":
-        if (not x.is_conj()) and x.is_contiguous() and \
+        if (not x.is_conj()) and x.dim() >= 1 and x.is_contiguous() and \
                 x.storage_offset() == 0 and \
                 x.untyped_storage().nbytes() == x.numel() * x.element_size():
             x.view(torch.uint8).fill_(0)
@@ -96,79 +115,162 @@ def apply_candidate(name, x, scalars):
     raise ValueError(name)
 
 
-def storage_bytes(t):
-    return t.untyped_storage().cpu() if t.is_cuda else None
+def guard_cost(x, iters=1000):
+    """Host-side cost of candidate A's branch condition (no device work)."""
+    def check():
+        return ((not x.is_conj()) and x.is_contiguous() and
+                x.storage_offset() == 0 and
+                x.untyped_storage().nbytes() ==
+                x.numel() * x.element_size())
+    t0 = time.perf_counter()
+    n = 0
+    for _ in range(iters):
+        n += 1 if check() else 0
+    return (time.perf_counter() - t0) / iters * 1e6  # microseconds
 
 
-def check_case(layout, dtype_name, dtype, candidate, n=32):
-    """Runs one matrix cell. Returns a result dict (pass/fail + details)."""
-    x, base = make_layout(layout, dtype, n_small=n)
-    base_before = base.clone()
-    # selected-region mask on the BASE buffer: elements that belong to x
-    sel = torch.zeros(base.numel(), dtype=torch.bool)
-    xv = x.contiguous()  # only to discover which base indices are selected
-    # map selected flat indices of x back to base storage indices
-    idx = (torch.arange(x.numel(), device=DEVICE)
-           .view(x.shape)
-           .expand_as(x) if False else None)
-    # simpler: compare base buffers elementwise before/after and require
-    # differences exactly at positions whose value changed to 0 while being
-    # part of x — done below via change-mask containment check
-    del idx, xv
-    scalars = {"device": torch.complex(torch.tensor(0.0),
-                                       torch.tensor(0.0)).cuda()}
+def selected_base_indices(x):
+    """Exact flat storage indices of x's elements (stride/offset aware)."""
+    dims = [torch.arange(d, device=DEVICE) for d in x.shape]
+    grids = torch.meshgrid(*dims, indexing="ij") if x.dim() else []
+    flat = torch.full((), x.storage_offset(), dtype=torch.long,
+                      device=DEVICE)
+    for g, s in zip(grids, x.stride()):
+        flat = flat + g * s
+    return flat.reshape(-1)
+
+
+def check_case(layout, dtype_name, dtype, candidate, creation=False,
+               n=32):
+    """One matrix cell. creation=True emulates the zeros CREATION path
+    (fresh alloc + candidate zeroing) instead of zeroing a view."""
     res = {"layout": layout, "dtype": dtype_name, "candidate": candidate,
-           "shape": list(x.shape), "stride": list(x.stride()),
-           "storage_offset": x.storage_offset()}
+           "creation": creation}
     try:
+        if layout == "empty":
+            x = torch.zeros(0, dtype=dtype, device=DEVICE)
+        elif layout == "zerodim":
+            p = torch.full((), 1.0, dtype=torch.float32, device=DEVICE)
+            q = torch.full((), 0.5, dtype=torch.float32, device=DEVICE)
+            x = torch.complex(p, q)
+        else:
+            x, base = make_layout(layout, dtype, n=n)
+            base_before = base.clone()
+        res["shape"] = list(x.shape)
+        scalars = {"device": torch.complex(torch.tensor(0.0),
+                                           torch.tensor(0.0)).cuda()}
+        if creation:
+            # zeros creation path: fresh native alloc + candidate zeroing
+            y = torch.empty(x.shape, dtype=dtype, device=DEVICE)
+            outcome = apply_candidate(candidate, y, scalars)
+            res["outcome"] = outcome
+            res["all_zero"] = bool((y == 0).all().item()) \
+                if y.numel() else True
+            res["pass"] = res["all_zero"]
+            return res
         outcome = apply_candidate(candidate, x, scalars)
         res["outcome"] = outcome
     except Exception as e:
         res["pass"] = False
         res["error"] = f"{type(e).__name__}: {str(e)[:120]}"
         return res
-    # 1) selected view all-zero
-    all_zero = bool((x == 0).all().item()) if x.numel() else True
-    # 2) unselected storage unchanged: differences vs base_before must be
-    #    confined to positions now equal to zero AND belonging to x's
-    #    element set (approximated: every changed element must be 0)
-    changed = (base != base_before)
-    changed_nonzero = changed & (base != 0)
-    unselected_ok = not bool(changed_nonzero.any().item())
-    # 3) alias consistency: a fresh view of the same storage sees zeros
-    alias = base.reshape(-1)[x.storage_offset():]  # not exact for strided;
-    # simpler alias check: re-read x itself (same storage) and also a
-    # non-slice re-view of base where layout allows
-    alias_ok = bool((x == 0).all().item()) if x.numel() else True
-    # 4) equality vs native oracle: run native_ref on a fresh twin
-    x2, base2 = make_layout(layout, dtype, n_small=n)
-    apply_candidate("native_ref", x2, scalars)
-    same_as_native = bool(torch.equal(x, x2)) if x.numel() else True
-    ok = all_zero and unselected_ok and alias_ok and same_as_native
-    res.update({
-        "all_zero": all_zero,
-        "unselected_ok": unselected_ok,
-        "alias_ok": alias_ok,
-        "same_as_native": same_as_native,
-        "pass": ok,
-    })
+    try:
+        all_zero = bool((x == 0).all().item()) if x.numel() else True
+        checks = {"all_zero": all_zero}
+        if layout not in ("empty", "zerodim"):
+            idx = selected_base_indices(x)
+            bf = base_before.reshape(-1)
+            ba = base.reshape(-1)
+            changed = bf != ba
+            # every changed base element must be a selected one
+            sel_mask = torch.zeros(ba.numel(), dtype=torch.bool,
+                                   device=DEVICE)
+            sel_mask[idx] = True
+            checks["changed_only_selected"] = bool(
+                (changed & ~sel_mask).sum().item() == 0)
+            checks["selected_all_zero_via_base"] = bool(
+                (ba[idx] == 0).all().item())
+            # native oracle twin
+            x2, _ = make_layout(layout, dtype, n=n)
+            apply_candidate("native_ref", x2, scalars)
+            checks["same_as_native"] = bool(torch.equal(x, x2)) \
+                if x.numel() else True
+        else:
+            checks["changed_only_selected"] = True
+            checks["selected_all_zero_via_base"] = True
+            checks["same_as_native"] = True
+        res.update(checks)
+        res["pass"] = all(v is True for k, v in checks.items()
+                          if isinstance(v, bool))
+    except Exception as e:
+        res["pass"] = False
+        res["error"] = f"post-check {type(e).__name__}: {str(e)[:120]}"
     return res
+
+
+def classify_events(events):
+    tags = []
+    for name in events:
+        nl = name.lower()
+        if "memcpy" in nl and "htod" in nl:
+            tags.append("HtoD-staging(!)")
+        elif "memcpy" in nl or "memset" in nl:
+            tags.append("memcpy/memset")
+        elif "at::native" in name:
+            tags.append("native-aten")
+        elif "kernel" in nl:
+            tags.append("triton-candidate")
+        else:
+            tags.append("unknown")
+    return tags
+
+
+def path_verify(candidate, dtype_name, dtype, layout, n=1024):
+    """Registered-environment path verification: profiler events + timing
+    for one candidate on one layout (used in --registered mode)."""
+    if layout == "contig":
+        x, base = make_layout("contig", dtype, n=n)
+    elif layout == "slice_stride":
+        x, base = make_layout("slice_stride", dtype, n=n)
+    else:
+        x, base = make_layout("transpose", dtype, n=n)
+    scalars = {"device": torch.complex(torch.tensor(0.0),
+                                       torch.tensor(0.0)).cuda()}
+    fn = lambda: apply_candidate(candidate, x, scalars)
+    fn()
+    torch.cuda.synchronize()
+    from torch.profiler import profile, ProfilerActivity
+    with profile(activities=[ProfilerActivity.CUDA]) as prof:
+        fn()
+        torch.cuda.synchronize()
+    events = []
+    for ev in prof.key_averages():
+        dev = getattr(ev, "self_device_time_total", 0) or 0
+        if dev > 0:
+            events.append({"name": ev.key[:110],
+                           "class": classify_events([ev.key])[0],
+                           "self_device_us": dev})
+    t = bench_case(fn)
+    return {"candidate": candidate, "dtype": dtype_name,
+            "layout": layout, "events": events,
+            "ms_per_iter_median": t["ms_per_iter_median"],
+            "cv_pct": t["cv_pct"]}
 
 
 def bench_case(fn, iters=100, blocks=5, warmup=20):
     fn()
     torch.cuda.synchronize()
     e0, e1 = torch.cuda.Event(True), torch.cuda.Event(True)
-    w0 = time.perf_counter()
     e0.record()
     fn()
     e1.record()
     torch.cuda.synchronize()
     first = e0.elapsed_time(e1)
-    first_wall = (time.perf_counter() - w0) * 1e3
     for _ in range(warmup):
         fn()
     torch.cuda.synchronize()
+    torch.cuda.reset_peak_memory_stats()
+    base_a = torch.cuda.memory_allocated() / 2**20
     dev = []
     for _ in range(blocks):
         torch.cuda.synchronize()
@@ -179,51 +281,64 @@ def bench_case(fn, iters=100, blocks=5, warmup=20):
         torch.cuda.synchronize()
         dev.append(e0.elapsed_time(e1))
     med = statistics.median(dev) / iters
-    torch.cuda.reset_peak_memory_stats()
-    base_a = torch.cuda.memory_allocated() / 2**20
-    return {
-        "first_call_ms": first,
-        "first_call_wall_ms": first_wall,
-        "block_device_ms": dev,
-        "ms_per_iter_median": med,
-        "cv_pct": (statistics.stdev(dev) / statistics.mean(dev) * 100)
-        if len(dev) > 1 and statistics.mean(dev) else 0.0,
-        "mem_baseline_alloc_mb": base_a,
-    }
+    return {"first_call_ms": first,
+            "block_device_ms": dev,
+            "ms_per_iter_median": med,
+            "cv_pct": (statistics.stdev(dev) / statistics.mean(dev) * 100)
+            if len(dev) > 1 and statistics.mean(dev) else 0.0,
+            "mem_baseline_alloc_mb": base_a}
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--registered", action="store_true",
+                    help="run under zeros-family only_enable (fix tree)")
     args = ap.parse_args()
     if not torch.cuda.is_available():
         print("no device")
         sys.exit(2)
     rec = sm.set_determinism(0, "fp32")
+    prov = {"registered_mode": args.registered,
+            "torch": torch.__version__,
+            "device": torch.cuda.get_device_name(0),
+            "determinism": rec}
+    if args.registered:
+        import flag_gems
+        flag_gems.only_enable(include=["zeros", "zero_", "zeros_like"])
+        prov["flag_gems_path"] = flag_gems.__file__
+        prov["registered_keys"] = sorted(set(
+            flag_gems.all_registered_keys()))
+
     candidates = ["current", "A", "B", "C", "native_ref"]
     layouts = ["contig", "slice_stride", "narrow", "transpose",
-               "storage_offset", "conj"]
+               "storage_offset", "conj",
+               "offset_transpose", "offset_slice", "transpose_conj",
+               "slice_conj", "offset_transpose_conj",
+               "empty", "zerodim"]
     matrix = []
-    n_pass = 0
-    n_fail = 0
+    n_pass = n_fail = 0
     for dtype_name, dtype in DTYPES.items():
         for layout in layouts:
             for cand in candidates:
-                r = check_case(layout, dtype_name, dtype, cand)
-                matrix.append(r)
-                if r.get("pass"):
-                    n_pass += 1
-                else:
-                    n_fail += 1
-                    print(f"FAIL {dtype_name}/{layout}/{cand}: "
-                          f"{r.get('error', r)}", flush=True)
-    # perf: contig / slice_stride / transpose at 2^20 total elements
-    # (1024x1024), both dtypes
+                for creation in (False, True):
+                    r = check_case(layout, dtype_name, dtype, cand,
+                                   creation=creation)
+                    r["creation"] = creation
+                    matrix.append(r)
+                    if r.get("pass"):
+                        n_pass += 1
+                    else:
+                        n_fail += 1
+                        print(f"FAIL {dtype_name}/{layout}/{cand}"
+                              f"{'/creation' if creation else ''}: "
+                              f"{r.get('error', r)}", flush=True)
+    # perf: contig / slice_stride / transpose at 2^20 (1024x1024)
     perf = []
     for dtype_name, dtype in DTYPES.items():
         for layout in ("contig", "slice_stride", "transpose"):
             for cand in candidates:
-                x, base = make_layout(layout, dtype, n_big=1024)
+                x, base = make_layout(layout, dtype, n=1024)
                 scalars = {"device": torch.complex(
                     torch.tensor(0.0), torch.tensor(0.0)).cuda()}
                 try:
@@ -240,19 +355,43 @@ def main():
                                  "candidate": cand,
                                  "error": f"{type(e).__name__}: "
                                           f"{str(e)[:100]}"})
+    # complexity (round-11 section 4): guard cost + B-only vs A+B combo
+    xg, _ = make_layout("contig", torch.complex64, n=1024)
+    guard_us = guard_cost(xg)
+    complexity = {
+        "note": "candidate A IS the A+B combo (A fast path, B fallback); "
+                "compare A vs B-only per layout",
+        "guard_branch_cost_us": guard_us,
+        "comparison": "see perf rows: A vs B per dtype/layout",
+    }
+    # registered-mode path verification
+    path_verification = []
+    if args.registered:
+        for dtype_name, dtype in DTYPES.items():
+            for layout in ("contig", "slice_stride"):
+                for cand in ("A", "B", "C", "native_ref"):
+                    r = path_verify(cand, dtype_name, dtype, layout)
+                    path_verification.append(r)
+                    tags = [e["class"] for e in r["events"]]
+                    print(f"PATH {dtype_name}/{layout}/{cand}: {tags} "
+                          f"{r['ms_per_iter_median']:.4f} ms/iter",
+                          flush=True)
     out = {
-        "purpose": "round-10 zero_ candidate screening (native harness; "
-                   "does not modify the zeros-7181 patch)",
-        "determinism": rec,
-        "device": torch.cuda.get_device_name(0),
-        "torch": torch.__version__,
+        "purpose": "round-10/11 zero_ candidate screening"
+                   + (" (registered environment)" if args.registered
+                      else " (native harness)")
+                   + "; does not modify the zeros-7181 patch",
+        "mode": "registered" if args.registered else "native",
+        "provenance": prov,
         "matrix": matrix,
         "matrix_summary": {"pass": n_pass, "fail": n_fail},
         "perf": perf,
+        "complexity": complexity,
+        "path_verification": path_verification,
     }
     sm.write_json(args.out, out)
-    print(f"CANDIDATE SCREENING: matrix pass={n_pass} fail={n_fail}; "
-          f"wrote {args.out}", flush=True)
+    print(f"CANDIDATE SCREENING ({out['mode']}): matrix pass={n_pass} "
+          f"fail={n_fail}; wrote {args.out}", flush=True)
     sys.exit(0 if n_fail == 0 else 1)
 
 

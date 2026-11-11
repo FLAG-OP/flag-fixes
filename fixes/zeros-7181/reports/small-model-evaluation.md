@@ -347,3 +347,26 @@ validation.
   `benchmarks/gen_perf_section.py`,
   `tests/repro_mse_scalar_grad.py`, `tests/repro_complex_fill.py`.
 - Follow-up items: `reports/follow-up-fix-items.md` (FIX-ITEM-1/2/3).
+
+## 7. Round-11 addendum: matrix expansion, registered-path verification, two new follow-up items
+
+- Candidate matrix expanded to **260 cells** (zeros creation path, empty/
+  0-dim, five combined layouts, exact storage-index alias checks; negative
+  strides N/A by framework) — native harness **260/260 pass**; candidate A
+  gained two fallback constraints (0-dim and conj must fall back to B).
+- **Registered-environment re-test** (`--registered`): A/B events all
+  native-aten, no HtoD-staging, 0.0051–0.0075 ms — consistent with the
+  native-harness conclusion; **candidate C eliminated** (registered zero_
+  writes densely on strided REAL views — root cause filed as FIX-ITEM-5,
+  both-tree attribution closed; the round-2 view_as_real corruption
+  pattern recurring on the real path). native_ref under registration IS
+  the current path (HtoD-staging 0.69–0.73 ms, self-consistent).
+- FIX-ITEM-4 dedicated repro (`u8sum_repro.py`): fix tree 6/8 failures,
+  pre-fix tree identical 6/8 (attribution closed; the 4-element case
+  accidentally passes); checksum wrap kept as clue only.
+- Complexity: registered mode — **B wins or ties every tested layout**
+  (0.005–0.007 ms, near-native); A's fast path pays off only for c128
+  contiguous (~3 µs). **B-only recommended as the primary design** for the
+  future optimization fix.
+- New items: FIX-ITEM-5 (strided-real zero_ dense write) — see
+  `reports/follow-up-fix-items.md`.

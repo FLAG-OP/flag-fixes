@@ -320,6 +320,18 @@ hardware_status=unverified`；9/9 与比较器负例保留；FIX-ITEM-1/2/3 独�
 （工作树批）完全一致；性能中位数批间偏差 ≤~3%（首轮数值为引用口径，确认批
 JSON 以 `-59301a1-confirmation` 后缀归档）。
 
+## 第十一轮：候选矩阵扩展、注册环境复测与两项新缺口（2026-11-11，意见 comment `6788210724`，基于 `9723734`）
+
+| 评审项 | 落地 | 结果 |
+| --- | --- | --- |
+| §1 矩阵扩展 | `zero_candidates.py` 扩展：zeros **创建路径**、empty/0-dim、组合布局（offset×transpose×slice×conj 五种）、精确 storage 索引映射的 alias/未选中检查；负 stride 框架不支持登记 N/A | 原生 harness **260/260 全过**；候选 A 新增两条实现约束（0 维/conj 必须 fallback B） |
+| §2 注册环境复测 | `--registered` 模式（zeros 族 only_enable）：A/B/C/native_ref 逐候选取 profiler 事件 + 耗时 | **A/B 过验证**（事件全为 native-aten、无 HtoD-staging、0.0051–0.0075 ms 与原生 harness 一致）；**候选 C 被淘汰**——`select(-1,i).zero_()` 命中注册 zero_ 对实数跨步视图**稠密写**，矩阵 C 全失败，根因 = 新 **FIX-ITEM-5**（双树同型污染归因闭环）；native_ref 在注册下即当前路径（HtoD-staging 0.69–0.73 ms，自洽） |
+| §3 FIX-ITEM-4 独立验证 | 新增 `benchmarks/u8sum_repro.py` 按评审清单直取**值+dtype** 双树对照（1d/多维、默认/显式 dtype、>255 累加、empty、reduction 维、连续/非连续） | **修复树 6/8 失败、修复前对照树同型 6/8 失败**（大累加/2d/非连续回绕+dtype 错；4 元素小例侥幸正确）——预存归因闭环，checksum 回绕仅作发现线索 |
+| §4 复杂度评估 | A 即"A 快路径+B 兜底"组合；注册实测逐布局对比 + guard 分支 µs 级实测 | **B-only 建议为首选**（注册下全布局占优或持平、0.005–0.007 ms 接近 native、复杂度最低）；A 快路径仅 c128 contiguous 一处收益 ~3µs，作为可选增强 |
+
+"B 全布局最优"已限定为"**在本轮已测试布局中最优**"。功能 fix 维持
+`draft / deployable=false / hardware_status=unverified`。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models

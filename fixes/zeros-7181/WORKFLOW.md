@@ -14,3 +14,4 @@
 | 8 上游 | not-run | 未提交上游 PR，无合入 commit；跟踪 issue https://github.com/flagos-ai/FlagGems/issues/7181（open）；`mean/full/ones/eq` 等其余 complex 缺口与非 thead 后端同源 view 待按范围另修 | 原因：本修复尚未获部署资格，未在上游开 PR |
 
 性能修复必须给同口径前后数据和数值精度。dispatch/e2e 按层级选择；编译器修复可使用编译复现及调用方回归，解释不适用项。设备不足时可提交草稿。
+。第十一轮（意见 6788210724）：候选矩阵扩展至 260 格（原生全过）+ 注册环境复测（A/B 路径验证通过；C 被淘汰 → FIX-ITEM-5 实数跨步 zero_ 稠密写，双树归因闭环）+ FIX-ITEM-4 专项复现（双树同型 6/8）+ 复杂度评估（建议 B-only 首选）

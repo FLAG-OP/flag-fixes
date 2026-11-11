@@ -122,6 +122,28 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   独立优化 fix 的实现建议按评审顺序 A→B→C 落地（可组合：A 快路径 + B 兜底），
   通过第"验收门槛"节全部门槛后另行提交；实现时每候选仍须按 round-8 协议
   记录正确性、非连续视图行为、大尺寸耗时与显存变化。
+- **round-11 扩展与注册环境复测（评审 6788210724 §1/§2/§4）**：
+  - 矩阵扩展后 **260/260 全过**（原生 harness）：新增 zeros 创建路径、
+    empty/0-dim、组合布局（offset×transpose×slice×conj 五种组合）、精确
+    storage 索引映射的 alias/未选中检查；负 stride 框架不支持，登记 N/A。
+    候选 A 新增两条实现约束（0 维与 conj 必须 fallback B）。
+  - **注册环境复测**（`--registered`，zeros 族 only_enable）：A/B 的
+    profiler 事件均为 **native-aten、无 HtoD-staging**，耗时与原生 harness
+    一致（0.0051–0.0075 ms）——A 未被 FlagGems fill 污染、B 未重引
+    host staging ✓。
+  - **候选 C 在注册环境被淘汰**：`select(-1,i).zero_()` 命中注册的
+    FlagGems `zero_`，对**实数跨步视图按稠密写**——矩阵 C 全部失败
+    （all_zero=False、未选中区被污染），根因即 **FIX-ITEM-5**（round-2 弃用
+    view_as_real 的同一缺陷模式在实数路径复现）。C 仅在原生环境正确。
+  - **B-only vs A+B 组合**（评审 §4）：A 即"A 快路径 + B 兜底"组合。
+    实测：注册环境下 **B 占优或持平全部已测布局**（contig c64 0.0051 vs
+    A 0.0063、c128 0.0051 vs A 0.0075；slice 两者持平 ~0.0056）；原生
+    harness 中仅 c128 contig A 略优（0.0082 vs 0.0116）；guard 分支为纯
+    host 判断（µs 级，已实测）。**B-only 已接近 native（0.005–0.007 ms）
+    且复杂度最低——建议独立优化 fix 首选 B-only**，A 快路径作为可选增强
+    （收益仅 c128 contiguous 一处、量级 ~3µs）。
+  - "B 全布局最优"表述已按评审要求限定为"**在本轮已测试布局中最优**"。
+  - 证据：`bench-r2/zero-candidates-r11-{native,registered}.{json,log}`。
 - **状态**：proposed（未实现）。修复前后证据在独立修复包轮次补齐。
 
 ## FIX-ITEM-4：FlagGems `sum` 对 uint8 的累加器回绕与输出 dtype 错误（round-10 探索中发现）
@@ -135,12 +157,36 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
 - **发现路径**：round-10 基线冻结的 checksum 辅助函数在注册组出现
   byte_sum 回绕（28173→255），定位为 uint8 sum 累加器问题（探针 artifact
   已改用 `sum(dtype=torch.int64)` 规避）。
-- **预存归因**：待补（需在修复前对照树复跑同一复现——初步推断与本 patch
-  无关：zeros-7181 的 sum 改动针对 complex/bool-out/空输入，未触及 uint8
-  累加器；但按第六轮评审要求，归因须以对照树实测为准）。
-- **影响面**：所有经 FlagGems sum 的 uint8 归约（大值/多元素必回绕）。
+- **预存归因（round-11 闭环）**：专项复现脚本 `benchmarks/u8sum_repro.py`
+  按评审清单（1d/多维、默认/显式 dtype、>255 累加、empty、不同 reduction
+  维、连续/非连续）双树对照——**修复树 6/8 用例失败、修复前对照树同型
+  6/8 失败**（1d/large、2d/full、2d/dim0、2d/dim1、非连续 view、empty 的
+  dtype 错误；仅 4 元素小例 `[200,100,50,7]` 侥幸走对路径），失败集合逐项
+  一致 → 预存归因由同路径基线直接证明。日志
+  `bench-r2/u8sum-repro-{fix,prefix}.log`。checksum 回绕仅作发现线索
+  （已按评审要求不以之为归因证据）。
+- **影响面**：所有经 FlagGems sum 的 uint8 归约（大值/多元素必回绕；
+  4 元素小例路径侥幸正确）。
 - **状态**：proposed（未实现）。修复方向：uint8/int8 等小整型归约按 ATen
   提升为 int64 累加与输出。
+
+## FIX-ITEM-5：FlagGems `zero_` 对实数跨步视图稠密写（round-11 候选复测中发现）
+
+- **症状**：注册 FlagGems `zero_` 后，对**实数（float）跨步视图**调用
+  `zero_` 按**稠密**清零——选中元素与未选中元素全部变 0，未选中 storage 被
+  污染：`buf[:, ::2].zero_()` 把 8 列全清零（应只清 4 列）。native ATen
+  stride 正确。
+- **最小复现**：`benchmarks/strided_zero_probe.py`（4×8 float、`[:, ::2]`
+  视图，选中/未选中断言）——日志 `bench-r2/strided-zero-{fix,prefix}.log`。
+- **预存归因**：修复前对照树**同型污染**（逐位一致）——预存，非本 patch
+  引入。与 round-2 在 complex 路径弃用 view_as_real 的缺陷模式同源
+  （稠密写不识别 stride），但此处为**实数路径**，属 FlagGems `zero_`
+  自身 kernel 的跨步处理缺陷。
+- **关联**：这正是 round-11 候选 C 在注册环境被淘汰的根因（C 经
+  `view_as_real().select(-1,i).zero_()` 会命中此缺陷）；也意味着任何在
+  注册环境下对跨步实数张量的 `zero_` 都会损坏数据（影响面大）。
+- **状态**：proposed（未实现）。修复方向：FlagGems `zero_` kernel 按
+  stride 寻址（或跨步输入回退原生）。
 
 ## round-10 探索计划登记（评审 §三：sum/abs 性能探索）
 

@@ -51,3 +51,6 @@ dumps 重评分——设备运行用的是当时 harness，见 run-commits.json 
 | `verify-2026-11-07-dirty.json` / `verify-2026-11-07.json` | 初版 `flag-fixes verify`：`passed: true`，3/3（dirty / 已提交干净树） |
 
 不提交凭据、机器备份、模型缓存或无出处的测量数据；大日志若超仓库体量应改放发布附件并链接。
+| `small-model-2026-11-10/bench-r2/zero-candidates-r11-{native,registered}.{json,log}` | 第十一轮：候选矩阵扩展至 260 格（zeros 创建/empty/0-dim/组合布局/精确 alias，原生 260/260 全过）+ **注册环境复测**（A/B 事件全 native-aten 无 HtoD、0.0051–0.0075 ms；C 被淘汰 → FIX-ITEM-5）+ 复杂度（guard µs 级、B-only 建议首选） |
+| `small-model-2026-11-10/bench-r2/u8sum-repro-{fix,prefix}.log` + `benchmarks/u8sum_repro.py` | 第十一轮 FIX-ITEM-4 专项复现：按评审清单（1d/多维/显式 dtype/>255/empty/reduction 维/非连续）直取值+dtype 双树对照——修复树与 prefix **同型 6/8 失败**（预存归因闭环；4 元素小例侥幸正确） |
+| `small-model-2026-11-10/bench-r2/strided-zero-{fix,prefix}.log` + `benchmarks/strided_zero_probe.py` | 第十一轮 FIX-ITEM-5 最小复现：注册 zero_ 对实数跨步视图稠密写（未选中 storage 污染），双树同型（预存归因闭环） |

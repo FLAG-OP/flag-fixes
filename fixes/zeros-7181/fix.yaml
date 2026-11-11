@@ -354,5 +354,19 @@ notes:
   FlagGems sum 对 uint8 返回 uint8 dtype 且按 256 回绕（[200,100,50,7].sum()
   =101 vs native 357/int64），最小复现已登记、归因需对照树实测。功能 fix 维持
   draft/deployable=false/hardware_status=unverified。
+- |-
+  第十一轮（2026-11-11，意见 6788210724）四项预实现补强落地：(1) 候选矩阵
+  扩展至 260 格（zeros 创建路径/empty/0-dim/五种组合布局/精确 storage 索引
+  alias 检查/负 stride 登记 N/A）——原生 harness 260/260 全过，候选 A 新增
+  0 维与 conj 两条 fallback 约束；(2) 注册环境复测（--registered）——A/B
+  事件全为 native-aten、无 HtoD、0.0051–0.0075 ms 与原生结论一致；
+  候选 C 被淘汰（注册 zero_ 对实数跨步视图稠密写，根因登记 FIX-ITEM-5，
+  双树同型污染归因闭环；正是 round-2 view_as_real 弃用模式在实数路径复现）；
+  (3) FIX-ITEM-4 专项复现 u8sum_repro.py——修复树 6/8 失败、prefix 同型
+  6/8 失败（预存归因闭环；4 元素小例侥幸正确），checksum 回绕仅作线索；
+  (4) 复杂度评估——注册下 B 占优或持平全部已测布局（0.005–0.007 ms 接近
+  native），建议独立优化 fix 首选 B-only，A 快路径仅 c128 contig 一处
+  ~3µs 收益作可选增强；"B 全布局最优"限定为"本轮已测试布局中最优"。
+  功能 fix 维持 draft/deployable=false/hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

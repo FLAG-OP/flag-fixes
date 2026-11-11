@@ -319,3 +319,12 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   `MISSING DEPENDENCY`，不会因为前两个脚本通过而返回 0；`opt_einsum` 缺失时使用
   `tests/_stubs/opt_einsum.py` 兜底（host 侧 import 需要，非 FlagGems 依赖），运行时
   打印 `opt_einsum=bundled-stub|real`；模型代码 revision 打印并比对 pin `90e0b28f…`。
+- 第十一轮（2026-11-11，意见 6788210724）候选预实现补强：(1) 矩阵扩展至
+  260 格（zeros 创建/empty/0-dim/五种组合布局/精确 alias 检查/负 stride
+  N/A）原生全过，候选 A 新增 0 维与 conj fallback 约束；(2) 注册环境复测：
+  A/B 事件全 native-aten、无 HtoD、0.0051–0.0075 ms 与原生一致；候选 C 被
+  淘汰（注册 zero_ 对实数跨步视图稠密写 → 新 FIX-ITEM-5，双树归因闭环，
+  即 round-2 view_as_real 模式在实数路径复现）；(3) FIX-ITEM-4 专项复现
+  双树同型 6/8 失败（预存归因闭环）；(4) 复杂度评估建议独立优化 fix 首选
+  B-only（0.005–0.007 ms 接近 native），A 仅 c128 contig ~3µs 收益作可选
+  增强。状态与验收口径不变。
