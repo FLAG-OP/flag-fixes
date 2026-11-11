@@ -30,6 +30,18 @@
   115 自动生成，旧 58 作废）/正确性失败配置标 diagnostic；(4) 报告三态重生成，
   另立修复项 `reports/follow-up-fix-items.md`，两缺口在修复前对照树逐位复现
   （预存归因有隔离对照支撑）。状态与验收口径不变。
+- 第六轮评审修正（2026-11-10/11，意见 6784122575）：(1) 撤回旧清零性能结论
+  （bench-r1 0.83–1.00×），性能节改由脚本从 bench2-summary.json 自动生成——
+  实测 complex zeros/zero_ 2^20 达 97–290× 且随字节数线性增长；根因：complex
+  `zero_`→`copy_(0)` 重派生**继承了 ATen complex-标量拷贝的全量张量可分页
+  HtoD host 中转**（native `copy_(0)` 0.74–0.85ms ≈ f_target 0.90ms；native
+  `zero_` 0.005ms 设备 memset）→ 登记 FIX-ITEM-3（候选方向：设备端 0 维源/
+  real 视图清零，不承诺优化比例）；sum "大尺寸 1.1–2×" 同步撤回（实测
+  3.95–22.92×）。(2) 命中说明三分法（registered/probe-hit/timed-case）并附
+  profiler 全事件清单——zeros 族无 Triton kernel（此前"命中 Triton"系子串
+  误判，更正）。(3) provenance 更正：test_small_models.py 在
+  968d624..fac401c 间 226 行差异，设备运行在旧 harness、比较器随后加固并重
+  评分已存 dumps；run-commits.json 机器可读清单。状态与验收口径不变。
 
 ## 一句话版本
 

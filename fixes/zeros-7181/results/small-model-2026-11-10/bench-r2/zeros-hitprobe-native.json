@@ -1,0 +1,93 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "flag_gems_available": false,
+  "flag_gems_path": null,
+  "group": "f_target (native, no flag_gems)",
+  "probes": [
+    {
+      "events": [
+        {
+          "class": "native-aten",
+          "count": 2,
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul>)",
+          "self_device_us_total": 2.400000000001455
+        }
+      ],
+      "fn": "zeros/c64/8x8",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "native-aten",
+          "count": 2,
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul>)",
+          "self_device_us_total": 6.079999999999998
+        }
+      ],
+      "fn": "zeros/c64/1024x1024",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "native-aten",
+          "count": 1,
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul>)",
+          "self_device_us_total": 1.240000000000009
+        }
+      ],
+      "fn": "zero_/c64/8x8",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "native-aten",
+          "count": 1,
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul>)",
+          "self_device_us_total": 3.0
+        }
+      ],
+      "fn": "zero_/c64/1024x1024",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "memcpy/memset",
+          "count": 1,
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us_total": 925.438
+        }
+      ],
+      "fn": "copy_scalar/c64/1024x1024",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    }
+  ],
+  "registered_keys": [],
+  "registered_target_keys": {
+    "zero_": false,
+    "zeros": false,
+    "zeros_like": false
+  },
+  "sync": "torch.cuda.synchronize() before/after each profiled call",
+  "torch": "2.10.0"
+}

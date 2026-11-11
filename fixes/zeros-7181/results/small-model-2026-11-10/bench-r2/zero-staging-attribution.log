@@ -1,0 +1,6 @@
+== NATIVE (no flag_gems), c64 2^20 = 8MB ==
+native x.copy_(0)          : 0.7417 ms
+native x.zero_()           : 0.0049 ms
+native copy_(cpu-0dim c64) : 0.7306 ms
+native copy_(device-0dim)  : 0.0165 ms
+native torch.zeros((32,32), c64) creation: 0.0079 ms

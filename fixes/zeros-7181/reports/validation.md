@@ -229,6 +229,20 @@ PASS、lr 校准 0.1（候选 1e-1 为按评审"调任务再校准"条款新增�
 owner=null`；小模型结论不替代大模型完整梯度与容器平台验收；两项新缺口各自独立建包，
 修复前后证据在其自身轮次补齐。
 
+## 第六轮评审修正（2026-11-10/11，意见 comment `6784122575`，基于 `fb13007`）
+
+| 意见 | 处理 | 验证 |
+| --- | --- | --- |
+| P1 报告沿用旧清零结论（0.89–0.96×/0.83–1.00×）与 bench-r2 实测（2^20 达 97–290×）矛盾 | 旧表述**撤回**；性能节改为由 `benchmarks/gen_perf_section.py` 从 `bench2-summary.json` **自动生成**（`bench-r2/perf-section-auto.md`，报告内嵌），旗标计数 115、比值与舍入全部出自数据；sum "大尺寸仅 1.1–2×" 同步撤回（实测 forward 3.95–22.92×、fwd+bwd ≈3×） | 自动生成文件 + 报告内嵌一致；机器可复核 |
+| P1 后续定位：zero_ 的 copy_(0) 追踪 | 根因完成：**native ATen complex-标量 copy 本身经全量张量可分页 HtoD 中转**——native `copy_(0)` 0.74–0.85 ms ≈ f_target 0.90 ms（同路径）；native `zero_()` 0.005 ms 设备 memset；设备端 0 维源 0.017–0.020 ms。profiler 全事件：f_target `zero_` 仅 Memcpy HtoD、`zeros` 为 native FillFunctor+HtoD、无 Triton kernel。→ **FIX-ITEM-3**（`reports/follow-up-fix-items.md`），候选方向（设备端 0 维源/real 视图清零）已列，不承诺优化比例 | `benchmarks/zero_staging_probe.py` → `bench-r2/zero-staging-attribution.log`；`benchmarks/zeros_hitprobe.py` → `bench-r2/zeros-hitprobe-{f_target,native}.json`（全事件清单+分类+dtype/shape/入口/同步方式） |
+| P2 profiler 命中说明与 JSON 不符 | 三分法表述：**registered（断言）/ probe-hit（kernel 事件）/ timed-case（尺寸标度）**；round-5 回复"zeros 命中 Triton"系 `vectorized_elementwise_kernel` 子串误判，**更正为 native FillFunctor+HtoD、无 Triton kernel**；无法识别的 kernel 名标 unknown、原始名逐字保留 | `zeros-hitprobe-*.json` 全事件清单；报告与回复同步更正 |
+| P2 provenance 不准确（"tests 文件逐字节一致 968d624..fac401c"不实） | 更正：`test_small_models.py` 在该区间 **226 行差异（170+/56−，比较器加固）**；准确表述 = 设备运行在 `968d624`（当时 harness）、`fac401c` 加固比较器并对**已保存 dumps** 重评分（设备数据未重跑）；`tests/small_models.py` 确无变化。新增 `bench-r2/run-commits.json` 机器可读清单，报告 provenance 表自动对应 | `git diff --stat 968d624..fac401c` 记录于清单；报告 provenance 表重写 |
+
+可保留结论（评审确认）：隔离组 9/9 + 比较器加固与负例自测；全量组两缺口（mse 标量
+广播、complex pointwise/fill）继续作为独立修复项；性能定位为"修正归因后的观测报告"，
+**清零路径大幅开销已如实量化并根因（FIX-ITEM-3）**，是否另立优化项交维护者决定。
+状态口径不变：`draft / deployable=false / hardware_status=unverified / owner=null`。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models

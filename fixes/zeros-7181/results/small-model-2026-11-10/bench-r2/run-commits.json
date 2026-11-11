@@ -1,0 +1,15 @@
+{
+  "comment": "auto-checked against git; generated for round-6 provenance sync (review 6784122575)",
+  "accuracy_matrix_run": {
+    "commit": "968d624",
+    "note": "device runs executed with the harness AS OF THIS COMMIT",
+    "files_changed_after_run_until_comparator_v2": {
+      "tests/test_small_models.py": "226 lines changed (170+/56-), 968d624..fac401c — comparator hardening; device data re-scored from saved dumps, not re-run",
+      "tests/small_models.py": "unchanged (git diff empty)"
+    }
+  },
+  "bench_r2_run": {"commit": "dd5ebea"},
+  "rescoring_commit": {"commit": "fac401c"},
+  "evidence_commits": ["5e02b3b (round-4)", "fb13007 (round-5)"],
+  "round6_additions": ["zeros_hitprobe.py runs", "zero_staging_probe.py run (native attribution)", "gen_perf_section.py output"]
+}

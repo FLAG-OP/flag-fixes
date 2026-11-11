@@ -1,0 +1,108 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+  "group": "f_target",
+  "probes": [
+    {
+      "events": [
+        {
+          "class": "native-aten",
+          "count": 1,
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul>)",
+          "self_device_us_total": 1.2400000000016007
+        },
+        {
+          "class": "memcpy/memset",
+          "count": 1,
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us_total": 1.3999999999978172
+        }
+      ],
+      "fn": "zeros/c64/8x8",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "native-aten",
+          "count": 1,
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::complex<float> >, std::array<char*, 1ul>)",
+          "self_device_us_total": 2.9599999999999937
+        },
+        {
+          "class": "memcpy/memset",
+          "count": 1,
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us_total": 558.3190000000001
+        }
+      ],
+      "fn": "zeros/c64/1024x1024",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "memcpy/memset",
+          "count": 1,
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us_total": 1.3599999999999994
+        }
+      ],
+      "fn": "zero_/c64/8x8",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "memcpy/memset",
+          "count": 1,
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us_total": 572.559
+        }
+      ],
+      "fn": "zero_/c64/1024x1024",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    },
+    {
+      "events": [
+        {
+          "class": "memcpy/memset",
+          "count": 1,
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us_total": 573.919
+        }
+      ],
+      "fn": "copy_scalar/c64/1024x1024",
+      "note": "full event list, no truncation; classes are advisory, raw names are authoritative",
+      "probe_dtype": "complex64",
+      "probe_entry": "torch.zeros / Tensor.zero_ / Tensor.copy_(0)"
+    }
+  ],
+  "registered_keys": [
+    "zero_",
+    "zeros",
+    "zeros_like"
+  ],
+  "registered_target_keys": {
+    "zero_": true,
+    "zeros": true,
+    "zeros_like": true
+  },
+  "sync": "torch.cuda.synchronize() before/after each profiled call",
+  "torch": "2.10.0"
+}
