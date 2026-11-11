@@ -86,3 +86,10 @@ ratio 0.332，确定性通过）；CUPTI 关闭时 exit 2=skip。历史 wall 数
 | 真实 step 端到端收益（含 clip 62 ms 墙钟） | 同上；只给出 kernel 级实测 + 墙钟预估 |
 | `HYDRA_*`/foreach 在其他厂商后端（PPU/Ascend/CUDA）的行为 | 无设备 |
 | `clip_grad_norm_` 的 multi-tensor reduce 优化 | torch 2.9 foreach 实测只省 ~2 ms，需厂商支持，未立项 |
+
+## 二轮评审修订复验（2026-11-11）
+
+最新 clean verify 绑定提交 `4052ef37`
+（`results/verify-2026-11-11-clean.json`，source_dirty=false，4/4 rc=0）；
+选择矩阵扩至 18 例（含 vendor nvidia/thead/kunlunxin、显式 forced=1 回退日志断言、
+混合 dtype）。性能判定口径为 torch.profiler device time。

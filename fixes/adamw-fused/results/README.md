@@ -43,3 +43,5 @@ wall 对照反转。因此 repro 的性能判定改用 **torch.profiler 的 devi
 - `--iters 30`、median-of-N、每步 `torch.cuda.synchronize()`。
 - 日志保留了厂商栈的环境告警（`SYMBOL_REWRITE`、XCCL 加载），grep 过滤后
   的关键行见 WORKFLOW.md 表格。
+
+| `verify-2026-11-11-clean.json` | 绑定当前提交 `4052ef37`（PR #3 二轮评审修订）的干净树复跑，`source_dirty=false`，生成时间 2026-11-11。adamw 含 vendor nvidia/thead/kunlunxin、显式 forced=1、混合 dtype 断言；flaggems 含 7 例语义矩阵与 WARNING 断言。 |

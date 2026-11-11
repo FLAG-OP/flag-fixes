@@ -13,3 +13,5 @@
 
 判定：复现 1→0、语义 fixed exit 0、dispatch 机制成立、整步 -14.0%。
 平台整模型验收 not-run（hardware_status=unverified）。
+
+| `verify-2026-11-11-clean.json` | 绑定当前提交 `4052ef37`（PR #3 二轮评审修订）的干净树复跑，`source_dirty=false`，生成时间 2026-11-11。adamw 含 vendor nvidia/thead/kunlunxin、显式 forced=1、混合 dtype 断言；flaggems 含 7 例语义矩阵与 WARNING 断言。 |
