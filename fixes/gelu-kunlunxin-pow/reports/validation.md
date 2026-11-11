@@ -122,3 +122,35 @@ fp32/bf16/fp16 × none/tanh × 前反向，补丁前后 FlagGems 输出 **NaN �
 bf16/fp16 及其余 kernel 逐位一致；NaN 传播与 ±0 相等断言通过。
 数据：`results/boundary-{base,fixed,compare}-2026-11-11.json|log`；
 harness：`tests/test_gelu_boundary.py`（dumper + 双树 diff 用法见 tests/README）。
+
+
+## 三轮评审修订（PR #3，2026-11-11）——结论更正与独立参考对照
+
+### 结论更正
+
+| 原表述 | 更正后 | 依据 |
+|---|---|---|
+| "±3 均只有 1 ULP" | x=+3：1 ULP；**x=−3：170 ULP（abs 1.583e-7）**——评审复核正确 | float32 位型复核 |
+| "补丁前后相近即数值不增" | 改为**独立 fp64 参考对照**：base 与 fixed 对 fp64 的绝对误差**完全相同**（gelu_tanh_bwd @−3 均 1.30e-7；@+3 均 1.15e-7），补丁未引入额外误差 | `results/boundary-fp64ref-2026-11-11.json` |
+| "NaN 感知逐位一致" | 改为"NaN 掩码一致（payload 未比较）"；已改为保存**原始位型**做真位级比较 | dumper v2+ |
+| "覆盖 subnormal" | 更正：1e-300/5e-324 转 bf16/fp16/fp32 后均为零。现按 dtype 位级构造 8 个次正规数（min_sub×1/2/3/8 及其负数），设备输入位型已存档（非零），fp16 的 1e-30 FTZ 行为单独记录 | dumper v3 `inputs.bits`、`ftz` |
+
+### 比较器（可执行，含失败判定与负例自测）
+
+`tests/compare_gelu_boundary.py`：
+- 结构检查：dtype 键、输出键集合、元素/bit 数、双树输入位型一致；
+- 分层：NaN 掩码一致 → Inf 掩码+符号一致 → 零的符号位一致（位型）→
+  有限值位型一致；位型不一致处走**预冻结容差**（fp32 gelu_tanh_bwd
+  atol=2e-7，其余要求位型一致），报告最差位置；
+- 任一检查不过 → exit 1；
+- `--self-test` 负例：有限值改坏 / NaN→Inf 重分类 / 缺输出键 / ±0 符号位
+  翻转——比较器全部拒绝（PASS）。
+
+### fp32 gelu_tanh_bwd @±3 独立参考对照（摘要）
+
+| x | fp64 参考 | base abs | fixed abs | base ulp | fixed ulp |
+|---|---:|---:|---:|---:|---:|
+| +3 | 1.0115842 | 1.15e-7 | 1.15e-7 | 1.0 | 1.0 |
+| −3 | −0.0115842 | 1.30e-7 | 1.30e-7 | 139.8* | 139.8* |
+
+\* 相对近零值的 ULP 计量放大；绝对误差一致，补丁未引入额外误差。
