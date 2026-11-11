@@ -39,49 +39,58 @@ DEVICE = "cuda"
 DTYPES = {"c64": torch.complex64, "c128": torch.complex128}
 
 
-def mk_complex(shape):
-    p = torch.randn(shape, dtype=torch.float32, device=DEVICE)
-    q = torch.randn(shape, dtype=torch.float32, device=DEVICE)
+DTYPES = {"c64": torch.complex64, "c128": torch.complex128}
+REAL = {"c64": torch.float32, "c128": torch.float64}
+
+
+def mk_complex(shape, dtype):
+    """real/imag constructed in the dtype's REAL type (round-12: the
+    previous float32-hardcoded construction made most c128 entries
+    actually run c64)."""
+    real = dtype.to_real_dtype() if hasattr(dtype, "to_real_dtype") \
+        else (torch.float32 if dtype == torch.complex64 else torch.float64)
+    p = torch.randn(shape, dtype=real, device=DEVICE)
+    q = torch.randn(shape, dtype=real, device=DEVICE)
     return torch.complex(p, q)
 
 
 def make_layout(layout, dtype, n=32):
-    """(view, base) pairs. Complex tensors assembled via torch.complex
-    (cast via .to() hits the FIX-ITEM-2 to_copy/fill gap under
-    registration)."""
+    """(view, base) pairs. Complex tensors assembled via torch.complex in
+    the requested dtype (cast via .to() hits the FIX-ITEM-2 to_copy/fill
+    gap under registration)."""
     if layout == "contig":
-        base = mk_complex((n, n))
+        base = mk_complex((n, n), dtype)
         return base, base
     if layout == "slice_stride":
-        base = mk_complex((n, 2 * n))
+        base = mk_complex((n, 2 * n), dtype)
         return base[:, ::2], base
     if layout == "narrow":
-        base = mk_complex((4 * n,))
+        base = mk_complex((4 * n,), dtype)
         return base[2:2 + n], base
     if layout == "transpose":
-        base = mk_complex((n, n))
+        base = mk_complex((n, n), dtype)
         return base.t(), base
     if layout == "storage_offset":
-        base = mk_complex((2 * n + 3,))
+        base = mk_complex((2 * n + 3,), dtype)
         return base[3:3 + n], base
     if layout == "conj":
-        base = mk_complex((n, n))
+        base = mk_complex((n, n), dtype)
         return base.conj(), base
     # round-11 combined layouts
     if layout == "offset_transpose":
-        base = mk_complex((n + 3, n))
+        base = mk_complex((n + 3, n), dtype)
         return base[3:, :].t(), base
     if layout == "offset_slice":
-        base = mk_complex((n + 5, 2 * n))
+        base = mk_complex((n + 5, 2 * n), dtype)
         return base[5:, ::2], base
     if layout == "transpose_conj":
-        base = mk_complex((n, n))
+        base = mk_complex((n, n), dtype)
         return base.t().conj(), base
     if layout == "slice_conj":
-        base = mk_complex((n, 2 * n))
+        base = mk_complex((n, 2 * n), dtype)
         return base[:, ::2].conj(), base
     if layout == "offset_transpose_conj":
-        base = mk_complex((n + 3, n))
+        base = mk_complex((n + 3, n), dtype)
         return base[3:, :].t().conj(), base
     raise ValueError(layout)
 
@@ -150,15 +159,27 @@ def check_case(layout, dtype_name, dtype, candidate, creation=False,
         if layout == "empty":
             x = torch.zeros(0, dtype=dtype, device=DEVICE)
         elif layout == "zerodim":
-            p = torch.full((), 1.0, dtype=torch.float32, device=DEVICE)
-            q = torch.full((), 0.5, dtype=torch.float32, device=DEVICE)
+            real = torch.float32 if dtype == torch.complex64 \
+                else torch.float64
+            p = torch.full((), 1.0, dtype=real, device=DEVICE)
+            q = torch.full((), 0.5, dtype=real, device=DEVICE)
             x = torch.complex(p, q)
         else:
             x, base = make_layout(layout, dtype, n=n)
             base_before = base.clone()
         res["shape"] = list(x.shape)
-        scalars = {"device": torch.complex(torch.tensor(0.0),
-                                           torch.tensor(0.0)).cuda()}
+        # round-12: assert and record the ACTUAL dtype (the previous
+        # float32-hardcoded construction made c128 labels run c64)
+        assert x.dtype == dtype, f"dtype mismatch {x.dtype} != {dtype}"
+        res["actual_dtype"] = str(x.dtype)
+        res["is_conj"] = bool(x.is_conj())
+        scalars = {"device": torch.complex(
+            torch.tensor(0.0, dtype=torch.float32
+                         if dtype == torch.complex64 else torch.float64),
+            torch.tensor(0.0, dtype=torch.float32
+                         if dtype == torch.complex64 else torch.float64),
+        ).cuda()}
+        assert scalars["device"].dtype == dtype
         if creation:
             # zeros creation path: fresh native alloc + candidate zeroing
             y = torch.empty(x.shape, dtype=dtype, device=DEVICE)
@@ -234,8 +255,13 @@ def path_verify(candidate, dtype_name, dtype, layout, n=1024):
         x, base = make_layout("slice_stride", dtype, n=n)
     else:
         x, base = make_layout("transpose", dtype, n=n)
-    scalars = {"device": torch.complex(torch.tensor(0.0),
-                                       torch.tensor(0.0)).cuda()}
+    assert x.dtype == dtype
+    scalars = {"device": torch.complex(
+        torch.tensor(0.0, dtype=torch.float32
+                     if dtype == torch.complex64 else torch.float64),
+        torch.tensor(0.0, dtype=torch.float32
+                     if dtype == torch.complex64 else torch.float64),
+    ).cuda()}
     fn = lambda: apply_candidate(candidate, x, scalars)
     fn()
     torch.cuda.synchronize()
@@ -251,8 +277,10 @@ def path_verify(candidate, dtype_name, dtype, layout, n=1024):
                            "class": classify_events([ev.key])[0],
                            "self_device_us": dev})
     t = bench_case(fn)
-    return {"candidate": candidate, "dtype": dtype_name,
-            "layout": layout, "events": events,
+    return {"candidate": candidate,
+            "role": ("registered-path reference (current fix path)"
+                     if candidate == "native_ref" else "candidate"),
+            "dtype": dtype_name, "layout": layout, "events": events,
             "ms_per_iter_median": t["ms_per_iter_median"],
             "cv_pct": t["cv_pct"]}
 
@@ -339,8 +367,15 @@ def main():
         for layout in ("contig", "slice_stride", "transpose"):
             for cand in candidates:
                 x, base = make_layout(layout, dtype, n=1024)
+                assert x.dtype == dtype
                 scalars = {"device": torch.complex(
-                    torch.tensor(0.0), torch.tensor(0.0)).cuda()}
+                    torch.tensor(0.0, dtype=torch.float32
+                                 if dtype == torch.complex64
+                                 else torch.float64),
+                    torch.tensor(0.0, dtype=torch.float32
+                                 if dtype == torch.complex64
+                                 else torch.float64),
+                ).cuda()}
                 try:
                     fn = lambda x=x, c=cand, s=scalars: apply_candidate(
                         c, x, s)

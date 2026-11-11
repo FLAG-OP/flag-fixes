@@ -42,7 +42,10 @@ def check(name, got, want, want_dtype):
           f"(want {want_v} {want_dtype})", flush=True)
 
 
-u8 = torch.tensor([200, 100, 50, 7], device="cuda")           # sum=357
+# round-12: explicit dtype=torch.uint8 (the previous tensor was int64, so
+# the two "passing" cases never exercised uint8)
+u8 = torch.tensor([200, 100, 50, 7], dtype=torch.uint8, device="cuda")
+assert u8.dtype == torch.uint8
 check("1d/default", u8.sum(), 357, torch.int64)
 check("1d/explicit-i64", u8.sum(dtype=torch.int64), 357, torch.int64)
 big = torch.randint(0, 255, (1 << 20,), dtype=torch.uint8, device="cuda")
@@ -55,12 +58,19 @@ check("2d/dim0", m2d.sum(dim=0), m2d.cpu().long().sum(dim=0).tolist(),
       torch.int64)
 check("2d/dim1", m2d.sum(dim=1), m2d.cpu().long().sum(dim=1).tolist(),
       torch.int64)
-v = torch.randn(4, 8, device="cuda")[:, ::2].to(torch.uint8)
+# round-12: build the uint8 base FIRST, then slice (slicing float then
+# .to(uint8) produced a fresh contiguous tensor, not a strided view)
+base_u8 = torch.randint(0, 255, (4, 8), dtype=torch.uint8, device="cuda")
+v = base_u8[:, ::2]
+assert v.dtype == torch.uint8 and not v.is_contiguous()
 wv = int(v.cpu().long().sum().item())
 check("noncontig/view", v.sum(), wv, torch.int64)
 e = torch.zeros(0, dtype=torch.uint8, device="cuda")
 check("empty", e.sum(), 0, torch.int64)
-print(f"SUMMARY: {len(fails)} failures / {len(results)} cases "
+results.append({"case": "_inputs", "u8_dtype": str(u8.dtype),
+                "v_dtype": str(v.dtype), "v_contiguous": v.is_contiguous(),
+                "v_stride": list(v.stride())})
+print(f"SUMMARY: {len(fails)} failures / {len(results)-1} cases "
       f"({'PASS' if not fails else 'FAIL'})", flush=True)
 if fails:
     print("failing cases:", fails, flush=True)

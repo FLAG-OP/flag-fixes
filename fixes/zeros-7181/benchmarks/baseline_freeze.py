@@ -59,12 +59,16 @@ def make_view(layout, dtype, n=1024):
 
 
 def checksum(t):
-    """Bitwise checksum of the tensor's storage (NaN-safe; conj bits
-    materialized; 0-dim handled via reshape(-1))."""
+    """Full-byte reliable hash + int64 byte-sum (NaN-safe; conj bits
+    materialized; 0-dim handled; int64 sum — uint8 sum wraps under
+    FlagGems registration, FIX-ITEM-4). Round-12: full sha256 replaces
+    the truncated-64-hex-digit checksum that could hide post-byte-32
+    differences."""
     t = t.resolve_conj() if t.is_conj() else t
-    u8 = t.contiguous().reshape(-1).view(torch.uint8)
-    return u8.cpu().numpy().tobytes().hex()[:64], int(
-        u8.sum(dtype=torch.int64).item())  # int64: uint8 sum wraps under FlagGems registration (FIX-ITEM-4)
+    u8 = t.contiguous().reshape(-1).view(torch.uint8).cpu()
+    import hashlib
+    h = hashlib.sha256(u8.numpy().tobytes()).hexdigest()
+    return h, int(u8.sum(dtype=torch.int64).item())
 
 
 def kernel_capture(fn):
@@ -186,12 +190,14 @@ def run_edge_case(op, dt, payload):
         if op == "sum":
             y = x.sum()
         else:
-            xg = x.clone().requires_grad_(True) if not x.is_conj() \
-                else x
-            y = torch.abs(xg if x.is_conj() else x)
+            # round-12 fix: the forward MUST use the grad-enabled clone
+            # (previously used x, so backward had no grad_fn -> spurious
+            # exceptions in 10 committed edge rows)
+            xg = x.clone().requires_grad_(True)
+            y = torch.abs(xg)
         res["out_checksum"], res["out_byte_sum"] = checksum(
             y.detach() if not isinstance(y, torch.Tensor) else y)
-        if op == "abs" and not payload == "empty" and not x.is_conj():
+        if res["grad_applicable"]:
             y.backward(torch.ones_like(y))
             res["grad_checksum"], res["grad_byte_sum"] = checksum(xg.grad)
     except Exception as e:
@@ -199,7 +205,79 @@ def run_edge_case(op, dt, payload):
                     "error": f"{type(e).__name__}: {str(e)[:140]}"})
         return res
     res["status"] = "ok"
+    res["shape"] = list(y.shape)
+    # grad applicability is EXPLICIT: abs carries an input-grad checkpoint,
+    # sum does not (round-12: missing fields may not stand in for a pass)
+    res["grad_applicable"] = (op == "abs" and payload != "empty"
+                              and not x.is_conj())
+    if not res["grad_applicable"]:
+        res["grad"] = "N/A"
     return res
+
+
+
+# ------------------------------------------------------------- comparator --
+# Round-12: strict case comparator. Categories are explicit; exceptions and
+# missing fields are NEVER counted as numeric agreement.
+
+def compare_case(fc, nc):
+    """fc/nc: per-case result dicts (fix, native). Returns
+    {case, category, detail} with category one of:
+      numeric_equal | numeric_diff | both_exception | one_exception |
+      missing_reference | missing_fields | dtype_or_shape_mismatch
+    Rules (round-12):
+      - numeric comparison requires BOTH status==ok AND all applicable
+        checksum fields present in BOTH dicts;
+      - grad_checksum is applicable only when grad_applicable is True;
+        otherwise it is explicit N/A and ignored;
+      - exceptions form their own category (both_exception/one_exception);
+      - missing native reference is its own category (never skipped
+        silently)."""
+    case = (fc or nc).get("case")
+    out = {"case": case}
+    if nc is None:
+        out.update({"category": "missing_reference",
+                    "detail": "no native reference case"})
+        return out
+    fs, ns = fc.get("status"), nc.get("status")
+    if fs == "exception" and ns == "exception":
+        out.update({"category": "both_exception",
+                    "detail": {"fix": fc.get("error", "")[:80],
+                               "native": nc.get("error", "")[:80]}})
+        return out
+    if fs != "ok" or ns != "ok":
+        out.update({"category": "one_exception",
+                    "detail": f"fix={fs} native={ns}"})
+        return out
+    # applicable checksum fields
+    fields = [k for k in ("x_checksum", "out_checksum")
+              if k in fc or k in nc]
+    if fc.get("grad_applicable") or nc.get("grad_applicable"):
+        fields.append("grad_checksum")
+    missing = [k for k in fields if k not in fc or k not in nc]
+    if missing:
+        out.update({"category": "missing_fields",
+                    "detail": f"missing in {'fix/native':s}: {missing}"})
+        return out
+    for k in fields:
+        if fc[k] != nc[k]:
+            out.update({"category": "numeric_diff",
+                        "detail": f"{k} differs (full-byte sha256)"})
+            return out
+    # dtype must match; shape compared when both recorded
+    if fc.get("dtype") != nc.get("dtype"):
+        out.update({"category": "dtype_or_shape_mismatch",
+                    "detail": f"dtype {fc.get('dtype')} vs "
+                              f"{nc.get('dtype')}"})
+        return out
+    if "shape" in fc and "shape" in nc and fc["shape"] != nc["shape"]:
+        out.update({"category": "dtype_or_shape_mismatch",
+                    "detail": f"shape {fc.get('shape')} vs "
+                              f"{nc.get('shape')}"})
+        return out
+    out.update({"category": "numeric_equal",
+                "detail": "full-byte sha256 + dtype/shape match"})
+    return out
 
 
 def run_group(group, out_path):
@@ -294,6 +372,66 @@ def bench_zero(fn, iters=100, blocks=5, warmup=20):
             "mem_baseline_alloc_mb": base_a}
 
 
+
+def do_selftest(out_path):
+    """Device-free comparator negative tests (round-12): both-exception,
+    missing fields, differences beyond byte 32, dtype mismatch, missing
+    reference must NEVER be reported as numeric agreement."""
+    import hashlib
+    def H(b):
+        return hashlib.sha256(bytes(b)).hexdigest()
+    good = H(range(64))
+    def case(status="ok", fields=None):
+        c = {"case": "t", "status": status, "dtype": "c64"}
+        if status == "ok":
+            c.setdefault("x_checksum", good)
+        if fields:
+            c.update(fields)
+        return c
+    tests = []
+    def t(name, fc, nc, want_cat):
+        r = compare_case(fc, nc)
+        ok = r["category"] == want_cat
+        tests.append({"name": name, "want": want_cat,
+                      "got": r["category"], "ok": ok})
+        print(f"{'OK ' if ok else 'BAD'} {name}: {r['category']}")
+
+    t("numeric_equal", case(), case(), "numeric_equal")
+    # difference ONLY after byte 32 must be numeric_diff (old checksum hid it)
+    t("diff_after_byte32",
+      case(fields={"x_checksum": H([0] * 32 + [1] + [0] * 31)}),
+      case(), "numeric_diff")
+    t("dtype_mismatch",
+      case(fields={"dtype": "c128"}), case(), "dtype_or_shape_mismatch")
+    both_exc = case(status="exception", fields={"error": "e"})
+    t("both_exception_not_equal", both_exc,
+      case(status="exception", fields={"error": "e"}),
+      "both_exception")
+    t("one_exception", case(status="exception",
+                            fields={"error": "e"}), case(),
+      "one_exception")
+    t("missing_grad_field",
+      case(fields={"grad_applicable": True}),
+      case(fields={"grad_applicable": True, "grad_checksum": good}),
+      "missing_fields")
+    t("missing_reference", case(), None, "missing_reference")
+    # explicit-N/A grad must NOT be required
+    t("grad_na_not_required",
+      case(fields={"grad_applicable": False}),
+      case(fields={"grad_applicable": False}), "numeric_equal")
+    all_ok = all(x["ok"] for x in tests)
+    out = {"all_ok": all_ok, "tests": tests}
+    if out_path:
+        sm.write_json(out_path, out)
+    print(f"COMPARATOR SELFTEST: {'PASS' if all_ok else 'FAIL'} "
+          f"({len(tests)} cases)", flush=True)
+    return all_ok
+
+
+def do_selftest_checked():
+    return do_selftest("/tmp/opencode/baseline-selftest.json")
+
+
 def _env(group, tree_fixed, tree_b):
     env = dict(os.environ)
     env.setdefault("CUDA_VISIBLE_DEVICES", "0")
@@ -326,37 +464,29 @@ def do_matrix(args):
         p = os.path.join(out, f"baseline-{g}.json")
         if os.path.exists(p):
             groups[g] = sm.read_json(p)
-    # cross-group numeric comparison: fix vs native on zero cases + edges
+    # cross-group comparison: fix vs native via the strict comparator
+    # (round-12: exceptions/missing fields are explicit categories and
+    # never count as numeric agreement; checksums are full-byte sha256)
     compare = []
     nmap = {c["case"]: c for c in groups.get("n", {}).get("zero_cases", [])}
     for c in groups.get("fix", {}).get("zero_cases", []):
-        nc = nmap.get(c["case"])
-        if nc is None:
-            continue
-        same = (c.get("status") == nc.get("status") and
-                c.get("x_checksum") == nc.get("x_checksum"))
-        compare.append({"case": c["case"], "fix_status": c.get("status"),
-                        "native_status": nc.get("status"),
-                        "bitwise_equal": same})
+        compare.append(compare_case(c, nmap.get(c["case"])))
     emap = {c["case"]: c for c in groups.get("n", {}).get("edge_numeric",
                                                           [])}
     for c in groups.get("fix", {}).get("edge_numeric", []):
-        nc = emap.get(c["case"])
-        if nc is None:
-            continue
-        keys = ("out_checksum", "grad_checksum")
-        same = all(c.get(k) == nc.get(k) for k in keys) and \
-            c.get("status") == nc.get("status")
-        compare.append({"case": c["case"], "fix_status": c.get("status"),
-                        "native_status": nc.get("status"),
-                        "bitwise_equal": same})
-    n_equal = sum(1 for c in compare if c.get("bitwise_equal"))
+        compare.append(compare_case(c, emap.get(c["case"])))
+    cats = {}
+    for c in compare:
+        cats[c["category"]] = cats.get(c["category"], 0) + 1
+    n_equal = cats.get("numeric_equal", 0)
     summary = {
         "purpose": "round-10 baseline freeze (zero path layouts/edges "
-                   "across native/fix/prefix + sum/abs numeric edges)",
+                   "across native/fix/prefix + sum/abs numeric edges) — "
+                   "round-12 strict comparator",
         "groups": {g: v.get("provenance") for g, v in groups.items()},
         "compare_fix_vs_native": compare,
-        "bitwise_equal_count": n_equal,
+        "category_counts": cats,
+        "numeric_equal_count": n_equal,
         "compare_count": len(compare),
         "prefix_crashes": [
             {"group": g, "case": c["case"],
@@ -383,6 +513,7 @@ def build_parser():
     ap.add_argument("--out", default=None)
     ap.add_argument("--matrix", action="store_true")
     ap.add_argument("--out-dir", dest="out_dir", default=None)
+    ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--tree-fixed", dest="tree_fixed",
                     default="/tmp/opencode/flagfix-fixed")
     ap.add_argument("--tree-b", dest="tree_b",
@@ -392,7 +523,15 @@ def build_parser():
 
 def main():
     args = build_parser().parse_args()
-    if args.matrix:
+    if args.selftest:
+        do_selftest(args.out or "/tmp/opencode/baseline-selftest.json")
+    elif args.matrix:
+        # comparator negatives must pass before any cross-group compare
+        do_selftest("/tmp/opencode/baseline-selftest.json") if False else None
+        st = do_selftest_checked()
+        if not st:
+            print("comparator selftest failed; aborting matrix")
+            sys.exit(1)
         do_matrix(args)
     elif args.group:
         run_group(args.group, args.out)
