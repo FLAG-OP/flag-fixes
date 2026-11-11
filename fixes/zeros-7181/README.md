@@ -60,6 +60,15 @@
   生成 perf-section-auto.md。FIX-ITEM-3 登记候选评估协议与多平台复验要求
   （昆仑芯/昇腾/平头哥）。功能 fix 维持 draft/deployable=false/
   hardware_status=unverified；本轮结束证据审阅。
+- 第十轮（2026-11-11，意见 6787395475）：后续探索与实施方案落地——(1) 基线
+  冻结（baseline_freeze.py 三组进程 × 五布局 × c64/c128 + 边缘数值位级对比）：
+  fix vs native 52/58 位级一致（6 例声明内 1ulp 级）、prefix 58/58 全崩；
+  (2) zero_/zeros 三候选筛选（zero_candidates.py 矩阵 60/60 全过）：2^20 c64
+  contig 当前 0.6674ms → A 0.0083 / B 0.0050（最优全布局）/ C 0.0154 /
+  native 0.0042 ms，独立优化 fix 按 A→B→C 落地、过验收门槛后另行提交；
+  (3) 登记 sum/abs 探索计划与六项验收门槛；探索中发现 **FIX-ITEM-4**
+  （FlagGems sum 对 uint8 回绕 357→101 且 dtype 错为 uint8）。状态与验收
+  口径不变。
 - 第九轮评审收尾（2026-11-11，意见 6787003142 + 更正 6787034891）：copy-only
   双批口径（round-7 批 0.0071/0.0069 ms、round-8 批 0.0089/0.0067 ms，批间
   计时波动，引用须标批次；r7 批日志归档）；单次创建 0.336 ms 保留"含冷启动"

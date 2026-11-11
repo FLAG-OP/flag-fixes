@@ -103,7 +103,81 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   避免把 PPU/thead 上的归因直接外推到其他后端。~~【**round-9 评审更正并撤回**：
   三平台复验属 PR3 problem29 性能 bundle 范围，**PR2 不要求**；FIX-ITEM-3
   若后续扩大到其它后端，应另建平台适配/优化条目再分别定义验证范围】
+- **round-10 候选筛选已执行**（`benchmarks/zero_candidates.py`，原生 harness、
+  不改动本 patch）：正确性矩阵 **60/60 全过**（6 布局[contig/slice-stride/
+  narrow/transpose/storage-offset/conj] × c64/c128 × 5 实现[当前/A/B/C/
+  native]，含未选中 storage 位级保持与 native 逐位一致检查；候选 A 的 conj
+  回退路径在首轮暴露并修正）。2^20 性能（ms/iter，c64 contig）：
+
+  | 实现 | c64 contig | c64 slice | c128 contig | 结论 |
+  |---|---:|---:|---:|---|
+  | 当前（copy_(0)） | 0.6674 | 1.1078 | 1.7097 | host staging |
+  | **A uint8-view memset** | 0.0083 | 0.0071 | 0.0082 | 快，仅限全 storage 连续 |
+  | **B 预建设备标量 copy** | **0.0050** | **0.0056** | 0.0116 | **最优，全布局** |
+  | C real/imag 双通道 | 0.0154 | 0.0163 | 0.0151 | 正确但最慢（两遍） |
+  | native zero_ 基准 | 0.0042 | 0.0054 | 0.0053 | — |
+
+  筛选结论：**候选 B 全布局最优且矩阵全过**；A 可作 contiguous 全 storage
+  快路径；C 正确但无双遍优势。证据 `bench-r2/zero-candidates.{json,log}`。
+  独立优化 fix 的实现建议按评审顺序 A→B→C 落地（可组合：A 快路径 + B 兜底），
+  通过第"验收门槛"节全部门槛后另行提交；实现时每候选仍须按 round-8 协议
+  记录正确性、非连续视图行为、大尺寸耗时与显存变化。
 - **状态**：proposed（未实现）。修复前后证据在独立修复包轮次补齐。
+
+## FIX-ITEM-4：FlagGems `sum` 对 uint8 的累加器回绕与输出 dtype 错误（round-10 探索中发现）
+
+- **症状**：注册 FlagGems `sum` 后，`uint8` 张量求和返回 dtype **uint8**
+  （native 为 **int64**）且数值按 256 回绕：`[200,100,50,7].sum()` = **101**
+  （期望 357，= 357 mod 256）；万级元素求和同样回绕。
+- **最小复现**：`u8 = torch.tensor([200,100,50,7], dtype=torch.uint8,
+  device='cuda'); u8.sum()` → 注册后 `(101, torch.uint8)` vs native
+  `(357, torch.int64)`。
+- **发现路径**：round-10 基线冻结的 checksum 辅助函数在注册组出现
+  byte_sum 回绕（28173→255），定位为 uint8 sum 累加器问题（探针 artifact
+  已改用 `sum(dtype=torch.int64)` 规避）。
+- **预存归因**：待补（需在修复前对照树复跑同一复现——初步推断与本 patch
+  无关：zeros-7181 的 sum 改动针对 complex/bool-out/空输入，未触及 uint8
+  累加器；但按第六轮评审要求，归因须以对照树实测为准）。
+- **影响面**：所有经 FlagGems sum 的 uint8 归约（大值/多元素必回绕）。
+- **状态**：proposed（未实现）。修复方向：uint8/int8 等小整型归约按 ATen
+  提升为 int64 累加与输出。
+
+## round-10 探索计划登记（评审 §三：sum/abs 性能探索）
+
+作为独立后续工作（不在本 patch 范围）：
+- `sum`：real/imag 分开累加、减少 complex 拆装与中间张量；inner/outer/full/
+  strided 四类分别分析；forward/backward/fwd+bwd 分开测；
+- `abs`：保留 scaled-hypot，测试寄存器压力/向量化/不同 shape 吞吐；
+- 数值检查扩展：NaN、Inf、极大/极小、空输入、conj 输入（round-10 基线
+  `baseline/` 已覆盖首trap：见 `baseline-freeze-*.json` 的 edge_numeric 节）；
+- 每候选记录 max_abs、相对误差、梯度误差与 kernel 数量。
+
+## round-10 基线冻结（评审 §一）已完成
+
+- 产物：`results/small-model-2026-11-10/baseline/`
+  （`baseline-{n,fix,prefix}.json`、`baseline-summary.json`、
+  `baseline-table.md`；脚本 `benchmarks/baseline_freeze.py`）。
+- 覆盖：zeros/zero_ × {contig, slice-stride, narrow, transpose,
+  storage-offset} × c64/c128 × 三路径；conj/empty/0-dim 边缘；
+  sum/abs 的 NaN/Inf/±Inf/1e38/1e-38/empty/conj 数值边缘（位级 checksum
+  交叉对比）。
+- 结果：fix 与 native 在 52/58 用例**位级一致**；6 例为既定声明内的 1ulp 级
+  差异（conj 归约求和顺序 ×4、abs scaled-hypot 舍入 ×2——abs 值差异见
+  `abs(1e-38)` 1.11803383 vs 1.11803397，第 8 位有效数字）；**修复前对照树
+  58/58 全崩**（零路径与边缘数值全部不可执行）；prefix 崩溃清单逐例记录。
+- provenance：每 JSON 含 group/tree/torch/device/determinism/注册键样本；
+  运行提交见 run-commits.json（round-10 追加）。
+
+## 验收门槛（评审 §五，优化候选转正式 fix 前必须全过）
+
+1. 当前 210 用例回归；
+2. zero view/storage 矩阵（zero_candidates.py 60 项）;
+3. complex64/complex128 数值和梯度对照；
+4. 小模型前向、反向和短训练步；
+5. 目标后端完整模型容器验收；
+6. 性能重复测量和 provenance 检查。
+随机权重小模型只证明局部数值一致，不替代完整模型验证；PR2 维持
+`draft / deployable=false / hardware_status=unverified`。
 
 ## 跟进原则
 

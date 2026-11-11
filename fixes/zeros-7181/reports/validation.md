@@ -300,9 +300,20 @@ FIX-ITEM-3 按评审框定**三条候选路径**独立跟踪（native memset 基
 hardware_status=unverified`；9/9 与比较器负例保留；FIX-ITEM-1/2/3 独立推进
 （FIX-ITEM-3 正确性矩阵与每候选记录要求不变，仅多平台项撤回）。
 
+## 第十轮：后续探索与实施方案落地（2026-11-11，意见 comment `6787395475`，基于 `2a0753a`）
 
-功能 fix 维持 `draft / deployable=false / hardware_status=unverified`；9/9 与
-比较器负例保留；全量组两缺口继续独立跟踪。
+本轮为方案执行（非缺陷修复）：按评审 §一/§二 完成基线冻结与候选筛选，
+§三 登记探索计划，§五 登记验收门槛。
+
+| 评审节 | 落地 | 结果 |
+| --- | --- | --- |
+| §一 基线冻结 | 新增 `benchmarks/baseline_freeze.py`（三组进程：native / fix[注册 zeros+sum+abs 族] / prefix[修复前对照树]）；zeros/zero_ × {contig, slice-stride, narrow, transpose, storage-offset} × c64/c128 + conj/empty/0-dim 边缘 + sum/abs 数值边缘（NaN/Inf/±Inf/1e38/1e-38/empty/conj，位级 checksum 交叉对比）；provenance（tree/torch/device/determinism/注册键）逐 JSON 记录 | `results/small-model-2026-11-10/baseline/`：**fix vs native 52/58 位级一致**；6 例为声明内 1ulp 级差异（conj 归约顺序 ×4、abs scaled-hypot ×2，`abs(1e-38)` 1.11803383 vs 1.11803397）；**prefix 58/58 全崩**逐例记录；探针过程中发现 FIX-ITEM-4（见下） |
+| §二 zero_/zeros 三候选 | 新增 `benchmarks/zero_candidates.py`（原生 harness，不改动本 patch）：正确性矩阵 6 布局 × c64/c128 × 5 实现（含未选中 storage 位级保持、native 逐位一致）+ 2^20 三布局性能（首调/5×100/events/显存） | **矩阵 60/60 全过**（候选 A conj 回退首轮暴露即修正）；2^20 c64 contig：当前 0.6674 ms → **A 0.0083 / B 0.0050（最优全布局）/ C 0.0154 / native 0.0042 ms**；独立优化 fix 建议按 A→B→C 落地（可组合 A 快路径 + B 兜底），过验收门槛后另行提交 |
+| §三 sum/abs 探索 | 登记为探索计划（`follow-up-fix-items.md` round-10 节）：real/imag 分累加、四类 reduction 分别分析、fwd/bwd 分测、数值边缘扩展（基线已含首批）、每候选记录 max_abs/相对误差/梯度误差/kernel 数 | 探索过程中**发现 FIX-ITEM-4**：FlagGems `sum` 对 uint8 返回 uint8 dtype 且按 256 回绕（`[200,100,50,7].sum()`=101 vs native 357/int64）——最小复现与归因要求（对照树实测）已登记 |
+| §四 独立跟踪 | FIX-ITEM-1/2/3 维持独立；新增 FIX-ITEM-4 | `follow-up-fix-items.md` |
+| §五 验收门槛 | 六项门槛（210 回归 / view-storage 矩阵 / c64-c128 数值梯度对照 / 小模型三步 / 容器验收 / 性能重复+provenance）写入 `follow-up-fix-items.md`"验收门槛"节 | 小模型只证明局部一致，不替代完整模型验证 |
+
+功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
 ## 未执行（如实登记，不算通过）
 

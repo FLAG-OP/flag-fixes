@@ -1,0 +1,723 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "edge_numeric": [
+    {
+      "case": "sum/c64/nan",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 1784,
+      "out_checksum": "ffffff7fffffff7f",
+      "payload": "nan",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/nan",
+      "dtype": "torch.complex64",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 228352,
+      "out_checksum": "ffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7f",
+      "payload": "nan",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/inf",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 510,
+      "out_checksum": "0000807f0000807f",
+      "payload": "inf",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/inf",
+      "dtype": "torch.complex64",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 65280,
+      "out_checksum": "0000807f0000807f0000807f0000807f0000807f0000807f0000807f0000807f",
+      "payload": "inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/neginf",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 766,
+      "out_checksum": "000080ff000080ff",
+      "payload": "-inf",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/neginf",
+      "dtype": "torch.complex64",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 65280,
+      "out_checksum": "0000807f0000807f0000807f0000807f0000807f0000807f0000807f0000807f",
+      "payload": "-inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/extreme_high",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 510,
+      "out_checksum": "0000807f0000807f",
+      "payload": "1e+38",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/extreme_high",
+      "dtype": "torch.complex64",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 96512,
+      "out_checksum": "1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e",
+      "payload": "1e+38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/extreme_low",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 1151,
+      "out_checksum": "dcc75904dcc7d903",
+      "payload": "1e-38",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/extreme_low",
+      "dtype": "torch.complex64",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 94976,
+      "out_checksum": "3cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe7900",
+      "payload": "1e-38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/empty",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 0,
+      "out_checksum": "0000000000000000",
+      "payload": "empty",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/empty",
+      "dtype": "torch.complex64",
+      "op": "abs",
+      "out_byte_sum": 0,
+      "out_checksum": "",
+      "payload": "empty",
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/conj",
+      "dtype": "torch.complex64",
+      "op": "sum",
+      "out_byte_sum": 1181,
+      "out_checksum": "f46c67c084a031c1",
+      "payload": "conj",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/conj",
+      "dtype": "torch.complex64",
+      "op": "abs",
+      "out_byte_sum": 28836,
+      "out_checksum": "243d2e4050debb3fa63b093f30a51740d23cd93fbedee73fa78fda3f98e7a03f",
+      "payload": "conj",
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/nan",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 1784,
+      "out_checksum": "ffffff7fffffff7f",
+      "payload": "nan",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/nan",
+      "dtype": "torch.complex128",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 228352,
+      "out_checksum": "ffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7f",
+      "payload": "nan",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/inf",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 510,
+      "out_checksum": "0000807f0000807f",
+      "payload": "inf",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/inf",
+      "dtype": "torch.complex128",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 65280,
+      "out_checksum": "0000807f0000807f0000807f0000807f0000807f0000807f0000807f0000807f",
+      "payload": "inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/neginf",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 766,
+      "out_checksum": "000080ff000080ff",
+      "payload": "-inf",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/neginf",
+      "dtype": "torch.complex128",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 65280,
+      "out_checksum": "0000807f0000807f0000807f0000807f0000807f0000807f0000807f0000807f",
+      "payload": "-inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/extreme_high",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 510,
+      "out_checksum": "0000807f0000807f",
+      "payload": "1e+38",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/extreme_high",
+      "dtype": "torch.complex128",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 96512,
+      "out_checksum": "1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e",
+      "payload": "1e+38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/extreme_low",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 1151,
+      "out_checksum": "dcc75904dcc7d903",
+      "payload": "1e-38",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/extreme_low",
+      "dtype": "torch.complex128",
+      "error": "RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn",
+      "op": "abs",
+      "out_byte_sum": 94976,
+      "out_checksum": "3cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe7900",
+      "payload": "1e-38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/empty",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 0,
+      "out_checksum": "00000000000000000000000000000000",
+      "payload": "empty",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/empty",
+      "dtype": "torch.complex128",
+      "op": "abs",
+      "out_byte_sum": 0,
+      "out_checksum": "",
+      "payload": "empty",
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/conj",
+      "dtype": "torch.complex128",
+      "op": "sum",
+      "out_byte_sum": 1079,
+      "out_checksum": "041d80bfc466eebf",
+      "payload": "conj",
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/conj",
+      "dtype": "torch.complex128",
+      "op": "abs",
+      "out_byte_sum": 28465,
+      "out_checksum": "adcaad3f47c98f3f521d1a3f95824f3e0928ac3feeb9a73f8a5dd33efc8a1940",
+      "payload": "conj",
+      "status": "ok"
+    }
+  ],
+  "group": "n",
+  "perf": [
+    {
+      "block_device_ms": [
+        0.40771999955177307,
+        0.39956000447273254,
+        0.4020799994468689,
+        0.4004400074481964,
+        0.40116000175476074
+      ],
+      "dtype": "c64",
+      "first_call_ms": 0.04780000075697899,
+      "first_call_wall_ms": 2.528778997657355,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.0,
+      "ms_per_iter_median": 0.004011600017547607,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        0.5453199744224548,
+        0.5432400107383728,
+        0.5443199872970581,
+        0.542680025100708,
+        0.5429199934005737
+      ],
+      "dtype": "c64",
+      "first_call_ms": 0.013120000250637531,
+      "first_call_wall_ms": 0.0316259975079447,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.0,
+      "ms_per_iter_median": 0.005432400107383728,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        0.41255998611450195,
+        0.4063200056552887,
+        0.41600000858306885,
+        0.4156000018119812,
+        0.4227199852466583
+      ],
+      "dtype": "c64",
+      "first_call_ms": 0.013120000250637531,
+      "first_call_wall_ms": 0.029454997275024652,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.0,
+      "ms_per_iter_median": 0.004156000018119812,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        0.40720000863075256,
+        0.40643998980522156,
+        0.4116800129413605,
+        0.4124400019645691,
+        0.40808001160621643
+      ],
+      "dtype": "c128",
+      "first_call_ms": 0.012199999764561653,
+      "first_call_wall_ms": 0.027190999389858916,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.0,
+      "ms_per_iter_median": 0.004080800116062164,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        0.5473200082778931,
+        0.5440400242805481,
+        0.5417600274085999,
+        0.5442000031471252,
+        0.542959988117218
+      ],
+      "dtype": "c128",
+      "first_call_ms": 0.012480000033974648,
+      "first_call_wall_ms": 0.027530997613212094,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.0,
+      "ms_per_iter_median": 0.005440400242805481,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        0.4228000044822693,
+        0.4171600043773651,
+        0.41499999165534973,
+        0.41863998770713806,
+        0.4156799912452698
+      ],
+      "dtype": "c128",
+      "first_call_ms": 0.012319999746978283,
+      "first_call_wall_ms": 0.0267489995167125,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.0,
+      "ms_per_iter_median": 0.0041716000437736515,
+      "op": "zero_"
+    }
+  ],
+  "provenance": {
+    "device": "PPU-ZW810E",
+    "group": "n",
+    "torch": "2.10.0"
+  },
+  "zero_cases": [
+    {
+      "all_zero": true,
+      "case": "zero_/c64/contig",
+      "dtype": "torch.complex64",
+      "layout": "contig",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/contig",
+      "dtype": "torch.complex64",
+      "layout": "contig",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/slice_stride",
+      "dtype": "torch.complex64",
+      "layout": "slice_stride",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/slice_stride",
+      "dtype": "torch.complex64",
+      "layout": "slice_stride",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/narrow",
+      "dtype": "torch.complex64",
+      "layout": "narrow",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/narrow",
+      "dtype": "torch.complex64",
+      "layout": "narrow",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/transpose",
+      "dtype": "torch.complex64",
+      "layout": "transpose",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/transpose",
+      "dtype": "torch.complex64",
+      "layout": "transpose",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/offset",
+      "dtype": "torch.complex64",
+      "layout": "offset",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/offset",
+      "dtype": "torch.complex64",
+      "layout": "offset",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/contig",
+      "dtype": "torch.complex128",
+      "layout": "contig",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/contig",
+      "dtype": "torch.complex128",
+      "layout": "contig",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/slice_stride",
+      "dtype": "torch.complex128",
+      "layout": "slice_stride",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/slice_stride",
+      "dtype": "torch.complex128",
+      "layout": "slice_stride",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/narrow",
+      "dtype": "torch.complex128",
+      "layout": "narrow",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/narrow",
+      "dtype": "torch.complex128",
+      "layout": "narrow",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/transpose",
+      "dtype": "torch.complex128",
+      "layout": "transpose",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/transpose",
+      "dtype": "torch.complex128",
+      "layout": "transpose",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/offset",
+      "dtype": "torch.complex128",
+      "layout": "offset",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/offset",
+      "dtype": "torch.complex128",
+      "layout": "offset",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/conj/c64",
+      "dtype": "torch.complex64",
+      "layout": "conj",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/conj/c64",
+      "dtype": "torch.complex64",
+      "layout": "conj",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/empty/c64",
+      "dtype": "torch.complex64",
+      "layout": "empty",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": ""
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/empty/c64",
+      "dtype": "torch.complex64",
+      "layout": "empty",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": ""
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/zerodim/c64",
+      "dtype": "torch.complex64",
+      "layout": "zerodim",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/conj/c128",
+      "dtype": "torch.complex128",
+      "layout": "conj",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/conj/c128",
+      "dtype": "torch.complex128",
+      "layout": "conj",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/empty/c128",
+      "dtype": "torch.complex128",
+      "layout": "empty",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": ""
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/empty/c128",
+      "dtype": "torch.complex128",
+      "layout": "empty",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": ""
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/zerodim/c128",
+      "dtype": "torch.complex128",
+      "layout": "zerodim",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "0000000000000000"
+    }
+  ]
+}

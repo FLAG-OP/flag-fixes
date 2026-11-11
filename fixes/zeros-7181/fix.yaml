@@ -338,5 +338,21 @@ notes:
   昇腾/平头哥属 PR3 problem29 bundle，PR2 不要求；FIX-ITEM-3 扩展到其它后端
   另建条目）。收尾确认：无新功能阻塞，剩余仅可选历史标注清理（已完成）。
   功能 fix 维持 draft/deployable=false/hardware_status=unverified。
+- |-
+  第十轮：后续探索与实施方案落地（2026-11-11，意见 6787395475）。(1) 基线冻结
+  （评审§一）：新增 baseline_freeze.py 三组进程（native/fix[注册 zeros+sum+abs
+  族]/prefix[修复前对照树]）× zeros/zero_ 五布局 × c64/c128 + conj/empty/
+  0-dim 边缘 + sum/abs 数值边缘（NaN/Inf/1e38/1e-38/empty/conj 位级 checksum
+  交叉对比）→ results/small-model-2026-11-10/baseline/：fix vs native 52/58
+  位级一致（6 例为声明内 1ulp 级：conj 归约顺序×4、abs scaled-hypot×2），
+  prefix 58/58 全崩逐例记录。(2) 候选筛选（评审§二）：zero_candidates.py
+  正确性矩阵 60/60 全过（6 布局×c64-c128×5 实现，含未选中 storage 位级保持）；
+  2^20 c64 contig：当前 0.6674ms → A(uint8-view memset) 0.0083 / B(预建设备
+  标量 copy) 0.0050 全布局最优 / C(real-imag 双通道) 0.0154 / native 0.0042；
+  独立优化 fix 按 A→B→C 落地（可组合），过验收门槛后另行提交。(3) 登记探索
+  计划（评审§三）与验收门槛（评审§五，六项）。探索中发现 **FIX-ITEM-4**：
+  FlagGems sum 对 uint8 返回 uint8 dtype 且按 256 回绕（[200,100,50,7].sum()
+  =101 vs native 357/int64），最小复现已登记、归因需对照树实测。功能 fix 维持
+  draft/deployable=false/hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181
