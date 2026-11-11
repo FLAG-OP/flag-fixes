@@ -1,0 +1,536 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "edge_numeric": [
+    {
+      "case": "sum/c64/nan",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "nan",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/nan",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "nan",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/inf",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "inf",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/inf",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/neginf",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "-inf",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/neginf",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "-inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/extreme_high",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "1e+38",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/extreme_high",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "1e+38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/extreme_low",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "1e-38",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/extreme_low",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "1e-38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/empty",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "empty",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/empty",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "empty",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c64/conj",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "conj",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c64/conj",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "conj",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/nan",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "nan",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/nan",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "nan",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/inf",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "inf",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/inf",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/neginf",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "-inf",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/neginf",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "-inf",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/extreme_high",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "1e+38",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/extreme_high",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "1e+38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/extreme_low",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "1e-38",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/extreme_low",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "1e-38",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/empty",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex128'",
+      "op": "sum",
+      "payload": "empty",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/empty",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex128'",
+      "op": "abs",
+      "payload": "empty",
+      "status": "exception"
+    },
+    {
+      "case": "sum/c128/conj",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "sum",
+      "payload": "conj",
+      "status": "exception"
+    },
+    {
+      "case": "abs/c128/conj",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "op": "abs",
+      "payload": "conj",
+      "status": "exception"
+    }
+  ],
+  "group": "prefix",
+  "perf": [
+    {
+      "dtype": "c64",
+      "error": "KeyError: 'complex64'",
+      "layout": "contig",
+      "op": "zero_"
+    },
+    {
+      "dtype": "c64",
+      "error": "KeyError: 'complex64'",
+      "layout": "slice_stride",
+      "op": "zero_"
+    },
+    {
+      "dtype": "c64",
+      "error": "KeyError: 'complex64'",
+      "layout": "transpose",
+      "op": "zero_"
+    },
+    {
+      "dtype": "c128",
+      "error": "KeyError: 'complex64'",
+      "layout": "contig",
+      "op": "zero_"
+    },
+    {
+      "dtype": "c128",
+      "error": "KeyError: 'complex64'",
+      "layout": "slice_stride",
+      "op": "zero_"
+    },
+    {
+      "dtype": "c128",
+      "error": "KeyError: 'complex64'",
+      "layout": "transpose",
+      "op": "zero_"
+    }
+  ],
+  "provenance": {
+    "device": "PPU-ZW810E",
+    "flag_gems_path": "/tmp/opencode/flagfix-e2ebase/src/flag_gems/__init__.py",
+    "group": "prefix",
+    "registered_keys_sample": [
+      "__and__.Scalar",
+      "__and__.Tensor",
+      "__ilshift__.Tensor",
+      "__ior__.Scalar",
+      "__ior__.Tensor",
+      "__irshift__.Tensor",
+      "__ixor__.Scalar",
+      "__ixor__.Tensor",
+      "__lshift__",
+      "__or__.Scalar",
+      "__or__.Tensor",
+      "__rshift__.Scalar"
+    ],
+    "torch": "2.10.0"
+  },
+  "zero_cases": [
+    {
+      "case": "zero_/c64/contig",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "contig",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c64/contig",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "contig",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c64/slice_stride",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "slice_stride",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c64/slice_stride",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "slice_stride",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c64/narrow",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "narrow",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c64/narrow",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "narrow",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c64/transpose",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "transpose",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c64/transpose",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "transpose",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c64/offset",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "offset",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c64/offset",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "offset",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c128/contig",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "contig",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c128/contig",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "contig",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c128/slice_stride",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "slice_stride",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c128/slice_stride",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "slice_stride",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c128/narrow",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "narrow",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c128/narrow",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "narrow",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c128/transpose",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "transpose",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c128/transpose",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "transpose",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/c128/offset",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "offset",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/c128/offset",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "offset",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/conj/c64",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "conj",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/conj/c64",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "conj",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/empty/c64",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "empty",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/empty/c64",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "empty",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/zerodim/c64",
+      "dtype": "torch.complex64",
+      "error": "KeyError: 'complex64'",
+      "layout": "zerodim",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/conj/c128",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "conj",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/conj/c128",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "conj",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/empty/c128",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex128'",
+      "layout": "empty",
+      "op": "zero_",
+      "status": "exception"
+    },
+    {
+      "case": "zeros/empty/c128",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex128'",
+      "layout": "empty",
+      "op": "zeros",
+      "status": "exception"
+    },
+    {
+      "case": "zero_/zerodim/c128",
+      "dtype": "torch.complex128",
+      "error": "KeyError: 'complex64'",
+      "layout": "zerodim",
+      "op": "zero_",
+      "status": "exception"
+    }
+  ]
+}

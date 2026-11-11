@@ -16,3 +16,4 @@
 性能修复必须给同口径前后数据和数值精度。dispatch/e2e 按层级选择；编译器修复可使用编译复现及调用方回归，解释不适用项。设备不足时可提交草稿。
 。第十一轮（意见 6788210724）：候选矩阵扩展至 260 格（原生全过）+ 注册环境复测（A/B 路径验证通过；C 被淘汰 → FIX-ITEM-5 实数跨步 zero_ 稠密写，双树归因闭环）+ FIX-ITEM-4 专项复现（双树同型 6/8）+ 复杂度评估（建议 B-only 首选）
 。第十二轮（意见 6793416880）：harness 修正（dtype 贯穿/u8sum 显式 uint8/严格比较器全字节 sha256+负例 8 项/abs 梯度输入修正），干净提交 fc71b82 重跑定论：候选原生 260/260、注册 224+36C、基线 50 equal+8 numeric_diff（1-2 ULP 级）、u8sum 7/8 双树同型；历史口径加 superseded 标注（r12-superseded-manifest.md）
+。第十三轮（意见 6794976151）：diff_details ULP 映射按 dtype 修正 + ULP 自测（c128 亚 f32-ULP 差异报 1 f64 ULP，旧映射误报 0）+ diff-details.json 重生成（c128 极值 1 ULP、conj ≤4 ULP）+ 严格比较产物同步 baseline/（50 equal+8 diff，旧产物 .r10-superseded 归档）+ README 两处旧口径标注替换 + run-commits 映射补全

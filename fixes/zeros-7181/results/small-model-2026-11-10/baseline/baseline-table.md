@@ -1,60 +1,60 @@
-| case | fix | native | bitwise_equal |
-|---|---|---|---|
-| zero_/c64/contig | ok | ok | True |
-| zeros/c64/contig | ok | ok | True |
-| zero_/c64/slice_stride | ok | ok | True |
-| zeros/c64/slice_stride | ok | ok | True |
-| zero_/c64/narrow | ok | ok | True |
-| zeros/c64/narrow | ok | ok | True |
-| zero_/c64/transpose | ok | ok | True |
-| zeros/c64/transpose | ok | ok | True |
-| zero_/c64/offset | ok | ok | True |
-| zeros/c64/offset | ok | ok | True |
-| zero_/c128/contig | ok | ok | True |
-| zeros/c128/contig | ok | ok | True |
-| zero_/c128/slice_stride | ok | ok | True |
-| zeros/c128/slice_stride | ok | ok | True |
-| zero_/c128/narrow | ok | ok | True |
-| zeros/c128/narrow | ok | ok | True |
-| zero_/c128/transpose | ok | ok | True |
-| zeros/c128/transpose | ok | ok | True |
-| zero_/c128/offset | ok | ok | True |
-| zeros/c128/offset | ok | ok | True |
-| zero_/conj/c64 | ok | ok | True |
-| zeros/conj/c64 | ok | ok | True |
-| zero_/empty/c64 | ok | ok | True |
-| zeros/empty/c64 | ok | ok | True |
-| zero_/zerodim/c64 | ok | ok | True |
-| zero_/conj/c128 | ok | ok | True |
-| zeros/conj/c128 | ok | ok | True |
-| zero_/empty/c128 | ok | ok | True |
-| zeros/empty/c128 | ok | ok | True |
-| zero_/zerodim/c128 | ok | ok | True |
-| sum/c64/nan | ok | ok | True |
-| abs/c64/nan | exception | exception | True |
-| sum/c64/inf | ok | ok | True |
-| abs/c64/inf | exception | exception | True |
-| sum/c64/neginf | ok | ok | True |
-| abs/c64/neginf | exception | exception | True |
-| sum/c64/extreme_high | ok | ok | True |
-| abs/c64/extreme_high | exception | exception | True |
-| sum/c64/extreme_low | ok | ok | True |
-| abs/c64/extreme_low | exception | exception | False |
-| sum/c64/empty | ok | ok | True |
-| abs/c64/empty | ok | ok | True |
-| sum/c64/conj | ok | ok | False |
-| abs/c64/conj | ok | ok | False |
-| sum/c128/nan | ok | ok | True |
-| abs/c128/nan | exception | exception | True |
-| sum/c128/inf | ok | ok | True |
-| abs/c128/inf | exception | exception | True |
-| sum/c128/neginf | ok | ok | True |
-| abs/c128/neginf | exception | exception | True |
-| sum/c128/extreme_high | ok | ok | True |
-| abs/c128/extreme_high | exception | exception | True |
-| sum/c128/extreme_low | ok | ok | True |
-| abs/c128/extreme_low | exception | exception | False |
-| sum/c128/empty | ok | ok | True |
-| abs/c128/empty | ok | ok | True |
-| sum/c128/conj | ok | ok | False |
-| abs/c128/conj | ok | ok | False |
+| case | category | detail |
+|---|---|---|
+| zero_/c64/contig | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c64/contig | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c64/slice_stride | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c64/slice_stride | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c64/narrow | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c64/narrow | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c64/transpose | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c64/transpose | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c64/offset | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c64/offset | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c128/contig | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c128/contig | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c128/slice_stride | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c128/slice_stride | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c128/narrow | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c128/narrow | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c128/transpose | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c128/transpose | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/c128/offset | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/c128/offset | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/conj/c64 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/conj/c64 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/empty/c64 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/empty/c64 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/zerodim/c64 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/conj/c128 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/conj/c128 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/empty/c128 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zeros/empty/c128 | numeric_equal | full-byte sha256 + dtype/shape match |
+| zero_/zerodim/c128 | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c64/nan | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c64/nan | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c64/inf | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c64/inf | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c64/neginf | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c64/neginf | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c64/extreme_high | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c64/extreme_high | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c64/extreme_low | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c64/extreme_low | numeric_diff | out_checksum differs (full-byte sha256) |
+| sum/c64/empty | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c64/empty | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c64/conj | numeric_diff | out_checksum differs (full-byte sha256) |
+| abs/c64/conj | numeric_diff | out_checksum differs (full-byte sha256) |
+| sum/c128/nan | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c128/nan | numeric_diff | out_checksum differs (full-byte sha256) |
+| sum/c128/inf | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c128/inf | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c128/neginf | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c128/neginf | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c128/extreme_high | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c128/extreme_high | numeric_diff | out_checksum differs (full-byte sha256) |
+| sum/c128/extreme_low | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c128/extreme_low | numeric_diff | out_checksum differs (full-byte sha256) |
+| sum/c128/empty | numeric_equal | full-byte sha256 + dtype/shape match |
+| abs/c128/empty | numeric_equal | full-byte sha256 + dtype/shape match |
+| sum/c128/conj | numeric_diff | out_checksum differs (full-byte sha256) |
+| abs/c128/conj | numeric_diff | out_checksum differs (full-byte sha256) |

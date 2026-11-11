@@ -62,7 +62,7 @@
   hardware_status=unverified；本轮结束证据审阅。
 - 第十轮（2026-11-11，意见 6787395475）：后续探索与实施方案落地——(1) 基线
   冻结（baseline_freeze.py 三组进程 × 五布局 × c64/c128 + 边缘数值位级对比）：
-  fix vs native 52/58 位级一致（6 例声明内 1ulp 级）、prefix 58/58 全崩；
+  fix vs native ~~52/58 位级一致~~（**superseded by round-12 严格比较器：50 numeric_equal + 8 numeric_diff，1–4 ULP 级**）、prefix 58/58 全崩；
   (2) zero_/zeros 三候选筛选（zero_candidates.py 矩阵 60/60 全过）：2^20 c64
   contig 当前 0.6674ms → A 0.0083 / B 0.0050（最优全布局）/ C 0.0154 /
   native 0.0042 ms，独立优化 fix 按 A→B→C 落地、过验收门槛后另行提交；
@@ -337,3 +337,11 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   NaN payload 位不保证但传播正确；"52/58 位级一致"撤回）；(4) B-only 仍为
   优化首选（真实 c64/c128 下注册 B 占优或持平全部已测布局）。历史产物标注
   superseded 对应关系（r12-superseded-manifest.md）。状态与验收口径不变。
+- 第十三轮（2026-11-11，意见 6794976151）：(1) diff_details ULP 映射按
+  dtype 修正（c64 恒 float32、c128 恒 float64 位型；旧按数值大小选择使
+  c128 落 float32 范围误报 0 ULP）+ ULP 映射自测（c128 亚 f32-ULP 差异 →
+  1 f64 ULP）——重生成 diff-details.json：c128 极值 1 ULP、conj ≤4 ULP、
+  NaN 数值全同 payload 位不保证；(2) 严格比较最终批产物同步入 baseline/，
+  round-10 旧产物 .r10-superseded 归档，README 两处旧口径加 superseded
+  标注并替换为当前口径（50 equal + 8 numeric_diff），run-commits 补
+  commit↔文件映射。状态与验收口径不变。

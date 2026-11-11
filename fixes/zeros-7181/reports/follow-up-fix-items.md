@@ -236,3 +236,12 @@ pointwise/sgn/fill 与 FP64 编译；每项保留最小复现、原生对照与�
   "错树前置 / 缺依赖 exit 2 / 证据单独提交" 的既有流程。
 - 原始运行证据（四轮矩阵/bench 与 traceback）保留在
   `results/small-model-2026-11-10/`，不改写。
+
+
+## round-13 补充（评审 6794976151）
+
+- FIX-ITEM-3 的 ULP 量化按 dtype 修正后定稿：conj sum/abs ≤4 float64 ULP
+  （c128）、≤2 float32 ULP（c64）；abs scaled-hypot 1 ULP 级（c64/c128）；
+  NaN 数值全同、payload 位不保证。详见 `baseline/diff-details.json` 与
+  `baseline/ulp-mapping-selftest.json`。
+- B-only 首选结论不变；"本轮已测试布局中最优"限定语维持。

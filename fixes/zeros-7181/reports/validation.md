@@ -344,6 +344,19 @@ prefix 58/58 全崩——与首轮（工作树批）完全一致；性能中位�
 
 ~~评审此前对"52/58 位级一致"的认可~~ 由评审自行更正撤回；该口径作废，替换为上行定论。registered 模式 `native_ref` 更名说明为 **registered-path reference（当前修复路径）**（基线的 native 参考本就来自独立未注册进程，命名问题不否定其正确性检查）。历史原始 JSON/日志保留，`bench-r2/r12-superseded-manifest.md` 标注新旧批次对应。B-only 仍为优先候选；真实 c64/c128 布局/0 维/空/conj/alias/未选中 storage 检查已按本批补齐后，再评估是否单独提交优化 fix；性能区分标量构造成本（单次 0.336 ms 含冷启动 / 50 次平均 0.0145 ms）、稳态拷贝净成本（0.0071/0.0069 与 0.0089/0.0067 双批）与整体调用成本（0.005–0.009 ms），注册路径事件已验证。三平台要求属 PR3。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
+## 第十三轮：ULP dtype-aware 修正与证据同步收尾（2026-11-11，意见 comment `6794976151`，基于 `4c588b3`）
+
+两项 P2 落地（diff_details ULP 修正提交 `32ee6a9`，干净提交重跑）：
+
+| 评审项 | 处理 | 结果 |
+| --- | --- | --- |
+| P2-b ULP 映射按 dtype | `_ulp_distance(n, f, float64)`：c64 恒用 float32 位型、c128 恒用 float64 位型（旧按数值大小选择使 c128 落 float32 范围即误报 0 ULP）；NaN/Inf 不入 ULP；**ULP 映射自测**：c128 亚 float32-ULP 差异 → 1 float64 ULP（旧映射报 0）、f32 1-ULP 差异按 f64 映射 → 536870912（演示两映射不可混用） | `baseline/diff-details.json` 重生成：c64 extreme_low **1 ULP**（float32）、c128 extreme_low **1 ULP** / extreme_high **1 ULP**（float64）、c128 conj sum **4 ULP** / abs **2 ULP**（float64）、c64 conj **2 ULP**；NaN 数值全同、payload 位不保证 |
+| P2-a 结果同步 | 严格比较最终批产物拷入 `baseline/`（50 numeric_equal + 8 numeric_diff 的 summary/table/三组 JSON），round-10 旧产物以 `.r10-superseded` 后缀归档；README 两处旧"52/58"加 superseded 标注并替换为当前口径；`run-commits.json` round13_additions 记录 commit↔文件↔批次映射 | grep 复核：旧 52/58 仅存于带 superseded 标记处与归档文件；`baseline-freeze-final.log` ↔ `baseline/*`(strict) ↔ `diff-details.json` ↔ run-commits 一一对应 |
+
+评审前轮认可撤回事项已按第七/十二轮处理。B-only 仍为 FIX-ITEM-3 优先候选；
+PR2 范围维持 PPU/thead；三平台属 PR3。功能 fix 维持 `draft / deployable=false /
+hardware_status=unverified`。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models
