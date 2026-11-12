@@ -27,7 +27,9 @@ python3 tests/<script>.py
   属环境问题，测试不依赖该路径。
 - 各脚本自行把 native 参考在启用 FlagGems 之前算好，避免参考也被 patch 影响。
 - 基准脚本的判定同时包含精度；出现 `ACCURACY FAIL` 时 exit 1，不会把“跑完”当通过。
-- 清单 `fix.yaml` 的 4 个 `validation.commands` 与上表一一对应。
+- 清单 `fix.yaml` 现有 **5 个 `validation.commands`**（4 个基础命令 + 第 5 个
+  `gelu-boundary-compare` 边界 wrapper），与上表一一对应。历史说明：早期版本
+  为 4 命令口径（“±3 相邻值 1 ULP”“±0 相等”等描述同期，已由 v3 口径替代）。
 
 | `test_gelu_boundary.py` | boundary (supplemental) | 边界语义 dumper（v3：±0/±Inf/NaN/次正规数位级构造/±1e30 大值 × 3 dtype × none/tanh × 前反向；设备输入位型与 FTZ 存档） | — | — | 600 s |
 | `compare_gelu_boundary.py` | boundary comparator | 结构检查 + NaN 掩码/Inf 符号/±0 符号位/位型分层 + 冻结容差（fp32 gelu_tanh_bwd atol=2e-7）；`--self-test` 六个负例（含容差分支接受） | — | — | 300 s |

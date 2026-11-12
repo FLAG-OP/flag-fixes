@@ -169,5 +169,5 @@ dump 边界输出，对比**已提交基线** `results/boundary-base-2026-11-11.
 （FlagGems @4e08b44e9 未打补丁、dumper v3、P800/XPU3）；旧 schema/缺
 字段/基线缺失均返回非零。独立 fp64 参考由 v3 dumps 再生成
 （`boundary-fp64ref-2026-11-11.json`），±3 处 base/fixed 绝对误差完全相同
-（pow→x*x 未引入额外误差）。本轮 verify（5 命令，组合树）rc=0：
+（pow→x*x 未引入额外误差）。**[旧批次]** 本轮 verify（5 命令，组合树）rc=0——绑定 flag-fixes 提交 `c3c555b0` 时代、fp16 邻界输入为旧值 0x007F；当前口径（0x03FF）的 5 命令 verify **pending**（见上方表格与`results/history/boundary-base-hang-2026-11-12.log`）：
 `results/verify-2026-11-11-combo.json`（source_dirty 以推送提交为准）。
