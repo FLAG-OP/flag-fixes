@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "failures": [],
+  "report": {
+    "gelu_none_bwd:torch.float32": {
+      "elements": 24,
+      "bitwise_identical": 20,
+      "nan_mask_equal": 3,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 1,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_none_fwd:torch.float32": {
+      "elements": 24,
+      "bitwise_identical": 16,
+      "nan_mask_equal": 3,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 5,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_tanh_bwd:torch.float32": {
+      "elements": 24,
+      "bitwise_identical": 19,
+      "nan_mask_equal": 5,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 0,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_tanh_fwd:torch.float32": {
+      "elements": 24,
+      "bitwise_identical": 16,
+      "nan_mask_equal": 2,
+      "inf_mask_sign_equal": 1,
+      "zero_sign_equal": 5,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_none_bwd:torch.bfloat16": {
+      "elements": 24,
+      "bitwise_identical": 20,
+      "nan_mask_equal": 3,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 1,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_none_fwd:torch.bfloat16": {
+      "elements": 24,
+      "bitwise_identical": 7,
+      "nan_mask_equal": 3,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 14,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_tanh_bwd:torch.bfloat16": {
+      "elements": 24,
+      "bitwise_identical": 19,
+      "nan_mask_equal": 5,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 0,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_tanh_fwd:torch.bfloat16": {
+      "elements": 24,
+      "bitwise_identical": 16,
+      "nan_mask_equal": 2,
+      "inf_mask_sign_equal": 1,
+      "zero_sign_equal": 5,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_none_bwd:torch.float16": {
+      "elements": 24,
+      "bitwise_identical": 19,
+      "nan_mask_equal": 5,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 0,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_none_fwd:torch.float16": {
+      "elements": 24,
+      "bitwise_identical": 13,
+      "nan_mask_equal": 3,
+      "inf_mask_sign_equal": 2,
+      "zero_sign_equal": 6,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_tanh_bwd:torch.float16": {
+      "elements": 24,
+      "bitwise_identical": 19,
+      "nan_mask_equal": 5,
+      "inf_mask_sign_equal": 0,
+      "zero_sign_equal": 0,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    },
+    "gelu_tanh_fwd:torch.float16": {
+      "elements": 24,
+      "bitwise_identical": 13,
+      "nan_mask_equal": 3,
+      "inf_mask_sign_equal": 2,
+      "zero_sign_equal": 6,
+      "rounding_within_frozen_tol": 0,
+      "worst_rounding": null
+    }
+  },
+  "baseline": "FlagGems @4e08b44e9 unpatched (dumper v3, P800/XPU3)",
+  "target_dump": "/workspace/flag-fixes/fixes/gelu-kunlunxin-pow/tests/../results/_boundary_target_dump.json"
+}

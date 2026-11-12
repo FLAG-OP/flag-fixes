@@ -1,0 +1,60 @@
+{
+  "fix": "gelu-kunlunxin-pow",
+  "passed": true,
+  "scope": "declared commands only; does not promote catalog hardware status",
+  "target": "/tmp/opencode/FlagGems-gelu-fixed",
+  "source_commit": "d57e825472f66809ac1224dd7aca8c6e4bec47a3",
+  "source_dirty": false,
+  "results": [
+    {
+      "name": "gelu-pow-repro",
+      "level": "repro",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python3",
+        "/workspace/flag-fixes/fixes/gelu-kunlunxin-pow/tests/repro_gelu_pow.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "gelu_backward      native=0.3021 ms  flag_gems=0.1536 ms  ratio=0.51x  max_abs_err=1.953e-03\ngelu(tanh) forward native=0.1300 ms  flag_gems=0.0535 ms  ratio=0.41x  max_abs_err=3.815e-06\nPASS: GELU kernels are within the native-torch budget\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n"
+    },
+    {
+      "name": "gelu-family-accuracy",
+      "level": "regression",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python3",
+        "/workspace/flag-fixes/fixes/gelu-kunlunxin-pow/tests/test_gelu_accuracy.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "TOTAL: 0 failed (GELU family matches native torch)\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n"
+    },
+    {
+      "name": "gelu-family-dispatch",
+      "level": "dispatch",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python3",
+        "/workspace/flag-fixes/fixes/gelu-kunlunxin-pow/tests/test_gelu_family_dispatch.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "TOTAL: 0 failed (dispatch / autograd / gated MLP)\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n/tmp/opencode/FlagGems-gelu-fixed/src/flag_gems/config.py:153: UserWarning: resolve_user_setting: no exclude ops found; returning empty list\n  warnings.warn(\n/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.\n  Overriding a previously registered kernel for the same operator and the same dispatch key\n  operator: aten::_log_softmax(Tensor self, int dim, bool half_to_float) -> Tensor\n    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6\n  dispatch key: CUDA\n  previous kernel: registered at /pytorch/build/aten/src/ATen/RegisterCPU_3.cpp:3798\n       new kernel: registered at /tmp/opencode/FlagGems-gelu-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)\n  self.m.impl(\n"
+    },
+    {
+      "name": "gelu-family-benchmark",
+      "level": "benchmark",
+      "argv": [
+        "/root/miniconda/envs/python310_torch29_cuda/bin/python3",
+        "/workspace/flag-fixes/fixes/gelu-kunlunxin-pow/tests/bench_gelu_family.py",
+        "--iters",
+        "100"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "{\n  \"device\": \"GPU\",\n  \"vendor_env\": \"kunlunxin\",\n  \"torch\": \"2.9.0+cu129\",\n  \"triton\": \"3.0.0\",\n  \"python\": \"3.10.18\",\n  \"flag_gems\": \"/tmp/opencode/FlagGems-gelu-fixed/src/flag_gems/__init__.py\",\n  \"dtype\": \"bfloat16\",\n  \"shape\": [\n    2990,\n    1024\n  ],\n  \"gated_shape\": [\n    2990,\n    4096\n  ],\n  \"iters\": 100,\n  \"cases\": {\n    \"gelu_fwd_none\": {\n      \"gems_ms\": 0.11546,\n      \"native_ms\": 0.169616,\n      \"speedup_vs_native\": 1.469,\n      \"max_abs_err\": 1.52587890625e-05,\n      \"max_rel_err\": 3.090387658227848e-06\n    },\n    \"gelu_fwd_tanh\": {\n      \"gems_ms\": 0.054846,\n      \"native_ms\": 0.129694,\n      \"speedup_vs_native\": 2.365,\n      \"max_abs_err\": 3.814697265625e-06,\n      \"max_rel_err\": 7.72596914556962e-07\n    },\n    \"gelu_bwd_none\": {\n      \"gems_ms\": 0.153339,\n      \"native_ms\": 0.301895,\n      \"speedup_vs_native\": 1.969,\n      \"max_abs_err\": 0.001953125,\n      \"max_rel_err\": 0.00038580246913580245\n    },\n    \"gelu_bwd_tanh\": {\n      \"gems_ms\": 0.065066,\n      \"native_ms\": 0.138919,\n      \"speedup_vs_native\": 2.135,\n      \"max_abs_err\": 0.015625,\n      \"max_rel_err\": 0.0030864197530864196\n    },\n    \"gelu_and_mul_none\": {\n      \"gems_ms\": 0.464955,\n      \"native_ms\": 0.683885,\n      \"speedup_vs_native\": 1.471,\n      \"max_abs_err\": 0.0625,\n      \"max_rel_err\": 0.0045045045045045045\n    },\n    \"gelu_and_mul_tanh\": {\n      \"gems_ms\": 0.219821,\n      \"native_ms\": 0.546108,\n      \"speedup_vs_native\": 2.484,\n      \"max_abs_err\": 0.0625,\n      \"max_rel_err\": 0.0045045045045045045\n    }\n  }\n}\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n/tmp/opencode/FlagGems-gelu-fixed/src/flag_gems/config.py:153: UserWarning: resolve_user_setting: no exclude ops found; returning empty list\n  warnings.warn(\n/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.\n  Overriding a previously registered kernel for the same operator and the same dispatch key\n  operator: aten::_log_softmax(Tensor self, int dim, bool half_to_float) -> Tensor\n    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6\n  dispatch key: CUDA\n  previous kernel: registered at /pytorch/build/aten/src/ATen/RegisterCPU_3.cpp:3798\n       new kernel: registered at /tmp/opencode/FlagGems-gelu-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)\n  self.m.impl(\n"
+    }
+  ]
+}

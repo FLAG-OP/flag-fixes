@@ -545,45 +545,47 @@ def main():
                                      f"{str(e)[:140]}"})
             print(f"[case-error] {op}/{dtname}/{payload}: "
                   f"{type(e).__name__}", flush=True)
-    # batch reproduction: this run's output hashes vs the committed
-    # round-10 baseline checksums (full sha256, truncated to 64 hex in the
-    # r10 files)
+    # batch reproduction (round-17): compare against the CURRENT strict
+    # baseline files (baseline-n.json / baseline-fix.json), NOT the
+    # superseded r10 archive (the r10 batch had the float32-assembled
+    # c128 mis-dtype — see round-12 — and conj cases are RNG-batch
+    # dependent). Field name: batch_reproduction_vs_strict.
     repro = []
-    r10n = os.path.join(args.baseline_dir, "baseline-n.json.r10-superseded")
-    r10f = os.path.join(args.baseline_dir,
-                        "baseline-fix.json.r10-superseded")
-    if os.path.exists(r10n) and os.path.exists(r10f):
-        nmap = {c["case"]: c for c in sm.read_json(r10n).get(
+    sn = os.path.join(args.baseline_dir, "baseline-n.json")
+    sf = os.path.join(args.baseline_dir, "baseline-fix.json")
+    if os.path.exists(sn) and os.path.exists(sf):
+        nmap = {c["case"]: c for c in sm.read_json(sn).get(
             "edge_numeric", [])}
-        fmap = {c["case"]: c for c in sm.read_json(r10f).get(
+        fmap = {c["case"]: c for c in sm.read_json(sf).get(
             "edge_numeric", [])}
         for m in out["cases"]:
             case = m.get("case")
             rn = nmap.get(case, {}).get("out_checksum")
             rf = fmap.get(case, {}).get("out_checksum")
             if rn and rf:
-                hn = m.get("out_rawhex_prefix_native", "")
-                hf = m.get("out_rawhex_prefix_fix", "")
+                # strict baseline checksums are FULL sha256 hex (round-12
+                # checksum()); compare against this run's output sha256
+                sn = m.get("out_sha256_native", "")
+                sf = m.get("out_sha256_fix", "")
                 repro.append({"case": case,
-                              "this_native_rawhex_prefix": hn,
-                              "r10_native_checksum": rn,
-                              "this_fix_rawhex_prefix": hf,
-                              "r10_fix_checksum": rf,
-                              "native_matches_r10": hn.startswith(rn) or
-                                  rn.startswith(hn),
-                              "fix_matches_r10": hf.startswith(rf) or
-                                  rf.startswith(hf)})
-    out["batch_reproduction_vs_r10"] = repro
+                              "this_native_sha256": sn,
+                              "strict_native_checksum": rn,
+                              "this_fix_sha256": sf,
+                              "strict_fix_checksum": rf,
+                              "native_matches_strict": sn == rn,
+                              "fix_matches_strict": sf == rf})
+    out["batch_reproduction_vs_strict"] = repro
     out["batch_reproduction_note"] = (
-        "Deterministic (torch.full) cases reproduce the CURRENT strict "
-        "round-12/13 baseline bit-exactly (abs/c64/extreme_low matches "
-        "both trees' strict checksums). conj cases draw RNG-dependent "
-        "inputs — same construction code, different generator state — so "
-        "they are NOT hash-compared against old batches; the valid check "
-        "for them is the within-run native-vs-fix comparison with "
-        "in_bits_equal=True. c128 entries in the r10 batch were "
-        "mis-dtyped (float32-assembled, see round-12) and are not "
-        "comparable to true c128 outputs.")
+        "Deterministic (torch.full) cases are compared against the "
+        "CURRENT strict baseline (baseline-n.json / baseline-fix.json) "
+        "and reproduce it bit-exactly (e.g. abs/c64/extreme_low matches "
+        "both trees). conj cases draw RNG-dependent inputs — same "
+        "construction code, different generator state — so they are NOT "
+        "hash-compared against any stored batch; the valid check for "
+        "them is the within-run native-vs-fix comparison with "
+        "in_bits_equal=True. The r10-superseded archive is retained only "
+        "as historical raw evidence (its c128 entries were mis-dtyped, "
+        "see round-12).")
     out["hard_failures"] = hard_failures
     sm.write_json(args.out, out)
     print(f"hard_failures: {len(hard_failures)}; "

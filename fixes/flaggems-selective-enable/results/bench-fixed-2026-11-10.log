@@ -1,0 +1,14 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate="none") -> Tensor
+    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:352
+       new kernel: registered at /tmp/opencode/FlagGems-gelu-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)
+  self.m.impl(
+[flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/tmp/flaggems_cache/flaggems, TRITON_CACHE_DIR=/tmp/flaggems_cache/triton, TORCH_EXTENSIONS_DIR=/tmp/flaggems_cache/torch_extensions)
+vendor           pair   1.8601 ms     39.5 GB/s
+include_enabled  pair   1.1678 ms     62.9 GB/s
+wrote /tmp/opencode/fse-bench-fixed.json

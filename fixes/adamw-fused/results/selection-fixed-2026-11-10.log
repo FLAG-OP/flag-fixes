@@ -1,0 +1,16 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+ok   vendor nvidia, auto (platform guard): kwargs={} expected={}
+ok   vendor nvidia, forced 1 (still stock + log): kwargs={} expected={}
+ok   vendor thead, auto: kwargs={} expected={}
+ok   vendor kunlunxin, auto: kwargs={'fused': True} expected={'fused': True}
+ok   vendor kunlunxin, forced 1: kwargs={'fused': True} expected={'fused': True}
+ok   no GEMS_VENDOR, torch_xmlir shim present: kwargs={'fused': True} expected={'fused': True}
+ok   FLAGSCALE_VENDOR overrides shim detection: kwargs={} expected={}
+ok   auto, dtensor-like (FSDP2 guard): kwargs={} expected={}
+ok   auto, empty parameter list: kwargs={} expected={}
+ok   auto, cpu params: kwargs={} expected={}
+ok   mixed dtype params (bf16+fp32, both supported): kwargs={'fused': True} expected={'fused': True}
+ok   build_optimizer honours 0 on cuda: fused=None
+ok   build_optimizer auto on cuda (kunlunxin shim): fused=True
+PASS: selection matrix matches the documented behaviour

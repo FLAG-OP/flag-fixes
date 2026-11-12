@@ -1,78 +1,78 @@
 {
-  "batch_commit": "ed1b7d0",
-  "batch_reproduction_note": "Deterministic (torch.full) cases reproduce the CURRENT strict round-12/13 baseline bit-exactly (abs/c64/extreme_low matches both trees' strict checksums). conj cases draw RNG-dependent inputs \u2014 same construction code, different generator state \u2014 so they are NOT hash-compared against old batches; the valid check for them is the within-run native-vs-fix comparison with in_bits_equal=True. c128 entries in the r10 batch were mis-dtyped (float32-assembled, see round-12) and are not comparable to true c128 outputs.",
-  "batch_reproduction_vs_r10": [
+  "batch_commit": "867c4b3",
+  "batch_reproduction_note": "Deterministic (torch.full) cases are compared against the CURRENT strict baseline (baseline-n.json / baseline-fix.json) and reproduce it bit-exactly (e.g. abs/c64/extreme_low matches both trees). conj cases draw RNG-dependent inputs \u2014 same construction code, different generator state \u2014 so they are NOT hash-compared against any stored batch; the valid check for them is the within-run native-vs-fix comparison with in_bits_equal=True. The r10-superseded archive is retained only as historical raw evidence (its c128 entries were mis-dtyped, see round-12).",
+  "batch_reproduction_vs_strict": [
     {
       "case": "abs/c64/extreme_low",
-      "fix_matches_r10": true,
-      "native_matches_r10": true,
-      "r10_fix_checksum": "3dbe79003dbe79003dbe79003dbe79003dbe79003dbe79003dbe79003dbe7900",
-      "r10_native_checksum": "3cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe7900",
-      "this_fix_rawhex_prefix": "3dbe79003dbe79003dbe79003dbe79003dbe79003dbe79003dbe79003dbe7900",
-      "this_native_rawhex_prefix": "3cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe7900"
+      "fix_matches_strict": true,
+      "native_matches_strict": true,
+      "strict_fix_checksum": "21cd4226b69dd85c06005dbd026487e7ccf0b71798034a743fbbd8b550069086",
+      "strict_native_checksum": "4f3d7e5e9fd1a4ab97ae78764ab2ba9add0183324be02f68a269f8259cd2c285",
+      "this_fix_sha256": "21cd4226b69dd85c06005dbd026487e7ccf0b71798034a743fbbd8b550069086",
+      "this_native_sha256": "4f3d7e5e9fd1a4ab97ae78764ab2ba9add0183324be02f68a269f8259cd2c285"
     },
     {
       "case": "abs/c128/extreme_low",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "3dbe79003dbe79003dbe79003dbe79003dbe79003dbe79003dbe79003dbe7900",
-      "r10_native_checksum": "3cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe79003cbe7900",
-      "this_fix_rawhex_prefix": "3af7db498f6f0e383af7db498f6f0e383af7db498f6f0e383af7db498f6f0e38",
-      "this_native_rawhex_prefix": "3bf7db498f6f0e383bf7db498f6f0e383bf7db498f6f0e383bf7db498f6f0e38"
+      "fix_matches_strict": true,
+      "native_matches_strict": true,
+      "strict_fix_checksum": "b6754f2bdb5add088c1679c4cd0c9f4b0f6381867035337f8d7373981cf3c45e",
+      "strict_native_checksum": "ed904e820191478ac1c756d4f2ccf299196e60fddd56918490045e03e1fc6bcc",
+      "this_fix_sha256": "b6754f2bdb5add088c1679c4cd0c9f4b0f6381867035337f8d7373981cf3c45e",
+      "this_native_sha256": "ed904e820191478ac1c756d4f2ccf299196e60fddd56918490045e03e1fc6bcc"
     },
     {
       "case": "abs/c128/nan",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "ffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7f",
-      "r10_native_checksum": "ffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7f",
-      "this_fix_rawhex_prefix": "ffffffffffffff7fffffffffffffff7fffffffffffffff7fffffffffffffff7f",
-      "this_native_rawhex_prefix": "000000000000f87f000000000000f87f000000000000f87f000000000000f87f"
+      "fix_matches_strict": true,
+      "native_matches_strict": true,
+      "strict_fix_checksum": "398c191ed8d168edf872b0c73dcbe58473b46fe1b48cf43e97e9efc3bbc85f52",
+      "strict_native_checksum": "4a596d9c5ab41bf2c572eaf197373027885afae9f5522450ac956298d8061802",
+      "this_fix_sha256": "398c191ed8d168edf872b0c73dcbe58473b46fe1b48cf43e97e9efc3bbc85f52",
+      "this_native_sha256": "4a596d9c5ab41bf2c572eaf197373027885afae9f5522450ac956298d8061802"
     },
     {
       "case": "abs/c128/extreme_high",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e",
-      "r10_native_checksum": "1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e1a39a87e",
-      "this_fix_rawhex_prefix": "13f3c5492307d54713f3c5492307d54713f3c5492307d54713f3c5492307d547",
-      "this_native_rawhex_prefix": "12f3c5492307d54712f3c5492307d54712f3c5492307d54712f3c5492307d547"
+      "fix_matches_strict": true,
+      "native_matches_strict": true,
+      "strict_fix_checksum": "787a5991d3ff30aa8c97c0209e9c1531ee0634f80c83e16bf7afd207b8c1468e",
+      "strict_native_checksum": "230e973c306824dd6c100f0c1246a0ccf0fde053526c945f09fa81245d0c61f2",
+      "this_fix_sha256": "787a5991d3ff30aa8c97c0209e9c1531ee0634f80c83e16bf7afd207b8c1468e",
+      "this_native_sha256": "230e973c306824dd6c100f0c1246a0ccf0fde053526c945f09fa81245d0c61f2"
     },
     {
       "case": "sum/c64/conj",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "f56c67c085a031c1",
-      "r10_native_checksum": "f46c67c084a031c1",
-      "this_fix_rawhex_prefix": "6c9a88bfab4a67c1",
-      "this_native_rawhex_prefix": "6a9a88bfac4a67c1"
+      "fix_matches_strict": false,
+      "native_matches_strict": false,
+      "strict_fix_checksum": "04f5ebb4234a4e8830a615071cd097523213a2bb4484c5728a701f37339f64f7",
+      "strict_native_checksum": "66501355d5e4bdd80ee25acdf202163a643c3841f0fa937ed1f78778257b894d",
+      "this_fix_sha256": "2e9089d3bd7bc5e991b699288013f57e496b084b93df2704be7acf6d5ff7345f",
+      "this_native_sha256": "b77c2c9f6a045f6bfb7be92e7ae2c7a1fb715ad54cc8ce62bf8963bcded7cfcb"
     },
     {
       "case": "sum/c128/conj",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "001d80bfc666eebf",
-      "r10_native_checksum": "041d80bfc466eebf",
-      "this_fix_rawhex_prefix": "b179eb6dffaa21c0803219b0cd430340",
-      "this_native_rawhex_prefix": "b179eb6dffaa21c07c3219b0cd430340"
+      "fix_matches_strict": false,
+      "native_matches_strict": false,
+      "strict_fix_checksum": "47000329148d4781dd902b52c362389a4c47b6ea28c9a6fcf0bad75bce94f657",
+      "strict_native_checksum": "dbdfaf3c71b06000a35a150d9df7be791708860edbf38f76cff8293d933fac80",
+      "this_fix_sha256": "6e39b27ec7cfef6c8e0ee7d89c601a2010d523a63f17a7db0b562fa1ac674cfb",
+      "this_native_sha256": "c55aabbcef877689cc7440e55bf797e02834a038c8e6b9348f0dc986b778e0ab"
     },
     {
       "case": "abs/c64/conj",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "243d2e4050debb3fa63b093f30a51740d13cd93fbddee73fa78fda3f98e7a03f",
-      "r10_native_checksum": "243d2e4050debb3fa63b093f30a51740d23cd93fbedee73fa78fda3f98e7a03f",
-      "this_fix_rawhex_prefix": "9132713f6a73323f013d3340cfc93f3fc850b13ffa90853f37de223f700e7f3f",
-      "this_native_rawhex_prefix": "9232713f6b73323f003d3340d0c93f3fc750b13ffa90853f38de223f720e7f3f"
+      "fix_matches_strict": false,
+      "native_matches_strict": false,
+      "strict_fix_checksum": "055fc95156e88ea3c2512476455470dcad7ff6465733c33c95822aa9b30a861f",
+      "strict_native_checksum": "72aea50b2e291230d91cd63a63d22e58217c2d8059b411a1e7fbb22359c0dce4",
+      "this_fix_sha256": "75e052733a96dd34264a782ff8563fc6ca5f22c9bcec86d36c5539bd35201755",
+      "this_native_sha256": "4d4c2f0ba86bcb88849a30c683ea702fed1d8d569cf4b2d3802c69ab157d1f72"
     },
     {
       "case": "abs/c128/conj",
-      "fix_matches_r10": false,
-      "native_matches_r10": false,
-      "r10_fix_checksum": "adcaad3f47c98f3f521d1a3f93824f3e0828ac3feeb9a73f895dd33efd8a1940",
-      "r10_native_checksum": "adcaad3f47c98f3f521d1a3f95824f3e0928ac3feeb9a73f8a5dd33efc8a1940",
-      "this_fix_rawhex_prefix": "74ec0ea532f5dc3f914ef0d23432d03f065e75a03e84ed3f8472c1991e890240",
-      "this_native_rawhex_prefix": "74ec0ea532f5dc3f914ef0d23432d03f075e75a03e84ed3f8572c1991e890240"
+      "fix_matches_strict": false,
+      "native_matches_strict": false,
+      "strict_fix_checksum": "0968b818f4716af4bee4e42d93b6173dbacd64c863c94fdbc82c5ea3fdcade71",
+      "strict_native_checksum": "709884372af9d1b910e0195ee3f1c9cb09c13a0fcbdc9a5e89b8f1bdbec1b180",
+      "this_fix_sha256": "973acf44f6770480e689643b3c0db21869f526495ae391712fcaf74460e78d5c",
+      "this_native_sha256": "c1fdc8e0cc98803b968c2d08eaa0497730df0120ba4bab378d790ddfe3406ab7"
     }
   ],
   "byteorder": "little",
