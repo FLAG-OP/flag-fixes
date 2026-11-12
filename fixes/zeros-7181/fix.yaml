@@ -368,5 +368,20 @@ notes:
   native），建议独立优化 fix 首选 B-only，A 快路径仅 c128 contig 一处
   ~3µs 收益作可选增强；"B 全布局最优"限定为"本轮已测试布局中最优"。
   功能 fix 维持 draft/deployable=false/hardware_status=unverified。
+- |-
+  第十五轮（2026-11-12，意见 6811732879）三项落地：(1) classify 符号/指数/
+  尾数独立提取（尾数掩码排除符号位——此前 -inf 被误判 NaN），自测覆盖
+  双 dtype ±Inf/±NaN/-Inf↔NaN/Inf 符号翻转的精确分类负例；(2) main 聚合
+  hard failures（子 rc≠0/in_bits 不一致/长度不符/分类不一致/缺字段）非零
+  退出 + aggregate_failures 纯函数 + 入口级负例（注入分类不一致→聚合非零）
+  + run_child 检查 returncode；(3) 逐分量比较直接从子进程 raw bits 进行
+  （NaN payload 不经 repr），每用例归档双方 raw in/out bits、dtype/shape/
+  byteorder/输出 sha256，abs/c128/nan 与 round-10 提交 checksum 交叉核对
+  （确定性 full 输入的 abs/c64/extreme_low 双树位级复现 r10；conj 用例
+  RNG 状态不同属新批次输入，同 run 内 native vs fix 对比为有效检验）。
+  8 项 numeric_diff 定稿：conj ≤4 float64 ULP / ≤2 float32 ULP、abs
+  extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（掩码一致，
+  策略不要求 payload）。功能 fix 维持 draft/deployable=false/
+  hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

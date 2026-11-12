@@ -414,3 +414,28 @@ validation.
 - Tool-bug found by selftest and fixed: the classifier's exponent mask/
   mantissa didn't follow dtype and included exponent bits (inf classified
   as nan). Old diff-details batches superseded (see manifest).
+
+## 10. Round-15 addendum: classifier fix, failure aggregation, raw-bits archive
+
+- `classify()` extracts sign/exp/mantissa separately (mantissa mask
+  excludes the sign bit) — the previous `bits & ~exp_mask` kept the sign
+  bit so **-inf was misclassified as NaN** (a NaN payload policy then
+  silently accepted -Inf-vs-NaN). Self-tests now cover ±Inf, ±NaN,
+  -Inf↔NaN and Inf sign flips for both dtypes with exact classification
+  expectations.
+- `main()` aggregates **hard verification failures** (child rc≠0/missing
+  result, in_bits mismatch, length mismatch, classification mismatch,
+  missing fields) and exits NONZERO after saving diagnostics; the
+  aggregation is a pure function with an entry-level negative test
+  (`--exit-code-negative-test`); `run_child` checks returncodes.
+- Per-component comparison runs directly on the RAW BITS returned by the
+  children (NaN payloads never pass through repr); each case archives
+  both trees' raw in/out bits plus dtype/shape/byteorder and the output
+  sha256. abs/c64/extreme_low reproduces the committed round-10
+  checksums bit-exactly on both trees (deterministic full-input);
+  conj cases draw RNG-dependent inputs — the valid check is the
+  within-run native-vs-fix comparison (in_bits_equal=True).
+- Final numbers unchanged: conj sum/abs ≤ 4 float64 ULP / ≤ 2 float32
+  ULP, abs extremes 1 ULP, abs/c128/nan = output NaN payload-bit
+  difference (inputs identical; payload not a pass condition). PR2 stays
+  `draft / deployable=false / hardware_status=unverified`.

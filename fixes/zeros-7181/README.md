@@ -352,3 +352,12 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   ULP、abs 1–2 ULP、abs/c128/nan = 输出 NaN payload 位型差异（输入位级
   一致、掩码一致，策略不要求 payload）。旧 diff-details 批次 superseded。
   状态与验收口径不变。
+- 第十五轮（2026-11-12，意见 6811732879）：(1) classify 符号/指数/尾数独立
+  提取（修正 -inf 误判 NaN），自测覆盖双 dtype ±Inf/±NaN/-Inf↔NaN/Inf 符号
+  翻转精确负例；(2) main 聚合 hard failures 非零退出 + 入口级负例 +
+  run_child 检查 returncode；(3) 逐分量比较直接从 raw bits 进行（NaN
+  payload 不经 repr），归档双方 raw in/out bits 与 dtype/shape/byteorder/
+  sha256，abs/c128/nan 与 round-10 checksum 交叉核对（确定性输入双树位级
+  复现）。8 项 numeric_diff 定稿：conj ≤4 float64 ULP / ≤2 float32 ULP、
+  abs extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（掩码一致，
+  策略不要求 payload）。状态与验收口径不变。

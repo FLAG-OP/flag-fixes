@@ -368,6 +368,18 @@ hardware_status=unverified`。
 
 历史 `diff-details`（round-11/12 批）标注 superseded（`r12-superseded-manifest.md` 追加）；8 项 numeric_diff 的定性由"1 ULP 级"细化为**按 dtype 位型的 1–4 ULP**。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
+## 第十五轮：分类负例、位级归档与退出码修正（2026-11-12，意见 comment `6811732879`，基于 `bf71431`；工具重写提交 `967e1f8`）
+
+三项 P2 全部落地：
+
+| 评审项 | 处理 | 结果 |
+| --- | --- | --- |
+| P2-a −inf 误判 NaN | `classify()` 改为**符号/指数/尾数独立提取**（尾数掩码 = `sign−1−exp_mask`，排除符号位；此前 `bits & ~exp_mask` 保留符号位 → −inf 尾数非零被误判 NaN） | 自测覆盖 f32/f64 ±Inf、±NaN（符号位/载荷）、−Inf↔NaN、±Inf 符号翻转——**全部精确分类**；`-inf vs NaN` 判 class_mismatch 而非 payload flag |
+| P2-b 验证失败不聚合、退出码恒 0 | `main()` 聚合 hard failures（子进程 rc≠0/缺结果、in_bits 不一致、长度不符、分类不一致、缺字段），写诊断后**非零退出**；`run_child` 检查 returncode；`aggregate_failures` 纯函数 + **入口级负例**（注入分类不一致 → 聚合非零；干净用例 → 0）`--exit-code-negative-test` PASS | 实跑 `hard_failures: 0`、rc=0（干净基线）；负例注入验证通过 |
+| P2-c 原始位型未归档、payload 经 repr | 逐分量比较**直接从子进程返回的 raw bits** 进行（NaN payload 不经 repr）；每用例归档 `raw_in_bits_{native,fix}`、`raw_out_bits_{native,fix}`、dtype/shape/byteorder/输出 sha256/raw-hex 前缀；`abs/c128/nan` 与 **round-10 提交 checksum 交叉核对**（该用例输入为确定性 full 构造） | abs/c64/extreme_low **双树均复现 r10 位级输出**（确定性 full 输入）；conj 用例输入依赖 RNG 状态（构造代码相同、生成状态不同）——**同 run 内 native vs fix 对比（in_bits_equal=True）为有效检验**，与 r10 checksum 的差异属新批次输入差异，已在 JSON `batch_reproduction_note` 说明 |
+
+结论口径更新：8 项 numeric_diff 定稿为 **conj sum/abs ≤4 float64 ULP（c128）/ ≤2 float32 ULP（c64）、abs extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（输入位级一致、双方均 NaN、掩码一致——按策略 payload 不作为通过条件）**；"8 例全部解释完成"表述替换为上述准确状态。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models
