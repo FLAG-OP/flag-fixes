@@ -1,0 +1,98 @@
+schema_version: 1
+template_version: 1
+id: gelu-kunlunxin-pow
+title: KunlunXIN GELU 家族 pow(x,2) 降低为乘法（前反向约 5.8x / 16.5x）
+owner: null
+status: draft
+deployable: false
+source:
+  kind: local
+  path: fixes/gelu-kunlunxin-pow
+  commit: null
+  repository: null
+target:
+  package: flag_gems
+  baseline_version: v5.0.0
+  baseline_commit: 4e08b44e9b9ad68c2c27b4d25d04c6b76c30ff7a
+patches:
+- path: patches/gelu-kunlunxin-pow.patch
+  sha256: 65ffc3c7191d6d8382e51fb2ffb1f5a02a5485090efabb5ab560efe489d047e0
+targets:
+- path: src/flag_gems/runtime/backend/_kunlunxin/ops/gelu.py
+  before_sha256: 6c53c738d15695ab974489f98ac703dbb9e0908e3364969055185f6c5c8b762c
+  after_sha256: e9c72e110834d1f040b82541e6f50b3793eb809a5db3af06e3d11b0e3f286048
+  after_source: src/flag_gems/runtime/backend/_kunlunxin/ops/gelu.py
+- path: src/flag_gems/runtime/backend/_kunlunxin/fused/gelu_and_mul.py
+  before_sha256: a3192f8d6f41519aa20eb248076456864ab30e77909259b8d9df6f5245e1360f
+  after_sha256: 2669825cfda5ccacb86b4826f989b1d8b3e8fbe5c8a4bd5a4608d7523d8501e0
+  after_source: src/flag_gems/runtime/backend/_kunlunxin/fused/gelu_and_mul.py
+backends:
+- kunlunxin
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - 根因：KunlunXIN GELU 家族用 tl_extra_shim.pow(x, 2.0) 求平方；XPU3 将整数指数
+    2 的 pow 降低为 libdevice 调用，前向/反向均被它支配，部分手工 kernel 甚至让
+    xpu3-elfconv 编译失败（geglu，未纳入本 patch）。改为 x*x 后数学等价，fp32 误差
+    不增加（tanh 前向 max_abs_err 1.5e-5 -> 3.8e-6）。
+  - 2026-11-10 本地 KunlunXIN 环境（GEMS_VENDOR=kunlunxin，torch 2.9.0+cu129，
+    triton 3.0.0，P800/XPU3 栈）实测 (2990, 1024) bf16，同输入同计时口径：
+    gelu(tanh) 前向 0.3124 -> 0.0542 ms（5.77x，0.414x -> 2.40x native）；
+    gelu_backward 0.5743 -> 0.0639 ms（tanh，8.98x）；gelu_backward 2.5392 ->
+    0.1538 ms（none，16.51x，0.119x -> 1.96x native）；gelu_and_mul(tanh) 前向
+    1.2972 -> 0.2197 ms（5.90x）。gelu(none) 前向与 gelu_and_mul(none) 不经过
+    pow，逐位不变（0.115/0.465 ms）。原始数据 results/bench-{base,fixed}-2026-11-10.json。
+  - 精度：tests/test_gelu_accuracy.py 覆盖 fp32/bf16/fp16 × 4 形状 × 连续/转置/切片/
+    permute × none/tanh 前反向 + fused gelu_and_mul 前后向，0 failed；
+    tests/test_gelu_family_dispatch.py 覆盖 enable() 后 F.gelu / nn.GELU / autograd /
+    非连续输入 / gated MLP，0 failed。
+  - 复现：tests/repro_gelu_pow.py 在基线上 exit 1（backward 8.41x native、tanh 前向
+    2.41x native，阈值 2.0x），修复后 exit 0（0.51x / 0.42x）。
+  - 范围限制：只改 _kunlunxin 后端；同源 pow(x,2) 仍在 _kunlunxin/fused/geglu.py
+    （可编译但当前实现 21 ms，不适合随本 patch 交付）、其余厂商后端的 GELU 以及
+    torch 自带 aten gelu highprecision 路径（厂商二进制，FlagGems 无法覆盖）。
+  - hardware_status 保持 unverified：本机为 P800/XPU3 软件栈，但未完成平台 x-benchmark
+    整模型验收；deployable=false、owner=null。
+  commands:
+  - name: gelu-pow-repro
+    script: tests/repro_gelu_pow.py
+    level: repro
+    timeout_seconds: 900
+  - name: gelu-family-accuracy
+    script: tests/test_gelu_accuracy.py
+    level: regression
+    timeout_seconds: 1800
+  - name: gelu-family-dispatch
+    script: tests/test_gelu_family_dispatch.py
+    level: dispatch
+    timeout_seconds: 1800
+  - name: gelu-boundary-compare
+    script: tests/verify_gelu_boundary.py
+    level: regression
+    timeout_seconds: 900
+    env:
+      PYTHONPATH: '{target}'
+      XPU_ENABLE_PROFILER_TRACING: '1'
+      XPU_CUPTI_ENABLE_DEVICE: '0'
+  - name: gelu-family-benchmark
+    script: tests/bench_gelu_family.py
+    args:
+    - --iters
+    - '100'
+    level: benchmark
+    timeout_seconds: 1800
+notes:
+- 目标文件属于 _kunlunxin 厂商后端，不是厂商无关通用文件；cuda 是本环境 KunlunXIN
+  栈的设备/dispatch 标识（GEMS_VENDOR=kunlunxin，vendor_info.device_name=cuda）。
+- 改动只把 pow(x, 2.0) 换成 x*x（必要时先缓存 x_fp32 与平方值），表达式其余部分与
+  基线一致；fp32 与 bf16 的误差均不高于基线。
+- 未覆盖：_kunlunxin/fused/geglu.py（pow 会让 xpu3-elfconv 编译失败，去掉 pow 后可
+  编译但 kernel 配置本身 21 ms，属于独立问题）；其他厂商后端的 GELU 文件；厂商
+  aten GELU highprecision 路径。
+- 本修复是性能修复，不改变 API、dispatch 或数值语义；无 requires/conflicts。
+- 普通 CI（无设备 runner）只做 validate / pytest / compileall，不执行四个硬件脚本；
+  设备缺失时脚本退出码 2，跳过不算通过。
+installation_status: source-checked
+upstream_issue: null
