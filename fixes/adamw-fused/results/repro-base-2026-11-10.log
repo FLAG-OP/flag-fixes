@@ -1,8 +1,0 @@
-XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
-[35mSYMBOL_REWRITE [0m[32mtorch success[0m
-params: 336 tensors
-build_optimizer fused flag : False
-build_optimizer device time: 25.823 ms
-stock AdamW device time    : 27.010 ms
-ratio chosen/stock (device): 0.956
-FAIL: build_optimizer did not select fused AdamW (baseline behaviour; vendor torch decomposes AdamW into per-parameter kernels, 27.0 ms device/step)
