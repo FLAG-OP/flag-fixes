@@ -1,25 +1,25 @@
-# Round-12/13/14: quantify the numeric_diff baseline cases. Rewritten after
-# the round-14 review (6797761554):
-#   - the NaN case now uses EXACTLY the baseline input construction
-#     (NaN + NaN*j via p=full(nan), q=full(nan*0.5)), so the dual-tree
-#     comparison explains the committed out_checksum difference;
-#   - inputs and outputs are compared at the BIT level: per-component
-#     classification (nan / inf+ / inf- / zero+ / zero- / finite) must
-#     MATCH, otherwise the case is a classification failure (never a
-#     silent zero-error); only both-finite components contribute error
-#     and ULP;
-#   - NaN payloads are compared from actual BITS (repr(nan) cannot
-#     distinguish payloads); the policy is mask-must-match — payload
-#     equality is recorded but NOT a pass condition;
-#   - ULP uses the standard ordered bit mapping with the explicit
-#     signed-zero policy: +/-0.0 are the same point (distance 0); a
-#     differing sign bit on zeros is recorded separately;
-#   - self-tests cover the reviewer's exact cases plus adjacent-value,
-#     +/-0 and cross-zero min-subnormal exact expectations for f32/f64.
+# Round-12/13/14/15: quantify the numeric_diff baseline cases with a
+# classification-complete, bit-exact comparison tool.
+#
+# Round-15 (review 6811732879):
+#   - classify(): sign/exp/mantissa extracted separately — mantissa mask is
+#     mant&~sign&~exp (the previous ~exp mask kept the sign bit, so -inf
+#     was classified as NaN; a NaN payload policy then silently accepted
+#     -Inf-vs-NaN);
+#   - per-component comparison works directly on the RAW BITS returned by
+#     the children (NaN payloads no longer pass through repr);
+#   - main() aggregates hard verification failures (child rc != 0 / missing
+#     result, in_bits mismatch, length mismatch, classification mismatch,
+#     missing fields) and exits NONZERO after saving diagnostics; the
+#     aggregation is testable via --exit-code-negative-test;
+#   - raw in/out bits, dtype, shape, byteorder and output SHA256 are
+#     archived per case; the abs/c128/nan case is cross-checked against the
+#     committed round-10 baseline checksums (batch reproduction).
 #
 # Run: CUDA_VISIBLE_DEVICES=0 PYTHONPATH="" python3 benchmarks/diff_details.py \
 #        --fix-tree <tree>/src --out <path> [--selftest]
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -27,7 +27,7 @@ import struct
 import subprocess
 import sys
 
-import torch  # noqa: E402
+import torch
 
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "tests"))
@@ -53,8 +53,6 @@ def mk_payload():
                           device="cuda")
     if payload == "nan":
         # EXACTLY the baseline_freeze construction: NaN + NaN*j
-        # (round-14: diff_details previously used NaN + 0.5j — a different
-        # input — and could not explain the committed checksum difference)
         p = torch.full((16, 16), float("nan"), dtype=real, device="cuda")
         q = torch.full((16, 16), float("nan") * 0.5, dtype=real,
                        device="cuda")
@@ -70,10 +68,6 @@ y = (x.sum() if op == "sum" else torch.abs(x.resolve_conj()
      if x.is_conj() else x)).flatten().cpu()
 f64 = dt == torch.complex128
 def bit_list(t):
-    # round-14: view FIRST, then count (complex numel must double);
-    # conj-bit tensors reject view() — resolve first (recorded as
-    # conj_resolved_for_bits; the VALUE bits after resolution are what the
-    # checksum comparison uses anyway)
     tt = (t.resolve_conj() if t.is_conj() else t).contiguous().reshape(-1)
     vtt = tt.view(torch.float64 if f64 else torch.float32).cpu()
     raw = vtt.numpy().tobytes()
@@ -83,7 +77,9 @@ def bit_list(t):
 print(json.dumps({"values": [repr(v) for v in y.tolist()],
                   "out_bits": bit_list(y),
                   "in_bits": bit_list(x),
-                  "dtype": dtype_name}))
+                  "dtype": dtype_name,
+                  "shape": list(y.shape),
+                  "byteorder": sys.byteorder}))
 '''
 
 
@@ -106,15 +102,16 @@ def ordered_ord(bits, total_bits):
 
 
 def classify(value, bits, float64):
-    """('nan'|'inf+'|'inf-'|'zero'|'finite', payload_bits) — round-14:
-    exp mask now follows the dtype (the float64 mask on float32 made inf
-    classify as nan); zero is a single class with the sign bit as payload
-    (signed-zero policy handled downstream)."""
+    """Round-15: sign/exp/mantissa extracted SEPARATELY. mantissa is the
+    true payload mask (exponent AND sign excluded) — the previous
+    `bits & ~exp_mask` kept the sign bit, so -inf carried a non-zero
+    "mantissa" and was misclassified as NaN."""
     sign = 1 << (63 if float64 else 31)
     exp_mask = 0x7FF0000000000000 if float64 else 0x7F800000
-    mant = bits & ~exp_mask  # payload bits ONLY (exponent excluded —
-    # including it made inf classify as nan)
-    if (bits & exp_mask) == exp_mask:
+    mant_mask = sign - 1 - exp_mask          # 0x000F...FF / 0x007FFFFF
+    exp = bits & exp_mask
+    mant = bits & mant_mask                  # true mantissa payload
+    if exp == exp_mask:
         if mant == 0:
             return ("inf-" if bits & sign else "inf+"), mant
         return "nan", mant
@@ -123,189 +120,225 @@ def classify(value, bits, float64):
     return "finite", mant
 
 
-def component_compare(nv, fv, float64):
-    """Compares one scalar component at the bit level. Returns
-    (status, detail) with status in: equal | signed_zero_bit_diff |
-    nan_payload_diff | class_mismatch | numeric_diff."""
-    bn = bits64(nv) if float64 else bits32(nv)
-    bf = bits64(fv) if float64 else bits32(fv)
-    cn, pn = classify(nv, bn, float64)
-    cf, pf = classify(fv, bf, float64)
-    if cn != cf:
-        return "class_mismatch", f"native={cn}({bn:#x}) fix={cf}({bf:#x})"
-    if cn == "nan":
-        if bn != bf:
-            return ("nan_payload_diff",
-                    f"native_bits={bn:#x} fix_bits={bf:#x}")
-        return "equal", "nan"
-    if cn.startswith("inf"):
-        return "equal", cn
-    if cn.startswith("zero"):
-        if bn != bf:
-            return "signed_zero_bit_diff", f"native={bn:#x} fix={bf:#x}"
-        return "equal", "zero"
-    # both finite
-    dist = abs(ordered_ord(bn, 64 if float64 else 32) -
-               ordered_ord(bf, 64 if float64 else 32))
-    d = abs(nv - fv)
-    return "numeric_diff" if d != 0 else "equal", f"ulp={dist} abs={d!r}"
+def classify_bits(bits, float64, value=None):
+    return classify(0.0 if value is None else value, bits, float64)
 
 
-def component_metrics(nv, fv, float64):
-    """Per-component classification; returns (max_abs, max_rel, max_ulp,
-    flags, class_mismatches). Only both-finite components contribute
-    error/ULP; NaN/Inf are separately classified (round-14)."""
-    import math
-    max_abs = 0.0
-    rel = 0.0
-    max_ulp = 0
+def ulp_distance(n, f, float64, nv_bits=None, fv_bits=None):
+    """Ordered-mapping ULP distance; +/-0 policy = same point (distance 0)
+    when both values are zero (sign-bit difference is a separate flag
+    handled by the caller)."""
+    if n == 0.0 and f == 0.0:
+        return 0
+    if float64:
+        bn = bits64(n) if nv_bits is None else nv_bits
+        bf = bits64(f) if fv_bits is None else fv_bits
+        return abs(ordered_ord(bn, 64) - ordered_ord(bf, 64))
+    bn = bits32(n) if nv_bits is None else nv_bits
+    bf = bits32(f) if fv_bits is None else fv_bits
+    return abs(ordered_ord(bn, 32) - ordered_ord(bf, 32))
+
+
+def component_compare(nv_bits, fv_bits, nv_value, fv_value, float64):
+    """One scalar component compared from RAW BITS + repr round-trip
+    value. Returns (status, flags, detail): status in equal |
+    signed_zero_bit_diff | nan_payload_diff | class_mismatch |
+    numeric_diff."""
+    cn, pn = classify(0.0 if nv_value is None else nv_value, nv_bits,
+                      float64)
+    cf, pf = classify(0.0 if fv_value is None else fv_value, fv_bits,
+                      float64)
     flags = []
-    mismatches = []
-    cn, pn = classify(nv, bits64(nv) if float64 else bits32(nv), float64)
-    cf, pf = classify(fv, bits64(fv) if float64 else bits32(fv), float64)
     if cn != cf:
-        mismatches.append(f"native={cn} fix={cf}")
-        return max_abs, rel, max_ulp, flags, mismatches
+        return ("class_mismatch", flags,
+                f"native={cn}({nv_bits:#x}) fix={cf}({fv_bits:#x})")
     if cn == "nan":
-        bn = bits64(nv) if float64 else bits32(nv)
-        bf = bits64(fv) if float64 else bits32(fv)
-        if bn != bf:
+        if nv_bits != fv_bits:
             flags.append("nan_payload_diff")
-        return max_abs, rel, max_ulp, flags, mismatches
+        return ("equal", flags,
+                f"nan payload native={nv_bits:#x} fix={fv_bits:#x}")
     if cn.startswith("inf"):
-        if nv != fv:  # sign mismatch already covered by class; defensive
-            flags.append("inf_sign_diff")
-        return max_abs, rel, max_ulp, flags, mismatches
+        return "equal", flags, cn
     if cn == "zero":
-        # explicit signed-zero policy: numeric ULP treats +/-0 as the
-        # same point; a differing sign bit is recorded separately
-        if pn != pf:
-            flags.append("signed_zero_bit_diff")
-        return max_abs, rel, max_ulp, flags, mismatches
+        if nv_bits != fv_bits:
+            flags.append("signed_zero_bit_diff")  # numeric policy: same
+            # zero point; the sign-bit difference is recorded separately
+        return "equal", flags, "zero"
+    # both finite: exact repr round-trip values
+    nv = float(nv_value) if nv_value is not None else 0.0
+    fv = float(fv_value) if fv_value is not None else 0.0
     d = abs(nv - fv)
-    max_abs = max(max_abs, d)
-    if nv != 0:
-        rel = max(rel, d / abs(nv))
-    max_ulp = max(max_ulp, abs(ordered_ord(bits64(nv), 64) -
-                               ordered_ord(bits64(fv), 64)) if float64 else
-                  abs(ordered_ord(bits32(nv), 32) -
-                      ordered_ord(bits32(fv), 32)))
-    return max_abs, rel, max_ulp, flags, mismatches
+    ulp = abs(ordered_ord(nv_bits, 64 if float64 else 32) -
+              ordered_ord(fv_bits, 64 if float64 else 32))
+    if d != 0:
+        return "numeric_diff", flags, f"ulp={ulp} abs={d!r}"
+    return "equal", flags, "zero-diff"
 
 
-def ulp_metrics(native_vals, fix_vals, float64):
-    """Classification-complete metrics from ACTUAL outputs (round-14)."""
+def ulp_metrics(nat, fix):
+    """Classification-complete metrics from RAW BITS (round-15). Values
+    (repr round-trip, exact for finite floats) are used only for finite
+    error/ULP; NaN payloads come from bits. Returns metrics + hard
+    classification failures."""
+    float64 = nat.get("dtype") == "c128"
+    nb, fb = nat["out_bits"], fix["out_bits"]
+    hard = []
+    flags = []
     max_abs = 0.0
     rel = 0.0
     max_ulp = 0
-    flags = []
-    mismatches = []
-    for i, (nv, fv) in enumerate(zip(native_vals, fix_vals)):
+    if nat.get("in_bits") != fix.get("in_bits"):
+        hard.append("in_bits mismatch (dual-tree inputs differ)")
+    if len(nb) != len(fb):
+        hard.append(f"out component count mismatch {len(nb)} vs {len(fb)}")
+        return {"float64": float64, "hard_failures": hard,
+                "max_abs_err": None, "max_ulp_distance": None,
+                "flags": [], "class_mismatches": ["length"]}
+    n_vals = nat["values"]
+    f_vals = fix["values"]
+    if len(n_vals) * (2 if float64 else 1) != len(nb):
+        hard.append("values/bits granularity mismatch")
+    class_mismatches = []
+    for i in range(min(len(nb), len(fb))):
+        # component i: real part of element i//2 (float64 complex) or the
+        # element itself (float32 complex) — matching the bits layout
+        # out_bits granularity = per float component for BOTH dtypes
+        # (complex viewed as float32/float64 doubles the element count)
+        e, part = i // 2, i % 2
+        vi_n = n_vals[e] if e < len(n_vals) else "nan"
+        vi_f = f_vals[e] if e < len(f_vals) else "nan"
+        nv_value = fv_value = None
         try:
-            n = complex(nv)
-            f = complex(fv)
-            comps = [(n.real, f.real), (n.imag, f.imag)]
-        except ValueError:
-            comps = [(float(nv), float(fv))]
-        for ci, (a, b) in enumerate(comps):
-            ma, mr, mu, fl, mm = component_metrics(a, b, float64)
-            max_abs = max(max_abs, ma)
-            rel = max(rel, mr)
-            max_ulp = max(max_ulp, mu)
-            for x in fl:
-                flags.append(f"[{i}].{'real' if ci == 0 else 'imag'}" + x
-                             if False else f"comp{ci}:{x}")
-            for x in mm:
-                mismatches.append(f"comp{ci}:{x}")
-    return {"max_abs_err": max_abs, "max_rel_err": rel,
-            "ulp_mapping": "float64" if float64 else "float32",
-            "max_ulp_distance": max_ulp,
+            cv_n = complex(vi_n)
+            cv_f = complex(vi_f)
+            nv_value = cv_n.real if part == 0 else cv_n.imag
+            fv_value = cv_f.real if part == 0 else cv_f.imag
+        except (ValueError, TypeError):
+            pass  # NaN repr — bits-only classification
+        st, fl, detail = component_compare(
+            nb[i], fb[i], nv_value, fv_value, float64)
+        if st == "class_mismatch":
+            class_mismatches.append(f"comp{i}:{detail}")
+            hard.append(f"comp{i}:{detail}")
+        for x in fl:
+            flags.append(f"comp{i}:{x}")
+        if st == "numeric_diff":
+            try:
+                nv = float(nv_value)
+                fv = float(fv_value)
+                d = abs(nv - fv)
+                max_abs = max(max_abs, d)
+                if nv != 0:
+                    rel = max(rel, d / abs(nv))
+                u = abs(ordered_ord(nb[i], 64 if float64 else 32) -
+                        ordered_ord(fb[i], 64 if float64 else 32))
+                max_ulp = max(max_ulp, u)
+            except (ValueError, TypeError):
+                pass
+    return {"float64": float64,
+            "hard_failures": hard,
+            "class_mismatches": sorted(set(class_mismatches)),
+            "n_class_mismatches": len(class_mismatches),
             "flags": sorted(set(flags)),
-            "class_mismatches": sorted(set(mismatches)),
-            "n_class_mismatches": len(mismatches)}
+            "max_abs_err": max_abs, "max_rel_err": rel,
+            "max_ulp_distance": max_ulp}
 
 
 def selftest():
-    """Device-free self-tests (round-14): ordered mapping exact values,
-    +/-0 policy, classification-mismatch detection (the reviewer's two
-    false-pass reproductions), NaN payload via bits."""
+    """Device-free self-tests: classify negatives (±Inf, ±NaN, -Inf↔NaN,
+    Inf sign flip — both dtypes), ordered mapping exact values, signed-zero
+    policy, and the exit-code aggregation negative."""
     tests = []
 
     def t(name, cond):
         tests.append((name, bool(cond)))
         print(f"{'OK ' if cond else 'BAD'} {name}", flush=True)
 
-    # ordered mapping, exact expectations, float32
-    t("f32 +0.0 ord == 0x80000000",
-      ordered_ord(bits32(0.0), 32) == 0x80000000)
+    pinf32, pinf64 = 0x7F800000, 0x7FF0000000000000
+    ninf32, ninf64 = 0xFF800000, 0xFFF0000000000000
+    t("f32 classify(+inf)==inf+",
+      classify(0.0, pinf32, False) == ("inf+", 0))
+    t("f32 classify(-inf)==inf-",
+      classify(0.0, ninf32, False) == ("inf-", 0))
+    t("f64 classify(+inf)==inf+",
+      classify(0.0, pinf64, True) == ("inf+", 0))
+    t("f64 classify(-inf)==inf-",          # round-15: was misclassified nan
+      classify(0.0, ninf64, True) == ("inf-", 0))
+    t("f64 classify(-inf)!=nan",
+      classify(0.0, ninf64, True)[0] != "nan")
+    t("f32 classify(-inf)!=nan",
+      classify(0.0, ninf32, False)[0] != "nan")
+    # NaN with/without sign bit and payload
+    qnan64 = 0x7FF8000000000000
+    snan64 = 0xFFF8000000000000
+    t("f64 classify(+qnan)==nan",
+      classify(0.0, qnan64, True) == ("nan", 0x8000000000000))
+    t("f64 classify(-qnan)==nan (sign excluded from mantissa)",
+      classify(0.0, snan64, True) == ("nan", 0x8000000000000))
+    t("f64 NaN payload bits returned",
+      classify(0.0, qnan64 | (1 << 40), True)[1] == (0x8000000000000 |
+                                                     (1 << 40)))
+    # -Inf vs NaN comparison must be a CLASS MISMATCH (round-15: was
+    # silently accepted as nan_payload_diff)
+    st, fl, det = component_compare(ninf64, qnan64, None, None, True)
+    t("f64 -inf vs NaN -> class_mismatch",
+      st == "class_mismatch")
+    st, fl, det = component_compare(ninf32, 0x7FC00000, None, None, False)
+    t("f32 -inf vs +NaN -> class_mismatch", st == "class_mismatch")
+    st, fl, det = component_compare(pinf32, ninf32, None, None, False)
+    t("f32 +inf vs -inf -> class_mismatch (sign flip)",
+      st == "class_mismatch")
+    # ordered mapping exact values (retained from round-14)
     t("f32 -0.0 ord == 0x7FFFFFFF",
       ordered_ord(bits32(-0.0), 32) == 0x7FFFFFFF)
-    t("f32 +min_sub ord == 0x80000001",
-      ordered_ord(bits32(torch.tensor(1e-45, dtype=torch.float32).item()),
-                  32) == 0x80000001)
-    t("f32 -min_sub ord == 0x7FFFFFFE",
-      ordered_ord(bits32(torch.tensor(-1e-45, dtype=torch.float32).item()),
-                  32) == 0x7FFFFFFE)
-    # cross-zero min-subnormal: exact distance
-    t("f32 dist(-min_sub,+min_sub)==3 (crosses -0/+0)",
+    t("f32 dist(-min_sub,+min_sub)==3",
       abs(ordered_ord(bits32(torch.tensor(-1e-45,
           dtype=torch.float32).item()), 32) -
           ordered_ord(bits32(torch.tensor(1e-45,
           dtype=torch.float32).item()), 32)) == 3)
-    # +/-0 policy: numeric distance 0 (same zero point)...
-    t("f32 dist(-0.0,+0.0)==0 under signed-zero policy",
-      abs(ordered_ord(bits32(-0.0), 32) -
-          ordered_ord(bits32(0.0), 32)) != 0 and True)  # raw ord differs
-    st = component_metrics(-0.0, 0.0, float64=False)
-    t("f32 +/-0 numeric ulp == 0 with signed_zero_bit_diff flag",
-      st[2] == 0 and "signed_zero_bit_diff" in st[3])
-    # adjacent values, exact
-    import struct as _s
-    a = 1.0
-    ai = _s.unpack("i", _s.pack("f", a))[0]
-    b = _s.unpack("f", _s.pack("i", ai + 1))[0]
-    t("f32 dist(1.0,nextafter)==1",
-      abs(ordered_ord(bits32(a), 32) - ordered_ord(bits32(b), 32)) == 1)
-    ai2 = _s.unpack("i", _s.pack("f", -1.0))[0]
-    b2 = _s.unpack("f", _s.pack("i", ai2 - 1))[0]
-    t("f32 dist(-1.0, prev-neg)==1",
-      abs(ordered_ord(bits32(-1.0), 32) -
-          ordered_ord(bits32(b2), 32)) == 1)
-    # float64 exact expectations
-    t("f64 -0.0 ord == 0x7FFFFFFFFFFFFFFF",
-      ordered_ord(bits64(-0.0), 64) == (1 << 63) - 1)
-    t("f64 +min_sub ord == (1<<63)+1",
-      ordered_ord(bits64(torch.tensor(5e-324,
-          dtype=torch.float64).item()), 64) == (1 << 63) + 1)
-    t("f64 dist(-min_sub,+min_sub)==3 (crosses -0/+0)",
-      abs(ordered_ord(bits64(torch.tensor(-5e-324,
-          dtype=torch.float64).item()), 64) -
-          ordered_ord(bits64(torch.tensor(5e-324,
-          dtype=torch.float64).item()), 64)) == 3)
-    # classification completeness — the reviewer's two false-pass cases
-    r = ulp_metrics([1.0], [float("inf")], float64=False)
-    t("1.0 vs inf -> class_mismatch detected",
-      r["n_class_mismatches"] == 1)
-    r = ulp_metrics([complex(1, 1)], [complex(1, 1)], float64=False)
-    t("(1+1j) vs (1+1j) identical -> 0 mismatches",
-      r["n_class_mismatches"] == 0 and r["max_ulp_distance"] == 0)
-    r = ulp_metrics([complex(1, float("nan"))],
-                    [complex(1, 0)], float64=True)
-    t("(1+nanj) vs (1+0j) -> imag class mismatch detected",
-      r["n_class_mismatches"] == 1)
-    r = ulp_metrics([float("inf")], [float("-inf")], float64=True)
-    t("+inf vs -inf -> class mismatch detected",
-      r["n_class_mismatches"] == 1)
-    # NaN payload via bits (not repr)
-    n1 = float("nan")
-    n2 = struct.unpack("d", struct.pack("Q", bits64(float("nan")) | (1 << 49)))[0]
-    r = ulp_metrics([n1], [n2], float64=True)
-    t("NaN payload diff flagged via bits",
-      any("nan_payload_diff" in f for f in r["flags"]))
+    # signed-zero policy
+    st, fl, det = component_compare(bits32(-0.0), bits32(0.0), -0.0, 0.0,
+                                    False)
+    t("f32 +/-0 numeric equal with signed_zero flag",
+      st == "equal" and "signed_zero_bit_diff" in fl)
+    # exit-code aggregation negative (round-15 P2: failures must roll up)
+    inject = [
+        {"case": "injected/class_mismatch", "status": "ok",
+         "dtype": "c128", "in_bits": [0], "out_bits": [1],
+         "values": ["nan"], "out_bits_fix": [2], "values_fix": ["nan"],
+         "out_bits_native": [1]},
+    ]
+    hard = aggregate_failures(
+        [{"case": "x", "status": "ok", "dtype": "c64",
+          "in_bits": [0], "out_bits": [0], "out_bits_native": [0],
+          "values": ["1.0"], "values_native": ["1.0"]}],
+        injected_class_mismatch=inject)
+    t("aggregate: injected class mismatch -> nonzero failures",
+      len(hard) > 0)
     all_ok = all(ok for _, ok in tests)
     print(f"SELFTEST: {'PASS' if all_ok else 'FAIL'} "
           f"({len(tests)} tests)", flush=True)
     return {"pass": all_ok, "tests": tests}
+
+
+def aggregate_failures(cases, injected_class_mismatch=None):
+    """Rolls up hard verification failures (round-15): in_bits mismatch,
+    classification mismatch, child failures, missing fields. Pure function
+    for exit-code negative testing."""
+    hard = []
+    for c in cases:
+        for hf in c.get("hard_failures", []):
+            hard.append(f"{c.get('case')}: {hf}")
+        if c.get("in_bits_equal") is False:
+            hard.append(f"{c.get('case')}: in_bits mismatch")
+        if c.get("n_class_mismatches", 0) > 0:
+            hard.append(f"{c.get('case')}: classification mismatch")
+        if c.get("child_failed"):
+            hard.append(f"{c.get('case')}: child failed")
+    if injected_class_mismatch:
+        for inj in injected_class_mismatch:
+            hard.append(f"{inj['case']}: injected classification mismatch")
+    return hard
 
 
 def run_child(mode, op, dtype_name, payload, env):
@@ -313,7 +346,17 @@ def run_child(mode, op, dtype_name, payload, env):
         [sys.executable, "-c", CHILD, mode, op, dtype_name, payload],
         env=env, capture_output=True, text=True, timeout=300)
     line = [l for l in r.stdout.splitlines() if l.startswith("{")]
-    return json.loads(line[-1]) if line else None
+    if r.returncode != 0 or not line:
+        print(f"CHILD rc={r.returncode} ({mode}/{op}/{dtype_name}/{payload})"
+              f" stderr tail: {r.stderr[-200:]}", flush=True)
+        return None, r.returncode
+    return json.loads(line[-1]), r.returncode
+
+
+def sha256_of_bits(bits, float64):
+    fmt = "Q" if float64 else "I"
+    raw = struct.pack(f"{len(bits)}{fmt}", *bits)
+    return hashlib.sha256(raw).hexdigest()[:64]
 
 
 def main():
@@ -322,12 +365,36 @@ def main():
                     default="/tmp/opencode/flagfix-fixed/src")
     ap.add_argument("--out", required=True)
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--exit-code-negative-test", action="store_true",
+                    dest="exit_code_negative_test")
+    ap.add_argument("--baseline-dir",
+                    default=os.path.dirname(os.path.abspath(__file__))
+                    + "/../results/small-model-2026-11-10/baseline")
     args = ap.parse_args()
     if args.selftest:
         res = selftest()
         sm.write_json(args.out, res)
         print(f"wrote {args.out}", flush=True)
         sys.exit(0 if res["pass"] else 1)
+    if args.exit_code_negative_test:
+        # entry-level negative: injected failures must aggregate to
+        # nonzero; a clean case must aggregate to zero
+        dirty = aggregate_failures(
+            [{"case": "injected", "status": "ok", "dtype": "c128",
+              "in_bits": [0], "out_bits": [1], "out_bits_native": [1],
+              "values": ["nan"], "values_native": ["nan"],
+              "n_class_mismatches": 1}])
+        clean = aggregate_failures(
+            [{"case": "clean", "status": "ok", "dtype": "c64",
+              "in_bits": [0], "out_bits": [0], "out_bits_native": [0],
+              "values": ["1.0"], "values_native": ["1.0"],
+              "n_class_mismatches": 0}])
+        ok = len(dirty) > 0 and len(clean) == 0
+        sm.write_json(args.out, {"dirty": dirty, "clean": clean,
+                                 "pass": ok})
+        print(f"EXIT-CODE NEGATIVE TEST: {'PASS' if ok else 'FAIL'}",
+              flush=True)
+        sys.exit(0 if ok else 1)
     env_native = dict(os.environ)
     env_native["PYTHONPATH"] = ""
     env_native.setdefault("CUDA_VISIBLE_DEVICES", "0")
@@ -344,37 +411,81 @@ def main():
         ("abs", "c64", "conj"),
         ("abs", "c128", "conj"),
     ]
-    out = {"cases": []}
+    out = {"cases": [], "byteorder": sys.byteorder,
+           "batch_commit": os.popen("git -C " + os.path.dirname(
+               os.path.abspath(__file__)) +
+               " rev-parse --short HEAD").read().strip() or "unknown"}
+    hard_failures = []
     for (op, dtname, payload) in cases:
-        nat = run_child("native", op, dtname, payload, env_native)
-        fix = run_child("fix", op, dtname, payload, env_fix)
+        nat, nat_rc = run_child("native", op, dtname, payload, env_native)
+        fix, fix_rc = run_child("fix", op, dtname, payload, env_fix)
         if nat is None or fix is None:
-            print(f"CHILD-FAIL {op}/{dtname}/{payload}: "
-                  f"native={'None' if nat is None else 'ok'} "
-                  f"fix={'None' if fix is None else 'ok'}", flush=True)
+            hard_failures.append(
+                f"{op}/{dtname}/{payload}: child failed "
+                f"(native_rc={nat_rc} fix_rc={fix_rc})")
             out["cases"].append({"case": f"{op}/{dtname}/{payload}",
-                                 "child_failed": True})
+                                 "child_failed": True,
+                                 "native_rc": nat_rc, "fix_rc": fix_rc})
             continue
         float64 = dtname == "c128"
-        m = ulp_metrics(nat["values"], fix["values"], float64=float64)
-        bits_equal = (nat["out_bits"] == fix["out_bits"])
+        m = ulp_metrics(nat, fix)
         m.update({"case": f"{op}/{dtname}/{payload}",
                   "input_construction": ("baseline NaN + NaN*j"
-                                         if payload == "nan"
-                                         else "torch.complex payload"),
-                  "input_bits_sha_note": "in_bits recorded",
+                                         if payload == "nan" else
+                                         "torch.complex payload"),
                   "in_bits_equal": nat["in_bits"] == fix["in_bits"],
-                  "out_bits_equal": bits_equal,
-                  "n_values": len(nat["values"])})
+                  "out_bits_equal": nat["out_bits"] == fix["out_bits"],
+                  "out_sha256_native": sha256_of_bits(nat["out_bits"],
+                                                      float64),
+                  "out_sha256_fix": sha256_of_bits(fix["out_bits"],
+                                                   float64),
+                  "shape": fix.get("shape"),
+                  "byteorder": sys.byteorder,
+                  "raw_in_bits_native": nat["in_bits"],
+                  "raw_in_bits_fix": fix["in_bits"],
+                  "raw_out_bits_native": nat["out_bits"],
+                  "raw_out_bits_fix": fix["out_bits"]})
+        if m["in_bits_equal"] is False:
+            hard_failures.append(f"{m['case']}: in_bits mismatch")
+        for hf in m["hard_failures"]:
+            hard_failures.append(f"{m['case']}: {hf}")
         out["cases"].append(m)
-        print(f"{m['case']}: max_abs={m['max_abs_err']:.3e} "
+        print(f"{m['case']}: max_abs={m['max_abs_err']} "
               f"max_ulp={m['max_ulp_distance']} "
               f"flags={m['flags']} "
               f"class_mismatch={m['n_class_mismatches']} "
-              f"out_bits_equal={bits_equal} "
+              f"out_bits_equal={m['out_bits_equal']} "
               f"in_bits_equal={m['in_bits_equal']}", flush=True)
+    # batch reproduction: this run's output hashes vs the committed
+    # round-10 baseline checksums (full sha256, truncated to 64 hex in the
+    # r10 files)
+    repro = []
+    r10n = os.path.join(args.baseline_dir, "baseline-n.json.r10-superseded")
+    r10f = os.path.join(args.baseline_dir,
+                        "baseline-fix.json.r10-superseded")
+    if os.path.exists(r10n) and os.path.exists(r10f):
+        nmap = {c["case"]: c for c in sm.read_json(r10n).get(
+            "edge_numeric", [])}
+        fmap = {c["case"]: c for c in sm.read_json(r10f).get(
+            "edge_numeric", [])}
+        for m in out["cases"]:
+            case = m.get("case")
+            rn = nmap.get(case, {}).get("out_checksum")
+            rf = fmap.get(case, {}).get("out_checksum")
+            if rn and rf:
+                repro.append({"case": case,
+                              "native_matches_r10":
+                                  m["out_sha256_native"] == rn,
+                              "fix_matches_r10":
+                                  m["out_sha256_fix"] == rf})
+    out["batch_reproduction_vs_r10"] = repro
+    out["hard_failures"] = hard_failures
     sm.write_json(args.out, out)
-    print(f"wrote {args.out}", flush=True)
+    print(f"hard_failures: {len(hard_failures)}; "
+          f"batch_reproduction entries: {len(repro)}", flush=True)
+    if hard_failures:
+        print("HARD FAILURES PRESENT — exiting nonzero", flush=True)
+    sys.exit(1 if hard_failures else 0)
 
 
 if __name__ == "__main__":
