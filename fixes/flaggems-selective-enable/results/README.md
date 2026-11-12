@@ -14,4 +14,4 @@
 判定：复现 1→0、语义 fixed exit 0、dispatch 机制成立、整步 -14.0%。
 平台整模型验收 not-run（hardware_status=unverified）。
 
-| `verify-2026-11-11-clean.json` | 干净树复跑，`source_dirty=false`；JSON `source_commit`=`c3c555b0`（verify 运行时 flag-fixes HEAD，机器可读 provenance），patch/source 主体提交=`4052ef37`，生成时间 2026-11-11。adamw 含 vendor nvidia/thead/kunlunxin、显式 forced=1、混合 dtype 断言；flaggems 含 7 例语义矩阵与 WARNING 断言。 |
+| `verify-2026-11-11-clean.json` | 干净树复跑，`source_dirty=false`；JSON `source_commit`=`c3c555b0`（verify 运行时 flag-fixes HEAD，机器可读 provenance），patch/source 主体提交=`4052ef37`（评审修订主体提交；run 源码版本为其后的文档同步提交），生成时间 2026-11-11。adamw 含 vendor nvidia/thead/kunlunxin、显式 forced=1、混合 dtype 断言；flaggems 含 7 例语义矩阵与 WARNING 断言。 |

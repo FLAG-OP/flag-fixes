@@ -89,7 +89,9 @@ ratio 0.332，确定性通过）；CUPTI 关闭时 exit 2=skip。历史 wall 数
 
 ## 二轮评审修订复验（2026-11-11）
 
-最新 clean verify verify 运行时 flag-fixes HEAD = `c3c555b0`（机器可读 provenance，见 JSON `source_commit`；patch/source 主体提交 = `4052ef37`）
+最新 clean verify 运行时 flag-fixes HEAD = `c3c555b0`（机器可读 provenance，见 JSON
+`source_commit`；即评审修订主体提交 `4052ef37` 之后的文档同步提交——运行源码版本
+与后续文档提交分列，避免混淆）
 （`results/verify-2026-11-11-clean.json`，source_dirty=false，4/4 rc=0）；
 选择矩阵扩至 18 例（含 vendor nvidia/thead/kunlunxin、显式 forced=1 回退日志断言、
 混合 dtype）。性能判定口径为 torch.profiler device time。
