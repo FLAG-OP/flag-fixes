@@ -395,6 +395,37 @@ deployable=false / hardware_status=unverified`。工具收尾后按评审建议�
 稳定 `abs`、dtype/out 语义，小模型 p50/p95 固定输入多次重复）；B-only 仍为
 FIX-ITEM-3 优先候选；三平台属 PR3/problem29。
 
+## 第十七轮：批次对照切换至当前 strict baseline（2026-11-12，意见 comment `6816060628`，基于 `867c4b3`；提交 `b26e84f` + 清理 `cd5c2d6`/`7e39f36`）
+
+一项 P2 口径同步落地（按评审方案 1）：`diff_details.py` 的批次对照从
+`.r10-superseded` 归档切换为**当前 strict baseline**（`baseline-n.json` /
+`baseline-fix.json`），字段更名为 `batch_reproduction_vs_strict`
+（`native_matches_strict` / `fix_matches_strict`），比较口径为 **sha256**
+（strict baseline 的 checksum 即 round-12 版本的全字节 sha256）。`batch_reproduction_note` 同步改写。
+
+| 用例 | native 匹配 strict | fix 匹配 strict |
+| --- | --- | --- |
+| abs/c64/extreme_low（确定性 full 输入） | ✓ | ✓ |
+| abs/c128/extreme_low（真实 float64） | ✓ | ✓ |
+| abs/c128/nan | ✓ | ✓ |
+| abs/c128/extreme_high | ✓ | ✓ |
+| sum+abs conj（RNG 依赖输入） | ✗（新批次输入） | ✗（新批次输入） |
+
+- 4 例确定性用例**双树 sha256 与 strict baseline 完全一致**（位级复现）；
+- conj 用例构造代码相同但 RNG 生成状态不同——不与任何存储批次 hash 直接
+  比较，有效检验为**同批 native vs fix 输入位级一致**（in_bits_equal=True）；
+- c128 的 r10 条目系 float32 误标（round-12 修正），其 checksum 与真实
+  c128 输出不可比——已在 note 说明；
+- `.r10-superseded` 归档仅作历史 raw 证据保留（manifest 已标注）。
+
+**流程披露**：round-17 提交 `b26e84f` 因 `git add -A` 误将工作树中其他并行
+修复包（adamw-fused / flaggems-selective-enable / gelu-kunlunxin-pow /
+kunlunxin bundle/docs 等 121 文件）带入分支；后续提交 `cd5c2d6`/`7e39f36`
+已将其从分支移除（文件保留在磁盘未跟踪，其他工作不丢失），共享文件
+（CHANGELOG/README/catalog/docs）恢复至误提交前状态。当前分支相对 `867c4b3`
+仅含 `benchmarks/diff_details.py` 与 `baseline/diff-details.json` 两个预期
+文件。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models

@@ -367,3 +367,9 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   PASS；基线说明对齐当前 strict baseline 口径（确定性用例匹配 strict
   round-12/13；conj 以同批 native/fix 位级一致为有效检验）。状态与验收
   口径不变。
+- 第十七轮（2026-11-12，意见 6816060628）：diff_details 批次对照切换为
+  当前 strict baseline（sha256 口径，字段 batch_reproduction_vs_strict）
+  ——4 例确定性用例双树与 strict baseline 完全一致；conj RNG 依赖以同批
+  位级一致为有效检验；c128 r10 条目 float32 误标不可比。流程披露：round-17
+  提交因 git add -A 误带入其他并行修复包 121 文件，后续提交已从分支移除
+  （磁盘保留），分支现仅含 zeros-7181 预期变更。状态与验收口径不变。

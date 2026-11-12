@@ -394,5 +394,16 @@ notes:
   状态不同）而以同批 native/fix 输入位级一致为有效检验、c128 r10 条目
   float32 误标不可比。diff-details.json 重生成（hard_failures=0，结构
   未变）。功能 fix 维持 draft/deployable=false/hardware_status=unverified。
+- |-
+  第十七轮（2026-11-12，意见 6816060628）：diff_details 批次对照从
+  .r10-superseded 归档切换为当前 strict baseline（baseline-n.json/
+  baseline-fix.json），字段更名 batch_reproduction_vs_strict（sha256 口径
+  与 round-12 checksum 一致）；4 例确定性用例双树 sha256 与 strict baseline
+  完全一致，conj 用例 RNG 依赖不与存储批次比较（同批 native/fix 位级一致
+  为有效检验），c128 r10 条目 float32 误标不可比——note 同步改写。
+  流程披露：round-17 提交因 git add -A 误带入其他并行修复包 121 文件，
+  后续提交已从分支移除（文件保留磁盘未跟踪），共享文件恢复误提交前状态，
+  分支现仅含 zeros-7181 预期变更。功能 fix 维持 draft/deployable=false/
+  hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

@@ -20,3 +20,4 @@
 。第十四轮（意见 6797761554）：diff_details 重写（NaN 同源构造+位级 payload+分类完备+有序 ULP 映射±0 策略+精确断言自测 17/17，修复合并探针暴露的 exp-mask dtype/mantissa 分类 bug）——8 项 numeric_diff 定稿 1–4 ULP（按 dtype 位型）+ NaN payload 位型差异解释闭环，旧批次 superseded
 。第十五轮（意见 6811732879）：classify 符号/指数/尾数独立提取（-inf 误判 NaN 修正）+ 分类精确负例自测 + main 聚合 hard failures 非零退出 + 入口级负例 + 逐分量 raw bits 比较（NaN payload 不经 repr）+ raw bits/sha256/byteorder 归档 + abs/c128/nan 与 r10 checksum 交叉核对
 。第十六轮（意见 6813485321）：ulp_metrics 统一 schema + 必需字段集中校验 + process_case try/except（诊断必写、非零退出）+ 入口级负例三场景 PASS + 基线说明对齐 strict 口径
+。第十七轮（意见 6816060628）：批次对照切换为当前 strict baseline（sha256，字段 batch_reproduction_vs_strict）——4 例确定性用例双树完全一致、conj RNG 依赖以同批位级一致为有效检验、c128 r10 条目不可比；并披露/清理了 git add -A 误带入的其他并行修复包（分支已恢复 zeros-7181 纯净范围）

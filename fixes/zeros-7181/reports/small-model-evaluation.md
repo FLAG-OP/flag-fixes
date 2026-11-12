@@ -439,3 +439,20 @@ validation.
   ULP, abs extremes 1 ULP, abs/c128/nan = output NaN payload-bit
   difference (inputs identical; payload not a pass condition). PR2 stays
   `draft / deployable=false / hardware_status=unverified`.
+
+## 11. Round-17 addendum: batch reproduction switched to the current strict baseline
+
+- `diff_details.py` now compares against the CURRENT strict baseline
+  (`baseline-n.json` / `baseline-fix.json`) instead of the r10-superseded
+  archive; the result field is renamed `batch_reproduction_vs_strict`
+  (sha256, consistent with the round-12 checksum function).
+- Result: the 4 deterministic (torch.full) cases reproduce the strict
+  baseline sha256 bit-exactly on BOTH trees; conj cases are RNG-batch
+  dependent and are only checked within-run (native vs fix inputs
+  bit-identical); the r10 c128 entries were mis-dtyped and are not
+  comparable — all documented in `batch_reproduction_note`.
+- Process disclosure: the round-17 commit accidentally included 121 files
+  from other parallel fix packages (git add -A); follow-up commits
+  removed them from the branch (files kept on disk untracked) and
+  restored shared files to the pre-accident state — the branch now
+  contains only the intended zeros-7181 changes vs 867c4b3.
