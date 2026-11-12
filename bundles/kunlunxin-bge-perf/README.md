@@ -63,6 +63,12 @@ gemm(env) -32.7，其余类目零变化——**修复只动了该动的地方**�
   崩溃 bug（最小复现在 problem29/probes/）。
 - 真实多卡 FSDP2：`cluster_cast_kl3`（12,399 次/步）单卡复现不出，需真实
   节点归因。
+- 边界验证遗留（PR3 四轮评审）：fp16 邻界输入（0x03FF）的 base/fixed
+  dump **pending**——未打补丁 pow 路径触发 error 721 驱动异常并楔死
+  设备（现场：gelu-kunlunxin-pow/results/history/），设备恢复后按
+  `tests/verify_gelu_boundary.py` 流程补跑并刷新对比报告；
+  当前已提交基线的 fp16 用例为 0x007F（bf16 邻界位型，对 fp16 是普通
+  次正规数），patch 前后同输入对照仍有效，但不构成 fp16 邻界覆盖。
 
 ## 平台状态矩阵（PR #3 评审补充）
 

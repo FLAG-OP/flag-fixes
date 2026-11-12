@@ -202,14 +202,22 @@ def self_test(base_path):
     dt = "torch.float32"
     key = "gelu_none_fwd"
 
-    def rejects(payload, tag, must_accept=False):
+    def rejects(payload, tag, must_accept=False, expect_reason=None):
         f, report = [], {}
         compare_payload(base, payload, f, report)
         passed = (len(f) == 0)
+        reason_ok = True
+        if expect_reason is not None:
+            reason_ok = any(expect_reason in x for x in f)
         if must_accept:
             ok = passed
+            if not passed:
+                print(f"    (unexpected failures: {f[:2]})", file=sys.stderr)
         else:
-            ok = not passed
+            ok = (not passed) and reason_ok
+            if not reason_ok:
+                print(f"    (rejection reason mismatch: expected {expect_reason!r} "
+                      f"in {f[:2]})", file=sys.stderr)
         print(f"  {'ok  ' if ok else 'FAIL'} self-test {tag}: "
               f"{'accepted' if passed else 'rejected'} (expected "
               f"{'accept' if must_accept else 'reject'})")
@@ -224,7 +232,8 @@ def self_test(base_path):
                                dtype=torch.float32))   # 先量化到 fp32
     p["outputs"][dt][key]["values"][i] = new_v
     p["outputs"][dt][key]["bits"][i] = float_to_bits(new_v, dt)
-    ok &= rejects(p, "finite corrupted beyond tolerance (values+bits coherent)")
+    ok &= rejects(p, "finite corrupted beyond tolerance (values+bits coherent)",
+                      expect_reason="bitwise differs and no frozen tolerance")
 
     # 2. 容差内修改（gelu_tanh_bwd fp32，atol 冻结为 2e-7；取 |v| 接近 1 的
     #    元素加 1.5e-7：>=1 fp32 ulp 但 <= atol）-> 必须接受（验证容差分支）
@@ -249,16 +258,19 @@ def self_test(base_path):
     flipped = int(digits_of(old_bits), 16) ^ (1 << 31)
     p["outputs"][dt][key]["bits"][i0] = f"0x{flipped:08x}"
     p["outputs"][dt][key]["values"][i0] = struct.unpack(">f", struct.pack(">I", flipped))[0]
-    ok &= rejects(p, "signed-zero sign-bit flip (values+bits coherent)")
+    ok &= rejects(p, "signed-zero sign-bit flip (values+bits coherent)",
+                      expect_reason="signed-zero sign bit differs")
 
     # 4. NaN -> Inf 重分类 -> 必须拒绝
     p = copy.deepcopy(base)
     idx = next(i for i, v in enumerate(p["outputs"][dt][key]["values"]) if math.isnan(v))
     p["outputs"][dt][key]["values"][idx] = float("inf")
     p["outputs"][dt][key]["bits"][idx] = "0x7f800000"
-    ok &= rejects(p, "NaN -> Inf reclassification")
+    ok &= rejects(p, "NaN -> Inf reclassification",
+                      expect_reason="NaN classification differs")
 
-    # 5. Inf 符号翻转 -> 必须拒绝（评审建议补充的覆盖；取有 Inf 输出的张量）
+    # 5. Inf 符号翻转 -> 必须拒绝（评审建议补充的覆盖；按实际 dtype 写回
+    #    位型，并断言拒绝原因是 Inf mask/sign，而非 schema 不一致）
     p = copy.deepcopy(base)
     done = False
     for dtk in sorted(p["outputs"]):
@@ -271,8 +283,9 @@ def self_test(base_path):
             continue
         vals[idx] = -vals[idx]
         bits5 = p["outputs"][dtk][key5]["bits"]
-        bits5[idx] = float_to_bits(vals[idx], "torch.float32")
-        ok &= rejects(p, "Inf sign flip")
+        bits5[idx] = float_to_bits(vals[idx], dtk)
+        ok &= rejects(p, "Inf sign flip",
+                      expect_reason="Inf mask/sign differs")
         done = True
         break
     if not done:
@@ -282,7 +295,8 @@ def self_test(base_path):
     # 6. 缺输出键 -> 必须拒绝
     p = copy.deepcopy(base)
     del p["outputs"][dt][key]
-    ok &= rejects(p, "missing output key")
+    ok &= rejects(p, "missing output key",
+                      expect_reason="output key set differs")
 
     return ok
 
