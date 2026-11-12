@@ -1,0 +1,37 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+flag_gems from: /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py
+/tmp/opencode/FlagGems-base/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list
+  warnings.warn(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::__ilshift__.Tensor(Tensor(a!) self, Tensor other) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:7149
+       new kernel: registered at /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+
+ISSUE REPRODUCED (expected pre-fix, problem.md / issue #7181):
+Traceback (most recent call last):
+  File "/root/flag-fixes/fixes/zeros-7181/tests/repro_complex64.py", line 69, in <module>
+    z = gops.zeros((2,), dtype=dt, device=DEV)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/opencode/FlagGems-base/src/flag_gems/ops/zeros.py", line 53, in zeros
+    zeros_kernel[grid_fn](out, N, BLOCK_SIZE=1024)
+  File "/usr/local/lib/python3.12/site-packages/triton/runtime/jit.py", line 399, in <lambda>
+    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/triton/runtime/jit.py", line 753, in run
+    bound_args, specialization, options = binder(*args, **kwargs)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in dynamic_func
+  File "/usr/local/lib/python3.12/site-packages/triton/_utils.py", line 137, in canonicalize_ptr_dtype
+    return f"{'*k' if is_const else '*'}{canonicalize_dtype(dtype)}"
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/site-packages/triton/_utils.py", line 133, in canonicalize_dtype
+    return type_canonicalisation_dict[dtype_str]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'complex64'

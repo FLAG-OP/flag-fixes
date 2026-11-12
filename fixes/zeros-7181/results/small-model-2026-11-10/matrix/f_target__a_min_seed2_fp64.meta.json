@@ -1,0 +1,379 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 2,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "conj": {
+      "W2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 3.370672748633963,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.7893074600394603,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.7470718145433579,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.0582057984699882,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.4116001953966248,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.20382430776295024,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.22211263562390077,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "contig": {
+      "W2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 3.370672748633963,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.7893074600394603,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.7470718145433579,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.0582057984699882,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.4116001953966248,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.20382430776295024,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.22211263562390077,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "noncontig": {
+      "W2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 3.370672748633963,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.7893074600394603,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.7470718145433579,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.0582057984699882,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.4116001953966248,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.20382430776295024,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.22211263562390077,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_conj": 1.1616729410546451,
+    "single_contig": 1.1616729410546451,
+    "single_noncontig": 1.1616729410546451,
+    "train_conj": [
+      1.1616729410546451,
+      0.20509541256849467,
+      0.05419062025349143,
+      0.026088863145147623,
+      0.019403424848254164,
+      0.0166396849224312,
+      0.014752498623301613,
+      0.013191776957431171,
+      0.011838682993206461,
+      0.010651924800229333,
+      0.00960670446543893,
+      0.008683716405426058,
+      0.007866810839408267,
+      0.007142230073386377,
+      0.006498182466685669,
+      0.005924527252273465,
+      0.005412520374444214,
+      0.004954604557538839,
+      0.0045442343461550875,
+      0.004175729507202434
+    ],
+    "train_contig": [
+      1.1616729410546451,
+      0.20509541256849467,
+      0.05419062025349143,
+      0.026088863145147623,
+      0.019403424848254164,
+      0.0166396849224312,
+      0.014752498623301613,
+      0.013191776957431171,
+      0.011838682993206461,
+      0.010651924800229333,
+      0.00960670446543893,
+      0.008683716405426058,
+      0.007866810839408267,
+      0.007142230073386377,
+      0.006498182466685669,
+      0.005924527252273465,
+      0.005412520374444214,
+      0.004954604557538839,
+      0.0045442343461550875,
+      0.004175729507202434
+    ],
+    "train_noncontig": [
+      1.1616729410546451,
+      0.20509541256849467,
+      0.05419062025349143,
+      0.026088863145147623,
+      0.019403424848254164,
+      0.0166396849224312,
+      0.014752498623301613,
+      0.013191776957431171,
+      0.011838682993206461,
+      0.010651924800229333,
+      0.00960670446543893,
+      0.008683716405426058,
+      0.007866810839408267,
+      0.007142230073386377,
+      0.006498182466685669,
+      0.005924527252273465,
+      0.005412520374444214,
+      0.004954604557538839,
+      0.0045442343461550875,
+      0.004175729507202434
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "f_target",
+    "hits": {
+      "abs": true,
+      "absolute": true,
+      "sum": true,
+      "sum.dim_IntList": true
+    },
+    "include": [
+      "sum",
+      "sum_dim",
+      "sum_out",
+      "sum_dim_out",
+      "abs",
+      "absolute"
+    ],
+    "registered_keys": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum.IntList_out",
+      "sum.dim_IntList",
+      "sum.out"
+    ],
+    "registered_ops": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum_dim",
+      "sum_dim_out",
+      "sum_out"
+    ]
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp64",
+    "group": "f_target",
+    "lr": 0.1,
+    "model": "a",
+    "pythonpath": "/tmp/opencode/flagfix-fixed/src",
+    "seed": 2,
+    "steps": 20,
+    "variants": [
+      "contig",
+      "noncontig",
+      "conj"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/a_min_seed2_fp64.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      16,
+      8
+    ],
+    "stride": [
+      128,
+      8,
+      1
+    ]
+  }
+}

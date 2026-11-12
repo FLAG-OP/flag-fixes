@@ -1,0 +1,73 @@
+{
+  "pass": true,
+  "tests": [
+    [
+      "f32 +0.0 ord == 0x80000000",
+      true
+    ],
+    [
+      "f32 -0.0 ord == 0x7FFFFFFF",
+      true
+    ],
+    [
+      "f32 +min_sub ord == 0x80000001",
+      true
+    ],
+    [
+      "f32 -min_sub ord == 0x7FFFFFFE",
+      true
+    ],
+    [
+      "f32 dist(-min_sub,+min_sub)==3 (crosses -0/+0)",
+      true
+    ],
+    [
+      "f32 dist(-0.0,+0.0)==0 under signed-zero policy",
+      true
+    ],
+    [
+      "f32 +/-0 numeric ulp == 0 with signed_zero_bit_diff flag",
+      true
+    ],
+    [
+      "f32 dist(1.0,nextafter)==1",
+      true
+    ],
+    [
+      "f32 dist(-1.0, prev-neg)==1",
+      true
+    ],
+    [
+      "f64 -0.0 ord == 0x7FFFFFFFFFFFFFFF",
+      true
+    ],
+    [
+      "f64 +min_sub ord == (1<<63)+1",
+      true
+    ],
+    [
+      "f64 dist(-min_sub,+min_sub)==3 (crosses -0/+0)",
+      true
+    ],
+    [
+      "1.0 vs inf -> class_mismatch detected",
+      true
+    ],
+    [
+      "(1+1j) vs (1+1j) identical -> 0 mismatches",
+      true
+    ],
+    [
+      "(1+nanj) vs (1+0j) -> imag class mismatch detected",
+      true
+    ],
+    [
+      "+inf vs -inf -> class mismatch detected",
+      true
+    ],
+    [
+      "NaN payload diff flagged via bits",
+      true
+    ]
+  ]
+}

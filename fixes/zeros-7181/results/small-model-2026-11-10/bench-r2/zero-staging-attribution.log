@@ -1,0 +1,15 @@
+== NATIVE (no flag_gems), c64 2^20 = 8MB ==
+[fix's inherited path]
+native x.copy_(0) (python scalar)     : 0.8204 ms
+native copy_(cpu-0dim c64 tensor)     : 0.8096 ms
+[device-side alternatives]
+device-scalar creation (c0.cuda()), SINGLE-SHOT: 0.3358 ms
+device-scalar creation (c0.cuda()), 50-iter average: 0.0145 ms
+native copy_(PRE-BUILT device-0dim), copy-only: 0.0089 ms
+native x.zero_() (device memset)      : 0.0043 ms
+[creation reference]
+native torch.zeros(c64) creation      : 0.0078 ms
+== c128 2^20 = 16MB ==
+native x128.copy_(0)                  : 1.5196 ms
+native x128.copy_(PRE-BUILT device)   : 0.0067 ms
+native x128.zero_()                   : 0.0057 ms

@@ -1,0 +1,72 @@
+{
+  "comment": "auto-checked against git; generated for round-6 provenance sync (review 6784122575)",
+  "accuracy_matrix_run": {
+    "commit": "968d624",
+    "note": "device runs executed with the harness AS OF THIS COMMIT",
+    "files_changed_after_run_until_comparator_v2": {
+      "tests/test_small_models.py": "226 lines changed (170+/56-), 968d624..fac401c — comparator hardening; device data re-scored from saved dumps, not re-run",
+      "tests/small_models.py": "unchanged (git diff empty)"
+    }
+  },
+  "bench_r2_run": {
+    "commit": "dd5ebea"
+  },
+  "rescoring_commit": {
+    "commit": "fac401c"
+  },
+  "evidence_commits": [
+    "5e02b3b (round-4)",
+    "fb13007 (round-5)"
+  ],
+  "round6_additions": [
+    "zeros_hitprobe.py runs",
+    "zero_staging_probe.py run (native attribution)",
+    "gen_perf_section.py output"
+  ],
+  "round10_additions": {
+    "zero_candidates_screening": {
+      "initial_batch": "working tree at 2a0753a (script content byte-identical to 59301a1)",
+      "confirmation_batch": "clean commit 59301a1 rerun",
+      "outcome": "matrix 60/60 both batches; perf medians within ~3% across batches",
+      "files": [
+        "bench-r2/zero-candidates.json (initial)",
+        "bench-r2/zero-candidates-59301a1-confirmation.json"
+      ]
+    },
+    "baseline_freeze": {
+      "initial_batch": "working tree at 2a0753a",
+      "confirmation_batch": "clean commit 59301a1 rerun",
+      "outcome": "52/58 bitwise-equal, prefix 58/58 crashes — identical both batches",
+      "files": [
+        "baseline/baseline-{n,fix,prefix}.json (initial)",
+        "baseline/*-59301a1-confirmation.json"
+      ]
+    }
+  },
+  "round12_additions": {
+    "harness_fix_commit": "51642d8",
+    "table_writer_fix_commit": "fc71b82",
+    "final_clean_run_commit": "fc71b82",
+    "results": {
+      "zero_candidates_native": "260/260 (real c64/c128)",
+      "zero_candidates_registered": "224 pass + 36 C-failures (FIX-ITEM-5)",
+      "baseline_strict": "50 numeric_equal + 8 numeric_diff (1-2 ULP class; NaN payload bits differ, propagation correct)",
+      "u8sum_repro": "7/8 fail both trees (identical failure set)"
+    },
+    "superseded": "see r12-superseded-manifest.md"
+  },
+  "round13_additions": {
+    "dtype_aware_ulp_commit": "32ee6a9",
+    "ulp_mapping_selftest": "baseline/ulp-mapping-selftest.json (c128 sub-f32-ULP diff -> 1 float64 ULP; old magnitude-based mapping reported 0)",
+    "diff_details_rerun": "baseline/diff-details.json (c64 f32 mapping 1-2 ULP; c128 f64 mapping 1-4 ULP; NaN values identical, payload bits not guaranteed)",
+    "baseline_summary_synced": "strict final batch (50 numeric_equal + 8 numeric_diff) copied to baseline/baseline-summary.json; r10 originals archived as *.r10-superseded",
+    "file_mapping_check": "run-commits round12_additions.final_clean_run_commit=fc71b82 <-> baseline-freeze-final.log <-> baseline/* (strict) <-> diff-details.json"
+  },
+  "round14_additions": {
+    "harness_commit": "7a691c8",
+    "diff_details_rewrite": "NaN case uses baseline construction (NaN+NaN*j, bit-level payload comparison); classification-complete metrics; ordered ULP mapping with signed-zero policy",
+    "final": {
+      "numeric_diff_8_cases": "conj sum/abs <=4 float64 ULP / <=2 float32 ULP; abs extreme 1 ULP; abs/c128/nan = output NaN payload bits differ (inputs identical, both NaN, mask match -> payload not a pass condition)"
+    }
+  }
+}

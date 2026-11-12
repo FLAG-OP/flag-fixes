@@ -1,0 +1,353 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 2,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "conj": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 3.370672179883181,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.7893071160032676,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.7470714513261711,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.058205717304978,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.41160014059571987,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.20382428286834778,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.22211259388021715,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "contig": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 3.370672179883181,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.7893071160032676,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.7470714513261711,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.058205717304978,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.41160014059571987,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.20382428286834778,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.22211259388021715,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "noncontig": {
+      "W2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 3.3706718942796066,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.7893070611086227,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.7470714140262646,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 1.0582056679557375,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.41160013901742337,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.20382424461576557,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.22211257157554057,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_conj": 1.161672830581665,
+    "single_contig": 1.161672830581665,
+    "single_noncontig": 1.1616727113723755,
+    "train_conj": [
+      1.161672830581665,
+      0.205095574259758,
+      0.054190680384635925,
+      0.0260888934135437,
+      0.019403429701924324,
+      0.01663968525826931,
+      0.014752496965229511,
+      0.013191776350140572,
+      0.011838683858513832,
+      0.010651921853423119,
+      0.009606706909835339,
+      0.008683716878294945,
+      0.007866811007261276,
+      0.0071422322653234005,
+      0.006498182658106089,
+      0.005924535449594259,
+      0.005412527825683355,
+      0.0049546100199222565,
+      0.0045442418195307255,
+      0.004175734240561724
+    ],
+    "train_contig": [
+      1.161672830581665,
+      0.205095574259758,
+      0.054190680384635925,
+      0.0260888934135437,
+      0.019403429701924324,
+      0.01663968525826931,
+      0.014752496965229511,
+      0.013191776350140572,
+      0.011838683858513832,
+      0.010651921853423119,
+      0.009606706909835339,
+      0.008683716878294945,
+      0.007866811007261276,
+      0.0071422322653234005,
+      0.006498182658106089,
+      0.005924535449594259,
+      0.005412527825683355,
+      0.0049546100199222565,
+      0.0045442418195307255,
+      0.004175734240561724
+    ],
+    "train_noncontig": [
+      1.1616727113723755,
+      0.2050955891609192,
+      0.05419068783521652,
+      0.02608889527618885,
+      0.01940343528985977,
+      0.01663968712091446,
+      0.014752501621842384,
+      0.013191776350140572,
+      0.011838691309094429,
+      0.010651928372681141,
+      0.009606710635125637,
+      0.008683723397552967,
+      0.007866813801229,
+      0.007142235990613699,
+      0.006498182658106089,
+      0.005924530792981386,
+      0.005412520840764046,
+      0.004954607225954533,
+      0.0045442404225468636,
+      0.004175734706223011
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": null,
+    "group": "n",
+    "hits": {},
+    "include": null,
+    "registered_keys": [],
+    "registered_ops": []
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp32",
+    "group": "n",
+    "lr": 0.1,
+    "model": "a",
+    "pythonpath": "",
+    "seed": 2,
+    "steps": 20,
+    "variants": [
+      "contig",
+      "noncontig",
+      "conj"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/a_min_seed2_fp32.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      16,
+      8
+    ],
+    "stride": [
+      128,
+      8,
+      1
+    ]
+  }
+}

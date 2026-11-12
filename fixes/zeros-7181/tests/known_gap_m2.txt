@@ -1,0 +1,40 @@
+# Exact known missing-gradient set for m2-bert e2e (12L default config).
+# Pre-existing flag_gems gap: hyena filter_fn/filter_fn2 submodules hit the
+# autograd-not-implemented fallback for pad/conv1d (no flag_gems autograd
+# kernels); observed identical on complex-fix-free trees. Recorded from an
+# actual run (2026-11-08) and asserted bidirectionally by
+# test_m2_bert_backward.py: any missing grad outside this set fails, and any
+# entry here that HAS a grad fails as a stale fixture.
+# "{i}" is the 0-based layer index; regenerated: see reports/validation.md.
+encoder.layer.{i}.attention.filter_fn.implicit_filter.0.bias
+encoder.layer.{i}.attention.filter_fn.implicit_filter.0.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter.1.freq
+encoder.layer.{i}.attention.filter_fn.implicit_filter.2.bias
+encoder.layer.{i}.attention.filter_fn.implicit_filter.2.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter.4.bias
+encoder.layer.{i}.attention.filter_fn.implicit_filter.4.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter.6.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.0.bias
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.0.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.2.bias
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.2.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.4.bias
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.4.weight
+encoder.layer.{i}.attention.filter_fn.implicit_filter_rev.6.weight
+encoder.layer.{i}.attention.filter_fn.pos_emb.z
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.0.bias
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.0.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.1.freq
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.2.bias
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.2.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.4.bias
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.4.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter.6.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.0.bias
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.0.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.2.bias
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.2.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.4.bias
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.4.weight
+encoder.layer.{i}.attention.filter_fn2.implicit_filter_rev.6.weight
+encoder.layer.{i}.attention.filter_fn2.pos_emb.z

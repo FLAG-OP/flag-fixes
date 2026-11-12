@@ -1,0 +1,20 @@
+/tmp/opencode/flagfix-e2ebase/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::sum.IntList_out(Tensor self, int[1]? dim, bool keepdim=False, *, ScalarType? dtype=None, Tensor(a!) out) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_1.cpp:4863
+       new kernel: registered at /tmp/opencode/flagfix-e2ebase/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+BAD 1d/default: got=101 torch.uint8 (want 357 torch.int64)
+OK  1d/explicit-i64: got=357 torch.int64 (want 357 torch.int64)
+BAD 1d/large-accum: got=165 torch.uint8 (want 133131941 torch.int64)
+BAD 2d/full: got=173 torch.uint8 (want 32685 torch.int64)
+BAD 2d/dim0: got=[66, 249, 159, 15, 185, 186, 216, 102, 73, 44, 86, 43, 235, 37, 22, 247] torch.uint8 (want <16 elems> torch.int64)
+BAD 2d/dim1: got=[239, 17, 238, 75, 80, 112, 251, 236, 118, 71, 199, 44, 189, 114, 53, 185] torch.uint8 (want <16 elems> torch.int64)
+BAD noncontig/view: got=241 torch.uint8 (want 2033 torch.int64)
+BAD empty: got=0 torch.uint8 (want 0 torch.int64)
+SUMMARY: 7 failures / 8 cases (FAIL)
+failing cases: ['1d/default', '1d/large-accum', '2d/full', '2d/dim0', '2d/dim1', 'noncontig/view', 'empty']

@@ -1,0 +1,494 @@
+diff --git a/src/flag_gems/ops/abs.py b/src/flag_gems/ops/abs.py
+index 62e081f3..2cd81d08 100644
+--- a/src/flag_gems/ops/abs.py
++++ b/src/flag_gems/ops/abs.py
+@@ -17,6 +17,7 @@ import logging
+ import triton
+ import triton.language as tl
+ 
++from flag_gems.ops.absolute import absolute
+ from flag_gems.utils import pointwise_dynamic
+ 
+ logger = logging.getLogger(__name__)
+@@ -30,10 +31,20 @@ def abs_func(x):
+ 
+ def abs(A):
+     logger.debug("GEMS ABS")
++    if A.is_complex():
++        # Triton's type_canonicalisation_dict has no complex entry, so the
++        # pointwise kernel must not see a complex pointer. |a+bi| is computed
++        # by absolute(), whose real-view reduction is hypot-stable (scaled
++        # sqrt(re^2+im^2)) so large/small magnitudes do not overflow.
++        return absolute(A)
+     return abs_func(A)
+ 
+ 
+ def abs_(A):
+     logger.debug("GEMS ABS_")
++    if A.is_complex():
++        # Match native torch, which rejects in-place abs for complex tensors
++        # instead of failing inside the Triton launch path.
++        raise RuntimeError("In-place abs is not supported for complex tensors.")
+     abs_func(A, out0=A)
+     return A
+diff --git a/src/flag_gems/ops/absolute.py b/src/flag_gems/ops/absolute.py
+index c5766123..9ba577ec 100644
+--- a/src/flag_gems/ops/absolute.py
++++ b/src/flag_gems/ops/absolute.py
+@@ -46,13 +46,25 @@ def _absolute_complex_kernel(ri_ptr, out_ptr, n_elements, BLOCK_SIZE: tl.constex
+     base = offsets * 2
+     re = tl.load(ri_ptr + base, mask=mask)
+     im = tl.load(ri_ptr + base + 1, mask=mask)
+-    y = tl.sqrt(re * re + im * im)
++    # hypot-stable magnitude: naive sqrt(re*re+im*im) overflows float32 for
++    # |z| > ~1.4e19 (1e20+1e20j -> inf instead of 1.414e20) and underflows
++    # for |z| < ~1.2e-23 (1e-30+1e-30j -> 0 instead of 1.414e30). Scale by
++    # m = max(|re|,|im|) first (std::hypot style), keep +-inf explicit so it
++    # wins over NaN like std::hypot, and let NaN propagate through the math.
++    a = tl.abs(re)
++    b = tl.abs(im)
++    m = tl.maximum(a, b)
++    m_safe = tl.where(m > 0, m, 1.0)
++    y = m * tl.sqrt((re / m_safe) * (re / m_safe) + (im / m_safe) * (im / m_safe))
++    y = tl.where((a == float("inf")) | (b == float("inf")), float("inf"), y)
+     tl.store(out_ptr + offsets, y, mask=mask)
+ 
+ 
+ def absolute(input: torch.Tensor):
+     logger.debug("GEMS ABSOLUTE")
+-    x = input.contiguous()
++    # resolve_conj materializes an unresolved conjugate view (no-op otherwise):
++    # contiguous() does not clear the conj bit and view_as_real rejects it.
++    x = input.resolve_conj().contiguous()
+     n_elements = x.numel()
+     grid = lambda meta: (triton.cdiv(n_elements, meta["BLOCK_SIZE"]),)
+ 
+@@ -71,6 +83,10 @@ def absolute(input: torch.Tensor):
+ 
+ def absolute_(input: torch.Tensor):
+     logger.debug("GEMS ABSOLUTE_")
++    if input.is_complex():
++        # Match native torch, which rejects in-place abs for complex tensors
++        # instead of failing inside the Triton launch path.
++        raise RuntimeError("In-place abs is not supported for complex tensors.")
+     n_elements = input.numel()
+     if n_elements == 0:
+         return input
+diff --git a/src/flag_gems/ops/conv2d.py b/src/flag_gems/ops/conv2d.py
+index 54b25363..0a323b93 100644
+--- a/src/flag_gems/ops/conv2d.py
++++ b/src/flag_gems/ops/conv2d.py
+@@ -285,7 +285,7 @@ def conv2d_backward_kernel_weight(
+         :, None
+     ]
+ 
+-    input_pointer += (ci_point_value * input_c_stride[None])[:, None] + (
++    input_pointer += (ci_point_value * input_c_stride)[:, None] + (
+         pid_groups[None] * input_c_stride * input_c
+     )[None, :]
+ 
+diff --git a/src/flag_gems/ops/sum.py b/src/flag_gems/ops/sum.py
+index 30fe4fe8..d5b5be7b 100644
+--- a/src/flag_gems/ops/sum.py
++++ b/src/flag_gems/ops/sum.py
+@@ -21,13 +21,113 @@ import triton
+ import triton.language as tl
+ 
+ from flag_gems import runtime
+-from flag_gems.ops.zeros import zero_
+ from flag_gems.runtime import torch_device_fn
+ from flag_gems.utils import dim_compress, libentry, libtuner
+ from flag_gems.utils import triton_lang_extension as ext
+ 
+ logger = logging.getLogger(__name__)
+ 
++# Triton's type_canonicalisation_dict has no complex entry, so a complex
++# tensor must never reach a kernel above. Complex reductions are therefore
++# decomposed into real/imaginary parts (view_as_real layout) and recombined
++# with view_as_complex, matching ATen semantics.
++_COMPLEX_TO_REAL = {
++    torch.complex32: torch.float16,
++    torch.complex64: torch.float32,
++    torch.complex128: torch.float64,
++}
++
++# ATen spells dtype names in sum.out's error messages differently from
++# torch.dtype reprs (e.g. float32 -> "float", int64 -> "long int").
++_ATEN_DTYPE_NAMES = {
++    torch.float16: "c10::Half",
++    torch.bfloat16: "c10::BFloat16",
++    torch.float32: "float",
++    torch.float64: "double",
++    torch.complex64: "c10::complex<float>",
++    torch.complex128: "c10::complex<double>",
++    torch.int64: "long int",
++    torch.int32: "int",
++    torch.int16: "short",
++    torch.int8: "signed char",
++    torch.uint8: "unsigned char",
++    torch.bool: "bool",
++}
++
++
++def _aten_dtype_name(dtype):
++    return _ATEN_DTYPE_NAMES.get(dtype, str(dtype).replace("torch.", ""))
++
++
++def _real_sum(x, dim, keepdim, dtype):
++    """Sum a real tensor with ATen dim/keepdim semantics.
++
++    Routes through the public entries so their empty-tensor branches apply
++    (sum_dim_comm would divide by a zero-sized dim).
++    """
++    if dim is None or (isinstance(dim, (list, tuple)) and len(dim) == 0):
++        res = sum(x, dtype=dtype)
++        if keepdim:
++            res = res.reshape([1] * x.ndim)
++        return res
++    return sum_dim(x, dim, keepdim, dtype=dtype)
++
++
++def _sum_complex(inp, dim=None, keepdim=False, *, dtype=None, out=None):
++    """ATen-compatible sum for complex inputs (and complex dtype requests).
++
++    * dtype None / complex -> sum real and imaginary parts separately and
++      recombine (cast the input up first when a wider complex dtype is
++      requested, mirroring ATen promotion).
++    * dtype real -> ATen casts the complex input to the real dtype first
++      (dropping the imaginary part), so summing the real parts matches.
++      bool is the exception (c10 TypeCast): a complex value converts to
++      True when EITHER component is nonzero, so the cast must see the full
++      complex tensor, not just the real part.
++    """
++    # Materialize an unresolved conj bit first: the .real/.imag accessors
++    # hand back views whose raw storage is un-negated, which downstream
++    # kernels read literally (dispatch works only because ATen materializes
++    # conj inputs before entering this path).
++    inp = inp.resolve_conj()
++    if inp.is_complex():
++        if dtype is None or dtype.is_complex:
++            target = dtype if dtype is not None else inp.dtype
++            if target != inp.dtype:
++                inp = inp.to(target)
++            part_dtype = _COMPLEX_TO_REAL[target]
++            real_part = _real_sum(inp.real, dim, keepdim, part_dtype)
++            imag_part = _real_sum(inp.imag, dim, keepdim, part_dtype)
++            res = torch.view_as_complex(torch.stack((real_part, imag_part), dim=-1))
++            if res.dtype != target:
++                res = res.to(target)
++        elif dtype is torch.bool:
++            # sum([0+1j], dtype=bool) is True: cast the whole complex tensor
++            # with the any-component rule, then reduce (cast-first, ATen).
++            # Build the mask from real/imag comparisons: float->bool casts
++            # truncate in flag_gems while the nonzero rule must apply.
++            res = _real_sum(inp.real.ne(0) | inp.imag.ne(0), dim, keepdim, torch.bool)
++        else:
++            res = _real_sum(inp.real, dim, keepdim, dtype)
++    else:
++        # real input with a complex dtype requested: sum in the matching real
++        # dtype, then reinterpret the result as complex (imag parts are zero).
++        part_dtype = _COMPLEX_TO_REAL[dtype]
++        res = _real_sum(inp, dim, keepdim, part_dtype).to(dtype)
++    if out is not None:
++        if out.shape != res.shape:
++            out.resize_(res.shape)
++        if out.dtype != res.dtype:
++            # ATen sum.out raises on an out dtype that differs from the
++            # computed result; copy_ alone would silently cast (review P2).
++            raise RuntimeError(
++                f"Expected out tensor to have dtype {_aten_dtype_name(res.dtype)}, "
++                f"but got {_aten_dtype_name(out.dtype)} instead"
++            )
++        out.copy_(res)
++        return out
++    return res
++
+ 
+ @libentry()
+ @triton.jit
+@@ -73,22 +173,39 @@ def sum_kernel_2(mid, out, mid_size, BLOCK_MID: tl.constexpr):
+     tl.store(out, sum_val)
+ 
+ 
++def _cast_before_sum(inp, dtype):
++    """ATen casts the input to dtype before reducing (cast-first).
++
++    The bool cast must use the nonzero rule (0.5 -> True): flag_gems'
++    float->bool cast kernel truncates instead (0.5 -> False), so build the
++    mask with a comparison.
++    """
++    if dtype == inp.dtype:
++        return inp
++    if dtype is torch.bool:
++        return inp.ne(0)
++    return inp.to(dtype)
++
++
+ def sum(inp, *, dtype=None):
+     logger.debug("GEMS SUM")
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, None, False, dtype=dtype)
+     inp = inp.contiguous()
++    if dtype is None:
++        dtype = inp.dtype
++        if dtype is torch.bool:
++            dtype = torch.int64
++    if dtype != inp.dtype:
++        # ATen casts the input to dtype before summing (full sum and dim sum
++        # both); accumulate in the cast dtype instead of widening afterwards.
++        inp = _cast_before_sum(inp, dtype)
+     M = inp.numel()
+ 
+     if M == 0:
+-        if dtype is None:
+-            dtype = inp.dtype
+         out = torch.zeros([], dtype=dtype, device=inp.device)
+         return out
+ 
+-    if dtype is None:
+-        dtype = inp.dtype
+-        if dtype is torch.bool:
+-            inp = inp.to(torch.int64)
+-            dtype = torch.int64
+     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
+     mid_size = triton.cdiv(M, block_size)
+     block_mid = triton.next_power_of_2(mid_size)
+@@ -104,12 +221,30 @@ def sum(inp, *, dtype=None):
+ 
+ def sum_out(inp, *, dtype=None, out):
+     logger.debug("GEMS SUM_OUT")
+-    M = inp.numel()
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, None, False, dtype=dtype, out=out)
+     if dtype is None:
+         dtype = inp.dtype
+         if dtype is torch.bool:
+-            inp = inp.to(torch.int64)
+             dtype = torch.int64
++    if dtype != inp.dtype:
++        inp = _cast_before_sum(inp, dtype)
++    if out.dtype != dtype:
++        # ATen sum.out (full reduction) does NOT adopt out.dtype and raises
++        # when it differs from the computed dtype.
++        raise RuntimeError(
++            f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
++            f"but got {_aten_dtype_name(out.dtype)} instead"
++        )
++    M = inp.numel()
++    if M == 0:
++        # Empty full reduction: ATen yields a zero scalar of dtype without
++        # launching the kernel (the kernel path divides by a zero mid size).
++        res = torch.zeros([], dtype=dtype, device=inp.device)
++        if out.shape != res.shape:
++            out.resize_(res.shape)
++        out.copy_(res)
++        return out
+     block_size = triton.next_power_of_2(math.ceil(math.sqrt(M)))
+     mid_size = triton.cdiv(M, block_size)
+     block_mid = triton.next_power_of_2(mid_size)
+@@ -264,7 +399,15 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
+         dtype = inp.dtype
+         if dtype is torch.bool:
+             dtype = torch.int64
+-
++    if dim is not None and not isinstance(dim, (list, tuple)):
++        # public entries accept a scalar dim (torch.sum(x, 0)); normalize
++        # for the iterable-only reduction body below.
++        dim = [dim]
++    if dtype != inp.dtype:
++        # ATen casts the input to dtype before reducing, so for instance
++        # f32->i64 truncates each element before summing (summing first and
++        # truncating the total can differ by 1); bool uses the nonzero rule.
++        inp = _cast_before_sum(inp, dtype)
+     if dim is None:
+         result = torch.sum(inp, dtype=dtype)
+         if keepdim:
+@@ -347,44 +490,71 @@ def sum_dim_comm(inp, dim=None, keepdim=False, *, dtype=None, out=None):
+         return out
+ 
+ 
++def _empty_dim_result(inp, dim, keepdim, dtype):
++    """Zeros of the reduced shape for an empty input.
++
++    ATen never launches the reduction for a zero-element input; sharing this
++    between sum_dim's empty branch and sum_dim_out keeps both from dividing
++    by a zero-sized dim (review P2: sum_dim_out used to ZeroDivisionError).
++    """
++    out_shape = list(inp.shape)
++    if dim is None or (isinstance(dim, (list, tuple)) and len(dim) == 0):
++        if keepdim:
++            out_shape = [1] * len(out_shape)
++        else:
++            out_shape = []
++    else:
++        dims_to_reduce = dim if isinstance(dim, (list, tuple)) else [dim]
++        if keepdim:
++            for d in dims_to_reduce:
++                out_shape[d % inp.ndim] = 1
++        else:
++            sorted_dims_to_remove = sorted(
++                dims_to_reduce, key=lambda x: x % inp.ndim, reverse=True
++            )
++            for d in sorted_dims_to_remove:
++                index_to_remove = d % inp.ndim
++                out_shape.pop(index_to_remove)
++    return torch.zeros(out_shape, dtype=dtype, device=inp.device)
++
++
+ def sum_dim(inp, dim=None, keepdim=False, *, dtype=None):
+     logger.debug("GEMS SUM_DIM")
++    if inp.is_complex() or (dtype is not None and dtype.is_complex):
++        return _sum_complex(inp, dim, keepdim, dtype=dtype)
+     # support dim = 0, which are consistent with PyTorch
+     if inp.numel() == 0:
+         if dtype is None:
+             dtype = inp.dtype
+-        if dtype is torch.bool:
+-            dtype = torch.int64
+-
+-        out_shape = list(inp.shape)
+-        if dim is None:
+-            if keepdim:
+-                out_shape = [1] * len(out_shape)
+-            else:
+-                out_shape = []
+-        elif isinstance(dim, (list, tuple)) and len(dim) == 0:
+-            if keepdim:
+-                out_shape = [1] * len(out_shape)
+-            else:
+-                out_shape = []
+-        else:
+-            dims_to_reduce = dim if isinstance(dim, (list, tuple)) else [dim]
+-            if keepdim:
+-                for d in dims_to_reduce:
+-                    out_shape[d % inp.ndim] = 1
+-            else:
+-                sorted_dims_to_remove = sorted(
+-                    dims_to_reduce, key=lambda x: x % inp.ndim, reverse=True
+-                )
+-                for d in sorted_dims_to_remove:
+-                    index_to_remove = d % inp.ndim
+-                    out_shape.pop(index_to_remove)
+-        out = torch.empty(out_shape, dtype=dtype, device=inp.device)
+-        zero_(out)
+-        return out
++            if dtype is torch.bool:
++                # ATen's empty bool reduction without an explicit dtype
++                # promotes to int64; an explicit dtype=torch.bool is kept.
++                dtype = torch.int64
++        return _empty_dim_result(inp, dim, keepdim, dtype)
+     return sum_dim_comm(inp, dim, keepdim, dtype=dtype)
+ 
+ 
+ def sum_dim_out(inp, dim=None, keepdim=False, *, dtype=None, out):
+     logger.debug("GEMS SUM_DIM_OUT")
++    if dtype is None:
++        # ATen sum.dim_IntList_out computes in out.dtype when dtype is omitted
++        # (real, complex and bool inputs alike, empty and non-empty); the
++        # full-reduction sum.out variant does not adopt and requires a match.
++        dtype = out.dtype
++    if inp.is_complex() or dtype.is_complex or out.is_complex():
++        return _sum_complex(inp, dim, keepdim, dtype=dtype, out=out)
++    if dtype != out.dtype:
++        # ATen: an explicit dtype that differs from out.dtype raises.
++        raise RuntimeError(
++            f"Expected out tensor to have dtype {_aten_dtype_name(dtype)}, "
++            f"but got {_aten_dtype_name(out.dtype)} instead"
++        )
++    if inp.numel() == 0:
++        # Empty reductions yield zeros of the reduced shape in dtype (bool
++        # out included); sum_dim_comm would divide by a zero-sized dim.
++        res = _empty_dim_result(inp, dim, keepdim, dtype)
++        if out.shape != res.shape:
++            out.resize_(res.shape)
++        out.copy_(res)
++        return out
+     return sum_dim_comm(inp, dim, keepdim, dtype=dtype, out=out)
+diff --git a/src/flag_gems/ops/zero.py b/src/flag_gems/ops/zero.py
+index adb75894..67e045e3 100644
+--- a/src/flag_gems/ops/zero.py
++++ b/src/flag_gems/ops/zero.py
+@@ -44,6 +44,14 @@ def _launch_zero_kernel(tensor: torch.Tensor):
+     assert isinstance(tensor, torch.Tensor), "Expected a torch.Tensor"
+     if tensor.device.type != flag_gems.device:
+         raise ValueError(f"Tensor must be on {flag_gems.device} device")
++    if tensor.is_complex():
++        # Triton's type_canonicalisation_dict has no complex entry, and the
++        # dense kernel below writes at contiguous offsets, so it must not see
++        # a complex (or strided) tensor. Native ATen copy_ is stride-correct
++        # and matches zeros.zero_'s complex path; unlike the old view_as_real
++        # recursion it also handles slices/transpose views correctly.
++        tensor.copy_(0)
++        return tensor
+     assert tensor.is_contiguous(), "Tensor must be contiguous"
+     assert tensor.numel() >= 0
+     n_elements = tensor.numel()
+diff --git a/src/flag_gems/ops/zeros.py b/src/flag_gems/ops/zeros.py
+index 7d6bc59a..db711e80 100644
+--- a/src/flag_gems/ops/zeros.py
++++ b/src/flag_gems/ops/zeros.py
+@@ -47,6 +47,10 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
+         device = torch.device(device_.name)
+ 
+     out = torch.empty(size, device=device, dtype=dtype)
++    if out.is_complex():
++        # Triton has no complex dtype; zero through zero_ instead.
++        zero_(out)
++        return out
+     N = volume(size)
+     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
+     with torch_device_fn.device(device):
+@@ -56,6 +60,14 @@ def zeros(size, *, dtype=None, layout=None, device=None, pin_memory=None):
+ 
+ def zero_(x: torch.Tensor) -> torch.Tensor:
+     logger.debug("GEMS ZERO_")
++    if x.is_complex():
++        # Triton's type_canonicalisation_dict has no complex entry, and the
++        # dense kernel below writes numel zeros at contiguous offsets, which
++        # corrupts strided views (zeros of a [::2] slice must land at strides,
++        # not at 0..numel-1). Native ATen copy_ is stride-correct and is the
++        # same redispatch path ops/copy.py uses for complex tensors.
++        x.copy_(0)
++        return x
+     N = x.numel()
+     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
+     with torch_device_fn.device(x.device):
+diff --git a/src/flag_gems/ops/zeros_like.py b/src/flag_gems/ops/zeros_like.py
+index 7110fc6f..75eaea7e 100644
+--- a/src/flag_gems/ops/zeros_like.py
++++ b/src/flag_gems/ops/zeros_like.py
+@@ -17,7 +17,7 @@ import logging
+ import torch
+ import triton
+ 
+-from flag_gems.ops.zeros import zeros_kernel
++from flag_gems.ops.zeros import zero_, zeros_kernel
+ from flag_gems.runtime import torch_device_fn
+ 
+ logger = logging.getLogger(__name__)
+@@ -32,6 +32,10 @@ def zeros_like(
+     if dtype is None:
+         dtype = x.dtype
+     out = torch.empty_like(x, device=device, dtype=dtype)
++    if out.is_complex():
++        # Triton has no complex dtype; zero through the real view instead.
++        zero_(out)
++        return out
+     N = x.numel()
+     grid_fn = lambda meta: (triton.cdiv(N, meta["BLOCK_SIZE"]),)
+     with torch_device_fn.device(x.device):
+diff --git a/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py b/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+index 016f030d..88226dad 100644
+--- a/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
++++ b/src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+@@ -167,8 +167,8 @@ def linear_backward(
+     for dim in batch_dims:
+         batch_size *= dim
+ 
+-    input_flat = input.view(batch_size, in_features).contiguous()
+-    grad_output_flat = grad_output.view(batch_size, out_features).contiguous()
++    input_flat = input.reshape(batch_size, in_features)
++    grad_output_flat = grad_output.reshape(batch_size, out_features).contiguous()
+ 
+     grad_input = None
+     grad_weight = None

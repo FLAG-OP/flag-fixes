@@ -1,0 +1,232 @@
+/root/flag-fixes/fixes/zeros-7181/tests/test_complex_ops.py:88: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at ../aten/src/ATen/native/Copy.cpp:308.)
+  native[("c", dt, "realout")] = torch.sum(c, dtype=torch.float64 if rdt == torch.float32 else torch.float32)
+/root/flag-fixes/fixes/zeros-7181/tests/test_complex_ops.py:258: UserWarning: An output with one or more elements was resized since it had shape [2, 1], which does not match the required output shape [3]. This behavior is deprecated, and in a future PyTorch release outputs will not be resized unless they have zero elements. You can explicitly reuse an out tensor t by resizing it, inplace, to zero elements with t.resize_(0). (Triggered internally at ../aten/src/ATen/native/Resize.cpp:31.)
+  lambda _ci=_ci, _dt=_dt: torch.sum(_ci, 0,
+/tmp/opencode/flagfix-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+flag_gems from: /tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py
+/tmp/opencode/flagfix-fixed/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list
+  warnings.warn(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::__ilshift__.Tensor(Tensor(a!) self, Tensor other) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:7149
+       new kernel: registered at /tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+[PASS] sum full torch.complex64
+[PASS] sum dim0 torch.complex64
+[PASS] sum dim-1 keepdim torch.complex64
+[PASS] sum dim(0,1) torch.complex64
+[PASS] sum upcast c128 torch.complex64
+[PASS] sum out real torch.complex64
+[PASS] sum empty torch.complex64
+[PASS] sum noncontig torch.complex64
+[PASS] zeros torch.complex64
+[PASS] zeros_like torch.complex64
+[PASS] zeros_like dtype torch.complex64
+[PASS] zeros empty torch.complex64
+[PASS] flag_gems.zeros direct torch.complex64
+[PASS] flag_gems.zero_ torch.complex64
+[PASS] aten.zero_ torch.complex64
+[PASS] abs torch.complex64
+[PASS] abs noncontig torch.complex64
+[PASS] abs empty torch.complex64
+[PASS] flag_gems.abs direct torch.complex64
+[PASS] torch.absolute torch.complex64
+[PASS] sum full torch.complex128
+[PASS] sum dim0 torch.complex128
+[PASS] sum dim-1 keepdim torch.complex128
+[PASS] sum dim(0,1) torch.complex128
+[PASS] sum upcast c128 torch.complex128
+[PASS] sum out real torch.complex128
+[PASS] sum empty torch.complex128
+[PASS] sum noncontig torch.complex128
+[PASS] zeros torch.complex128
+[PASS] zeros_like torch.complex128
+[PASS] zeros_like dtype torch.complex128
+[PASS] zeros empty torch.complex128
+[PASS] flag_gems.zeros direct torch.complex128
+[PASS] flag_gems.zero_ torch.complex128
+[PASS] aten.zero_ torch.complex128
+[PASS] abs torch.complex128
+[PASS] abs noncontig torch.complex128
+[PASS] abs empty torch.complex128
+[PASS] flag_gems.abs direct torch.complex128
+[PASS] torch.absolute torch.complex128
+[PASS] sum f32
+[PASS] sum f32 dim0
+[PASS] sum f64
+[PASS] sum i64
+[PASS] sum i64 dim0 keepdim
+[PASS] zeros f32
+[PASS] zeros_like f32
+[PASS] zeros_like i64->f64
+[PASS] zeros f32 empty
+[PASS] abs f32
+[PASS] abs i64
+[PASS] abs_ real in-place
+[PASS] abs_ torch.complex64 rejected identical to native: In-place abs is not supported for complex tensors.
+[PASS] abs_ torch.complex128 rejected identical to native: In-place abs is not supported for complex tensors.
+[PASS] zero_ strided torch.complex64 slice[::2]
+[PASS] zero (zero.py) strided torch.complex64 slice[::2]
+[PASS] aten.zero_ strided torch.complex64 slice[::2]
+[PASS] zero_ strided torch.complex64 slice[1::2]
+[PASS] zero (zero.py) strided torch.complex64 slice[1::2]
+[PASS] zero_ strided torch.complex64 view-col
+[PASS] zero (zero.py) strided torch.complex64 view-col
+[PASS] zero_ strided torch.complex64 narrow-offset
+[PASS] zero (zero.py) strided torch.complex64 narrow-offset
+[PASS] zero_ strided torch.complex64 transpose
+[PASS] zero (zero.py) strided torch.complex64 transpose
+[PASS] zero_ strided torch.complex64 0-dim
+[PASS] zero (zero.py) strided torch.complex64 0-dim
+[PASS] zero_ strided torch.complex128 slice[::2]
+[PASS] zero (zero.py) strided torch.complex128 slice[::2]
+[PASS] aten.zero_ strided torch.complex128 slice[::2]
+[PASS] zero_ strided torch.complex128 slice[1::2]
+[PASS] zero (zero.py) strided torch.complex128 slice[1::2]
+[PASS] zero_ strided torch.complex128 view-col
+[PASS] zero (zero.py) strided torch.complex128 view-col
+[PASS] zero_ strided torch.complex128 narrow-offset
+[PASS] zero (zero.py) strided torch.complex128 narrow-offset
+[PASS] zero_ strided torch.complex128 transpose
+[PASS] zero (zero.py) strided torch.complex128 transpose
+[PASS] zero_ strided torch.complex128 0-dim
+[PASS] zero (zero.py) strided torch.complex128 0-dim
+[PASS] abs magnitude edges torch.complex64
+[PASS] abs magnitude edges torch.complex128
+[PASS] sum.out matrix torch.complex64 dim0 out=same
+[PASS] sum.out matrix torch.complex64 dim0 out=other-complex adopt
+[PASS] sum.out matrix torch.complex64 dim0 dtype=c128 out=c128
+[PASS] sum.out matrix torch.complex64 dim0 dtype=c128 out=c64 ERR
+[PASS] sum.out matrix torch.complex64 dim0 dtype=f32 out=f32
+[PASS] sum.out matrix torch.complex64 dim0 dtype=f64 out=f32 ERR
+[PASS] sum.out matrix torch.complex64 dim0 out=f32 adopt
+[PASS] sum.out matrix torch.complex64 dim0 out=f64 adopt
+[PASS] sum.out matrix torch.complex64 dim0 out=i64 adopt
+[PASS] sum.out matrix torch.complex64 dim(0,1) out=same
+[PASS] sum.out matrix torch.complex64 dim(0,1) out=c128 adopt
+[PASS] sum.out matrix torch.complex64 dim0 keepdim out=(1,3)
+[PASS] sum.out matrix torch.complex64 dim0 out=(2,1) resize
+[PASS] sum.out matrix torch.complex64 empty dim0 out
+[PASS] sum.out matrix torch.complex64 aten full out=same
+[PASS] sum.out matrix torch.complex64 aten full out=other-complex ERR
+[PASS] sum.out matrix torch.complex64 aten full dtype=c128 out=c64 ERR
+[PASS] sum.out matrix torch.complex64 aten full dtype=c128 out=c128
+[PASS] sum.out matrix torch.complex64 aten full out=i64 ERR
+[PASS] sum.out matrix torch.complex128 dim0 out=same
+[PASS] sum.out matrix torch.complex128 dim0 out=other-complex adopt
+[PASS] sum.out matrix torch.complex128 dim0 dtype=c128 out=c128
+[PASS] sum.out matrix torch.complex128 dim0 dtype=c128 out=c64 ERR
+[PASS] sum.out matrix torch.complex128 dim0 dtype=f32 out=f32
+[PASS] sum.out matrix torch.complex128 dim0 dtype=f64 out=f32 ERR
+[PASS] sum.out matrix torch.complex128 dim0 out=f32 adopt
+[PASS] sum.out matrix torch.complex128 dim0 out=f64 adopt
+[PASS] sum.out matrix torch.complex128 dim0 out=i64 adopt
+[PASS] sum.out matrix torch.complex128 dim(0,1) out=same
+[PASS] sum.out matrix torch.complex128 dim(0,1) out=c128 adopt
+[PASS] sum.out matrix torch.complex128 dim0 keepdim out=(1,3)
+[PASS] sum.out matrix torch.complex128 dim0 out=(2,1) resize
+[PASS] sum.out matrix torch.complex128 empty dim0 out
+[PASS] sum.out matrix torch.complex128 aten full out=same
+[PASS] sum.out matrix torch.complex128 aten full out=other-complex ERR
+[PASS] sum.out matrix torch.complex128 aten full dtype=c128 out=c64 ERR
+[PASS] sum.out matrix torch.complex128 aten full dtype=c128 out=c128
+[PASS] sum.out matrix torch.complex128 aten full out=i64 ERR
+[PASS] sum.out matrix f32 dim0 out=i64 adopt
+[PASS] sum.out matrix f32 dim0 out=f64 adopt
+[PASS] sum.out matrix f32 dim0 out=c64 adopt
+[PASS] sum.out matrix f32 dim0 dtype=f64 out=f32 ERR
+[PASS] sum.out matrix f32 aten full out=f64 ERR
+[PASS] sum.out matrix f32 aten full out=f32
+[PASS] sum.out matrix f32 aten full out=i64 ERR
+[PASS] sum.out matrix f32 cancel dim0 out=bool
+[PASS] sum.out matrix f32 cancel dim0 dtype=bool
+[PASS] sum.out matrix f32 cancel full dtype=bool
+[PASS] sum.out matrix f32 cancel aten full dtype=bool out=bool
+[PASS] sum.out matrix c64 frac dim0 dtype=bool
+[PASS] sum.out matrix c64 frac all dtype=bool out bool
+[PASS] sum.out matrix f32 empty dim0 dtype=bool
+[PASS] sum.out matrix bool dim0 out=bool adopt
+[PASS] sum.out matrix bool dim0 dtype=bool out=bool
+[PASS] sum.out matrix bool dim0 out=i64 adopt
+[PASS] sum.out matrix bool dim0 out=f32 adopt
+[PASS] sum.out matrix bool dim0 dtype=f32 out=f32
+[PASS] sum.out matrix bool dim0 dtype=f32 out=bool ERR
+[PASS] sum.out matrix bool dim0 dtype=bool out=i64 ERR
+[PASS] sum.out matrix bool dim(0,1) out=bool
+[PASS] sum.out matrix bool dim0 keepdim out bool
+[PASS] sum.out matrix bool count2 out=bool
+[PASS] sum.out matrix bool count3 out=bool
+[PASS] sum.out matrix bool aten full out=bool ERR
+[PASS] sum.out matrix bool aten full dtype=bool out=bool
+[PASS] sum.out matrix bool aten full out=i64
+[PASS] sum.out matrix f32 dim0 out=bool adopt
+[PASS] sum.out matrix bool empty dim0 out=bool
+[PASS] sum.out matrix bool empty dim0 out=i64
+[PASS] sum.out matrix bool empty dim0 out=f32
+[PASS] sum.out matrix bool empty dim0 dtype=bool out=bool
+[PASS] sum.out matrix bool empty dim0 dtype=f32 out=i64 ERR
+[PASS] sum.out matrix bool empty dim1 out=bool
+[PASS] sum.out matrix bool empty dim0 keepdim out bool
+[PASS] sum.out matrix bool empty full out=i64
+[PASS] sum.out matrix bool empty full out=bool ERR
+[PASS] sum.out matrix bool empty full dtype=bool out=bool
+[PASS] sum.out matrix bool empty no-dim
+[PASS] sum.out matrix bool empty no-dim dtype=bool
+[PASS] sum.out matrix bool empty dim0 dtype=bool
+[PASS] sum.out matrix f32 empty dim0 out=f32
+[PASS] sum.out matrix f32 empty dim0 out=i64
+[PASS] sum.out matrix c64 pureimag dim0 out=bool adopt
+[PASS] sum.out matrix c64 pureimag dim0 dtype=bool out=bool
+[PASS] sum.out matrix c64 pureimag dim0 dtype=bool
+[PASS] sum.out matrix c64 pureimag all dtype=bool
+[PASS] sum.out matrix c128 pureimag dim0 dtype=bool out=bool
+[PASS] sum.out matrix c64 mixed dim0 dtype=bool out=bool
+[PASS] sum.out matrix c64 mixed all dtype=bool
+[PASS] sum.out matrix c64 c22 dim0 dtype=bool out bool
+[PASS] sum.out matrix c64 c22 dim1 dtype=bool out bool
+[PASS] sum.out matrix c64 allzero dim0 dtype=bool out bool
+[PASS] sum.out matrix c64 dim0 dtype=bool out=i64 ERR
+[PASS] sum.out matrix c64 empty dim0 dtype=bool out bool
+[PASS] sum.out matrix c64 empty full dtype=bool out bool
+[PASS] sum.out matrix c64 empty full out=bool ERR
+[PASS] conj abs torch.complex64 direct
+[PASS] conj abs torch.complex64 dispatch
+[PASS] conj abs_strided torch.complex64 direct
+[PASS] conj abs_strided torch.complex64 dispatch
+[PASS] conj sum torch.complex64 direct
+[PASS] conj sum torch.complex64 dispatch
+[PASS] conj sum_dim0 torch.complex64 direct
+[PASS] conj sum_dim0 torch.complex64 dispatch
+[PASS] conj sum_strided torch.complex64 direct
+[PASS] conj sum_strided torch.complex64 dispatch
+[PASS] conj abs torch.complex128 direct
+[PASS] conj abs torch.complex128 dispatch
+[PASS] conj abs_strided torch.complex128 direct
+[PASS] conj abs_strided torch.complex128 dispatch
+[PASS] conj sum torch.complex128 direct
+[PASS] conj sum torch.complex128 dispatch
+[PASS] conj sum_dim0 torch.complex128 direct
+[PASS] conj sum_dim0 torch.complex128 dispatch
+[PASS] conj sum_strided torch.complex128 direct
+[PASS] conj sum_strided torch.complex128 dispatch
+[PASS] autograd grad abs().sum() torch.complex64
+[PASS] autograd fwd abs().sum() torch.complex64
+[PASS] autograd grad sum().abs() torch.complex64
+[PASS] autograd fwd sum().abs() torch.complex64
+[PASS] autograd grad (x*2).abs().sum() torch.complex64
+[PASS] autograd fwd (x*2).abs().sum() torch.complex64
+[PASS] autograd grad abs().sum() torch.complex128
+[PASS] autograd fwd abs().sum() torch.complex128
+[PASS] autograd grad sum().abs() torch.complex128
+[PASS] autograd fwd sum().abs() torch.complex128
+[PASS] autograd grad (x*2).abs().sum() torch.complex128
+[PASS] autograd fwd (x*2).abs().sum() torch.complex128
+
+TOTAL: 210 passed, 0 failed, 210 total
+ALL COMPLEX OPS REGRESSION PASSED

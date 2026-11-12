@@ -1,0 +1,1690 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "matrix": [
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        64,
+        2
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 2,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1,
+        32
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32
+      ],
+      "storage_offset": 3,
+      "stride": [
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "current",
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "A",
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "B",
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "C",
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    },
+    {
+      "alias_ok": true,
+      "all_zero": true,
+      "candidate": "native_ref",
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "shape": [
+        32,
+        32
+      ],
+      "storage_offset": 0,
+      "stride": [
+        32,
+        1
+      ],
+      "unselected_ok": true
+    }
+  ],
+  "matrix_summary": {
+    "fail": 0,
+    "pass": 60
+  },
+  "perf": [
+    {
+      "block_device_ms": [
+        69.28324127197266,
+        66.73255920410156,
+        66.75372314453125,
+        66.72007751464844,
+        66.73532104492188
+      ],
+      "candidate": "current",
+      "cv_pct": 1.69452590739019,
+      "dtype": "c64",
+      "first_call_ms": 3.6353600025177,
+      "first_call_wall_ms": 6.629522998991888,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.6673532104492188
+    },
+    {
+      "block_device_ms": [
+        0.8269199728965759,
+        0.8256000280380249,
+        0.819920003414154,
+        0.8288400173187256,
+        0.5936400294303894
+      ],
+      "candidate": "A",
+      "cv_pct": 13.30755589942184,
+      "dtype": "c64",
+      "first_call_ms": 0.023800000548362732,
+      "first_call_wall_ms": 0.05437700019683689,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.00825600028038025
+    },
+    {
+      "block_device_ms": [
+        0.4972800016403198,
+        0.4968799948692322,
+        0.4955599904060364,
+        0.4957599937915802,
+        0.49671998620033264
+      ],
+      "candidate": "B",
+      "cv_pct": 0.14987625510921682,
+      "dtype": "c64",
+      "first_call_ms": 0.01576000079512596,
+      "first_call_wall_ms": 0.03929199738195166,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004967199862003327
+    },
+    {
+      "block_device_ms": [
+        1.5648000240325928,
+        1.5376800298690796,
+        1.5417200326919556,
+        1.5424799919128418,
+        1.5540399551391602
+      ],
+      "candidate": "C",
+      "cv_pct": 0.7185776792521631,
+      "dtype": "c64",
+      "first_call_ms": 0.02727999910712242,
+      "first_call_wall_ms": 0.04597799852490425,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.015424799919128419
+    },
+    {
+      "block_device_ms": [
+        0.419840008020401,
+        0.41620001196861267,
+        0.4169999957084656,
+        0.41819998621940613,
+        0.4214000105857849
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.5044779661557368,
+      "dtype": "c64",
+      "first_call_ms": 0.013880000449717045,
+      "first_call_wall_ms": 0.03188400296494365,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004181999862194061
+    },
+    {
+      "block_device_ms": [
+        110.78431701660156,
+        110.4797592163086,
+        110.63500213623047,
+        111.02147674560547,
+        113.28079986572266
+      ],
+      "candidate": "current",
+      "cv_pct": 1.0410282984405828,
+      "dtype": "c64",
+      "first_call_ms": 1.1795200109481812,
+      "first_call_wall_ms": 1.2377450002531987,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.1078431701660156
+    },
+    {
+      "block_device_ms": [
+        0.7162799835205078,
+        0.709879994392395,
+        0.7086399793624878,
+        0.7112399935722351,
+        0.6025599837303162
+      ],
+      "candidate": "A",
+      "cv_pct": 7.076836110457578,
+      "dtype": "c64",
+      "first_call_ms": 0.0258799996227026,
+      "first_call_wall_ms": 0.07030800043139607,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.0070987999439239505
+    },
+    {
+      "block_device_ms": [
+        0.5649600028991699,
+        0.5636000037193298,
+        0.5627599954605103,
+        0.5651599764823914,
+        0.563319981098175
+      ],
+      "candidate": "B",
+      "cv_pct": 0.18637713920933277,
+      "dtype": "c64",
+      "first_call_ms": 0.015639999881386757,
+      "first_call_wall_ms": 0.036110999644733965,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005636000037193298
+    },
+    {
+      "block_device_ms": [
+        1.6314400434494019,
+        1.6316399574279785,
+        1.6267600059509277,
+        1.6203999519348145,
+        1.6015599966049194
+      ],
+      "candidate": "C",
+      "cv_pct": 0.7701167724630142,
+      "dtype": "c64",
+      "first_call_ms": 0.028279999271035194,
+      "first_call_wall_ms": 0.04843599890591577,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.016267600059509276
+    },
+    {
+      "block_device_ms": [
+        0.543720006942749,
+        0.5465599894523621,
+        0.5442000031471252,
+        0.544160008430481,
+        0.5429999828338623
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.24578519840896407,
+      "dtype": "c64",
+      "first_call_ms": 0.014680000022053719,
+      "first_call_wall_ms": 0.03315000139991753,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005441600084304809
+    },
+    {
+      "block_device_ms": [
+        69.16703796386719,
+        70.88423919677734,
+        102.41532135009766,
+        90.45964050292969,
+        90.27603912353516
+      ],
+      "candidate": "current",
+      "cv_pct": 16.814959509429805,
+      "dtype": "c64",
+      "first_call_ms": 0.7409999966621399,
+      "first_call_wall_ms": 0.7758710016787518,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.9027603912353516
+    },
+    {
+      "block_device_ms": [
+        0.693560004234314,
+        0.7025600075721741,
+        0.8105199933052063,
+        0.7045999765396118,
+        0.6822400093078613
+      ],
+      "candidate": "A",
+      "cv_pct": 7.247214142506561,
+      "dtype": "c64",
+      "first_call_ms": 0.020519999787211418,
+      "first_call_wall_ms": 0.0531250007043127,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.00702560007572174
+    },
+    {
+      "block_device_ms": [
+        0.498199999332428,
+        0.4970000088214874,
+        0.4967600107192993,
+        0.49748000502586365,
+        0.4971199929714203
+      ],
+      "candidate": "B",
+      "cv_pct": 0.1126621685738909,
+      "dtype": "c64",
+      "first_call_ms": 0.014999999664723873,
+      "first_call_wall_ms": 0.03470499723334797,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.004971199929714203
+    },
+    {
+      "block_device_ms": [
+        1.6523200273513794,
+        1.6619199514389038,
+        1.6558400392532349,
+        1.6487599611282349,
+        1.6608400344848633
+      ],
+      "candidate": "C",
+      "cv_pct": 0.3368229092296797,
+      "dtype": "c64",
+      "first_call_ms": 0.03248000144958496,
+      "first_call_wall_ms": 0.051801998779410496,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.016558400392532348
+    },
+    {
+      "block_device_ms": [
+        0.4163599908351898,
+        0.42320001125335693,
+        0.41624000668525696,
+        0.4142400026321411,
+        0.4158799946308136
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.8314775820987863,
+      "dtype": "c64",
+      "first_call_ms": 0.015239999629557133,
+      "first_call_wall_ms": 0.03377599932719022,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.00416240006685257
+    },
+    {
+      "block_device_ms": [
+        163.86424255371094,
+        160.9672393798828,
+        170.96812438964844,
+        182.77627563476562,
+        174.48440551757812
+      ],
+      "candidate": "current",
+      "cv_pct": 5.089894413279388,
+      "dtype": "c128",
+      "first_call_ms": 1.6839200258255005,
+      "first_call_wall_ms": 1.7169569982797839,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.7096812438964843
+    },
+    {
+      "block_device_ms": [
+        0.8165599703788757,
+        0.8203200101852417,
+        0.8160399794578552,
+        0.6978800296783447,
+        0.66184002161026
+      ],
+      "candidate": "A",
+      "cv_pct": 10.039130043444377,
+      "dtype": "c128",
+      "first_call_ms": 0.023159999400377274,
+      "first_call_wall_ms": 0.05120300193084404,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.008160399794578553
+    },
+    {
+      "block_device_ms": [
+        1.156599998474121,
+        1.1562800407409668,
+        1.1560399532318115,
+        1.1548800468444824,
+        1.1563199758529663
+      ],
+      "candidate": "B",
+      "cv_pct": 0.057928477709941154,
+      "dtype": "c128",
+      "first_call_ms": 0.01711999997496605,
+      "first_call_wall_ms": 0.03589200059650466,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.011562800407409668
+    },
+    {
+      "block_device_ms": [
+        1.517799973487854,
+        1.5096800327301025,
+        1.511080026626587,
+        1.5100799798965454,
+        1.5073599815368652
+      ],
+      "candidate": "C",
+      "cv_pct": 0.2602789893086937,
+      "dtype": "c128",
+      "first_call_ms": 0.02768000029027462,
+      "first_call_wall_ms": 0.04639700273401104,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.015100799798965454
+    },
+    {
+      "block_device_ms": [
+        0.5275999903678894,
+        0.5280799865722656,
+        0.5271999835968018,
+        0.526960015296936,
+        0.526639997959137
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.10641740359689934,
+      "dtype": "c128",
+      "first_call_ms": 0.01432000007480383,
+      "first_call_wall_ms": 0.031757001124788076,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005271999835968017
+    },
+    {
+      "block_device_ms": [
+        179.48768615722656,
+        179.4429931640625,
+        179.38839721679688,
+        179.6913604736328,
+        181.6532440185547
+      ],
+      "candidate": "current",
+      "cv_pct": 0.5383042578692521,
+      "dtype": "c128",
+      "first_call_ms": 1.8617600202560425,
+      "first_call_wall_ms": 1.9065970009251032,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 1.7948768615722657
+    },
+    {
+      "block_device_ms": [
+        1.3539600372314453,
+        1.353559970855713,
+        1.3507599830627441,
+        1.3517999649047852,
+        1.3519200086593628
+      ],
+      "candidate": "A",
+      "cv_pct": 0.09823060747398164,
+      "dtype": "c128",
+      "first_call_ms": 0.023479999974370003,
+      "first_call_wall_ms": 0.054160998843144625,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.013519200086593628
+    },
+    {
+      "block_device_ms": [
+        1.3525199890136719,
+        1.3523999452590942,
+        1.3529200553894043,
+        1.353119969367981,
+        1.3526400327682495
+      ],
+      "candidate": "B",
+      "cv_pct": 0.021830825372611634,
+      "dtype": "c128",
+      "first_call_ms": 0.019840000197291374,
+      "first_call_wall_ms": 0.038070000300649554,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.013526400327682495
+    },
+    {
+      "block_device_ms": [
+        1.7655600309371948,
+        1.7640399932861328,
+        1.7660000324249268,
+        1.76364004611969,
+        1.7626800537109375
+      ],
+      "candidate": "C",
+      "cv_pct": 0.07796874384963075,
+      "dtype": "c128",
+      "first_call_ms": 0.03068000078201294,
+      "first_call_wall_ms": 0.050292001105844975,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.017640399932861327
+    },
+    {
+      "block_device_ms": [
+        0.8876399993896484,
+        0.8879600167274475,
+        0.8869600296020508,
+        0.8874800205230713,
+        0.8864799737930298
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.06599435683849042,
+      "dtype": "c128",
+      "first_call_ms": 0.014440000057220459,
+      "first_call_wall_ms": 0.033435997465858236,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.008874800205230713
+    },
+    {
+      "block_device_ms": [
+        180.58311462402344,
+        192.3815155029297,
+        190.39840698242188,
+        189.37615966796875,
+        189.28756713867188
+      ],
+      "candidate": "current",
+      "cv_pct": 2.413259835651264,
+      "dtype": "c128",
+      "first_call_ms": 1.861840009689331,
+      "first_call_wall_ms": 1.8954689985548612,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 1.8937615966796875
+    },
+    {
+      "block_device_ms": [
+        1.1642400026321411,
+        1.169160008430481,
+        1.1673200130462646,
+        1.1684800386428833,
+        1.1669199466705322
+      ],
+      "candidate": "A",
+      "cv_pct": 0.1621676332935132,
+      "dtype": "c128",
+      "first_call_ms": 0.030519999563694,
+      "first_call_wall_ms": 0.07209199975477532,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.011673200130462646
+    },
+    {
+      "block_device_ms": [
+        1.1622799634933472,
+        1.1653599739074707,
+        1.1641600131988525,
+        1.1670399904251099,
+        1.1677199602127075
+      ],
+      "candidate": "B",
+      "cv_pct": 0.18853128777085346,
+      "dtype": "c128",
+      "first_call_ms": 0.022919999435544014,
+      "first_call_wall_ms": 0.056764998589642346,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.011653599739074707
+    },
+    {
+      "block_device_ms": [
+        2.4231998920440674,
+        2.414560079574585,
+        2.4169199466705322,
+        2.414720058441162,
+        2.410640001296997
+      ],
+      "candidate": "C",
+      "cv_pct": 0.19094215483856708,
+      "dtype": "c128",
+      "first_call_ms": 0.05031999945640564,
+      "first_call_wall_ms": 0.08744400111027062,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.02414720058441162
+    },
+    {
+      "block_device_ms": [
+        0.5948799848556519,
+        0.5890399813652039,
+        0.5392000079154968,
+        0.5262399911880493,
+        0.5248799920082092
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 6.199615145278052,
+      "dtype": "c128",
+      "first_call_ms": 0.021640000864863396,
+      "first_call_wall_ms": 0.055240001529455185,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.005392000079154968
+    }
+  ],
+  "purpose": "round-10 zero_ candidate screening (native harness; does not modify the zeros-7181 patch)",
+  "torch": "2.10.0"
+}

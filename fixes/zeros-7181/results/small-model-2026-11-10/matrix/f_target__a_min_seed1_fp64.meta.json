@@ -1,0 +1,379 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 1,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "conj": {
+      "W2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 7.993336023324831,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.8221952993283252,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.9994654466461292,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 2.0785398897755534,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.5920620762003928,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.6258779374145027,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.6337021690821469,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "contig": {
+      "W2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 7.993336023324831,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.8221952993283252,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.9994654466461292,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 2.0785398897755534,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.5920620762003928,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.6258779374145027,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.6337021690821469,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    },
+    "noncontig": {
+      "W2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 7.993336023324831,
+        "present": true,
+        "shape": [
+          4,
+          16
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.8221952993283252,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wr": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 1.9994654466461292,
+        "present": true,
+        "shape": [
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "b2": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 2.0785398897755534,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bi": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.5920620762003928,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "br": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.6258779374145027,
+        "present": true,
+        "shape": [
+          8
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float64",
+        "finite": true,
+        "norm": 0.6337021690821469,
+        "present": true,
+        "shape": [
+          2,
+          16,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_conj": 4.340265546659076,
+    "single_contig": 4.340265546659076,
+    "single_noncontig": 4.340265546659076,
+    "train_conj": [
+      4.340265546659076,
+      0.11546075507289467,
+      0.009485347821802702,
+      0.003250039825718648,
+      0.0027631295269351006,
+      0.0026350470119287425,
+      0.0025350577840198615,
+      0.00244130052748888,
+      0.002352025260788744,
+      0.0022668690752432777,
+      0.002185583949393068,
+      0.002107946409728889,
+      0.002033749745049955,
+      0.0019628022380110415,
+      0.0018949259829795853,
+      0.001829955909090005,
+      0.0017677390102593495,
+      0.0017081338522269755,
+      0.0016510105194907294,
+      0.0015962513778130794
+    ],
+    "train_contig": [
+      4.340265546659076,
+      0.11546075507289467,
+      0.009485347821802702,
+      0.003250039825718648,
+      0.0027631295269351006,
+      0.0026350470119287425,
+      0.0025350577840198615,
+      0.00244130052748888,
+      0.002352025260788744,
+      0.0022668690752432777,
+      0.002185583949393068,
+      0.002107946409728889,
+      0.002033749745049955,
+      0.0019628022380110415,
+      0.0018949259829795853,
+      0.001829955909090005,
+      0.0017677390102593495,
+      0.0017081338522269755,
+      0.0016510105194907294,
+      0.0015962513778130794
+    ],
+    "train_noncontig": [
+      4.340265546659076,
+      0.11546075507289467,
+      0.009485347821802702,
+      0.003250039825718648,
+      0.0027631295269351006,
+      0.0026350470119287425,
+      0.0025350577840198615,
+      0.00244130052748888,
+      0.002352025260788744,
+      0.0022668690752432777,
+      0.002185583949393068,
+      0.002107946409728889,
+      0.002033749745049955,
+      0.0019628022380110415,
+      0.0018949259829795853,
+      0.001829955909090005,
+      0.0017677390102593495,
+      0.0017081338522269755,
+      0.0016510105194907294,
+      0.0015962513778130794
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "f_target",
+    "hits": {
+      "abs": true,
+      "absolute": true,
+      "sum": true,
+      "sum.dim_IntList": true
+    },
+    "include": [
+      "sum",
+      "sum_dim",
+      "sum_out",
+      "sum_dim_out",
+      "abs",
+      "absolute"
+    ],
+    "registered_keys": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum.IntList_out",
+      "sum.dim_IntList",
+      "sum.out"
+    ],
+    "registered_ops": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum_dim",
+      "sum_dim_out",
+      "sum_out"
+    ]
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp64",
+    "group": "f_target",
+    "lr": 0.1,
+    "model": "a",
+    "pythonpath": "/tmp/opencode/flagfix-fixed/src",
+    "seed": 1,
+    "steps": 20,
+    "variants": [
+      "contig",
+      "noncontig",
+      "conj"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/a_min_seed1_fp64.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      16,
+      8
+    ],
+    "stride": [
+      128,
+      8,
+      1
+    ]
+  }
+}

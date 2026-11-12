@@ -1,0 +1,40 @@
+config: togethercomputer/m2-bert-80M-8k-retrieval layers=12 hidden=768 heads=12 inter=3072 seq=8192 pos=8192 lmax=8192 horder=128
+You are using a model of type m2_bert to instantiate a model of type bert. This is not supported for all configurations of models and can yield errors.
+/root/.cache/huggingface/modules/transformers_modules/togethercomputer/m2_hyphen_bert_hyphen_80M_hyphen_8k_hyphen_retrieval/90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b/blockdiag_multiply.py:50: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_fwd(cast_inputs=torch.bfloat16)
+/root/.cache/huggingface/modules/transformers_modules/togethercomputer/m2_hyphen_bert_hyphen_80M_hyphen_8k_hyphen_retrieval/90e0b28f3382c289cc6c1e92ef53d7dc5a3ec14b/blockdiag_multiply.py:63: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @torch.cuda.amp.custom_bwd
+/root/flag-fixes/fixes/zeros-7181/tests/test_m2_bert_backward.py:132: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at ../torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  loss_native_val = float(loss_native)  # snapshot: see note at the final print
+-- Bidirectional: True
+-- Using Long Conv Residual: True
+-- Hyena w: 10
+-- Hyena w mod: 1
+-- Hyena filter order: 128
+-- Hyena filter dropout: 0.2
+-- Hyena filter wd: 0.1
+-- Hyena filter emb dim: 5
+-- Hyena filter lr: 0.001
+-- Hyena filter lr pos emb: 1e-05
+native OK loss=1.000000000e+00 grads=545
+/tmp/opencode/flagfix-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+flag_gems from: /tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py
+/tmp/opencode/flagfix-fixed/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list
+  warnings.warn(
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+gems fwd loss=1.000000000e+00 vs native=1.000000000e+00 rel=0.000e+00
+/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: aten::pad: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:76.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: aten::conv1d: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:76.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+grad value divergence INFO (pre-existing, not a criterion; identical class on complex-fix-free tree):
+  gradworst ratio=9.991e+02 abs_diff=1.109e+00 native_max=1.402e-09 gems_max=1.109e+00 :: encoder.layer.11.attention.out_linear.weight
+  gradworst ratio=9.975e+02 abs_diff=3.929e-01 native_max=4.282e-10 gems_max=3.929e-01 :: encoder.layer.11.mlp.gated_layers.weight
+  gradworst ratio=9.970e+02 abs_diff=3.302e-01 native_max=3.837e-10 gems_max=3.302e-01 :: encoder.layer.11.mlp.wo.weight
+  gradworst ratio=8.865e+02 abs_diff=7.811e-03 native_max=7.811e-03 gems_max=2.935e-10 :: encoder.layer.11.mlp.layernorm.weight
+  gradworst ratio=7.985e+02 abs_diff=3.962e-03 native_max=3.962e-03 gems_max=0.000e+00 :: encoder.layer.11.mlp.layernorm.bias
+grad presence: 161 present+finite compared, 384 skipped (known filter_fn gap / native-unused), worst value ratio=9.991e+02 (info)
+E2E OK: loss_native=1.000000000e+00 loss_gems=1.000000000e+00 rel=0.000e+00 grads_present_finite=161 grads_skipped_known_gap=384

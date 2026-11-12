@@ -1,0 +1,24 @@
+{
+  "comparator": "structural-checks-v2 (shape/dtype/keys/step-ids/ref-validity)",
+  "dtype": "fp32",
+  "first_fail": "variant contig missing in val",
+  "input_identity": {
+    "X": true,
+    "params": true,
+    "target": true
+  },
+  "pass": false,
+  "ref": "results/small-model-2026-11-10/matrix/n__a_min_seed0_fp32.pt",
+  "tiers": {
+    "grad": {
+      "atol": 1e-05,
+      "rtol": 0.001
+    },
+    "inter": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "val": "results/small-model-2026-11-10/matrix/f_all__a_min_seed0_fp32.pt",
+  "variants": {}
+}

@@ -1,0 +1,4160 @@
+{
+  "complexity": {
+    "comparison": "see perf rows: A vs B per dtype/layout",
+    "guard_branch_cost_us": 0.6192740002006758,
+    "note": "candidate A IS the A+B combo (A fast path, B fallback); compare A vs B-only per layout"
+  },
+  "matrix": [
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    }
+  ],
+  "matrix_summary": {
+    "fail": 0,
+    "pass": 260
+  },
+  "mode": "native",
+  "path_verification": [],
+  "perf": [
+    {
+      "block_device_ms": [
+        68.23428344726562,
+        64.2501220703125,
+        63.98876190185547,
+        63.90876007080078,
+        63.844600677490234
+      ],
+      "candidate": "current",
+      "cv_pct": 2.9312277814181096,
+      "dtype": "c64",
+      "first_call_ms": 1.424239993095398,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.6398876190185547
+    },
+    {
+      "block_device_ms": [
+        0.8359599709510803,
+        0.8316400051116943,
+        0.837119996547699,
+        0.8329200148582458,
+        0.6899200081825256
+      ],
+      "candidate": "A",
+      "cv_pct": 8.026679641381639,
+      "dtype": "c64",
+      "first_call_ms": 0.023000000044703484,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.008329200148582459
+    },
+    {
+      "block_device_ms": [
+        0.4999200105667114,
+        0.5002400279045105,
+        0.4981600046157837,
+        0.4992400109767914,
+        0.4983200132846832
+      ],
+      "candidate": "B",
+      "cv_pct": 0.18617677925849993,
+      "dtype": "c64",
+      "first_call_ms": 0.015239999629557133,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004992400109767914
+    },
+    {
+      "block_device_ms": [
+        1.5379999876022339,
+        1.525439977645874,
+        1.5262000560760498,
+        1.518880009651184,
+        1.5222400426864624
+      ],
+      "candidate": "C",
+      "cv_pct": 0.4737152801610159,
+      "dtype": "c64",
+      "first_call_ms": 0.026639999821782112,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.01525439977645874
+    },
+    {
+      "block_device_ms": [
+        0.4212000072002411,
+        0.423799991607666,
+        0.4227199852466583,
+        0.41951999068260193,
+        0.41519999504089355
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.800835913248221,
+      "dtype": "c64",
+      "first_call_ms": 0.01360000018030405,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004212000072002411
+    },
+    {
+      "block_device_ms": [
+        117.51940155029297,
+        116.57936096191406,
+        116.39895629882812,
+        116.29196166992188,
+        116.10848236083984
+      ],
+      "candidate": "current",
+      "cv_pct": 0.47383216539973955,
+      "dtype": "c64",
+      "first_call_ms": 1.2430800199508667,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.1639895629882813
+    },
+    {
+      "block_device_ms": [
+        0.5656800270080566,
+        0.5650799870491028,
+        0.5665599703788757,
+        0.5637999773025513,
+        0.5648400187492371
+      ],
+      "candidate": "A",
+      "cv_pct": 0.18094772945059984,
+      "dtype": "c64",
+      "first_call_ms": 0.017480000853538513,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005650799870491028
+    },
+    {
+      "block_device_ms": [
+        0.6934800148010254,
+        0.5659999847412109,
+        0.5631600022315979,
+        0.5632399916648865,
+        0.5629600286483765
+      ],
+      "candidate": "B",
+      "cv_pct": 9.832726774138328,
+      "dtype": "c64",
+      "first_call_ms": 0.015359999611973763,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005632399916648865
+    },
+    {
+      "block_device_ms": [
+        1.670240044593811,
+        1.6634399890899658,
+        1.6651999950408936,
+        1.6610000133514404,
+        1.6527199745178223
+      ],
+      "candidate": "C",
+      "cv_pct": 0.38746216896145597,
+      "dtype": "c64",
+      "first_call_ms": 0.029519999399781227,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.016634399890899657
+    },
+    {
+      "block_device_ms": [
+        0.5431200265884399,
+        0.5428000092506409,
+        0.5431200265884399,
+        0.5430399775505066,
+        0.542639970779419
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.03953993594843099,
+      "dtype": "c64",
+      "first_call_ms": 0.014399999752640724,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005430399775505066
+    },
+    {
+      "block_device_ms": [
+        72.86399841308594,
+        70.08744049072266,
+        70.07572174072266,
+        70.07695770263672,
+        69.93108367919922
+      ],
+      "candidate": "current",
+      "cv_pct": 1.789246084712722,
+      "dtype": "c64",
+      "first_call_ms": 0.7092800140380859,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.7007695770263672
+    },
+    {
+      "block_device_ms": [
+        0.7335600256919861,
+        0.7092000246047974,
+        0.7072799801826477,
+        0.6481199860572815,
+        0.5253999829292297
+      ],
+      "candidate": "A",
+      "cv_pct": 12.634902706950385,
+      "dtype": "c64",
+      "first_call_ms": 0.020800000056624413,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.007072799801826477
+    },
+    {
+      "block_device_ms": [
+        0.49880000948905945,
+        0.4986400008201599,
+        0.4981200098991394,
+        0.49779999256134033,
+        0.4984799921512604
+      ],
+      "candidate": "B",
+      "cv_pct": 0.08133894000138582,
+      "dtype": "c64",
+      "first_call_ms": 0.015239999629557133,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004984799921512604
+    },
+    {
+      "block_device_ms": [
+        1.6704399585723877,
+        1.659000039100647,
+        1.634719967842102,
+        1.638800024986267,
+        1.6374399662017822
+      ],
+      "candidate": "C",
+      "cv_pct": 0.9579583778781561,
+      "dtype": "c64",
+      "first_call_ms": 0.029360000044107437,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.016388000249862672
+    },
+    {
+      "block_device_ms": [
+        0.41912001371383667,
+        0.42100000381469727,
+        0.4275200068950653,
+        0.42712000012397766,
+        0.4259600043296814
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.9030061329490817,
+      "dtype": "c64",
+      "first_call_ms": 0.01372000016272068,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004259600043296814
+    },
+    {
+      "block_device_ms": [
+        68.17523956298828,
+        68.12692260742188,
+        69.0551986694336,
+        72.89108276367188,
+        72.88536071777344
+      ],
+      "candidate": "current",
+      "cv_pct": 3.4993896783531513,
+      "dtype": "c128",
+      "first_call_ms": 0.722599983215332,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.6905519866943359
+    },
+    {
+      "block_device_ms": [
+        0.5776399970054626,
+        0.5627999901771545,
+        0.5683599710464478,
+        0.5671600103378296,
+        0.5720400214195251
+      ],
+      "candidate": "A",
+      "cv_pct": 0.9787732094419678,
+      "dtype": "c128",
+      "first_call_ms": 0.038839999586343765,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.005683599710464477
+    },
+    {
+      "block_device_ms": [
+        0.49983999133110046,
+        0.4966000020503998,
+        0.4984799921512604,
+        0.49696001410484314,
+        0.4973599910736084
+      ],
+      "candidate": "B",
+      "cv_pct": 0.2647988328145545,
+      "dtype": "c128",
+      "first_call_ms": 0.015080000273883343,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004973599910736084
+    },
+    {
+      "block_device_ms": [
+        1.448799967765808,
+        1.4408400058746338,
+        1.4406800270080566,
+        1.4449599981307983,
+        1.434880018234253
+      ],
+      "candidate": "C",
+      "cv_pct": 0.3616311310193916,
+      "dtype": "c128",
+      "first_call_ms": 0.026280000805854797,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.014408400058746338
+    },
+    {
+      "block_device_ms": [
+        0.3757599890232086,
+        0.3705599904060364,
+        0.37356001138687134,
+        0.37615999579429626,
+        0.3707599937915802
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.7116634757068567,
+      "dtype": "c128",
+      "first_call_ms": 0.013319999910891056,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.0037356001138687134
+    },
+    {
+      "block_device_ms": [
+        114.205322265625,
+        114.07376098632812,
+        85.52491760253906,
+        71.52364349365234,
+        72.00076293945312
+      ],
+      "candidate": "current",
+      "cv_pct": 23.44929789014544,
+      "dtype": "c128",
+      "first_call_ms": 1.1613999605178833,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.8552491760253906
+    },
+    {
+      "block_device_ms": [
+        0.7226399779319763,
+        0.7134000062942505,
+        0.7256799936294556,
+        0.718720018863678,
+        0.7182400226593018
+      ],
+      "candidate": "A",
+      "cv_pct": 0.6486389768092364,
+      "dtype": "c128",
+      "first_call_ms": 0.020919999107718468,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.00718720018863678
+    },
+    {
+      "block_device_ms": [
+        0.5662400126457214,
+        0.5641599893569946,
+        0.5640000104904175,
+        0.5636000037193298,
+        0.5673199892044067
+      ],
+      "candidate": "B",
+      "cv_pct": 0.28761325964677703,
+      "dtype": "c128",
+      "first_call_ms": 0.014759999699890614,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005641599893569946
+    },
+    {
+      "block_device_ms": [
+        1.6517200469970703,
+        1.6410800218582153,
+        1.649440050125122,
+        1.6456799507141113,
+        1.6516799926757812
+      ],
+      "candidate": "C",
+      "cv_pct": 0.2759081388875962,
+      "dtype": "c128",
+      "first_call_ms": 0.028440000489354134,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.01649440050125122
+    },
+    {
+      "block_device_ms": [
+        0.5454000234603882,
+        0.5432800054550171,
+        0.5440800189971924,
+        0.54339998960495,
+        0.5429999828338623
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.17694108449648302,
+      "dtype": "c128",
+      "first_call_ms": 0.013919999822974205,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.0054339998960494995
+    },
+    {
+      "block_device_ms": [
+        72.584716796875,
+        72.4600830078125,
+        72.53656005859375,
+        72.48491668701172,
+        72.5718002319336
+      ],
+      "candidate": "current",
+      "cv_pct": 0.0744948574196399,
+      "dtype": "c128",
+      "first_call_ms": 0.7567600011825562,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.7253656005859375
+    },
+    {
+      "block_device_ms": [
+        0.709559977054596,
+        0.7093200087547302,
+        0.7061600089073181,
+        0.7089599967002869,
+        0.7012400031089783
+      ],
+      "candidate": "A",
+      "cv_pct": 0.4982840340509005,
+      "dtype": "c128",
+      "first_call_ms": 0.02019999921321869,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.007089599967002869
+    },
+    {
+      "block_device_ms": [
+        0.4986400008201599,
+        0.49928000569343567,
+        0.4994800090789795,
+        0.498879998922348,
+        0.4989199936389923
+      ],
+      "candidate": "B",
+      "cv_pct": 0.06730152981818519,
+      "dtype": "c128",
+      "first_call_ms": 0.014639999717473984,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004989199936389923
+    },
+    {
+      "block_device_ms": [
+        1.6654800176620483,
+        1.6664400100708008,
+        1.6604000329971313,
+        1.6639599800109863,
+        1.6597199440002441
+      ],
+      "candidate": "C",
+      "cv_pct": 0.1809362778801281,
+      "dtype": "c128",
+      "first_call_ms": 0.028119999915361404,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.016639599800109862
+    },
+    {
+      "block_device_ms": [
+        0.42712000012397766,
+        0.4371199905872345,
+        0.42524001002311707,
+        0.42508000135421753,
+        0.42100000381469727
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 1.4103810155854009,
+      "dtype": "c128",
+      "first_call_ms": 0.014039999805390835,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.0042524001002311705
+    }
+  ],
+  "provenance": {
+    "determinism": {
+      "deterministic_algorithms": true,
+      "deterministic_error": null,
+      "seed": 0,
+      "tf32_cudnn_before": true,
+      "tf32_matmul_before": false
+    },
+    "device": "PPU-ZW810E",
+    "registered_mode": false,
+    "torch": "2.10.0"
+  },
+  "purpose": "round-10/11 zero_ candidate screening (native harness); does not modify the zeros-7181 patch"
+}

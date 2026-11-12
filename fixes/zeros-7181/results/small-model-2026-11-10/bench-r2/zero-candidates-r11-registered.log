@@ -1,0 +1,95 @@
+/tmp/opencode/flagfix-fixed/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::zero_(Tensor(a!) self) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at ../aten/src/ATen/LegacyBatchingRegistrations.cpp:1076
+       new kernel: registered at /tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+FAIL c64/contig/C: {'layout': 'contig', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/contig/C/creation: {'layout': 'contig', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/slice_stride/C: {'layout': 'slice_stride', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': False, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/slice_stride/C/creation: {'layout': 'slice_stride', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/narrow/C: {'layout': 'narrow', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/narrow/C/creation: {'layout': 'narrow', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/transpose/C: {'layout': 'transpose', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/transpose/C/creation: {'layout': 'transpose', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/storage_offset/C: {'layout': 'storage_offset', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/storage_offset/C/creation: {'layout': 'storage_offset', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/conj/C/creation: {'layout': 'conj', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/offset_transpose/C: {'layout': 'offset_transpose', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/offset_transpose/C/creation: {'layout': 'offset_transpose', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/offset_slice/C: {'layout': 'offset_slice', 'dtype': 'c64', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': False, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c64/offset_slice/C/creation: {'layout': 'offset_slice', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/transpose_conj/C/creation: {'layout': 'transpose_conj', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/slice_conj/C/creation: {'layout': 'slice_conj', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c64/offset_transpose_conj/C/creation: {'layout': 'offset_transpose_conj', 'dtype': 'c64', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/contig/C: {'layout': 'contig', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/contig/C/creation: {'layout': 'contig', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/slice_stride/C: {'layout': 'slice_stride', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': False, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/slice_stride/C/creation: {'layout': 'slice_stride', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/narrow/C: {'layout': 'narrow', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/narrow/C/creation: {'layout': 'narrow', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/transpose/C: {'layout': 'transpose', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/transpose/C/creation: {'layout': 'transpose', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/storage_offset/C: {'layout': 'storage_offset', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/storage_offset/C/creation: {'layout': 'storage_offset', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/conj/C/creation: {'layout': 'conj', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/offset_transpose/C: {'layout': 'offset_transpose', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': True, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/offset_transpose/C/creation: {'layout': 'offset_transpose', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/offset_slice/C: {'layout': 'offset_slice', 'dtype': 'c128', 'candidate': 'C', 'creation': False, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'changed_only_selected': False, 'selected_all_zero_via_base': False, 'same_as_native': False, 'pass': False}
+FAIL c128/offset_slice/C/creation: {'layout': 'offset_slice', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/transpose_conj/C/creation: {'layout': 'transpose_conj', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/slice_conj/C/creation: {'layout': 'slice_conj', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+FAIL c128/offset_transpose_conj/C/creation: {'layout': 'offset_transpose_conj', 'dtype': 'c128', 'candidate': 'C', 'creation': True, 'shape': [32, 32], 'outcome': 'ok', 'all_zero': False, 'pass': False}
+PERF c64/contig/current: 0.7112 ms/iter
+PERF c64/contig/A: 0.0084 ms/iter
+PERF c64/contig/B: 0.0051 ms/iter
+PERF c64/contig/C: 0.0442 ms/iter
+PERF c64/contig/native_ref: 0.6519 ms/iter
+PERF c64/slice_stride/current: 0.6695 ms/iter
+PERF c64/slice_stride/A: 0.0075 ms/iter
+PERF c64/slice_stride/B: 0.0056 ms/iter
+PERF c64/slice_stride/C: 0.0445 ms/iter
+PERF c64/slice_stride/native_ref: 0.6818 ms/iter
+PERF c64/transpose/current: 0.6760 ms/iter
+PERF c64/transpose/A: 0.0074 ms/iter
+PERF c64/transpose/B: 0.0051 ms/iter
+PERF c64/transpose/C: 0.0449 ms/iter
+PERF c64/transpose/native_ref: 0.6790 ms/iter
+PERF c128/contig/current: 0.6567 ms/iter
+PERF c128/contig/A: 0.0085 ms/iter
+PERF c128/contig/B: 0.0050 ms/iter
+PERF c128/contig/C: 0.0442 ms/iter
+PERF c128/contig/native_ref: 0.6630 ms/iter
+PERF c128/slice_stride/current: 0.6753 ms/iter
+PERF c128/slice_stride/A: 0.0075 ms/iter
+PERF c128/slice_stride/B: 0.0056 ms/iter
+PERF c128/slice_stride/C: 0.0447 ms/iter
+PERF c128/slice_stride/native_ref: 0.6833 ms/iter
+PERF c128/transpose/current: 0.6774 ms/iter
+PERF c128/transpose/A: 0.0074 ms/iter
+PERF c128/transpose/B: 0.0051 ms/iter
+PERF c128/transpose/C: 0.0449 ms/iter
+PERF c128/transpose/native_ref: 0.6856 ms/iter
+/usr/local/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+PATH c64/contig/A: ['native-aten'] 0.0063 ms/iter
+PATH c64/contig/B: ['native-aten'] 0.0051 ms/iter
+PATH c64/contig/C: ['triton-candidate'] 0.0434 ms/iter
+PATH c64/contig/native_ref: ['HtoD-staging(!)'] 0.6871 ms/iter
+PATH c64/slice_stride/A: ['native-aten'] 0.0057 ms/iter
+PATH c64/slice_stride/B: ['native-aten'] 0.0056 ms/iter
+PATH c64/slice_stride/C: ['triton-candidate'] 0.0449 ms/iter
+PATH c64/slice_stride/native_ref: ['native-aten', 'HtoD-staging(!)', 'native-aten'] 0.7110 ms/iter
+PATH c128/contig/A: ['native-aten'] 0.0075 ms/iter
+PATH c128/contig/B: ['native-aten'] 0.0051 ms/iter
+PATH c128/contig/C: ['triton-candidate'] 0.0431 ms/iter
+PATH c128/contig/native_ref: ['HtoD-staging(!)'] 0.7027 ms/iter
+PATH c128/slice_stride/A: ['native-aten'] 0.0056 ms/iter
+PATH c128/slice_stride/B: ['native-aten'] 0.0056 ms/iter
+PATH c128/slice_stride/C: ['triton-candidate'] 0.0444 ms/iter
+PATH c128/slice_stride/native_ref: ['native-aten', 'HtoD-staging(!)', 'native-aten'] 0.7264 ms/iter
+CANDIDATE SCREENING (registered): matrix pass=224 fail=36; wrote results/small-model-2026-11-10/bench-r2/zero-candidates-r11-registered.json

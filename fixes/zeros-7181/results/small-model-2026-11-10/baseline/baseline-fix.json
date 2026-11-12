@@ -1,0 +1,870 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "edge_numeric": [
+    {
+      "case": "sum/c64/nan",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 1784,
+      "out_checksum": "029d43a3cdc09a2c644b66b82af52c932b8209f2bfdce8698060998c684de158",
+      "payload": "nan",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/nan",
+      "dtype": "torch.complex64",
+      "grad_applicable": true,
+      "grad_byte_sum": 456704,
+      "grad_checksum": "61a9da3c23a173f036fef6607f47a32f45d08f5051e9cc316aa1d6c00432df66",
+      "op": "abs",
+      "out_byte_sum": 228352,
+      "out_checksum": "814d63d962f004bb55757ba4bf45c4164101a1bacd21c4b63b01fc6199b60816",
+      "payload": "nan",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/inf",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 510,
+      "out_checksum": "1c863010bd1070d8b7746fb0af44aad2924b6e9a5b957db3df0ac837a8ac2c2f",
+      "payload": "inf",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/inf",
+      "dtype": "torch.complex64",
+      "grad_applicable": true,
+      "grad_byte_sum": 456704,
+      "grad_checksum": "61a9da3c23a173f036fef6607f47a32f45d08f5051e9cc316aa1d6c00432df66",
+      "op": "abs",
+      "out_byte_sum": 65280,
+      "out_checksum": "e4d90ca92344ceb482a425b0e8847c37e16c92eab838885c6820b1806eeb1290",
+      "payload": "inf",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/neginf",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 766,
+      "out_checksum": "0e9f86dafae0056ec8f21396c546b6b32b1d356d09845a4d4bd32ebf6789bf05",
+      "payload": "-inf",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/neginf",
+      "dtype": "torch.complex64",
+      "grad_applicable": true,
+      "grad_byte_sum": 456704,
+      "grad_checksum": "61a9da3c23a173f036fef6607f47a32f45d08f5051e9cc316aa1d6c00432df66",
+      "op": "abs",
+      "out_byte_sum": 65280,
+      "out_checksum": "e4d90ca92344ceb482a425b0e8847c37e16c92eab838885c6820b1806eeb1290",
+      "payload": "-inf",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/extreme_high",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 510,
+      "out_checksum": "1c863010bd1070d8b7746fb0af44aad2924b6e9a5b957db3df0ac837a8ac2c2f",
+      "payload": "1e+38",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/extreme_high",
+      "dtype": "torch.complex64",
+      "grad_applicable": true,
+      "grad_byte_sum": 267008,
+      "grad_checksum": "3ae1f511363d8584c8488864f99078f2d32ffee4bc71ef915e486429a2fb1110",
+      "op": "abs",
+      "out_byte_sum": 96512,
+      "out_checksum": "67932dc10cb71a0b85f9bdf9481d021d0771f2bc10e97f6e2fa1fde05be0fdd9",
+      "payload": "1e+38",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/extreme_low",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 1151,
+      "out_checksum": "399649c48833430c755af07db6b1d1975de11c54df9afb2b6c4219b055d5ef60",
+      "payload": "1e-38",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/extreme_low",
+      "dtype": "torch.complex64",
+      "grad_applicable": true,
+      "grad_byte_sum": 267520,
+      "grad_checksum": "6d4be2a79a350a3ae0d26bfeed89f09cdd99670289d7dc3dd124f5469d35b537",
+      "op": "abs",
+      "out_byte_sum": 95232,
+      "out_checksum": "21cd4226b69dd85c06005dbd026487e7ccf0b71798034a743fbbd8b550069086",
+      "payload": "1e-38",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/empty",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 0,
+      "out_checksum": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "payload": "empty",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/empty",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "abs",
+      "out_byte_sum": 0,
+      "out_checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "payload": "empty",
+      "shape": [
+        0
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c64/conj",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 1183,
+      "out_checksum": "04f5ebb4234a4e8830a615071cd097523213a2bb4484c5728a701f37339f64f7",
+      "payload": "conj",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c64/conj",
+      "dtype": "torch.complex64",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "abs",
+      "out_byte_sum": 28834,
+      "out_checksum": "055fc95156e88ea3c2512476455470dcad7ff6465733c33c95822aa9b30a861f",
+      "payload": "conj",
+      "shape": [
+        8,
+        8
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/nan",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 3824,
+      "out_checksum": "6db4845ea3835187f15ebd6bdf52f0c51684d803eb0d4ac481f48faf042421f1",
+      "payload": "nan",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/nan",
+      "dtype": "torch.complex128",
+      "grad_applicable": true,
+      "grad_byte_sum": 978944,
+      "grad_checksum": "3bbceb2577b82434c9e2ad369e76a0609cacb57e5dcff1828d1509792bca3938",
+      "op": "abs",
+      "out_byte_sum": 489472,
+      "out_checksum": "398c191ed8d168edf872b0c73dcbe58473b46fe1b48cf43e97e9efc3bbc85f52",
+      "payload": "nan",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/inf",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 734,
+      "out_checksum": "e28b77045029f15dc09fb9745a7ea4395a5116ff77ed66311cbe64dcbd90e66d",
+      "payload": "inf",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/inf",
+      "dtype": "torch.complex128",
+      "grad_applicable": true,
+      "grad_byte_sum": 978944,
+      "grad_checksum": "3bbceb2577b82434c9e2ad369e76a0609cacb57e5dcff1828d1509792bca3938",
+      "op": "abs",
+      "out_byte_sum": 93952,
+      "out_checksum": "66e475c164160fb0387ec115e418ffcfcbfc7d8a4e6a6a0ed2c572753899eb7e",
+      "payload": "inf",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/neginf",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 990,
+      "out_checksum": "735c9c1d84a5765dce6af1009689b7a3df3472c960bdfbef4381605ca74f5e8e",
+      "payload": "-inf",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/neginf",
+      "dtype": "torch.complex128",
+      "grad_applicable": true,
+      "grad_byte_sum": 978944,
+      "grad_checksum": "3bbceb2577b82434c9e2ad369e76a0609cacb57e5dcff1828d1509792bca3938",
+      "op": "abs",
+      "out_byte_sum": 93952,
+      "out_checksum": "66e475c164160fb0387ec115e418ffcfcbfc7d8a4e6a6a0ed2c572753899eb7e",
+      "payload": "-inf",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/extreme_high",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 1930,
+      "out_checksum": "64150f948c4a397be72a70f0a291b905f987b4bd893e66fd93c29047d6d7ae8a",
+      "payload": "1e+38",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/extreme_high",
+      "dtype": "torch.complex128",
+      "grad_applicable": true,
+      "grad_byte_sum": 680960,
+      "grad_checksum": "dfcbe8ee33141c937b0843d0527e2c3e8b3a62de17053ccac08a5e458b1407c2",
+      "op": "abs",
+      "out_byte_sum": 219648,
+      "out_checksum": "787a5991d3ff30aa8c97c0209e9c1531ee0634f80c83e16bf7afd207b8c1468e",
+      "payload": "1e+38",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/extreme_low",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 2338,
+      "out_checksum": "4ea44661fb84616bcc9feb876750561915492f776290dac98bd981f899b821f5",
+      "payload": "1e-38",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/extreme_low",
+      "dtype": "torch.complex128",
+      "grad_applicable": true,
+      "grad_byte_sum": 679936,
+      "grad_checksum": "ce10d47964fffe601bdebe4ed3201e26f151b680ab06c620eca9cd928165984b",
+      "op": "abs",
+      "out_byte_sum": 235776,
+      "out_checksum": "b6754f2bdb5add088c1679c4cd0c9f4b0f6381867035337f8d7373981cf3c45e",
+      "payload": "1e-38",
+      "shape": [
+        16,
+        16
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/empty",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 0,
+      "out_checksum": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb",
+      "payload": "empty",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/empty",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "abs",
+      "out_byte_sum": 0,
+      "out_checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "payload": "empty",
+      "shape": [
+        0
+      ],
+      "status": "ok"
+    },
+    {
+      "case": "sum/c128/conj",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "sum",
+      "out_byte_sum": 1948,
+      "out_checksum": "47000329148d4781dd902b52c362389a4c47b6ea28c9a6fcf0bad75bce94f657",
+      "payload": "conj",
+      "shape": [],
+      "status": "ok"
+    },
+    {
+      "case": "abs/c128/conj",
+      "dtype": "torch.complex128",
+      "grad": "N/A",
+      "grad_applicable": false,
+      "op": "abs",
+      "out_byte_sum": 66286,
+      "out_checksum": "0968b818f4716af4bee4e42d93b6173dbacd64c863c94fdbc82c5ea3fdcade71",
+      "payload": "conj",
+      "shape": [
+        8,
+        8
+      ],
+      "status": "ok"
+    }
+  ],
+  "group": "fix",
+  "perf": [
+    {
+      "block_device_ms": [
+        83.67864227294922,
+        83.50420379638672,
+        83.41551971435547,
+        83.3302001953125,
+        83.30635833740234
+      ],
+      "dtype": "c64",
+      "first_call_ms": 0.9321200251579285,
+      "first_call_wall_ms": 3.749837000214029,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.0,
+      "ms_per_iter_median": 0.8341551971435547,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        99.22039794921875,
+        99.04815673828125,
+        95.25995635986328,
+        85.39627838134766,
+        85.25308227539062
+      ],
+      "dtype": "c64",
+      "first_call_ms": 1.077679991722107,
+      "first_call_wall_ms": 1.1491810000734404,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.0,
+      "ms_per_iter_median": 0.9525995635986328,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        85.83415985107422,
+        85.25032043457031,
+        85.74755859375,
+        85.30004119873047,
+        85.72112274169922
+      ],
+      "dtype": "c64",
+      "first_call_ms": 0.8821600079536438,
+      "first_call_wall_ms": 0.9128249948844314,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.0,
+      "ms_per_iter_median": 0.8572112274169922,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        154.3206329345703,
+        154.27711486816406,
+        154.34356689453125,
+        154.51600646972656,
+        154.63131713867188
+      ],
+      "dtype": "c128",
+      "first_call_ms": 1.5859999656677246,
+      "first_call_wall_ms": 1.613547996385023,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.0,
+      "ms_per_iter_median": 1.5434356689453126,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        184.97727966308594,
+        184.21363830566406,
+        185.05027770996094,
+        187.0443572998047,
+        167.54640197753906
+      ],
+      "dtype": "c128",
+      "first_call_ms": 1.9495199918746948,
+      "first_call_wall_ms": 2.0062820040038787,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.0,
+      "ms_per_iter_median": 1.8497727966308595,
+      "op": "zero_"
+    },
+    {
+      "block_device_ms": [
+        161.42559814453125,
+        161.1033935546875,
+        160.96583557128906,
+        160.88328552246094,
+        160.7196044921875
+      ],
+      "dtype": "c128",
+      "first_call_ms": 1.6530799865722656,
+      "first_call_wall_ms": 1.689183001872152,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.0,
+      "ms_per_iter_median": 1.6096583557128907,
+      "op": "zero_"
+    }
+  ],
+  "provenance": {
+    "device": "PPU-ZW810E",
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "fix",
+    "include": [
+      "zeros",
+      "zero_",
+      "zeros_like",
+      "sum",
+      "sum_dim",
+      "sum_out",
+      "sum_dim_out",
+      "abs",
+      "absolute"
+    ],
+    "registered_keys_sample": [
+      "abs",
+      "absolute",
+      "sum",
+      "sum.IntList_out",
+      "sum.dim_IntList",
+      "sum.out",
+      "zero_",
+      "zeros",
+      "zeros_like"
+    ],
+    "torch": "2.10.0"
+  },
+  "zero_cases": [
+    {
+      "all_zero": true,
+      "case": "zero_/c64/contig",
+      "dtype": "torch.complex64",
+      "layout": "contig",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/contig",
+      "dtype": "torch.complex64",
+      "layout": "contig",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/slice_stride",
+      "dtype": "torch.complex64",
+      "layout": "slice_stride",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/slice_stride",
+      "dtype": "torch.complex64",
+      "layout": "slice_stride",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/narrow",
+      "dtype": "torch.complex64",
+      "layout": "narrow",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/narrow",
+      "dtype": "torch.complex64",
+      "layout": "narrow",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/transpose",
+      "dtype": "torch.complex64",
+      "layout": "transpose",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/transpose",
+      "dtype": "torch.complex64",
+      "layout": "transpose",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c64/offset",
+      "dtype": "torch.complex64",
+      "layout": "offset",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c64/offset",
+      "dtype": "torch.complex64",
+      "layout": "offset",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/contig",
+      "dtype": "torch.complex128",
+      "layout": "contig",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/contig",
+      "dtype": "torch.complex128",
+      "layout": "contig",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/slice_stride",
+      "dtype": "torch.complex128",
+      "layout": "slice_stride",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/slice_stride",
+      "dtype": "torch.complex128",
+      "layout": "slice_stride",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/narrow",
+      "dtype": "torch.complex128",
+      "layout": "narrow",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/narrow",
+      "dtype": "torch.complex128",
+      "layout": "narrow",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/transpose",
+      "dtype": "torch.complex128",
+      "layout": "transpose",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/transpose",
+      "dtype": "torch.complex128",
+      "layout": "transpose",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/c128/offset",
+      "dtype": "torch.complex128",
+      "layout": "offset",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/c128/offset",
+      "dtype": "torch.complex128",
+      "layout": "offset",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/conj/c64",
+      "dtype": "torch.complex64",
+      "layout": "conj",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/conj/c64",
+      "dtype": "torch.complex64",
+      "layout": "conj",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/empty/c64",
+      "dtype": "torch.complex64",
+      "layout": "empty",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/empty/c64",
+      "dtype": "torch.complex64",
+      "layout": "empty",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/zerodim/c64",
+      "dtype": "torch.complex64",
+      "layout": "zerodim",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/conj/c128",
+      "dtype": "torch.complex128",
+      "layout": "conj",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/conj/c128",
+      "dtype": "torch.complex128",
+      "layout": "conj",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/empty/c128",
+      "dtype": "torch.complex128",
+      "layout": "empty",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "all_zero": true,
+      "case": "zeros/empty/c128",
+      "dtype": "torch.complex128",
+      "layout": "empty",
+      "op": "zeros",
+      "outcome_target": "created",
+      "status": "ok",
+      "x_byte_sum": 0,
+      "x_checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "all_zero": true,
+      "case": "zero_/zerodim/c128",
+      "dtype": "torch.complex128",
+      "layout": "zerodim",
+      "op": "zero_",
+      "outcome_target": "input-view",
+      "status": "ok",
+      "unselected_ok": true,
+      "x_byte_sum": 0,
+      "x_checksum": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+    }
+  ]
+}

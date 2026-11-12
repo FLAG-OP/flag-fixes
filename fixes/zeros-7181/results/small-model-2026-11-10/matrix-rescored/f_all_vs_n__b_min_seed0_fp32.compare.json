@@ -1,0 +1,1385 @@
+{
+  "comparator": "structural-checks-v2 (shape/dtype/keys/step-ids/ref-validity)",
+  "dtype": "fp32",
+  "first_fail": "single/default/grad.x",
+  "input_identity": {
+    "X": true,
+    "params": true,
+    "target": true
+  },
+  "pass": false,
+  "ref": "results/small-model-2026-11-10/matrix/n__b_min_seed0_fp32.pt",
+  "tiers": {
+    "grad": {
+      "atol": 1e-05,
+      "rtol": 0.001
+    },
+    "inter": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "val": "results/small-model-2026-11-10/matrix/f_all__b_min_seed0_fp32.pt",
+  "variants": {
+    "default": {
+      "act": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "conv": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "grad.Wc": {
+        "max_abs": 0.06839572242461145,
+        "pass": false,
+        "rel_l2": 1.017724429101664,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "grad.Wl": {
+        "max_abs": 0.20917039923369884,
+        "pass": false,
+        "rel_l2": 1.019540417030256,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "grad.bc": {
+        "max_abs": 0.0160204297862947,
+        "pass": false,
+        "rel_l2": 0.8603316292371289,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "grad.bl": {
+        "max_abs": 0.03449862776324153,
+        "pass": false,
+        "rel_l2": 0.8595014946600373,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "grad.x": {
+        "max_abs": 0.004164336249232292,
+        "pass": false,
+        "rel_l2": 1.004506063467692,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "loss": {
+        "max_abs": 5.960464477539063e-08,
+        "pass": true,
+        "rel_l2": 1.0983969226433098e-07,
+        "worst_flat_index": 0,
+        "worst_part": "part0"
+      },
+      "out": {
+        "max_abs": 0.0,
+        "pass": true,
+        "rel_l2": 0.0,
+        "worst_flat_index": 0,
+        "worst_part": ""
+      },
+      "params_after.Wc": {
+        "max_abs": 0.006839573383331299,
+        "pass": false,
+        "rel_l2": 0.011573828228669128,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "params_after.Wl": {
+        "max_abs": 0.020917057991027832,
+        "pass": false,
+        "rel_l2": 0.01999762388788267,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "params_after.bc": {
+        "max_abs": 0.001602042990271002,
+        "pass": false,
+        "rel_l2": 0.8603316256919551,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "params_after.bl": {
+        "max_abs": 0.0034498627355787903,
+        "pass": false,
+        "rel_l2": 0.8595014936948204,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.losses": {
+        "max_abs": 0.16122031211853027,
+        "pass": false,
+        "rel_l2": 0.23273156376512913,
+        "worst_flat_index": 19,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wc": {
+        "max_abs": 0.06839572242461145,
+        "pass": false,
+        "rel_l2": 1.017724429101664,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.Wl": {
+        "max_abs": 0.20917039923369884,
+        "pass": false,
+        "rel_l2": 1.019540417030256,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.bc": {
+        "max_abs": 0.0160204297862947,
+        "pass": false,
+        "rel_l2": 0.8603316292371289,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.bl": {
+        "max_abs": 0.03449862776324153,
+        "pass": false,
+        "rel_l2": 0.8595014946600373,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step0.grad.x": {
+        "max_abs": 0.004164336249232292,
+        "pass": false,
+        "rel_l2": 1.004506063467692,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wc": {
+        "max_abs": 0.006839573383331299,
+        "pass": false,
+        "rel_l2": 0.011573828228669128,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step0.param.Wl": {
+        "max_abs": 0.020917057991027832,
+        "pass": false,
+        "rel_l2": 0.01999762388788267,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step0.param.bc": {
+        "max_abs": 0.001602042990271002,
+        "pass": false,
+        "rel_l2": 0.8603316256919551,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step0.param.bl": {
+        "max_abs": 0.0034498627355787903,
+        "pass": false,
+        "rel_l2": 0.8595014936948204,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wc": {
+        "max_abs": 0.06732084532268345,
+        "pass": false,
+        "rel_l2": 1.0113667406989417,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.Wl": {
+        "max_abs": 0.199960564263165,
+        "pass": false,
+        "rel_l2": 1.0123609179889836,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.bc": {
+        "max_abs": 0.015065011102706194,
+        "pass": false,
+        "rel_l2": 0.877883684678158,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.bl": {
+        "max_abs": 0.03455675602890551,
+        "pass": false,
+        "rel_l2": 0.9122793337422357,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step1.grad.x": {
+        "max_abs": 0.0040117246098816395,
+        "pass": false,
+        "rel_l2": 0.9981672923244161,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wc": {
+        "max_abs": 0.013571664690971375,
+        "pass": false,
+        "rel_l2": 0.022886021427910547,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step1.param.Wl": {
+        "max_abs": 0.040913164615631104,
+        "pass": false,
+        "rel_l2": 0.03984109808726448,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step1.param.bc": {
+        "max_abs": 0.0031085441587492824,
+        "pass": false,
+        "rel_l2": 0.8685930303886766,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step1.param.bl": {
+        "max_abs": 0.006905538495630026,
+        "pass": false,
+        "rel_l2": 0.8841537793826307,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wc": {
+        "max_abs": 0.05708866426721215,
+        "pass": false,
+        "rel_l2": 1.015012163913941,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.Wl": {
+        "max_abs": 0.1481440905481577,
+        "pass": false,
+        "rel_l2": 1.018310057184949,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.bc": {
+        "max_abs": 0.01044872822239995,
+        "pass": false,
+        "rel_l2": 0.8037251819765706,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.bl": {
+        "max_abs": 0.023009879048913717,
+        "pass": false,
+        "rel_l2": 0.9077848318141979,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step10.grad.x": {
+        "max_abs": 0.0028127310797572136,
+        "pass": false,
+        "rel_l2": 1.007049730819591,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wc": {
+        "max_abs": 0.06891749799251556,
+        "pass": false,
+        "rel_l2": 0.11675143939944174,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step10.param.Wl": {
+        "max_abs": 0.19369983673095703,
+        "pass": false,
+        "rel_l2": 0.2157324179042395,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step10.param.bc": {
+        "max_abs": 0.014321584952995181,
+        "pass": false,
+        "rel_l2": 0.8473948594095717,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step10.param.bl": {
+        "max_abs": 0.03192247846163809,
+        "pass": false,
+        "rel_l2": 0.8989382196228934,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wc": {
+        "max_abs": 0.05605269595980644,
+        "pass": false,
+        "rel_l2": 1.0154060858191385,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.Wl": {
+        "max_abs": 0.14336139103397727,
+        "pass": false,
+        "rel_l2": 1.019076827441538,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.bc": {
+        "max_abs": 0.00997499329969287,
+        "pass": false,
+        "rel_l2": 0.7942608110183593,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.bl": {
+        "max_abs": 0.02196611650288105,
+        "pass": false,
+        "rel_l2": 0.9101675660528061,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step11.grad.x": {
+        "max_abs": 0.002709042513743043,
+        "pass": false,
+        "rel_l2": 1.0081701094682365,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wc": {
+        "max_abs": 0.07452276349067688,
+        "pass": false,
+        "rel_l2": 0.12634643326979558,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step11.param.Wl": {
+        "max_abs": 0.20803594589233398,
+        "pass": false,
+        "rel_l2": 0.23470021465421045,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step11.param.bc": {
+        "max_abs": 0.015319085214287043,
+        "pass": false,
+        "rel_l2": 0.8440391521585673,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step11.param.bl": {
+        "max_abs": 0.03411909146234393,
+        "pass": false,
+        "rel_l2": 0.8988357057224058,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wc": {
+        "max_abs": 0.0550346034578979,
+        "pass": false,
+        "rel_l2": 1.0157957606692554,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.Wl": {
+        "max_abs": 0.13874306250363588,
+        "pass": false,
+        "rel_l2": 1.0198655816717712,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.bc": {
+        "max_abs": 0.009512657765299082,
+        "pass": false,
+        "rel_l2": 0.7845285262979566,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.bl": {
+        "max_abs": 0.020963044371455908,
+        "pass": false,
+        "rel_l2": 0.9133890813675775,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step12.grad.x": {
+        "max_abs": 0.0026116324588656425,
+        "pass": false,
+        "rel_l2": 1.0092914241824875,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wc": {
+        "max_abs": 0.08002622425556183,
+        "pass": false,
+        "rel_l2": 0.13578635531884503,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step12.param.Wl": {
+        "max_abs": 0.2219102382659912,
+        "pass": false,
+        "rel_l2": 0.253499821368027,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step12.param.bc": {
+        "max_abs": 0.016270351596176624,
+        "pass": false,
+        "rel_l2": 0.840645377644282,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step12.param.bl": {
+        "max_abs": 0.03621539566665888,
+        "pass": false,
+        "rel_l2": 0.8987391961162369,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wc": {
+        "max_abs": 0.054033942986279726,
+        "pass": false,
+        "rel_l2": 1.0161808537771944,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.Wl": {
+        "max_abs": 0.13428219314664602,
+        "pass": false,
+        "rel_l2": 1.0206763264840069,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.bc": {
+        "max_abs": 0.009062551660463214,
+        "pass": false,
+        "rel_l2": 0.7745270755062268,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.bl": {
+        "max_abs": 0.019999024225398898,
+        "pass": false,
+        "rel_l2": 0.9175280675170057,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step13.grad.x": {
+        "max_abs": 0.002520308131352067,
+        "pass": false,
+        "rel_l2": 1.0104069717473712,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wc": {
+        "max_abs": 0.08542962372303009,
+        "pass": false,
+        "rel_l2": 0.14507461919932074,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step13.param.Wl": {
+        "max_abs": 0.2353385090827942,
+        "pass": false,
+        "rel_l2": 0.2721176456647946,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step13.param.bc": {
+        "max_abs": 0.017176606226712465,
+        "pass": false,
+        "rel_l2": 0.8372204807627718,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step13.param.bl": {
+        "max_abs": 0.03821529890410602,
+        "pass": false,
+        "rel_l2": 0.8986639477447863,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wc": {
+        "max_abs": 0.05305036227218807,
+        "pass": false,
+        "rel_l2": 1.0165611672414434,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.Wl": {
+        "max_abs": 0.12997213564813137,
+        "pass": false,
+        "rel_l2": 1.0215089162848239,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.bc": {
+        "max_abs": 0.008625377900898457,
+        "pass": false,
+        "rel_l2": 0.764257319823393,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.bl": {
+        "max_abs": 0.01907244324684143,
+        "pass": false,
+        "rel_l2": 0.9226635792221131,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step14.grad.x": {
+        "max_abs": 0.0024348325096070766,
+        "pass": false,
+        "rel_l2": 1.0115104907912558,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wc": {
+        "max_abs": 0.09073466062545776,
+        "pass": false,
+        "rel_l2": 0.15421464466384835,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step14.param.Wl": {
+        "max_abs": 0.24833571910858154,
+        "pass": false,
+        "rel_l2": 0.29054042253352447,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step14.param.bc": {
+        "max_abs": 0.018039145041257143,
+        "pass": false,
+        "rel_l2": 0.833769858485419,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step14.param.bl": {
+        "max_abs": 0.040122544625774026,
+        "pass": false,
+        "rel_l2": 0.8986213746503671,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wc": {
+        "max_abs": 0.05208366527222097,
+        "pass": false,
+        "rel_l2": 1.01693649950241,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.Wl": {
+        "max_abs": 0.12580666318535805,
+        "pass": false,
+        "rel_l2": 1.0223630950966878,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.bc": {
+        "max_abs": 0.008201713440939784,
+        "pass": false,
+        "rel_l2": 0.7537218710498852,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.bl": {
+        "max_abs": 0.018181799445301294,
+        "pass": false,
+        "rel_l2": 0.92887497910314,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step15.grad.x": {
+        "max_abs": 0.002354932250455022,
+        "pass": false,
+        "rel_l2": 1.012596029847621,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wc": {
+        "max_abs": 0.09594301879405975,
+        "pass": false,
+        "rel_l2": 0.16320984505678865,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step15.param.Wl": {
+        "max_abs": 0.26091641187667847,
+        "pass": false,
+        "rel_l2": 0.308755466719322,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step15.param.bc": {
+        "max_abs": 0.018859317060559988,
+        "pass": false,
+        "rel_l2": 0.83029778188355,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step15.param.bl": {
+        "max_abs": 0.041940724244341254,
+        "pass": false,
+        "rel_l2": 0.8986202523578184,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wc": {
+        "max_abs": 0.051133788889274,
+        "pass": false,
+        "rel_l2": 1.0173067448160458,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.Wl": {
+        "max_abs": 0.1217798893339932,
+        "pass": false,
+        "rel_l2": 1.0232384360478743,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.bc": {
+        "max_abs": 0.007791988551616669,
+        "pass": false,
+        "rel_l2": 0.742925050148554,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.bl": {
+        "max_abs": 0.017325626453384757,
+        "pass": false,
+        "rel_l2": 0.9362409316299318,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step16.grad.x": {
+        "max_abs": 0.002280317945405841,
+        "pass": false,
+        "rel_l2": 1.013658145833777,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wc": {
+        "max_abs": 0.10105640441179276,
+        "pass": false,
+        "rel_l2": 0.17206362237764336,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step16.param.Wl": {
+        "max_abs": 0.27309441566467285,
+        "pass": false,
+        "rel_l2": 0.32675044357881544,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step16.param.bc": {
+        "max_abs": 0.019638516940176487,
+        "pass": false,
+        "rel_l2": 0.8268077941003378,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step16.param.bl": {
+        "max_abs": 0.04367328668013215,
+        "pass": false,
+        "rel_l2": 0.8986674646606264,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wc": {
+        "max_abs": 0.05020074686035514,
+        "pass": false,
+        "rel_l2": 1.0176718191007217,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.Wl": {
+        "max_abs": 0.11788625828921795,
+        "pass": false,
+        "rel_l2": 1.0241343395406852,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.bc": {
+        "max_abs": 0.007396525703370571,
+        "pass": false,
+        "rel_l2": 0.7318730915791652,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.bl": {
+        "max_abs": 0.01650252752006054,
+        "pass": false,
+        "rel_l2": 0.9448388695728331,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step17.grad.x": {
+        "max_abs": 0.0022106862161308527,
+        "pass": false,
+        "rel_l2": 1.0146918096579673,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wc": {
+        "max_abs": 0.10607647150754929,
+        "pass": false,
+        "rel_l2": 0.1807793618294185,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step17.param.Wl": {
+        "max_abs": 0.2848830223083496,
+        "pass": false,
+        "rel_l2": 0.344513577804293,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step17.param.bc": {
+        "max_abs": 0.02037817006930709,
+        "pass": false,
+        "rel_l2": 0.823302887899452,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step17.param.bl": {
+        "max_abs": 0.04532354045659304,
+        "pass": false,
+        "rel_l2": 0.89876854420693,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wc": {
+        "max_abs": 0.04928469308651984,
+        "pass": false,
+        "rel_l2": 1.018031662813919,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.Wl": {
+        "max_abs": 0.11412053927779198,
+        "pass": false,
+        "rel_l2": 1.0250500011619619,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.bc": {
+        "max_abs": 0.007015517447143793,
+        "pass": false,
+        "rel_l2": 0.720573267009103,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.bl": {
+        "max_abs": 0.015711162239313126,
+        "pass": false,
+        "rel_l2": 0.9547449735564331,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step18.grad.x": {
+        "max_abs": 0.0021457322873175144,
+        "pass": false,
+        "rel_l2": 1.0156924870381139,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wc": {
+        "max_abs": 0.11100494861602783,
+        "pass": false,
+        "rel_l2": 0.18936041730942865,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step18.param.Wl": {
+        "max_abs": 0.29629504680633545,
+        "pass": false,
+        "rel_l2": 0.3620336185571787,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step18.param.bc": {
+        "max_abs": 0.021079720929265022,
+        "pass": false,
+        "rel_l2": 0.8197856633885391,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step18.param.bl": {
+        "max_abs": 0.04689465509727597,
+        "pass": false,
+        "rel_l2": 0.8989279859332103,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wc": {
+        "max_abs": 0.048385808477178216,
+        "pass": false,
+        "rel_l2": 1.0183862273559419,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.Wl": {
+        "max_abs": 0.1104776980355382,
+        "pass": false,
+        "rel_l2": 1.0259844084338783,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.bc": {
+        "max_abs": 0.006649054819718003,
+        "pass": false,
+        "rel_l2": 0.709034447784611,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.bl": {
+        "max_abs": 0.014950253069400787,
+        "pass": false,
+        "rel_l2": 0.9660323783577063,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step19.grad.x": {
+        "max_abs": 0.0020851562730968,
+        "pass": false,
+        "rel_l2": 1.016656022559547,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wc": {
+        "max_abs": 0.1158435270190239,
+        "pass": false,
+        "rel_l2": 0.1978101202485237,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step19.param.Wl": {
+        "max_abs": 0.3073428273200989,
+        "pass": false,
+        "rel_l2": 0.3792999270625678,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step19.param.bc": {
+        "max_abs": 0.02174462703987956,
+        "pass": false,
+        "rel_l2": 0.816258436124049,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step19.param.bl": {
+        "max_abs": 0.0483896816149354,
+        "pass": false,
+        "rel_l2": 0.8991495494443008,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wc": {
+        "max_abs": 0.06609868700616062,
+        "pass": false,
+        "rel_l2": 1.0117715866847385,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.Wl": {
+        "max_abs": 0.1933109974488616,
+        "pass": false,
+        "rel_l2": 1.0129415421491925,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.bc": {
+        "max_abs": 0.014529616571962833,
+        "pass": false,
+        "rel_l2": 0.8705163294077988,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.bl": {
+        "max_abs": 0.033055469393730164,
+        "pass": false,
+        "rel_l2": 0.9102348469642475,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step2.grad.x": {
+        "max_abs": 0.003860428696498275,
+        "pass": false,
+        "rel_l2": 0.9989675654582607,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wc": {
+        "max_abs": 0.020181521773338318,
+        "pass": false,
+        "rel_l2": 0.034017158066702344,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step2.param.Wl": {
+        "max_abs": 0.06024426221847534,
+        "pass": false,
+        "rel_l2": 0.05966546408507137,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step2.param.bc": {
+        "max_abs": 0.004561505746096373,
+        "pass": false,
+        "rel_l2": 0.8692790337885935,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step2.param.bl": {
+        "max_abs": 0.010211085551418364,
+        "pass": false,
+        "rel_l2": 0.8920831659071786,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wc": {
+        "max_abs": 0.06489745806902647,
+        "pass": false,
+        "rel_l2": 1.0121785461051616,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.Wl": {
+        "max_abs": 0.18690804857760668,
+        "pass": false,
+        "rel_l2": 1.0135412996168658,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.bc": {
+        "max_abs": 0.013999395770952106,
+        "pass": false,
+        "rel_l2": 0.862952829853082,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.bl": {
+        "max_abs": 0.03161466890014708,
+        "pass": false,
+        "rel_l2": 0.9084468282472237,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step3.grad.x": {
+        "max_abs": 0.0037117411848157644,
+        "pass": false,
+        "rel_l2": 0.9998280950712212,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wc": {
+        "max_abs": 0.02667127549648285,
+        "pass": false,
+        "rel_l2": 0.04496755074622034,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step3.param.Wl": {
+        "max_abs": 0.07893508672714233,
+        "pass": false,
+        "rel_l2": 0.07945513013060955,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step3.param.bc": {
+        "max_abs": 0.005961445509456098,
+        "pass": false,
+        "rel_l2": 0.8679167587092878,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step3.param.bl": {
+        "max_abs": 0.013372552464716136,
+        "pass": false,
+        "rel_l2": 0.8956292320260602,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wc": {
+        "max_abs": 0.06371794873848557,
+        "pass": false,
+        "rel_l2": 1.012586679158334,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.Wl": {
+        "max_abs": 0.18074118345975876,
+        "pass": false,
+        "rel_l2": 1.0141606376154373,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.bc": {
+        "max_abs": 0.013473851140588522,
+        "pass": false,
+        "rel_l2": 0.8551846751561996,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.bl": {
+        "max_abs": 0.03023156779818237,
+        "pass": false,
+        "rel_l2": 0.9069645708825154,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step4.grad.x": {
+        "max_abs": 0.0035667764022946358,
+        "pass": false,
+        "rel_l2": 1.0007440346191392,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wc": {
+        "max_abs": 0.03304307162761688,
+        "pass": false,
+        "rel_l2": 0.055738858989452786,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step4.param.Wl": {
+        "max_abs": 0.09700924158096313,
+        "pass": false,
+        "rel_l2": 0.09919475753155849,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step4.param.bc": {
+        "max_abs": 0.007308831089176238,
+        "pass": false,
+        "rel_l2": 0.8657083040897225,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step4.param.bl": {
+        "max_abs": 0.01639570901170373,
+        "pass": false,
+        "rel_l2": 0.8974201188358732,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wc": {
+        "max_abs": 0.06256043980829418,
+        "pass": false,
+        "rel_l2": 1.0129950531730691,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.Wl": {
+        "max_abs": 0.17480010678991675,
+        "pass": false,
+        "rel_l2": 1.0147999802059082,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.bc": {
+        "max_abs": 0.01295310235582292,
+        "pass": false,
+        "rel_l2": 0.8472020654667634,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.bl": {
+        "max_abs": 0.028903570491820574,
+        "pass": false,
+        "rel_l2": 0.9058418683000383,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step5.grad.x": {
+        "max_abs": 0.0034264419227838516,
+        "pass": false,
+        "rel_l2": 1.0017096897547224,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wc": {
+        "max_abs": 0.03929911553859711,
+        "pass": false,
+        "rel_l2": 0.06633329912985109,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step5.param.Wl": {
+        "max_abs": 0.11448925733566284,
+        "pass": false,
+        "rel_l2": 0.11886904291552228,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step5.param.bc": {
+        "max_abs": 0.0086041409522295,
+        "pass": false,
+        "rel_l2": 0.8630670981197945,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step5.param.bl": {
+        "max_abs": 0.019286066759377718,
+        "pass": false,
+        "rel_l2": 0.8983542513246716,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wc": {
+        "max_abs": 0.06142475362867117,
+        "pass": false,
+        "rel_l2": 1.0134027809439192,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.Wl": {
+        "max_abs": 0.16907473001629114,
+        "pass": false,
+        "rel_l2": 1.015459731006372,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.bc": {
+        "max_abs": 0.012437704484909773,
+        "pass": false,
+        "rel_l2": 0.8389946857541664,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.bl": {
+        "max_abs": 0.027628236450254917,
+        "pass": false,
+        "rel_l2": 0.9051365363109674,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step6.grad.x": {
+        "max_abs": 0.0032914471812546253,
+        "pass": false,
+        "rel_l2": 1.0027187578872652,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wc": {
+        "max_abs": 0.045441582798957825,
+        "pass": false,
+        "rel_l2": 0.07675346657850818,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step6.param.Wl": {
+        "max_abs": 0.13139671087265015,
+        "pass": false,
+        "rel_l2": 0.13846277005898636,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step6.param.bc": {
+        "max_abs": 0.009847911074757576,
+        "pass": false,
+        "rel_l2": 0.8601731865276161,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step6.param.bl": {
+        "max_abs": 0.02204889035783708,
+        "pass": false,
+        "rel_l2": 0.8988228044866252,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wc": {
+        "max_abs": 0.06031044037081301,
+        "pass": false,
+        "rel_l2": 1.0138090591557378,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.Wl": {
+        "max_abs": 0.1635554749518633,
+        "pass": false,
+        "rel_l2": 1.0161402925205025,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.bc": {
+        "max_abs": 0.011928510153666139,
+        "pass": false,
+        "rel_l2": 0.8305521339972051,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.bl": {
+        "max_abs": 0.02640329278074205,
+        "pass": false,
+        "rel_l2": 0.9049106464670137,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step7.grad.x": {
+        "max_abs": 0.0031623104587197304,
+        "pass": false,
+        "rel_l2": 1.0037644559188652,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wc": {
+        "max_abs": 0.051472634077072144,
+        "pass": false,
+        "rel_l2": 0.08700224709019364,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step7.param.Wl": {
+        "max_abs": 0.1477522850036621,
+        "pass": false,
+        "rel_l2": 0.15796086681279187,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step7.param.bc": {
+        "max_abs": 0.01104076229967177,
+        "pass": false,
+        "rel_l2": 0.8571173863045719,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step7.param.bl": {
+        "max_abs": 0.024689220008440316,
+        "pass": false,
+        "rel_l2": 0.8990239141680484,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wc": {
+        "max_abs": 0.059216811787337065,
+        "pass": false,
+        "rel_l2": 1.0142131347261023,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.Wl": {
+        "max_abs": 0.15823307167738676,
+        "pass": false,
+        "rel_l2": 1.0168420023002074,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.bc": {
+        "max_abs": 0.011426553130149841,
+        "pass": false,
+        "rel_l2": 0.8218649389884234,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.bl": {
+        "max_abs": 0.0252265939489007,
+        "pass": false,
+        "rel_l2": 0.9052300482157577,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step8.grad.x": {
+        "max_abs": 0.0030393744818866253,
+        "pass": false,
+        "rel_l2": 1.0048396874818035,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wc": {
+        "max_abs": 0.057394325733184814,
+        "pass": false,
+        "rel_l2": 0.09708268130420455,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step8.param.Wl": {
+        "max_abs": 0.16357558965682983,
+        "pass": false,
+        "rel_l2": 0.17734833261740277,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step8.param.bc": {
+        "max_abs": 0.012183418031781912,
+        "pass": false,
+        "rel_l2": 0.8539504652785016,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step8.param.bl": {
+        "max_abs": 0.02721187984570861,
+        "pass": false,
+        "rel_l2": 0.8990690185687853,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wc": {
+        "max_abs": 0.05814313725568354,
+        "pass": false,
+        "rel_l2": 1.0146143486616352,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.Wl": {
+        "max_abs": 0.15309871407225728,
+        "pass": false,
+        "rel_l2": 1.01756517167895,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.bc": {
+        "max_abs": 0.010932934004813433,
+        "pass": false,
+        "rel_l2": 0.812925009193986,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.bl": {
+        "max_abs": 0.024096098728477955,
+        "pass": false,
+        "rel_l2": 0.9061639751444451,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step9.grad.x": {
+        "max_abs": 0.0029228271450847387,
+        "pass": false,
+        "rel_l2": 1.0059371962906727,
+        "worst_flat_index": 221,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wc": {
+        "max_abs": 0.06320863962173462,
+        "pass": false,
+        "rel_l2": 0.10699797518863821,
+        "worst_flat_index": 66,
+        "worst_part": "part0"
+      },
+      "train.step9.param.Wl": {
+        "max_abs": 0.17888545989990234,
+        "pass": false,
+        "rel_l2": 0.1966103730811141,
+        "worst_flat_index": 14,
+        "worst_part": "part0"
+      },
+      "train.step9.param.bc": {
+        "max_abs": 0.013276711804792285,
+        "pass": false,
+        "rel_l2": 0.8507030711029125,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      },
+      "train.step9.param.bl": {
+        "max_abs": 0.029621488880366087,
+        "pass": false,
+        "rel_l2": 0.8990258682243619,
+        "worst_flat_index": 2,
+        "worst_part": "part0"
+      }
+    }
+  }
+}

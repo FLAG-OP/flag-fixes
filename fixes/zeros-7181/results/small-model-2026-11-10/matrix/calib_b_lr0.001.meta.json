@@ -1,0 +1,135 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 0,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "default": {
+      "Wc": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.2381272298901137,
+        "present": true,
+        "shape": [
+          4,
+          3,
+          3,
+          3
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wl": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.27546419503332303,
+        "present": true,
+        "shape": [
+          5,
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bc": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.023424465389764632,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bl": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.04775648553280269,
+        "present": true,
+        "shape": [
+          5
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.023150079411762423,
+        "present": true,
+        "shape": [
+          2,
+          3,
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_default": 0.5426512360572815,
+    "train_default": [
+      0.5426512360572815,
+      0.5425158739089966,
+      0.5423805117607117,
+      0.5422452688217163,
+      0.5421101450920105,
+      0.5419750213623047,
+      0.5418400764465332,
+      0.5417051315307617,
+      0.5415703654289246,
+      0.5414355993270874,
+      0.541300892829895,
+      0.5411663055419922,
+      0.5410318374633789,
+      0.5408973693847656,
+      0.5407630801200867,
+      0.5406288504600525,
+      0.5404946208000183,
+      0.5403605699539185,
+      0.5402264595031738,
+      0.5400925874710083
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": null,
+    "group": "n",
+    "hits": {},
+    "include": null,
+    "registered_keys": [],
+    "registered_ops": []
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp32",
+    "group": "n",
+    "lr": 0.001,
+    "model": "b",
+    "pythonpath": "",
+    "seed": 0,
+    "steps": 20,
+    "variants": [
+      "default"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/b_min_seed0_fp32.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      3,
+      8,
+      8
+    ],
+    "stride": [
+      192,
+      64,
+      8,
+      1
+    ]
+  }
+}

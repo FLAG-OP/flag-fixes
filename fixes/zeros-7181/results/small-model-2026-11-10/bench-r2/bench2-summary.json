@@ -1,0 +1,1506 @@
+{
+  "candidate_flag_note": "median-ratio criterion only, not a stability verdict",
+  "candidate_regression_gt10pct_count": 115,
+  "correctness_status_source": "/root/flag-fixes/fixes/zeros-7181/results/small-model-2026-11-10/matrix/summary.json",
+  "families": [
+    "a-sum-abs",
+    "b-linear",
+    "zeros"
+  ],
+  "groups": {
+    "a-sum-abs/b": {
+      "errors": {
+        "abs/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/strided/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/strided/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/strided/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/strided/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/strided/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/strided/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/conj/fwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/conj/fwd+bwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/conj/train-step": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/contig/fwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/contig/fwd+bwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/contig/train-step": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/full/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/full/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/full/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/full/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/full/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/full/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/strided/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/strided/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/strided/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/strided/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/strided/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/strided/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/outer/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/outer/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/outer/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/outer/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/outer/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/outer/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        }
+      }
+    },
+    "a-sum-abs/f_all": {
+      "errors": {
+        "abs/fwd+bwd/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/fwd+bwd/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/strided/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/strided/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/strided/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "abs/strided/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/strided/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "abs/strided/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/conj/fwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/conj/fwd+bwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/conj/train-step": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/contig/fwd+bwd": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "modelA/contig/train-step": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "sum/inner/fwd+bwd/strided/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        }
+      }
+    },
+    "a-sum-abs/f_target": {
+      "errors": {}
+    },
+    "a-sum-abs/n": {
+      "errors": {}
+    },
+    "a-sum-abs/n_rep": {
+      "errors": {}
+    },
+    "b-linear/b": {
+      "errors": {
+        "modelB/default/fwd+bwd": {
+          "message": "view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.",
+          "type": "RuntimeError"
+        },
+        "modelB/default/train-step": {
+          "message": "view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.",
+          "type": "RuntimeError"
+        }
+      }
+    },
+    "b-linear/f_all": {
+      "errors": {}
+    },
+    "b-linear/f_target": {
+      "errors": {}
+    },
+    "b-linear/n": {
+      "errors": {}
+    },
+    "b-linear/n_rep": {
+      "errors": {}
+    },
+    "zeros/b": {
+      "errors": {
+        "zero_/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zero_/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zero_/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zero_/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zero_/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zero_/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zeros/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zeros/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zeros/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zeros/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zeros/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zeros/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        }
+      }
+    },
+    "zeros/f_all": {
+      "errors": {
+        "zeros/c128/n1024": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zeros/c128/n1048576": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zeros/c128/n65536": {
+          "message": "'complex128'",
+          "type": "KeyError"
+        },
+        "zeros/c64/n1024": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zeros/c64/n1048576": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        },
+        "zeros/c64/n65536": {
+          "message": "'complex64'",
+          "type": "KeyError"
+        }
+      }
+    },
+    "zeros/f_target": {
+      "errors": {}
+    },
+    "zeros/n": {
+      "errors": {}
+    },
+    "zeros/n_rep": {
+      "errors": {}
+    }
+  },
+  "schedule": [
+    "n",
+    "f_target",
+    "f_all",
+    "b",
+    "n_rep"
+  ],
+  "table": [
+    {
+      "b_error": "KeyError",
+      "case": "abs/c128/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.09366519927978516,
+      "f_all_vs_n": 4.352229166846689,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.03135080099105835,
+      "f_target_vs_n": 1.4567402997746892,
+      "family": "a-sum-abs",
+      "n_ms": 0.02152120113372803,
+      "n_rep_ms": 0.02468719959259033,
+      "native_drift_pct": 14.711067654586197
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/c128/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.09486720085144043,
+      "f_all_vs_n": 2.953524408659553,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.04073959827423096,
+      "f_target_vs_n": 1.2683561528325493,
+      "family": "a-sum-abs",
+      "n_ms": 0.03211999893188477,
+      "n_rep_ms": 0.03209000110626221,
+      "native_drift_pct": -0.0933929844959681
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/c128/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.09462320327758789,
+      "f_all_vs_n": 4.417021490659201,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.03115880012512207,
+      "f_target_vs_n": 1.4544962018678258,
+      "family": "a-sum-abs",
+      "n_ms": 0.02142240047454834,
+      "n_rep_ms": 0.02440279960632324,
+      "native_drift_pct": 13.912535783820646
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/c64/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.09320199966430665,
+      "f_all_vs_n": 4.322110979626842,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.031184000968933104,
+      "f_target_vs_n": 1.4461139617387042,
+      "family": "a-sum-abs",
+      "n_ms": 0.02156399965286255,
+      "n_rep_ms": 0.02453279972076416,
+      "native_drift_pct": 13.767390631113804
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/c64/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.09353799819946289,
+      "f_all_vs_n": 4.374286704370152,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.03116719961166382,
+      "f_target_vs_n": 1.4575281650033693,
+      "family": "a-sum-abs",
+      "n_ms": 0.021383600234985353,
+      "n_rep_ms": 0.02421639919281006,
+      "native_drift_pct": 13.247530475200387
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/c64/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.09424639701843261,
+      "f_all_vs_n": 4.353101850974954,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.031043999195098877,
+      "f_target_vs_n": 1.4338764624754814,
+      "family": "a-sum-abs",
+      "n_ms": 0.021650400161743164,
+      "n_rep_ms": 0.024546399116516113,
+      "native_drift_pct": 13.376191355069068
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/fwd+bwd/c128/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09890159606933593,
+      "f_target_vs_n": 1.2361215621932593,
+      "family": "a-sum-abs",
+      "n_ms": 0.0800096035003662,
+      "n_rep_ms": 0.0842240047454834,
+      "native_drift_pct": 5.267369241615986
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/fwd+bwd/c128/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_ms": 0.15198840141296388,
+      "f_target_vs_n": 1.0560323757870727,
+      "family": "a-sum-abs",
+      "n_ms": 0.14392399787902832,
+      "n_rep_ms": 0.14420080184936523,
+      "native_drift_pct": 0.19232648787978682
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/fwd+bwd/c128/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09314559936523438,
+      "f_target_vs_n": 1.1577842574444979,
+      "family": "a-sum-abs",
+      "n_ms": 0.08045160293579101,
+      "n_rep_ms": 0.08679160118103027,
+      "native_drift_pct": 7.8805120269626645
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/fwd+bwd/c64/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09226880073547364,
+      "f_target_vs_n": 1.1403937960293664,
+      "family": "a-sum-abs",
+      "n_ms": 0.08090959548950195,
+      "n_rep_ms": 0.08692359924316406,
+      "native_drift_pct": 7.432991992207436
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/fwd+bwd/c64/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09341719627380371,
+      "f_target_vs_n": 1.1975580850030638,
+      "family": "a-sum-abs",
+      "n_ms": 0.07800640106201172,
+      "n_rep_ms": 0.08161439895629882,
+      "native_drift_pct": 4.6252587546231005
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/fwd+bwd/c64/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.0957964038848877,
+      "f_target_vs_n": 1.190354590061012,
+      "family": "a-sum-abs",
+      "n_ms": 0.08047719955444337,
+      "n_rep_ms": 0.08181639671325684,
+      "native_drift_pct": 1.6640702785731265
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/strided/c128/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.04218520164489746,
+      "f_target_vs_n": 1.8764324512119774,
+      "family": "a-sum-abs",
+      "n_ms": 0.022481598854064942,
+      "n_rep_ms": 0.025371999740600587,
+      "native_drift_pct": 12.856740774079892
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/strided/c128/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.05612760066986084,
+      "f_target_vs_n": 1.5177333047945205,
+      "family": "a-sum-abs",
+      "n_ms": 0.036981201171875,
+      "n_rep_ms": 0.03699120044708252,
+      "native_drift_pct": 0.02703880590856727
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/strided/c128/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.04261680126190186,
+      "f_target_vs_n": 1.9051213483840646,
+      "family": "a-sum-abs",
+      "n_ms": 0.02236959934234619,
+      "n_rep_ms": 0.02526439905166626,
+      "native_drift_pct": 12.940775849481337
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/strided/c64/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.04262159824371338,
+      "f_target_vs_n": 1.9564834199334653,
+      "family": "a-sum-abs",
+      "n_ms": 0.021784799098968508,
+      "n_rep_ms": 0.02508039951324463,
+      "native_drift_pct": 15.127981668796602
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/strided/c64/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.04264120101928711,
+      "f_target_vs_n": 1.8757895929167898,
+      "family": "a-sum-abs",
+      "n_ms": 0.02273240089416504,
+      "n_rep_ms": 0.025220000743865968,
+      "native_drift_pct": 10.94297017408067
+    },
+    {
+      "b_error": "KeyError",
+      "case": "abs/strided/c64/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.04274479866027832,
+      "f_target_vs_n": 1.948862818009466,
+      "family": "a-sum-abs",
+      "n_ms": 0.02193320035934448,
+      "n_rep_ms": 0.02517240047454834,
+      "native_drift_pct": 14.768479119025693
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "KeyError",
+      "case": "modelA/conj/fwd",
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.5372711944580079,
+      "f_target_vs_n": 2.281638889707886,
+      "family": "a-sum-abs",
+      "n_ms": 0.2354759979248047,
+      "n_rep_ms": 0.25032920837402345,
+      "native_drift_pct": 6.307738614600488
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "KeyError",
+      "case": "modelA/conj/fwd+bwd",
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.3961520385742188,
+      "f_target_vs_n": 1.881833760301955,
+      "family": "a-sum-abs",
+      "n_ms": 0.741910400390625,
+      "n_rep_ms": 0.7543567657470703,
+      "native_drift_pct": 1.677610308453989
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "KeyError",
+      "case": "modelA/conj/train-step",
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.4856527709960938,
+      "f_target_vs_n": 1.7822351877983817,
+      "family": "a-sum-abs",
+      "n_ms": 0.8335896301269531,
+      "n_rep_ms": 0.8813227844238282,
+      "native_drift_pct": 5.726217382239445
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "KeyError",
+      "case": "modelA/contig/fwd",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_ms": 2.7147076416015623,
+      "f_all_vs_n": 12.899610987478404,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.5035752105712891,
+      "f_target_vs_n": 2.3928633123362157,
+      "family": "a-sum-abs",
+      "n_ms": 0.21044879913330078,
+      "n_rep_ms": 0.22539640426635743,
+      "native_drift_pct": 7.102727691778683
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "KeyError",
+      "case": "modelA/contig/fwd+bwd",
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.2877787780761718,
+      "f_target_vs_n": 1.9449196684671495,
+      "family": "a-sum-abs",
+      "n_ms": 0.6621244049072266,
+      "n_rep_ms": 0.6816327667236328,
+      "native_drift_pct": 2.946328767195896
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "KeyError",
+      "case": "modelA/contig/train-step",
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.3979307556152343,
+      "f_target_vs_n": 1.8619671779644524,
+      "family": "a-sum-abs",
+      "n_ms": 0.7507816314697265,
+      "n_rep_ms": 0.7989372253417969,
+      "native_drift_pct": 6.414061273422631
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/full/c128/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.7255544281005859,
+      "f_all_vs_n": 121.39513808456543,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1369808006286621,
+      "f_target_vs_n": 22.91875366370924,
+      "family": "a-sum-abs",
+      "n_ms": 0.005976799726486206,
+      "n_rep_ms": 0.006047199964523315,
+      "native_drift_pct": 1.1778918695423277
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/full/c128/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.70896240234375,
+      "f_all_vs_n": 33.656898829095475,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1397276020050049,
+      "f_target_vs_n": 6.633352838976577,
+      "family": "a-sum-abs",
+      "n_ms": 0.021064400672912598,
+      "n_rep_ms": 0.021079199314117433,
+      "native_drift_pct": 0.07025427133972868
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/full/c128/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.7077999877929687,
+      "f_all_vs_n": 71.8491137021889,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.14035240173339844,
+      "f_target_vs_n": 14.247239113357917,
+      "family": "a-sum-abs",
+      "n_ms": 0.009851199984550476,
+      "n_rep_ms": 0.009915199875831605,
+      "native_drift_pct": 0.6496659430475415
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/full/c64/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6991428375244141,
+      "f_all_vs_n": 113.62263651252204,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.13719200134277343,
+      "f_target_vs_n": 22.2960403287419,
+      "family": "a-sum-abs",
+      "n_ms": 0.006153200268745423,
+      "n_rep_ms": 0.006304000020027161,
+      "native_drift_pct": 2.450753180385024
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/full/c64/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.7093108367919921,
+      "f_all_vs_n": 67.34048560365572,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.13781319618225096,
+      "f_target_vs_n": 13.083696275496443,
+      "family": "a-sum-abs",
+      "n_ms": 0.01053320050239563,
+      "n_rep_ms": 0.010591200590133666,
+      "native_drift_pct": 0.5506406882204989
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/full/c64/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.7144999694824219,
+      "f_all_vs_n": 60.78574810819747,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.13884400367736816,
+      "f_target_vs_n": 11.812088165629763,
+      "family": "a-sum-abs",
+      "n_ms": 0.011754399538040161,
+      "n_rep_ms": 0.01172600030899048,
+      "native_drift_pct": -0.24160510247907738
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/c128/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6087939834594727,
+      "f_all_vs_n": 90.76723528887975,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09640119552612304,
+      "f_target_vs_n": 14.372793152006244,
+      "family": "a-sum-abs",
+      "n_ms": 0.006707199811935425,
+      "n_rep_ms": 0.006975600123405456,
+      "native_drift_pct": 4.0016746033481
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/c128/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6176100158691407,
+      "f_all_vs_n": 32.99762827220796,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09804519653320312,
+      "f_target_vs_n": 5.238352465067044,
+      "family": "a-sum-abs",
+      "n_ms": 0.018716800212860107,
+      "n_rep_ms": 0.018725999593734742,
+      "native_drift_pct": 0.049150393069401485
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/c128/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.5815019989013672,
+      "f_all_vs_n": 84.91063298469962,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09702839851379394,
+      "f_target_vs_n": 14.168038546494085,
+      "family": "a-sum-abs",
+      "n_ms": 0.006848400235176086,
+      "n_rep_ms": 0.0070072001218795775,
+      "native_drift_pct": 2.3187880563380685
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/c64/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.5987615966796875,
+      "f_all_vs_n": 88.34419149328737,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09685720443725586,
+      "f_target_vs_n": 14.290781946870467,
+      "family": "a-sum-abs",
+      "n_ms": 0.006777600049972534,
+      "n_rep_ms": 0.006859999895095825,
+      "native_drift_pct": 1.2157672998663454
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/c64/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.5909296035766601,
+      "f_all_vs_n": 73.72980075339474,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09720800399780273,
+      "f_target_vs_n": 12.12856273067629,
+      "family": "a-sum-abs",
+      "n_ms": 0.008014799952507019,
+      "n_rep_ms": 0.008046000003814698,
+      "native_drift_pct": 0.3892804747786572
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/c64/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6008552169799805,
+      "f_all_vs_n": 86.77863020189137,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09653719902038574,
+      "f_target_vs_n": 13.942403523801914,
+      "family": "a-sum-abs",
+      "n_ms": 0.006923999786376953,
+      "n_rep_ms": 0.007048400044441223,
+      "native_drift_pct": 1.796653118173526
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/c128/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1614963912963867,
+      "f_target_vs_n": 3.0190980532897034,
+      "family": "a-sum-abs",
+      "n_ms": 0.05349160194396973,
+      "n_rep_ms": 0.052605600357055665,
+      "native_drift_pct": -1.6563377328690096
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/c128/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.16302959442138673,
+      "f_target_vs_n": 3.013062798124575,
+      "family": "a-sum-abs",
+      "n_ms": 0.05410759925842285,
+      "n_rep_ms": 0.052345600128173825,
+      "native_drift_pct": -3.256472573905114
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/c128/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1624300003051758,
+      "f_target_vs_n": 3.146404919780347,
+      "family": "a-sum-abs",
+      "n_ms": 0.051623997688293455,
+      "n_rep_ms": 0.05357639789581299,
+      "native_drift_pct": 3.7819624495339563
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/c64/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.15935400009155273,
+      "f_target_vs_n": 3.037906567910105,
+      "family": "a-sum-abs",
+      "n_ms": 0.052455201148986816,
+      "n_rep_ms": 0.052988801002502445,
+      "native_drift_pct": 1.0172487033269828
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/c64/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1629680061340332,
+      "f_target_vs_n": 3.107253811439688,
+      "family": "a-sum-abs",
+      "n_ms": 0.05244760036468506,
+      "n_rep_ms": 0.0518179988861084,
+      "native_drift_pct": -1.200439055741037
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/c64/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1633168029785156,
+      "f_target_vs_n": 3.1314099932617574,
+      "family": "a-sum-abs",
+      "n_ms": 0.05215439796447754,
+      "n_rep_ms": 0.05138999938964844,
+      "native_drift_pct": -1.4656454770118021
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/strided/c128/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.16193559646606445,
+      "f_target_vs_n": 3.1451134192321852,
+      "family": "a-sum-abs",
+      "n_ms": 0.051487998962402345,
+      "n_rep_ms": 0.05344200134277344,
+      "native_drift_pct": 3.79506374251978
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/strided/c128/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.16538440704345703,
+      "f_target_vs_n": 3.148451973150541,
+      "family": "a-sum-abs",
+      "n_ms": 0.05252880096435547,
+      "n_rep_ms": 0.05289080142974854,
+      "native_drift_pct": 0.6891466371728314
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/strided/c128/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1616864013671875,
+      "f_target_vs_n": 3.0331062773887165,
+      "family": "a-sum-abs",
+      "n_ms": 0.053307199478149415,
+      "n_rep_ms": 0.05265480041503906,
+      "native_drift_pct": -1.22384794079789
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/strided/c64/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.16214040756225587,
+      "f_target_vs_n": 3.119380375190092,
+      "family": "a-sum-abs",
+      "n_ms": 0.05197840213775635,
+      "n_rep_ms": 0.05133719921112061,
+      "native_drift_pct": -1.233594916858709
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/strided/c64/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.16106399536132812,
+      "f_target_vs_n": 3.080866342158216,
+      "family": "a-sum-abs",
+      "n_ms": 0.05227880001068115,
+      "n_rep_ms": 0.053187198638916015,
+      "native_drift_pct": 1.7376042067707531
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/fwd+bwd/strided/c64/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.16225040435791016,
+      "f_target_vs_n": 3.103560225650944,
+      "family": "a-sum-abs",
+      "n_ms": 0.05227880001068115,
+      "n_rep_ms": 0.05168479919433594,
+      "native_drift_pct": -1.1362173887385516
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/strided/c128/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6065644073486328,
+      "f_all_vs_n": 89.8827027462441,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09805480003356934,
+      "f_target_vs_n": 14.53008178106642,
+      "family": "a-sum-abs",
+      "n_ms": 0.00674839973449707,
+      "n_rep_ms": 0.007229599952697754,
+      "native_drift_pct": 7.130582614139487
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/strided/c128/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6297211837768555,
+      "f_all_vs_n": 53.49495145894563,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09735320091247558,
+      "f_target_vs_n": 8.270175581438448,
+      "family": "a-sum-abs",
+      "n_ms": 0.011771600246429443,
+      "n_rep_ms": 0.011803200244903564,
+      "native_drift_pct": 0.26844267400013183
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/strided/c128/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.5943379974365235,
+      "f_all_vs_n": 86.94236250104086,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09707759857177735,
+      "f_target_vs_n": 14.20093583476365,
+      "family": "a-sum-abs",
+      "n_ms": 0.006836000084877014,
+      "n_rep_ms": 0.006907200217247009,
+      "native_drift_pct": 1.0415466864534964
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/strided/c64/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.5979840087890625,
+      "f_all_vs_n": 87.92848073624813,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.0966923999786377,
+      "f_target_vs_n": 14.217797974364078,
+      "family": "a-sum-abs",
+      "n_ms": 0.00680079996585846,
+      "n_rep_ms": 0.006870800256729126,
+      "native_drift_pct": 1.02929495385959
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/strided/c64/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.598979606628418,
+      "f_all_vs_n": 70.29947087970578,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09772159576416016,
+      "f_target_vs_n": 11.46913250421008,
+      "family": "a-sum-abs",
+      "n_ms": 0.008520399928092956,
+      "n_rep_ms": 0.008532800078392029,
+      "native_drift_pct": 0.1455348387836551
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/inner/strided/c64/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6025511932373047,
+      "f_all_vs_n": 85.71140618377409,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.09838800430297852,
+      "f_target_vs_n": 13.995448511380376,
+      "family": "a-sum-abs",
+      "n_ms": 0.00703000009059906,
+      "n_rep_ms": 0.006982399821281433,
+      "native_drift_pct": -0.6771019730324221
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/outer/c128/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6217900085449218,
+      "f_all_vs_n": 79.07595271772993,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1099563980102539,
+      "f_target_vs_n": 13.983671031347168,
+      "family": "a-sum-abs",
+      "n_ms": 0.007863199710845948,
+      "n_rep_ms": 0.0078711998462677,
+      "native_drift_pct": 0.1017414756834698
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/outer/c128/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6289715957641602,
+      "f_all_vs_n": 22.313452600139527,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.11146880149841308,
+      "f_target_vs_n": 3.9544771741358975,
+      "family": "a-sum-abs",
+      "n_ms": 0.028187999725341795,
+      "n_rep_ms": 0.028203599452972412,
+      "native_drift_pct": 0.05534173330004842
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/outer/c128/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6064456176757812,
+      "f_all_vs_n": 24.000159270300472,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.11000639915466309,
+      "f_target_vs_n": 4.3535166608717315,
+      "family": "a-sum-abs",
+      "n_ms": 0.025268399715423585,
+      "n_rep_ms": 0.02524359941482544,
+      "native_drift_pct": -0.09814749203530938
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/outer/c64/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6266463851928711,
+      "f_all_vs_n": 93.33428288839808,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.10848440170288086,
+      "f_target_vs_n": 16.157938634560058,
+      "family": "a-sum-abs",
+      "n_ms": 0.006714000105857849,
+      "n_rep_ms": 0.006794800162315369,
+      "native_drift_pct": 1.2034562881079376
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/outer/c64/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6073139953613281,
+      "f_all_vs_n": 45.22339528117893,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.11056119918823243,
+      "f_target_vs_n": 8.232895753827997,
+      "family": "a-sum-abs",
+      "n_ms": 0.013429199457168578,
+      "n_rep_ms": 0.0134443998336792,
+      "native_drift_pct": 0.11318899953122064
+    },
+    {
+      "b_error": "KeyError",
+      "case": "sum/outer/c64/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.6034244155883789,
+      "f_all_vs_n": 56.72134885423655,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.10975079536437989,
+      "f_target_vs_n": 10.316475419415907,
+      "family": "a-sum-abs",
+      "n_ms": 0.010638400316238403,
+      "n_rep_ms": 0.01062000036239624,
+      "native_drift_pct": -0.17295790057906024
+    },
+    {
+      "b_candidate_regression_gt10pct": true,
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_ms": 1.1522683715820312,
+      "b_vs_n": 11.881358012259744,
+      "case": "modelB/default/fwd",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_ms": 1.170661163330078,
+      "f_all_vs_n": 12.071011177262829,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.23509559631347657,
+      "f_target_vs_n": 2.42413574458444,
+      "family": "b-linear",
+      "n_ms": 0.096981201171875,
+      "n_rep_ms": 0.1056779956817627,
+      "native_drift_pct": 8.967505459614586
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "RuntimeError",
+      "case": "modelB/default/fwd+bwd",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_ms": 4.178325500488281,
+      "f_all_vs_n": 10.564121319441028,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.16049560546875,
+      "f_target_vs_n": 2.934097969489783,
+      "family": "b-linear",
+      "n_ms": 0.3955204010009766,
+      "n_rep_ms": 0.5352108001708984,
+      "native_drift_pct": 35.318127412997065
+    },
+    {
+      "b_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "b_error": "RuntimeError",
+      "case": "modelB/default/train-step",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_correctness": "failed -> timing is diagnostic only, not valid performance",
+      "f_all_ms": 5.36279296875,
+      "f_all_vs_n": 11.508860517005735,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.175129165649414,
+      "f_target_vs_n": 2.5218944187727614,
+      "family": "b-linear",
+      "n_ms": 0.4659708023071289,
+      "n_rep_ms": 0.49298519134521485,
+      "native_drift_pct": 5.797442437236729
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zero_/c128/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.18825920104980468,
+      "f_all_vs_n": 48.227072992939235,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.018357599973678588,
+      "f_target_vs_n": 4.702735956430403,
+      "family": "zeros",
+      "n_ms": 0.003903599977493286,
+      "n_rep_ms": 0.003951199948787689,
+      "native_drift_pct": 1.2193865039667624
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zero_/c128/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.18961360931396484,
+      "f_all_vs_n": 35.328219022424705,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.5587196350097656,
+      "f_target_vs_n": 290.4158032717923,
+      "family": "zeros",
+      "n_ms": 0.005367199778556824,
+      "n_rep_ms": 0.005371999740600586,
+      "native_drift_pct": 0.08943140262710307
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zero_/c128/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.1887112045288086,
+      "f_all_vs_n": 48.71726593548293,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.18364240646362304,
+      "f_target_vs_n": 47.40871627129376,
+      "family": "zeros",
+      "n_ms": 0.0038736000657081603,
+      "n_rep_ms": 0.00401199996471405,
+      "native_drift_pct": 3.5729010909284007
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zero_/c64/n1024",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.18850120544433593,
+      "f_all_vs_n": 48.40811578301582,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.017596800327301026,
+      "f_target_vs_n": 4.518952256282213,
+      "family": "zeros",
+      "n_ms": 0.003894000053405762,
+      "n_rep_ms": 0.0040016001462936405,
+      "native_drift_pct": 2.7632278226028695
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zero_/c64/n1048576",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.1885304069519043,
+      "f_all_vs_n": 48.62038386244571,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.9037323760986328,
+      "f_target_vs_n": 233.06487131301375,
+      "family": "zeros",
+      "n_ms": 0.003877600133419037,
+      "n_rep_ms": 0.003971999883651734,
+      "native_drift_pct": 2.4344890392156255
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zero_/c64/n65536",
+      "f_all_candidate_regression_gt10pct": true,
+      "f_all_ms": 0.1895719909667969,
+      "f_all_vs_n": 42.49349806066455,
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.11348719596862793,
+      "f_target_vs_n": 25.43871548327935,
+      "family": "zeros",
+      "n_ms": 0.004461199939250946,
+      "n_rep_ms": 0.004453999996185303,
+      "native_drift_pct": -0.16139027982798965
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zeros/c128/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.028744800090789793,
+      "f_target_vs_n": 2.731149339856801,
+      "family": "zeros",
+      "n_ms": 0.010524799823760986,
+      "n_rep_ms": 0.010545200109481812,
+      "native_drift_pct": 0.19383062920369926
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zeros/c128/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.879081268310547,
+      "f_target_vs_n": 174.79175643531573,
+      "family": "zeros",
+      "n_ms": 0.010750399827957153,
+      "n_rep_ms": 0.01072559952735901,
+      "native_drift_pct": -0.23069189048809963
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zeros/c128/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.1896299934387207,
+      "f_target_vs_n": 17.989413293535076,
+      "family": "zeros",
+      "n_ms": 0.010541199445724488,
+      "n_rep_ms": 0.01059839963912964,
+      "native_drift_pct": 0.5426345806249969
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zeros/c64/n1024",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.02810159921646118,
+      "f_target_vs_n": 2.6566078433803235,
+      "family": "zeros",
+      "n_ms": 0.010578000545501709,
+      "n_rep_ms": 0.010704799890518188,
+      "native_drift_pct": 1.1987080589667833
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zeros/c64/n1048576",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 1.0276888275146485,
+      "f_target_vs_n": 97.41865433576177,
+      "family": "zeros",
+      "n_ms": 0.010549199581146241,
+      "n_rep_ms": 0.010634399652481079,
+      "native_drift_pct": 0.8076448898275592
+    },
+    {
+      "b_error": "KeyError",
+      "case": "zeros/c64/n65536",
+      "f_all_error": "KeyError",
+      "f_target_candidate_regression_gt10pct": true,
+      "f_target_ms": 0.14621640205383302,
+      "f_target_vs_n": 13.897840198506895,
+      "family": "zeros",
+      "n_ms": 0.010520800352096557,
+      "n_rep_ms": 0.01067520022392273,
+      "native_drift_pct": 1.4675677387548265
+    }
+  ]
+}

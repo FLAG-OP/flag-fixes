@@ -1,0 +1,410 @@
+schema_version: 1
+template_version: 1
+id: zeros-7181
+title: complex64/128 复数 dtype 支持（zeros/sum/abs）与 m2-bert 反向阻塞修复
+owner: null
+status: draft
+deployable: false
+source:
+  kind: local
+  path: fixes/zeros-7181
+  commit: null
+  repository: null
+target:
+  package: flag_gems
+  baseline_version: v5.3.5-46-g29e14822
+  baseline_commit: 29e14822f6dfabf990973c41f7c2df7811a6f60f
+patches:
+- path: patches/zeros-7181.patch
+  sha256: 60acb22f1800f2f2c9b2aacf3f0bcd254465e40b2e1babcc3cc48e1a2387a6ea
+targets:
+- path: src/flag_gems/ops/sum.py
+  before_sha256: 5259b9f60445ef4a99e85387bc1e4c7a2264681170c695c6fc9b94378fa6348b
+  after_sha256: 827500417ac340aa3b3d02e3d14a7307e15444bf668a3e9c3c6ccfd768d4bcdd
+  after_source: src/flag_gems/ops/sum.py
+- path: src/flag_gems/ops/zeros.py
+  before_sha256: ef6ee0ed2217edf2e49441ebd03ede9221b59d0a95e8ca2f7884dd28b64ae543
+  after_sha256: 391893014d200a1bca9b167903517ea24e69a1187d3a0a223d9fb0ae9990f9f7
+  after_source: src/flag_gems/ops/zeros.py
+- path: src/flag_gems/ops/zero.py
+  before_sha256: 8f8d83c541e003274466f95f8817b46eb8df4d450b2068a51386a3e6bb278b10
+  after_sha256: 1baf813d998fe4d4eaf522846bc862e21822014369a9eed347948b381a79d7fd
+  after_source: src/flag_gems/ops/zero.py
+- path: src/flag_gems/ops/zeros_like.py
+  before_sha256: 14bc478e3a474ae5872503717704f2569d4ef2dc2f65a4aaf54a7dd64817fc2d
+  after_sha256: 754892efc4dec014628890d4389e0b705ff8f04cc20f6bea4642b31684e09fb9
+  after_source: src/flag_gems/ops/zeros_like.py
+- path: src/flag_gems/ops/abs.py
+  before_sha256: b7cf2a18414e159822c0c98c41aad61434184765aebc625b8f016eeee15fb930
+  after_sha256: 9d473703db901f6ccc1cda134b7a95229b6fbec12656bd680eae48f14149ae0c
+  after_source: src/flag_gems/ops/abs.py
+- path: src/flag_gems/ops/absolute.py
+  before_sha256: fc3a44054ba94313dae0755b0d340db731a9feb3cb08ca0a05c6495735ab5b54
+  after_sha256: b9a9ce1981862e244817c16ef91e828e9c43beeddd5ace619d019f19afa441c2
+  after_source: src/flag_gems/ops/absolute.py
+- path: src/flag_gems/ops/conv2d.py
+  before_sha256: 290a77432d169331d594a59696d61e6b020ed65ce0e1d1a18ece3b669ff391e7
+  after_sha256: 778519c06d988a99dae05075e5d15ed5556f9ce0f8540f635811666a7c35de24
+  after_source: src/flag_gems/ops/conv2d.py
+- path: src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+  before_sha256: f47b39ea0d62911eeb8601c613e2348e87852685119d0390ece26b437b915267
+  after_sha256: 3fd7813424813de45ae0bf0e9aa8f0fb825601cb1b02948183e6dd48f348f413
+  after_source: src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+backends:
+- cuda
+requires:
+- linear-5379
+e2e_precondition:
+  description: >-
+    依赖 linear-5379：e2e（tests/test_m2_bert_backward.py，12L 全量 m2-bert
+    反向）需要 linear-5379 的 view→reshape 修复才能跑完原问题链路；复数算子
+    单测（repro_complex64 / test_complex_ops）不依赖 linear-5379，可在纯基线
+    上独立复现修复前后行为。
+    e2e 证据仅对 baseline 29e14822 + linear-5379 + zeros-7181 组合有效。
+    test_m2_bert_backward.py 在建模前按 files 逐个哈希校验目标树，
+    不匹配打印 MISSING PRECONDITION 并以退出码 2 结束（skip 不算通过）。
+    本修复目标文件的 sha256 与上方 targets[].after_sha256 一致（测试内
+    交叉校验）；linear.py 取 fixes/linear-5379 的 after_sha256。
+  files:
+  - path: src/flag_gems/ops/linear.py
+    sha256: ddec3383c1d6ca4b2f53cf6ea9550c2d5fead492a2562e0864e723b958ee951d
+  - path: src/flag_gems/ops/sum.py
+    sha256: 827500417ac340aa3b3d02e3d14a7307e15444bf668a3e9c3c6ccfd768d4bcdd
+  - path: src/flag_gems/ops/zeros.py
+    sha256: 391893014d200a1bca9b167903517ea24e69a1187d3a0a223d9fb0ae9990f9f7
+  - path: src/flag_gems/ops/zero.py
+    sha256: 1baf813d998fe4d4eaf522846bc862e21822014369a9eed347948b381a79d7fd
+  - path: src/flag_gems/ops/zeros_like.py
+    sha256: 754892efc4dec014628890d4389e0b705ff8f04cc20f6bea4642b31684e09fb9
+  - path: src/flag_gems/ops/abs.py
+    sha256: 9d473703db901f6ccc1cda134b7a95229b6fbec12656bd680eae48f14149ae0c
+  - path: src/flag_gems/ops/absolute.py
+    sha256: b9a9ce1981862e244817c16ef91e828e9c43beeddd5ace619d019f19afa441c2
+  - path: src/flag_gems/ops/conv2d.py
+    sha256: 778519c06d988a99dae05075e5d15ed5556f9ce0f8540f635811666a7c35de24
+  - path: src/flag_gems/runtime/backend/_thead/ops/linear_backward.py
+    sha256: 3fd7813424813de45ae0bf0e9aa8f0fb825601cb1b02948183e6dd48f348f413
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - |-
+    https://github.com/flagos-ai/FlagGems/issues/7181（同类上游问题："Complex zeros
+    and abs reach unsupported Triton dtype handling on Hygon"，复现
+    flag_gems.zeros((2,), dtype=complex64/128) 与 flag_gems.abs(x) 触发
+    KeyError complex64/128）。problem.md 容器 live 复现（m2-bert 反向
+    triton/_utils.py:133 canonicalize_dtype → KeyError: 'complex64'）与该 issue 同类。
+  - |-
+    基线 FlagGems 29e14822f6dfabf990973c41f7c2df7811a6f60f (git describe
+    v5.3.5-46-g29e14822)，8 个目标文件 before/after sha256 见 targets；
+    patches/zeros-7181.patch sha256=60acb22f1800f2f2c9b2aacf3f0bcd254465e40b2e1babcc3cc48e1a2387a6ea，
+    在基线上 git apply --check 干净，patch 应用后的文件内容与 src/ 快照逐字节一致
+    （flagfix-fixed 工作树逐文件 cmp 通过）。
+  - |-
+    2026-11-09 本地 PPU 设备（PPU-ZW810E，torch 2.10.0 + triton 3.6.0，
+    CUDA_VISIBLE_DEVICES=0）双树实测（第二轮评审最终代码）：修复前
+    tests/repro_complex64.py 退出码 1（KeyError: 'complex64'，triton/_utils.py
+    type_canonicalisation_dict，即 problem.md 原始签名）；修复前
+    tests/test_complex_ops.py（210 用例）TOTAL 33 passed / 177 failed /
+    210 total（137 条 complex KeyError，其余为 strided zero_ 断言、交叉 dtype
+    静默分歧、bool out 拒绝、conj 直调等修复缺失行为）；修复后 repro 退出码 0、
+    regression TOTAL 210 passed / 0 failed / 210 total。原始输出
+    results/repro-baseline-2026-11-09.log、results/regression-baseline-2026-11-09.log、
+    results/regression-fixed-2026-11-09.log。历史口径保留：11-08 第一轮（139 用例）
+    18/121/139 → 139/0/139（results/*-2026-11-08.log，提交 085e199/9fa84cf）；
+    2026-11-07 旧日志 TOTAL 行计数器有缺陷（printed N = passed+failed），旧口径
+    实际 16/38/54，38 条失败全为 complex KeyError，计数器已于 11-08 修正。
+  - |-
+    真实模型 e2e（tests/test_m2_bert_backward.py，12L/768/8192 全量容器配置，
+    2026-11-09 复跑）：修复前（基线 + linear-5379 + conv2d/linear_backward 机械修复、
+    complex 修复缺失）反向在 ops/sum.py:385 sum_dim → sum_dim_kernel_non_inner 抛
+    KeyError: 'complex64'，退出码 1（results/e2e-problem-path-noncomplex-2026-11-07.log）；
+    再早一层的阻塞（仅基线 + linear-5379）是 _thead/ops/linear_backward.py:170
+    view RuntimeError（results/e2e-linearblocker-baseline-2026-11-07.log）；
+    修复后 exit 0 E2E OK：precondition OK（9 文件 sha256，baseline 29e1482 +
+    linear-5379 + zeros-7181）、model code revision=90e0b28f…、opt_einsum=bundled-stub、
+    前向 loss 与 native 完全一致 rel=0.000e+00（backward 前快照）、反向完成、
+    161 个梯度 present+finite、缺失集合与 tests/known_gap_m2.txt（384 条）
+    双向断言通过，results/e2e-fixed-2026-11-09.log。
+  - |-
+    e2e 前置依赖检查实测（模型工作之前 exit 2）：基线树 MISSING PRECONDITION
+    （linear.py 4d46bae0… != ddec3383…）results/e2e-precondition-baseline-2026-11-09.log；
+    仅 linear-5379 树 MISSING PRECONDITION（sum.py 5259b9f6… != 82750041… 连同
+    zeros/zero/zeros_like/abs 等逐条）results/e2e-precondition-linearonly-2026-11-09.log；
+    另有双源校验：e2e_precondition 的 sha 必须等于 targets[].after_sha256。
+  - |-
+    缺依赖/缺设备行为（skip 不算通过）：transformers 缺失 e2e 退出码 2 打印
+    MISSING DEPENDENCY，results/e2e-missing-dep-2026-11-09.log；无 CUDA 设备
+    （CUDA_VISIBLE_DEVICES=）regression 退出码 2，results/nocuda-regression-2026-11-09.log。
+  - |-
+    评审两轮加固套件（含于 210 用例，results/regression-fixed-2026-11-09.log）：
+    strided zero_（切片[::2]/[1::2]/view 列/narrow/转置/0 维 × gops.zero_/zero/
+    aten.zero_，仅目标区间归零、原存储不污染）；模长量级（rtol=1e-6 或 1e-10、
+    atol=0、equal_nan，inf 优先于 NaN）；交叉 dtype out 矩阵（ok/err 双向 +
+    ATen 报错逐字，含 sum_dim_out dtype=None 采用 out.dtype、显式不符抛错、
+    sum 输入 cast-first 等 ATen 语义对齐）；autograd parity（abs().sum() 等
+    实数标量结尾链，grads+fwd rtol=1e-4/atol=1e-6）。complex zero_ 一律
+    x.copy_(0) 原生 redispatch（stride 正确），absolute 模长用缩放 hypot
+    （inf 优先、NaN 传播、防大数溢出）。第二轮新增：bool out 采用矩阵
+    （dim 形采用 out.dtype 含 bool/空输入、全量 sum.out 不采用只校验、
+    显式不符报错逐字）、complex→bool any-component（[0+1j]→True、纯虚/全零/
+    混合 × c64/c128）、空输入归约零分支（无除零）、conj 张量 abs/sum 直调+
+    dispatch（预 enable 构造 conj bit）、cast-first 非零规则抵消样例
+    （0.5→True 而非截断 False）。
+  - |-
+    第二轮评审修正（2026-11-09，基于 9fa84cf；源码仅 sum.py/absolute.py 变更，
+    patch 重建 sha256=60acb22f…、494 行 +267 −46）：(1) sum_dim_out 删除
+    bool→i64 强制分支，dim 形一律采用 out.dtype（bool out 可用），显式不符
+    仍逐字报错；(2) _sum_complex 对 bool 目标改用完整张量任一分量非零规则
+    （real.ne(0)|imag.ne(0)，对齐 c10 TypeCast；sum([0+1j], dtype=bool)=True）；
+    (3) absolute 入口 resolve_conj().contiguous()、_sum_complex 入口
+    resolve_conj()（conj bit 物化；enable 后 .imag 访问器返回未取负裸存储，
+    直调 gops.sum(conj) 曾 4+6j vs native 4-6j）；(4) 空输入 dim-out/全量-out
+    零分支（曾 ZeroDivisionError）；(5) _cast_before_sum bool 目标用 ne(0)
+    非零规则（flag_gems float→bool cast 截断 0.5→False 与 ATen 分歧）、
+    sum_dim_comm 标量 dim 归一化。全部纳入测试（210 用例）并在设备复验：
+    regression 33/177/210 → 210/0/210、e2e E2E OK（161/384、loss rel=0）、
+    repro 1→0、错树前置/缺依赖/缺设备/CLI 退出码全达标
+    （results/*-2026-11-09.log）。
+  - |-
+    第三轮评审小修（2026-11-10，基于 b5a2cc8；仅测试与文档，源码零改动）：
+    (1) strided conj 样例 _cbase[::2] 首维为 1 实际仍连续，改为
+    _cbase[:,::2].conj()（stride (2,2) 真正非连续）并在 enable 前断言
+    is_conj/非连续前提，direct+dispatch 双入口保留；(2) "实数路径逐位不变"
+    过强表述统一改写（README/WORKFLOW/diagnosis/PR 描述：含实数语义修正，
+    已列用例通过、未覆盖输入与后端不作逐位一致保证；单次模型前向 loss rel=0
+    结论保留）。测试变更后在干净提交 1fa248d 重跑：regression
+    33/177/210 → 210/0/210（20 conj 用例全 PASS），
+    results/regression-{baseline,fixed}-2026-11-10.log；flag-fixes verify
+    3/3 passed、source_dirty=false → results/verify-2026-11-10.json。
+  - |-
+    管理工具 requires 强制实测：check/plan/apply/status 必须同时给出
+    linear-5379 zeros-7181（results/cli-check-2026-11-09.log 等 exit 0）；
+    只给 zeros-7181 时 exit 2 "include required fixes: ['linear-5379']"
+    （results/cli-check-requiredfail-2026-11-09.log）；validate exit 0
+    fixes=11（results/cli-validate-2026-11-09.log）；apply 因 deployable=false
+    exit 2（results/cli-apply-2026-11-09.log）；status 干净
+    （results/cli-status-2026-11-09.log）。
+  - |-
+    预存缺陷对照（非本 patch 引入）：无任何 complex 修复的树上以 unused 排除
+    sum/zeros/abs/fill 后反向可完成，梯度缺失集合与修复树完全一致
+    （1L/64 配置 missing=34：32 个 filter_fn + 2 个未用 pooler），且
+    pad/conv1d 告警 "an autograd kernel was not registered" 同现；native 与
+    flag_gems 的梯度数值分歧在无 complex 修复树与修复树上同形态出现。
+    原始输出 results/gradgap-probe-noncomplex-2026-11-07.log 与
+    results/gradgap-probe-fixed-2026-11-07.log。flag_gems 全包无 register_autograd
+    调用（grep 0 命中），该类梯度缺口/数值分歧属于预存上游问题，超出 #7181 类修复范围。
+  - |-
+    issue #7181 最小调用形态直接通过：flag_gems.zeros((2,), dtype=c64/c128) 保 dtype 清零、
+    flag_gems.abs(x) 返回与 native 一致的实部模长（tests/repro_complex64.py 内含）。
+  - |-
+    e2e 缺依赖行为：transformers 缺失时 tests/test_m2_bert_backward.py 退出码 2 并打印
+    MISSING DEPENDENCY（skip 不算通过），原始输出 results/e2e-missing-dep-2026-11-09.log；
+    无 CUDA 设备同样退出码 2（results/nocuda-regression-2026-11-09.log）。
+  - |-
+    flag-fixes verify 在已提交干净树上通过：source_dirty=false，source_commit=a12c2fae0c49
+    （passed=true，3/3 命令 rc=0：complex-keyerror-repro / complex-ops-regression /
+    m2-bert-fwd-bwd），results/verify-2026-11-07.json；此前 dirty 预跑（HEAD f159ce07b199，
+    source_dirty=true）同样 passed=true，results/verify-2026-11-07-dirty.json。
+    2026-11-08 第一轮评审修正提交后干净重跑 → results/verify-2026-11-08.json
+    （commit 085e199）；2026-11-09 第二轮评审修正提交后干净重跑 →
+    results/verify-2026-11-09.json（commit 以该 JSON 的 provenance 字段为准）。
+  commands:
+  - name: complex-keyerror-repro
+    script: tests/repro_complex64.py
+    level: repro
+    timeout_seconds: 900
+  - name: complex-ops-regression
+    script: tests/test_complex_ops.py
+    level: regression
+    timeout_seconds: 1800
+  - name: m2-bert-fwd-bwd
+    script: tests/test_m2_bert_backward.py
+    level: e2e
+    timeout_seconds: 1800
+notes:
+- |-
+  一个实例覆盖 8 个文件，按评审口径分三类改动（同一反向链路的三个层次，故并入
+  一个 fix；每类独立验收）：A 类 complex dtype 支持本体（sum/zeros/zero/
+  zeros_like/abs/absolute，#7181 缺口）——验收为 KeyError 消失 + native oracle
+  数值一致（含 strided/交叉 dtype out 矩阵/模长误差界）；B 类同链路前置阻塞
+  （conv2d.py 的 input_c_stride[None] constexpr 与 _thead/ops/linear_backward.py
+  的 view→reshape）——不含则反向到不了、也完不成 A 类验证，验收为最小复现 +
+  e2e 剥洋葱归属链；C 类后端/依赖边界——ops/linear.py 归 linear-5379（不入本
+  patch），requires + e2e_precondition 哈希钉死，验收为 e2e 起跑前 9 文件 sha256
+  前置检查、不匹配 exit 2。详见 reports/diagnosis.md「修复与影响」。
+- |-
+  src/flag_gems/ops/linear.py 不在本 patch 内：line 158 view→reshape 归
+  linear-5379 所有（已合入本仓库 fixes/linear-5379）。requires: [linear-5379]
+  （select 类命令须同时给出两个 ID）；e2e_precondition 钉死 9 文件 sha256
+  （8 目标 + linear.py ddec3383…），e2e 在模型工作前逐文件核对并做双源校验。
+  本仓库 e2e 目标树构造为 baseline + linear-5379.patch + zeros-7181.patch，
+  见 reports/validation.md。
+- |-
+  未覆盖的 complex 缺口（非本 patch 范围）：mean/full/ones、eq/where 等
+  多数 pointwise 的 ComplexMode=NONE 路径、flag_gems 无 autograd 注册导致的
+  pad/conv1d 反向梯度缺口（filter_fn 子树，精确集合固化为 tests/known_gap_m2.txt
+  并被 e2e 双向断言）与 native 梯度数值分歧；个别 run 的 loss 存储间歇覆写
+  归因未定（既未证明预存、也未证明本修复引入，e2e 在反向前快照 loss 规避）。
+- |-
+  目标文件中 thead linear_backward 属厂商目录，本机以 cuda dispatch key 运行
+  （FlagGems vendor 解析为 thead / ppu-smi）；cuda 是本 PPU 环境的设备/dispatch 标识，
+  不代表已验证所有 CUDA 厂商后端。
+- |-
+  hardware_status 保持 unverified：本地设备三个脚本已跑通，但 problem.md 要求的
+  容器侧 x-benchmark 回归（run_model.py + 独立 --result-root）与平台验收未在本环境执行。
+- |-
+  deployable=false、owner=null：未完成平台验收与维护者审核，不具备部署资格。
+- |-
+  普通 CI（无设备 runner）只做 flag-fixes validate、pytest 与本地 fix 脚本语法检查
+  （compileall），不执行三个硬件脚本；语法检查通过不等于硬件验证通过。
+- |-
+  第四轮评审（2026-11-10，意见 6756872311）随机权重小模型评估完成：f_target
+  （仅注册目标算子）9/9 全 PASS（fp32 max_abs≤4.8e-7、fp64≤8.9e-16，阈值先冻结、
+  原生噪声门位级一致、FD 抽检 PASS）；修复前对照树在修复目标路径崩溃（complex
+  sum_dim KeyError、NHWC 非连续 linear_backward view RuntimeError）证明修复被真实
+  命中；全量注册的两个失败均为预存且不在本 patch 8 目标文件内（A：sgn/fill 的
+  triton complex64 KeyError 与 fp64 CompilationError；B：mse_loss_backward 不广播
+  标量 grad_output 致静默错梯度，最小复现 tests/repro_mse_scalar_grad.py）；
+  scoped 性能首轮只报告不作加速声明（complex sum/abs 慢于原生 1.06–21×，
+  zeros/zero_ 0.83–1.00×，>10% 回归 58 项打旗标，崩溃路径 N/A；
+  **[historical / superseded by bench-r2，见下方第六轮 bullet：zeros/zero_ 与
+  旗标计数结论已撤回，当前有效口径以第六轮 bullet 为准]**）；
+  证据 results/small-model-2026-11-10/，报告 reports/small-model-evaluation.md。
+- |-
+  第五轮评审修正（2026-11-10，意见 6766490204）全部落地：(1) bench 按族拆分
+  进程注册（a-sum-abs/b-linear/zeros 各自 include + 期望注册键断言），
+  registered≠called 由 torch.profiler kernel 名非计时命中验证（zero_ 命中原生
+  fill=修复刻意走原生 copy_(0)，b 树探针崩溃逐条记录）——modelB f_target 重测
+  fwd 2.42×/fwd+bwd 2.93×/step 2.52×（四轮 1.07× 系未注册目标算子，作废）；
+  (2) 比较器结构加固（shape/dtype 严格相等、键集合、step ID 序列、参考无效
+  判 fail 非 skip）+ 不依赖设备负例自测 10/10 + 已存 .pt 重评分 f_target 9/9
+  与 noise 维持 PASS（原始证据未改写）；(3) calls_per_s 公式修正（旧
+  samples_per_s 多乘 100 撤回）、P95 改名块均值分位、显存 baseline/peak/delta、
+  旗标改候选语义且计数从数据生成=115（旧 58 作废）、f_all-B 定性 diagnostic；
+  (4) 报告三态重生成（bench 版本统一 dd5ebea），另立修复项
+  reports/follow-up-fix-items.md（mse 标量广播优先、complex pointwise/fill/
+  FP64 编译），并补同路径隔离对照：两缺口在修复前对照树逐位复现
+  （mse 39/40、complex fill 5/5，含 abs 前向），预存归因不依赖文件位置论证。
+  原始 fix 维持 draft/deployable=false/hardware_status=unverified/owner=null。
+- |-
+  第六轮评审修正（2026-11-10/11，意见 6784122575）三项落地：(1) P1 清零性能
+  旧结论（0.83–1.00×）撤回，性能节改由 gen_perf_section.py 从 bench2-summary.json
+  自动生成——bench-r2 实测 complex zeros/zero_ 2^20 达 97–290×，随字节数线性
+  增长；根因完成：修复的 complex zero_→copy_(0) 重派生**继承了 native ATen
+  complex-标量 copy 的全量张量可分页 HtoD host 中转**（native copy_(0) 0.74–
+  0.85ms ≈ f_target 0.90ms；native zero_ 0.005ms 设备 memset；设备端 0 维源
+  0.02ms【该 0.02ms 数值已于第七轮更正：混入每次 .cuda() 构造，预建后
+  拷贝净成本为 0.0071/0.0069 ms，见下方第七轮 bullet】），登记 FIX-ITEM-3，
+  不承诺优化比例；sum"大尺寸 1.1–2×"同步撤回
+  （实测 3.95–22.92×）。(2) P2 命中说明修正：三分法 registered/probe-hit/
+  timed-case；profiler 全事件清单入库（zeros_hitprobe.py），zeros 族无 Triton
+  kernel（round-5"命中 Triton"系子串误判，更正为 native FillFunctor+HtoD）。
+  (3) P2 provenance 更正：test_small_models.py 在 968d624..fac401c 间 226 行
+  差异（非逐字节一致），准确表述=设备运行在旧 harness、比较器随后加固并对已存
+  dumps 重评分；新增 run-commits.json 机器可读清单。状态与验收口径不变。
+- |-
+  第七轮评审修正（2026-11-11，意见 6785197539）两项落地：(1) zero_staging_probe
+  按评审修正——设备标量预建在计时之外并单列构造/拷贝净成本/memset 边界：
+  copy_(0) 0.83/1.50 ms（继承路径）vs copy_(预建 device-0dim) 0.0071/0.0069 ms
+  （拷贝净成本）vs zero_() 0.0042/0.0055 ms，host staging 与设备路径差距约 117×，
+  此前 0.02 ms 系混入构造成本已更正；FIX-ITEM-3 框定三条候选路径（native memset
+  基准 / 预存设备 0 维标量 copy / real-view 或逐元素设备 kernel），均须通过
+  正确性矩阵（contiguous/slice-transpose/storage offset/c64-c128/未选中 storage
+  不污染）后才考虑独立建优化 fix。(2) 四处历史性能口径加 [historical /
+  superseded by bench-r2] 标记（fix.yaml 第四轮 bullet、validation.md 第四轮
+  性能行、results/README bench/ 行；原日志不改写）；"当前有效口径"唯一化：
+  zeros/zero_ 2^20 ≈97–290×、sum forward 3.95–22.92×/fwd+bwd 约 3×、
+  modelB f_target   2.42–2.93×，观测不外推、不构成加速承诺。状态与验收口径不变。
+- |-
+  第八轮评审收尾（2026-11-11，意见 6786286552）两项 P2：(1) 探针构造标签
+  更正——bench() 为 warmup+50 次平均而非一次性成本，改报**单次 CUDA event
+  0.3358 ms / 50 次平均 0.0145 ms**，copy-only 净成本 0.0071/0.0069 ms
+  （c64/c128）不变；(2) 旧证据同步收尾——results/README 头注改为
+  "968d624..d236d5a 区间一致 + fac401c 后续 226 行加固"、0.02ms 行更新为
+  净成本口径，validation.md 第六轮表 0.017–0.020 ms 加 [historical /
+  superseded] 标记，报告 §4 机制段与生成器（gen_perf_section.py）同步替换
+  并重生成 perf-section-auto.md。FIX-ITEM-3 登记候选评估协议（每候选记录
+  正确性/非连续视图/大尺寸耗时/内存）与多平台复验要求（优化完成后昆仑芯/
+  昇腾/平头哥复跑同一矩阵，不外推 PPU/thead 归因）。功能 fix 维持
+  draft/deployable=false/hardware_status=unverified；本轮结束证据审阅。
+- |-
+  第九轮评审收尾（2026-11-11，意见 6787003142 + 更正 6787034891）：(1) copy-only
+  双批口径——round-7 探针批 0.0071/0.0069 ms、round-8 探针批 0.0089/0.0067 ms
+  （c64/c128），批间为计时波动非功能差异，汇总须标批次来源，不再宣称单一
+  "唯一口径"；round-7 批日志自 git 历史归档为 zero-staging-attribution-r7-batch.log，
+  生成器与报告/validation/results·README/FIX-ITEM-3 全部按批标注。(2) 单次创建
+  0.3358 ms 一律保留"含冷启动"说明。(3) 按评审更正撤回多平台复验要求（昆仑芯/
+  昇腾/平头哥属 PR3 problem29 bundle，PR2 不要求；FIX-ITEM-3 扩展到其它后端
+  另建条目）。收尾确认：无新功能阻塞，剩余仅可选历史标注清理（已完成）。
+  功能 fix 维持 draft/deployable=false/hardware_status=unverified。
+- |-
+  第十轮：后续探索与实施方案落地（2026-11-11，意见 6787395475）。(1) 基线冻结
+  （评审§一）：新增 baseline_freeze.py 三组进程（native/fix[注册 zeros+sum+abs
+  族]/prefix[修复前对照树]）× zeros/zero_ 五布局 × c64/c128 + conj/empty/
+  0-dim 边缘 + sum/abs 数值边缘（NaN/Inf/1e38/1e-38/empty/conj 位级 checksum
+  交叉对比）→ results/small-model-2026-11-10/baseline/：fix vs native 52/58
+  位级一致（6 例为声明内 1ulp 级：conj 归约顺序×4、abs scaled-hypot×2），
+  prefix 58/58 全崩逐例记录。(2) 候选筛选（评审§二）：zero_candidates.py
+  正确性矩阵 60/60 全过（6 布局×c64-c128×5 实现，含未选中 storage 位级保持）；
+  2^20 c64 contig：当前 0.6674ms → A(uint8-view memset) 0.0083 / B(预建设备
+  标量 copy) 0.0050 全布局最优 / C(real-imag 双通道) 0.0154 / native 0.0042；
+  独立优化 fix 按 A→B→C 落地（可组合），过验收门槛后另行提交。(3) 登记探索
+  计划（评审§三）与验收门槛（评审§五，六项）。探索中发现 **FIX-ITEM-4**：
+  FlagGems sum 对 uint8 返回 uint8 dtype 且按 256 回绕（[200,100,50,7].sum()
+  =101 vs native 357/int64），最小复现已登记、归因需对照树实测。功能 fix 维持
+  draft/deployable=false/hardware_status=unverified。
+- |-
+  第十一轮（2026-11-11，意见 6788210724）四项预实现补强落地：(1) 候选矩阵
+  扩展至 260 格（zeros 创建路径/empty/0-dim/五种组合布局/精确 storage 索引
+  alias 检查/负 stride 登记 N/A）——原生 harness 260/260 全过，候选 A 新增
+  0 维与 conj 两条 fallback 约束；(2) 注册环境复测（--registered）——A/B
+  事件全为 native-aten、无 HtoD、0.0051–0.0075 ms 与原生结论一致；
+  候选 C 被淘汰（注册 zero_ 对实数跨步视图稠密写，根因登记 FIX-ITEM-5，
+  双树同型污染归因闭环；正是 round-2 view_as_real 弃用模式在实数路径复现）；
+  (3) FIX-ITEM-4 专项复现 u8sum_repro.py——修复树 6/8 失败、prefix 同型
+  6/8 失败（预存归因闭环；4 元素小例侥幸正确），checksum 回绕仅作线索；
+  (4) 复杂度评估——注册下 B 占优或持平全部已测布局（0.005–0.007 ms 接近
+  native），建议独立优化 fix 首选 B-only，A 快路径仅 c128 contig 一处
+  ~3µs 收益作可选增强；"B 全布局最优"限定为"本轮已测试布局中最优"。
+  功能 fix 维持 draft/deployable=false/hardware_status=unverified。
+- |-
+  第十五轮（2026-11-12，意见 6811732879）三项落地：(1) classify 符号/指数/
+  尾数独立提取（尾数掩码排除符号位——此前 -inf 被误判 NaN），自测覆盖
+  双 dtype ±Inf/±NaN/-Inf↔NaN/Inf 符号翻转的精确分类负例；(2) main 聚合
+  hard failures（子 rc≠0/in_bits 不一致/长度不符/分类不一致/缺字段）非零
+  退出 + aggregate_failures 纯函数 + 入口级负例（注入分类不一致→聚合非零）
+  + run_child 检查 returncode；(3) 逐分量比较直接从子进程 raw bits 进行
+  （NaN payload 不经 repr），每用例归档双方 raw in/out bits、dtype/shape/
+  byteorder/输出 sha256，abs/c128/nan 与 round-10 提交 checksum 交叉核对
+  （确定性 full 输入的 abs/c64/extreme_low 双树位级复现 r10；conj 用例
+  RNG 状态不同属新批次输入，同 run 内 native vs fix 对比为有效检验）。
+  8 项 numeric_diff 定稿：conj ≤4 float64 ULP / ≤2 float32 ULP、abs
+  extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（掩码一致，
+  策略不要求 payload）。功能 fix 维持 draft/deployable=false/
+  hardware_status=unverified。
+- |-
+  第十六轮收尾（2026-11-12，意见 6813485321）：ulp_metrics 统一 schema
+  （长度不符/缺字段返回路径均带全字段默认值）+ 必需字段集中校验（缺失聚合
+  hard failure 而非抛 KeyError）+ process_case 抽取置于 try/except——
+  异常输入下诊断 JSON 必写、失败聚合后非零退出；入口级负例扩展三场景
+  （长度错误/缺字段/子进程失败）全部聚合非零且诊断写出——PASS。
+  batch_reproduction_note 与文档对齐当前 strict baseline 口径：确定性用例
+  匹配 strict round-12/13 baseline、conj 跨批 hash 差异不作为验收失败条件（RNG
+  状态不同）而以同批 native/fix 输入位级一致为有效检验、c128 r10 条目
+  float32 误标不可比。diff-details.json 重生成（hard_failures=0，结构
+  未变）。功能 fix 维持 draft/deployable=false/hardware_status=unverified。
+- |-
+  第十七轮（2026-11-12，意见 6816060628）：diff_details 批次对照从
+  .r10-superseded 归档切换为当前 strict baseline（baseline-n.json/
+  baseline-fix.json），字段更名 batch_reproduction_vs_strict（sha256 口径
+  与 round-12 checksum 一致）；4 例确定性用例双树 sha256 与 strict baseline
+  完全一致，conj 跨批 hash 对照仅作诊断，不作为验收条件（同批 native/fix 位级一致
+  为有效检验），c128 r10 条目 float32 误标不可比——note 同步改写。
+  流程披露：round-17 提交因 git add -A 误带入其他并行修复包 121 文件，
+  后续提交已从分支移除（文件保留磁盘未跟踪），共享文件恢复误提交前状态，
+  2091540 随后合并 main 正常继承 PR3；相对 main 的增量为 zeros-7181、
+  所需 schema 与共享索引文档。功能 fix 维持 draft/deployable=false/
+  hardware_status=unverified。
+installation_status: source-checked
+upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

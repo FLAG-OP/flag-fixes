@@ -1,0 +1,4947 @@
+{
+  "complexity": {
+    "comparison": "see perf rows: A vs B per dtype/layout",
+    "guard_branch_cost_us": 0.6202759977895766,
+    "note": "candidate A IS the A+B combo (A fast path, B fallback); compare A vs B-only per layout"
+  },
+  "matrix": [
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": false,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": false,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex64",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c64",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "contig",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": false,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "slice_stride",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "narrow",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "storage_offset",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_transpose",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "changed_only_selected": false,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": false,
+      "same_as_native": false,
+      "selected_all_zero_via_base": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "offset_slice",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "slice_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "fallback->B(conj)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": false,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": false,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": true,
+      "layout": "offset_transpose_conj",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        32,
+        32
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok(memset)",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "empty",
+      "outcome": "ok",
+      "pass": true,
+      "shape": [
+        0
+      ]
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "current",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "A",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "fallback->B",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "B",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "C",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "changed_only_selected": true,
+      "creation": false,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "same_as_native": true,
+      "selected_all_zero_via_base": true,
+      "shape": []
+    },
+    {
+      "actual_dtype": "torch.complex128",
+      "all_zero": true,
+      "candidate": "native_ref",
+      "creation": true,
+      "dtype": "c128",
+      "is_conj": false,
+      "layout": "zerodim",
+      "outcome": "ok",
+      "pass": true,
+      "shape": []
+    }
+  ],
+  "matrix_summary": {
+    "fail": 36,
+    "pass": 224
+  },
+  "mode": "registered",
+  "path_verification": [
+    {
+      "candidate": "A",
+      "cv_pct": 0.7477543767164134,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<unsigned char>, std::array<char*, 1u",
+          "self_device_us": 4.040000000000873
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.006152399778366089,
+      "role": "candidate"
+    },
+    {
+      "candidate": "B",
+      "cv_pct": 0.21442447107554952,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 5.400999999999996
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.004990400075912476,
+      "role": "candidate"
+    },
+    {
+      "candidate": "C",
+      "cv_pct": 0.4578338464128525,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "triton-candidate",
+          "name": "zeros_kernel",
+          "self_device_us": 5.039000000000016
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.04126359939575195,
+      "role": "candidate"
+    },
+    {
+      "candidate": "native_ref",
+      "cv_pct": 0.1920480055445352,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "HtoD-staging(!)",
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us": 675.278
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.878856430053711,
+      "role": "registered-path reference (current fix path)"
+    },
+    {
+      "candidate": "A",
+      "cv_pct": 0.28842373346627254,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 5.920000000000002
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.005640000104904175,
+      "role": "candidate"
+    },
+    {
+      "candidate": "B",
+      "cv_pct": 0.14333861152132857,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 5.960000000000001
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.005626000165939331,
+      "role": "candidate"
+    },
+    {
+      "candidate": "C",
+      "cv_pct": 0.6377400995525989,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "triton-candidate",
+          "name": "zeros_kernel",
+          "self_device_us": 5.039999999999978
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.04283199787139893,
+      "role": "candidate"
+    },
+    {
+      "candidate": "native_ref",
+      "cv_pct": 0.4123043254789804,
+      "dtype": "c64",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<c10::complex<float> >, std::array<ch",
+          "self_device_us": 3.0
+        },
+        {
+          "class": "HtoD-staging(!)",
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us": 702.885
+        },
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 8.199999999999932
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.890506362915039,
+      "role": "registered-path reference (current fix path)"
+    },
+    {
+      "candidate": "A",
+      "cv_pct": 0.12794522139315104,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<unsigned char>, std::array<char*, 1u",
+          "self_device_us": 6.3999999999999915
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.006616799831390381,
+      "role": "candidate"
+    },
+    {
+      "candidate": "B",
+      "cv_pct": 0.1496392525503392,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 6.1200000000000045
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.005666400194168091,
+      "role": "candidate"
+    },
+    {
+      "candidate": "C",
+      "cv_pct": 0.53163616854335,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "triton-candidate",
+          "name": "zeros_kernel",
+          "self_device_us": 6.239999999999995
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 0.04135119915008545,
+      "role": "candidate"
+    },
+    {
+      "candidate": "native_ref",
+      "cv_pct": 0.07672938454169635,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "HtoD-staging(!)",
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us": 1400.892
+        }
+      ],
+      "layout": "contig",
+      "ms_per_iter_median": 1.5971380615234374,
+      "role": "registered-path reference (current fix path)"
+    },
+    {
+      "candidate": "A",
+      "cv_pct": 0.024089321480666465,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 9.361000000000004
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.009048799872398377,
+      "role": "candidate"
+    },
+    {
+      "candidate": "B",
+      "cv_pct": 0.18731940891202015,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 9.680000000000007
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.009034799933433533,
+      "role": "candidate"
+    },
+    {
+      "candidate": "C",
+      "cv_pct": 0.642264471558059,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "triton-candidate",
+          "name": "zeros_kernel",
+          "self_device_us": 6.199999999999989
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 0.042617602348327635,
+      "role": "candidate"
+    },
+    {
+      "candidate": "native_ref",
+      "cv_pct": 0.6889566537944695,
+      "dtype": "c128",
+      "events": [
+        {
+          "class": "native-aten",
+          "name": "void at::native::unrolled_elementwise_kernel<at::native::FillFunctor<c10::complex<double> >, std::array<char*,",
+          "self_device_us": 5.040000000000006
+        },
+        {
+          "class": "HtoD-staging(!)",
+          "name": "Memcpy HtoD (Pageable -> Device)",
+          "self_device_us": 1390.2930000000001
+        },
+        {
+          "class": "native-aten",
+          "name": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_",
+          "self_device_us": 12.360000000000127
+        }
+      ],
+      "layout": "slice_stride",
+      "ms_per_iter_median": 1.6373300170898437,
+      "role": "registered-path reference (current fix path)"
+    }
+  ],
+  "perf": [
+    {
+      "block_device_ms": [
+        731.5740966796875,
+        72.12068176269531,
+        72.16075897216797,
+        72.09728240966797,
+        72.56652069091797
+      ],
+      "candidate": "current",
+      "cv_pct": 144.46805298072144,
+      "dtype": "c64",
+      "first_call_ms": 31.945159912109375,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.7216075897216797
+    },
+    {
+      "block_device_ms": [
+        0.824999988079071,
+        0.8325600028038025,
+        0.8216000199317932,
+        0.8153200149536133,
+        0.639240026473999
+      ],
+      "candidate": "A",
+      "cv_pct": 10.51060623498554,
+      "dtype": "c64",
+      "first_call_ms": 0.02319999970495701,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.008216000199317931
+    },
+    {
+      "block_device_ms": [
+        0.5002400279045105,
+        0.4994800090789795,
+        0.49823999404907227,
+        0.4984000027179718,
+        0.4971599876880646
+      ],
+      "candidate": "B",
+      "cv_pct": 0.23838377572971992,
+      "dtype": "c64",
+      "first_call_ms": 0.014720000326633453,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004984000027179718
+    },
+    {
+      "block_device_ms": [
+        4.145880222320557,
+        4.108759880065918,
+        4.099959850311279,
+        4.135280132293701,
+        4.1162800788879395
+      ],
+      "candidate": "C",
+      "cv_pct": 0.459982709300248,
+      "dtype": "c64",
+      "first_call_ms": 0.07011999934911728,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.04116280078887939
+    },
+    {
+      "block_device_ms": [
+        72.13020324707031,
+        72.04428100585938,
+        72.1472396850586,
+        71.98824310302734,
+        72.11372375488281
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.09244206515642049,
+      "dtype": "c64",
+      "first_call_ms": 0.758679986000061,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.7211372375488281
+    },
+    {
+      "block_device_ms": [
+        84.25228118896484,
+        74.51367950439453,
+        78.1968002319336,
+        89.65287780761719,
+        90.60711669921875
+      ],
+      "candidate": "current",
+      "cv_pct": 8.427181876708241,
+      "dtype": "c64",
+      "first_call_ms": 1.155959963798523,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.8425228118896484
+    },
+    {
+      "block_device_ms": [
+        0.7200400233268738,
+        0.718559980392456,
+        0.7212799787521362,
+        0.7163599729537964,
+        0.6634399890899658
+      ],
+      "candidate": "A",
+      "cv_pct": 3.523117036634995,
+      "dtype": "c64",
+      "first_call_ms": 0.020239999517798424,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.007185599803924561
+    },
+    {
+      "block_device_ms": [
+        0.5649999976158142,
+        0.5641199946403503,
+        0.5634400248527527,
+        0.5622400045394897,
+        0.5632799863815308
+      ],
+      "candidate": "B",
+      "cv_pct": 0.18195217412528591,
+      "dtype": "c64",
+      "first_call_ms": 0.014840000309050083,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005634400248527527
+    },
+    {
+      "block_device_ms": [
+        4.361599922180176,
+        4.284679889678955,
+        4.266880035400391,
+        4.26584005355835,
+        4.2811598777771
+      ],
+      "candidate": "C",
+      "cv_pct": 0.9268921650924793,
+      "dtype": "c64",
+      "first_call_ms": 0.07267999649047852,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.04281159877777099
+    },
+    {
+      "block_device_ms": [
+        91.0598373413086,
+        90.96267700195312,
+        91.2593994140625,
+        98.69252014160156,
+        104.40540313720703
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 6.374269932840009,
+      "dtype": "c64",
+      "first_call_ms": 0.9528399705886841,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.912593994140625
+    },
+    {
+      "block_device_ms": [
+        92.85563659667969,
+        92.74791717529297,
+        96.38880157470703,
+        96.57044219970703,
+        98.5753173828125
+      ],
+      "candidate": "current",
+      "cv_pct": 2.6682659948936798,
+      "dtype": "c64",
+      "first_call_ms": 0.96288001537323,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.9638880157470703
+    },
+    {
+      "block_device_ms": [
+        0.5329599976539612,
+        0.5305200219154358,
+        0.5345600247383118,
+        0.5321999788284302,
+        0.5369200110435486
+      ],
+      "candidate": "A",
+      "cv_pct": 0.45591992395005293,
+      "dtype": "c64",
+      "first_call_ms": 0.01600000075995922,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.005329599976539612
+    },
+    {
+      "block_device_ms": [
+        0.4999200105667114,
+        0.4981200098991394,
+        0.4981200098991394,
+        0.49744001030921936,
+        0.49856001138687134
+      ],
+      "candidate": "B",
+      "cv_pct": 0.18522325535581832,
+      "dtype": "c64",
+      "first_call_ms": 0.015080000273883343,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.004981200098991394
+    },
+    {
+      "block_device_ms": [
+        4.297520160675049,
+        4.250239849090576,
+        4.2159600257873535,
+        4.265160083770752,
+        4.218560218811035
+      ],
+      "candidate": "C",
+      "cv_pct": 0.800954206579779,
+      "dtype": "c64",
+      "first_call_ms": 0.07119999825954437,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 0.042502398490905764
+    },
+    {
+      "block_device_ms": [
+        100.85743713378906,
+        100.01531982421875,
+        100.0953598022461,
+        99.83448028564453,
+        101.05387878417969
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 0.5441670917318725,
+      "dtype": "c64",
+      "first_call_ms": 1.0352400541305542,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 8.00048828125,
+      "ms_per_iter_median": 1.0009535980224609
+    },
+    {
+      "block_device_ms": [
+        172.81256103515625,
+        176.433837890625,
+        180.26431274414062,
+        193.14231872558594,
+        193.4013671875
+      ],
+      "candidate": "current",
+      "cv_pct": 5.215465865891263,
+      "dtype": "c128",
+      "first_call_ms": 1.7305599451065063,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.8026431274414063
+    },
+    {
+      "block_device_ms": [
+        0.8213599920272827,
+        0.8202800154685974,
+        0.7311999797821045,
+        0.6622400283813477,
+        0.66211998462677
+      ],
+      "candidate": "A",
+      "cv_pct": 10.745234890876104,
+      "dtype": "c128",
+      "first_call_ms": 0.027559999376535416,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.007311999797821045
+    },
+    {
+      "block_device_ms": [
+        0.5694000124931335,
+        0.5681999921798706,
+        0.5701199769973755,
+        0.5686799883842468,
+        0.5681999921798706
+      ],
+      "candidate": "B",
+      "cv_pct": 0.14613339769174014,
+      "dtype": "c128",
+      "first_call_ms": 0.014360000379383564,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005686799883842468
+    },
+    {
+      "block_device_ms": [
+        4.108320236206055,
+        4.0930399894714355,
+        4.096039772033691,
+        4.098800182342529,
+        4.084199905395508
+      ],
+      "candidate": "C",
+      "cv_pct": 0.21409013059057858,
+      "dtype": "c128",
+      "first_call_ms": 0.0737600028514862,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.04096039772033691
+    },
+    {
+      "block_device_ms": [
+        177.22067260742188,
+        181.29400634765625,
+        196.27847290039062,
+        197.4951934814453,
+        197.70384216308594
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 5.223921739457429,
+      "dtype": "c128",
+      "first_call_ms": 1.7625999450683594,
+      "layout": "contig",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.9627847290039062
+    },
+    {
+      "block_device_ms": [
+        182.49891662597656,
+        180.82904052734375,
+        160.86044311523438,
+        167.58148193359375,
+        159.9739227294922
+      ],
+      "candidate": "current",
+      "cv_pct": 6.3142394422152455,
+      "dtype": "c128",
+      "first_call_ms": 1.805400013923645,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 1.6758148193359375
+    },
+    {
+      "block_device_ms": [
+        0.9074400067329407,
+        1.5443999767303467,
+        0.9029200077056885,
+        0.9041600227355957,
+        0.9046000242233276
+      ],
+      "candidate": "A",
+      "cv_pct": 27.69927553767055,
+      "dtype": "c128",
+      "first_call_ms": 0.022199999541044235,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.009046000242233277
+    },
+    {
+      "block_device_ms": [
+        0.9056400060653687,
+        0.9038400053977966,
+        0.9041200280189514,
+        0.902400016784668,
+        0.9052799940109253
+      ],
+      "candidate": "B",
+      "cv_pct": 0.1420557432709735,
+      "dtype": "c128",
+      "first_call_ms": 0.015720000490546227,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.009041200280189515
+    },
+    {
+      "block_device_ms": [
+        4.2829999923706055,
+        4.236480236053467,
+        4.225719928741455,
+        4.229400157928467,
+        4.235879898071289
+      ],
+      "candidate": "C",
+      "cv_pct": 0.5493975706051031,
+      "dtype": "c128",
+      "first_call_ms": 0.07063999772071838,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 0.04235879898071289
+    },
+    {
+      "block_device_ms": [
+        157.71043395996094,
+        157.83172607421875,
+        157.84959411621094,
+        157.83392333984375,
+        166.25892639160156
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 2.3702580030412435,
+      "dtype": "c128",
+      "first_call_ms": 1.627959966659546,
+      "layout": "slice_stride",
+      "mem_baseline_alloc_mb": 32.00048828125,
+      "ms_per_iter_median": 1.5783392333984374
+    },
+    {
+      "block_device_ms": [
+        153.634521484375,
+        153.6670379638672,
+        156.8961181640625,
+        166.39071655273438,
+        161.84552001953125
+      ],
+      "candidate": "current",
+      "cv_pct": 3.4997068432928193,
+      "dtype": "c128",
+      "first_call_ms": 1.5830800533294678,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.568961181640625
+    },
+    {
+      "block_device_ms": [
+        0.5698000192642212,
+        0.5681599974632263,
+        0.5680400133132935,
+        0.5663999915122986,
+        0.5691999793052673
+      ],
+      "candidate": "A",
+      "cv_pct": 0.2286639317082327,
+      "dtype": "c128",
+      "first_call_ms": 0.017160000279545784,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005681599974632263
+    },
+    {
+      "block_device_ms": [
+        0.5663999915122986,
+        0.5687999725341797,
+        0.5687199831008911,
+        0.5677599906921387,
+        0.5672799944877625
+      ],
+      "candidate": "B",
+      "cv_pct": 0.17783022914927535,
+      "dtype": "c128",
+      "first_call_ms": 0.014720000326633453,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.005677599906921387
+    },
+    {
+      "block_device_ms": [
+        4.299680233001709,
+        4.253680229187012,
+        4.252600193023682,
+        4.250800132751465,
+        4.264440059661865
+      ],
+      "candidate": "C",
+      "cv_pct": 0.4811243693331763,
+      "dtype": "c128",
+      "first_call_ms": 0.07023999840021133,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 0.04253680229187012
+    },
+    {
+      "block_device_ms": [
+        162.46511840820312,
+        168.43423461914062,
+        176.8231658935547,
+        176.8582000732422,
+        176.7051239013672
+      ],
+      "candidate": "native_ref",
+      "cv_pct": 3.8101041760156433,
+      "dtype": "c128",
+      "first_call_ms": 1.6658400297164917,
+      "layout": "transpose",
+      "mem_baseline_alloc_mb": 16.00048828125,
+      "ms_per_iter_median": 1.767051239013672
+    }
+  ],
+  "provenance": {
+    "determinism": {
+      "deterministic_algorithms": true,
+      "deterministic_error": null,
+      "seed": 0,
+      "tf32_cudnn_before": true,
+      "tf32_matmul_before": false
+    },
+    "device": "PPU-ZW810E",
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "registered_keys": [
+      "zero_",
+      "zeros",
+      "zeros_like"
+    ],
+    "registered_mode": true,
+    "torch": "2.10.0"
+  },
+  "purpose": "round-10/11 zero_ candidate screening (registered environment); does not modify the zeros-7181 patch"
+}

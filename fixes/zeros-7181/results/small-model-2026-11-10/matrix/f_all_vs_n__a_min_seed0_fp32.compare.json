@@ -1,0 +1,23 @@
+{
+  "dtype": "fp32",
+  "first_fail": "variant conj missing in val",
+  "input_identity": {
+    "X": true,
+    "params": true,
+    "target": true
+  },
+  "pass": false,
+  "ref": "/tmp/opencode/small-model-clean/n__a_min_seed0_fp32.pt",
+  "tiers": {
+    "grad": {
+      "atol": 1e-05,
+      "rtol": 0.001
+    },
+    "inter": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "val": "/tmp/opencode/small-model-clean/f_all__a_min_seed0_fp32.pt",
+  "variants": {}
+}

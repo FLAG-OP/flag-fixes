@@ -1,0 +1,18 @@
+{
+  "matrix_run_commit": "968d624",
+  "bench_run_commit": "d236d5a",
+  "tests_identical_968d624_to_d236d5a": true,
+  "plan_comment": "6756872311",
+  "device": "PPU-ZW810E (CUDA_VISIBLE_DEVICES=0)",
+  "torch": "2.10.0",
+  "date": "2026-11-10",
+  "groups": {
+    "n": "no flag_gems on PYTHONPATH",
+    "f_target": "/tmp/opencode/flagfix-fixed, only_enable(sum*/abs* for A, conv2d/linear/linear_backward for B)",
+    "f_all": "/tmp/opencode/flagfix-fixed, flag_gems.enable()",
+    "b": "/tmp/opencode/flagfix-e2ebase (base + linear-5379), enable()"
+  },
+  "thresholds": "frozen review table, never loosened; native noise gate max_abs=0.0",
+  "calibration": "lr=0.1 both models (1e-1 added to plan candidates {1e-3,1e-2}; native drop>=10% rule)",
+  "bench_protocol": "first-call separate, warmup 20, 5 blocks x 100 iters, cuda events + synced wall clock, seeded-random order, n_rep native drift pass"
+}

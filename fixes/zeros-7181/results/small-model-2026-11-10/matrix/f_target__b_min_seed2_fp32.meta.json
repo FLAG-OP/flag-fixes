@@ -1,0 +1,153 @@
+{
+  "determinism": {
+    "deterministic_algorithms": true,
+    "deterministic_error": null,
+    "seed": 2,
+    "tf32_cudnn_before": true,
+    "tf32_matmul_before": false
+  },
+  "device": "PPU-ZW810E",
+  "exception": null,
+  "grad_stats_step0": {
+    "default": {
+      "Wc": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.5082293226814952,
+        "present": true,
+        "shape": [
+          4,
+          3,
+          3,
+          3
+        ],
+        "zero_ratio": 0.0
+      },
+      "Wl": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.4066659697136141,
+        "present": true,
+        "shape": [
+          5,
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bc": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.041403416907097035,
+        "present": true,
+        "shape": [
+          4
+        ],
+        "zero_ratio": 0.0
+      },
+      "bl": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.051206966008710865,
+        "present": true,
+        "shape": [
+          5
+        ],
+        "zero_ratio": 0.0
+      },
+      "x": {
+        "dtype": "torch.float32",
+        "finite": true,
+        "norm": 0.05446150115533495,
+        "present": true,
+        "shape": [
+          2,
+          3,
+          8,
+          8
+        ],
+        "zero_ratio": 0.0
+      }
+    }
+  },
+  "losses": {
+    "single_default": 0.7553218007087708,
+    "train_default": [
+      0.7553218007087708,
+      0.7135264277458191,
+      0.6755038499832153,
+      0.6408154964447021,
+      0.6090864539146423,
+      0.5799986124038696,
+      0.5532832741737366,
+      0.5287150144577026,
+      0.5061034560203552,
+      0.48528632521629333,
+      0.4661225378513336,
+      0.4484862983226776,
+      0.4322624206542969,
+      0.4173434376716614,
+      0.40362653136253357,
+      0.3910132050514221,
+      0.37940868735313416,
+      0.3687222898006439,
+      0.35886797308921814,
+      0.34976500272750854
+    ]
+  },
+  "provenance": {
+    "flag_gems_path": "/tmp/opencode/flagfix-fixed/src/flag_gems/__init__.py",
+    "group": "f_target",
+    "hits": {
+      "conv2d": true,
+      "conv2d.padding": true,
+      "linear": true,
+      "linear_backward": true
+    },
+    "include": [
+      "conv2d",
+      "linear",
+      "linear_backward"
+    ],
+    "registered_keys": [
+      "conv2d",
+      "conv2d.padding",
+      "linear",
+      "linear_backward"
+    ],
+    "registered_ops": [
+      "conv2d",
+      "linear",
+      "linear_backward"
+    ]
+  },
+  "run": {
+    "cfg": "min",
+    "dtype": "fp32",
+    "group": "f_target",
+    "lr": 0.1,
+    "model": "b",
+    "pythonpath": "/tmp/opencode/flagfix-fixed/src",
+    "seed": 2,
+    "steps": 20,
+    "variants": [
+      "default"
+    ]
+  },
+  "task_file": "/tmp/opencode/small-model-clean/inputs/b_min_seed2_fp32.pt",
+  "torch_version": "2.10.0",
+  "x_layout": {
+    "requires_grad": true,
+    "shape": [
+      2,
+      3,
+      8,
+      8
+    ],
+    "stride": [
+      192,
+      64,
+      8,
+      1
+    ]
+  }
+}
