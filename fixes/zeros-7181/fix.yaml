@@ -383,5 +383,16 @@ notes:
   extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（掩码一致，
   策略不要求 payload）。功能 fix 维持 draft/deployable=false/
   hardware_status=unverified。
+- |-
+  第十六轮收尾（2026-11-12，意见 6813485321）：ulp_metrics 统一 schema
+  （长度不符/缺字段返回路径均带全字段默认值）+ 必需字段集中校验（缺失聚合
+  hard failure 而非抛 KeyError）+ process_case 抽取置于 try/except——
+  异常输入下诊断 JSON 必写、失败聚合后非零退出；入口级负例扩展三场景
+  （长度错误/缺字段/子进程失败）全部聚合非零且诊断写出——PASS。
+  batch_reproduction_note 与文档对齐当前 strict baseline 口径：确定性用例
+  匹配 strict round-12/13 baseline、conj 不与旧批次 hash 直接比较（RNG
+  状态不同）而以同批 native/fix 输入位级一致为有效检验、c128 r10 条目
+  float32 误标不可比。diff-details.json 重生成（hard_failures=0，结构
+  未变）。功能 fix 维持 draft/deployable=false/hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

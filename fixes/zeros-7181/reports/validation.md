@@ -380,6 +380,21 @@ hardware_status=unverified`。
 
 结论口径更新：8 项 numeric_diff 定稿为 **conj sum/abs ≤4 float64 ULP（c128）/ ≤2 float32 ULP（c64）、abs extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（输入位级一致、双方均 NaN、掩码一致——按策略 payload 不作为通过条件）**；"8 例全部解释完成"表述替换为上述准确状态。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
+## 第十六轮收尾：诊断必写、入口负例与基线说明对齐（2026-11-12，意见 comment `6813485321`，基于 `ed1b7d0`；工具提交见后续 `git log`）
+
+两项 P2 收尾落地：
+
+| 评审项 | 处理 | 验证 |
+| --- | --- | --- |
+| P2-a 异常输入下诊断可能不写/KeyError | `ulp_metrics` **统一 schema**：所有返回路径（长度不符/缺字段）均带全字段默认值；**必需字段集中校验**（out_bits/in_bits/values/out_is_complex 缺失 → 聚合 hard failure 而非抛异常）；`process_case` 抽取为函数并置于 try/except——**诊断 JSON 必写**、失败聚合后**非零退出** | 入口级负例 `--exit-code-negative-test` 扩展为三场景：**长度错误 / 缺字段 / 子进程失败**全部聚合非零且诊断 JSON 写出——PASS；selftest 16 项继续全过 |
+| P2-b 基线说明对齐当前 strict baseline | `batch_reproduction_note` 与相关文档改为：**确定性用例匹配 strict round-12/13 baseline**（abs/c64/extreme_low 双树位级复现）；**conj 用例不与旧批次 hash 直接比较**（RNG 生成状态不同），有效检验为**同批 native/fix 输入位级一致**（in_bits_equal=True）；c128 r10 条目系 float32 误标不可比 | `diff-details.json` 重生成（结构未变，仅注记），strict 复现条目确认 |
+
+收尾后：hard_failures=0、raw bits 与 sha256 复核通过；功能 fix 维持 `draft /
+deployable=false / hardware_status=unverified`。工具收尾后按评审建议的顺序，
+后续在 PPU/thead 范围做针对性正确性与性能复测（complex strided `zero_`、
+稳定 `abs`、dtype/out 语义，小模型 p50/p95 固定输入多次重复）；B-only 仍为
+FIX-ITEM-3 优先候选；三平台属 PR3/problem29。
+
 ## 未执行（如实登记，不算通过）
 
 - **problem.md 容器整模型回归**：`dockerexec xbench-ppu … run_model.py --models

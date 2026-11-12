@@ -1,6 +1,6 @@
 {
-  "batch_commit": "967e1f8",
-  "batch_reproduction_note": "conj cases draw RNG-dependent inputs (same construction code, different generator state than the r10 batch), so their r10 checksums are not expected to reproduce; extreme_* cases are deterministic (torch.full) \u2014 abs/c64/extreme_low reproduces both trees bit-exactly. c128 r10 entries were mis-dtyped (float32-assembled, see round-12) so their checksums are not comparable to true c128 outputs. The VALID check is the within-run native-vs-fix comparison (in_bits_equal=True per case).",
+  "batch_commit": "ed1b7d0",
+  "batch_reproduction_note": "Deterministic (torch.full) cases reproduce the CURRENT strict round-12/13 baseline bit-exactly (abs/c64/extreme_low matches both trees' strict checksums). conj cases draw RNG-dependent inputs \u2014 same construction code, different generator state \u2014 so they are NOT hash-compared against old batches; the valid check for them is the within-run native-vs-fix comparison with in_bits_equal=True. c128 entries in the r10 batch were mis-dtyped (float32-assembled, see round-12) and are not comparable to true c128 outputs.",
   "batch_reproduction_vs_r10": [
     {
       "case": "abs/c64/extreme_low",

@@ -19,3 +19,4 @@
 。第十三轮（意见 6794976151）：diff_details ULP 映射按 dtype 修正 + ULP 自测（c128 亚 f32-ULP 差异报 1 f64 ULP，旧映射误报 0）+ diff-details.json 重生成（c128 极值 1 ULP、conj ≤4 ULP）+ 严格比较产物同步 baseline/（50 equal+8 diff，旧产物 .r10-superseded 归档）+ README 两处旧口径标注替换 + run-commits 映射补全
 。第十四轮（意见 6797761554）：diff_details 重写（NaN 同源构造+位级 payload+分类完备+有序 ULP 映射±0 策略+精确断言自测 17/17，修复合并探针暴露的 exp-mask dtype/mantissa 分类 bug）——8 项 numeric_diff 定稿 1–4 ULP（按 dtype 位型）+ NaN payload 位型差异解释闭环，旧批次 superseded
 。第十五轮（意见 6811732879）：classify 符号/指数/尾数独立提取（-inf 误判 NaN 修正）+ 分类精确负例自测 + main 聚合 hard failures 非零退出 + 入口级负例 + 逐分量 raw bits 比较（NaN payload 不经 repr）+ raw bits/sha256/byteorder 归档 + abs/c128/nan 与 r10 checksum 交叉核对
+。第十六轮（意见 6813485321）：ulp_metrics 统一 schema + 必需字段集中校验 + process_case try/except（诊断必写、非零退出）+ 入口级负例三场景 PASS + 基线说明对齐 strict 口径

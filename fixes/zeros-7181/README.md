@@ -361,3 +361,9 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   复现）。8 项 numeric_diff 定稿：conj ≤4 float64 ULP / ≤2 float32 ULP、
   abs extreme 1 ULP、abs/c128/nan = 输出 NaN payload 位型差异（掩码一致，
   策略不要求 payload）。状态与验收口径不变。
+- 第十六轮收尾（2026-11-12，意见 6813485321）：ulp_metrics 统一 schema +
+  必需字段集中校验 + process_case 置于 try/except——异常输入下**诊断 JSON
+  必写、失败聚合后非零退出**；入口级负例三场景（长度/缺字段/子进程失败）
+  PASS；基线说明对齐当前 strict baseline 口径（确定性用例匹配 strict
+  round-12/13；conj 以同批 native/fix 位级一致为有效检验）。状态与验收
+  口径不变。

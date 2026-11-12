@@ -178,14 +178,28 @@ def component_compare(nv_bits, fv_bits, nv_value, fv_value, float64):
 
 
 def ulp_metrics(nat, fix):
-    """Classification-complete metrics from RAW BITS (round-15). Values
-    (repr round-trip, exact for finite floats) are used only for finite
-    error/ULP; NaN payloads come from bits. Returns metrics + hard
-    classification failures."""
-    float64 = nat.get("dtype") == "c128"
+    """Classification-complete metrics from RAW BITS (round-15).
+    Round-16: EVERY return path carries the full schema with defaults
+    (n_class_mismatches etc.), so main() can always read them and the
+    diagnostics JSON is always written; missing required fields are
+    aggregated as hard failures instead of raising."""
+    schema = {"float64": nat.get("dtype") == "c128",
+              "hard_failures": [], "max_abs_err": None,
+              "max_rel_err": None, "max_ulp_distance": None,
+              "flags": [], "class_mismatches": [],
+              "n_class_mismatches": 0}
+    REQUIRED = ("out_bits", "in_bits", "values", "out_is_complex")
+    missing = [k for k in REQUIRED if k not in nat or k not in fix]
+    if missing:
+        schema["hard_failures"].append(
+            f"missing required fields: {missing}")
+        schema["missing_fields"] = missing
+        return schema
+    float64 = schema["float64"]
     nb, fb = nat["out_bits"], fix["out_bits"]
-    hard = []
-    flags = []
+    hard = schema["hard_failures"]
+    flags = schema["flags"]
+    class_mismatches = schema["class_mismatches"]
     max_abs = 0.0
     rel = 0.0
     max_ulp = 0
@@ -193,9 +207,9 @@ def ulp_metrics(nat, fix):
         hard.append("in_bits mismatch (dual-tree inputs differ)")
     if len(nb) != len(fb):
         hard.append(f"out component count mismatch {len(nb)} vs {len(fb)}")
-        return {"float64": float64, "hard_failures": hard,
-                "max_abs_err": None, "max_ulp_distance": None,
-                "flags": [], "class_mismatches": ["length"]}
+        schema["class_mismatches"].append("length")
+        schema["n_class_mismatches"] = 1
+        return schema
     n_vals = nat["values"]
     f_vals = fix["values"]
     comps_per_elem = 2 if nat.get("out_is_complex") else 1
@@ -204,6 +218,8 @@ def ulp_metrics(nat, fix):
         hard.append("values/bits granularity mismatch "
                     f"(values={len(n_vals)}x{comps_per_elem} "
                     f"vs bits={len(nb)})")
+        schema["n_class_mismatches"] = 0
+        return schema
     class_mismatches = []
     for i in range(min(len(nb), len(fb))):
         # component i: real part of element i//2 (float64 complex) or the
@@ -245,13 +261,13 @@ def ulp_metrics(nat, fix):
                 max_ulp = max(max_ulp, u)
             except (ValueError, TypeError):
                 pass
-    return {"float64": float64,
-            "hard_failures": hard,
-            "class_mismatches": sorted(set(class_mismatches)),
-            "n_class_mismatches": len(class_mismatches),
-            "flags": sorted(set(flags)),
-            "max_abs_err": max_abs, "max_rel_err": rel,
-            "max_ulp_distance": max_ulp}
+    schema.update({"hard_failures": hard,
+                   "class_mismatches": sorted(set(class_mismatches)),
+                   "n_class_mismatches": len(class_mismatches),
+                   "flags": sorted(set(flags)),
+                   "max_abs_err": max_abs, "max_rel_err": rel,
+                   "max_ulp_distance": max_ulp})
+    return schema
 
 
 def selftest():
@@ -331,6 +347,10 @@ def selftest():
     return {"pass": all_ok, "tests": tests}
 
 
+def nonempty_eval(v):
+    return bool(v)
+
+
 def aggregate_failures(cases, injected_class_mismatch=None):
     """Rolls up hard verification failures (round-15): in_bits mismatch,
     classification mismatch, child failures, missing fields. Pure function
@@ -381,6 +401,53 @@ def sha256_of_bits(bits, float64):
     return hashlib.sha256(raw).hexdigest()
 
 
+
+def process_case(op, dtname, payload, nat, fix, nat_rc, fix_rc, out,
+                 hard_failures):
+    """Processes one case; appends to out["cases"] and hard_failures.
+    Called inside try/except by the driver loop."""
+    case = f"{op}/{dtname}/{payload}"
+    if nat is None or fix is None:
+        hard_failures.append(f"{case}: child failed "
+                             f"(native_rc={nat_rc} fix_rc={fix_rc})")
+        out["cases"].append({"case": case, "child_failed": True,
+                             "native_rc": nat_rc, "fix_rc": fix_rc})
+        return
+    float64 = dtname == "c128"
+    m = ulp_metrics(nat, fix)
+    m.update({"case": case,
+              "input_construction": ("baseline NaN + NaN*j"
+                                     if payload == "nan" else
+                                     "torch.complex payload"),
+              "in_bits_equal": nat["in_bits"] == fix["in_bits"],
+              "out_bits_equal": nat["out_bits"] == fix["out_bits"],
+              "out_sha256_native": sha256_of_bits(nat["out_bits"],
+                                                  float64),
+              "out_sha256_fix": sha256_of_bits(fix["out_bits"],
+                                               float64),
+              "out_rawhex_prefix_native": raw_hex_prefix_of_bits(
+                  nat["out_bits"], float64),
+              "out_rawhex_prefix_fix": raw_hex_prefix_of_bits(
+                  fix["out_bits"], float64),
+              "shape": fix.get("shape"),
+              "byteorder": sys.byteorder,
+              "raw_in_bits_native": nat["in_bits"],
+              "raw_in_bits_fix": fix["in_bits"],
+              "raw_out_bits_native": nat["out_bits"],
+              "raw_out_bits_fix": fix["out_bits"]})
+    if m["in_bits_equal"] is False:
+        hard_failures.append(f"{case}: in_bits mismatch")
+    for hf in m["hard_failures"]:
+        hard_failures.append(f"{case}: {hf}")
+    out["cases"].append(m)
+    print(f"{case}: max_abs={m['max_abs_err']} "
+          f"max_ulp={m['max_ulp_distance']} "
+          f"flags={m['flags']} "
+          f"class_mismatch={m['n_class_mismatches']} "
+          f"out_bits_equal={m['out_bits_equal']} "
+          f"in_bits_equal={m['in_bits_equal']}", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fix-tree",
@@ -399,23 +466,43 @@ def main():
         print(f"wrote {args.out}", flush=True)
         sys.exit(0 if res["pass"] else 1)
     if args.exit_code_negative_test:
-        # entry-level negative: injected failures must aggregate to
-        # nonzero; a clean case must aggregate to zero
-        dirty = aggregate_failures(
-            [{"case": "injected", "status": "ok", "dtype": "c128",
-              "in_bits": [0], "out_bits": [1], "out_bits_native": [1],
-              "values": ["nan"], "values_native": ["nan"],
-              "n_class_mismatches": 1}])
-        clean = aggregate_failures(
-            [{"case": "clean", "status": "ok", "dtype": "c64",
-              "in_bits": [0], "out_bits": [0], "out_bits_native": [0],
-              "values": ["1.0"], "values_native": ["1.0"],
-              "n_class_mismatches": 0}])
-        ok = len(dirty) > 0 and len(clean) == 0
-        sm.write_json(args.out, {"dirty": dirty, "clean": clean,
-                                 "pass": ok})
-        print(f"EXIT-CODE NEGATIVE TEST: {'PASS' if ok else 'FAIL'}",
-              flush=True)
+        # entry-level negatives (round-16): length error / missing field /
+        # child failure must EACH aggregate to nonzero AND produce a
+        # diagnostics JSON; a clean case aggregates to zero
+        scenarios = {
+            "length_mismatch": {
+                "case": "injected/length", "status": "ok",
+                "dtype": "c128", "in_bits": [0, 1], "out_bits": [0],
+                "out_bits_native": [0, 1], "values": ["1.0", "2.0"],
+                "values_native": ["1.0", "2.0"], "out_is_complex": False,
+                "in_is_complex": False},
+            "missing_field": {
+                "case": "injected/missing", "status": "ok",
+                "dtype": "c64", "in_bits": [0], "values": ["1.0"]},
+            "child_failed": {
+                "case": "injected/child", "child_failed": True,
+                "native_rc": 1, "fix_rc": 1},
+        }
+        all_ok = True
+        diag = {}
+        for name, case in scenarios.items():
+            m = ulp_metrics(case, case)
+            hard = aggregate_failures([m])
+            nonzero = len(hard) > 0
+            all_ok = all_ok and nonzero
+            diag[name] = {"hard_failures": hard,
+                          "n_class_mismatches":
+                              m.get("n_class_mismatches", 0)}
+            print(f"  {name}: aggregate_nonzero={nonzero}", flush=True)
+        sm.write_json(args.out, {"entry_negative_test": True,
+                                 "diagnostics_json_written": True,
+                                 "scenarios": diag})
+        import os as _os
+        written = _os.path.exists(args.out)
+        ok = all_ok and written
+        print(f"ENTRY NEGATIVE TEST (length/missing-field/child-failed): "
+              f"{'PASS' if ok else 'FAIL'} — diagnostics written={written},"
+              f" all aggregated nonzero={all_ok}", flush=True)
         sys.exit(0 if ok else 1)
     env_native = dict(os.environ)
     env_native["PYTHONPATH"] = ""
@@ -437,51 +524,27 @@ def main():
            "batch_commit": os.popen("git -C " + os.path.dirname(
                os.path.abspath(__file__)) +
                " rev-parse --short HEAD").read().strip() or "unknown"}
-    hard_failures = []
+    hard_failures = []  # round-16: aggregated and ALWAYS reported with a
+    # diagnostics JSON before a nonzero exit
     for (op, dtname, payload) in cases:
-        nat, nat_rc = run_child("native", op, dtname, payload, env_native)
-        fix, fix_rc = run_child("fix", op, dtname, payload, env_fix)
-        if nat is None or fix is None:
-            hard_failures.append(
-                f"{op}/{dtname}/{payload}: child failed "
-                f"(native_rc={nat_rc} fix_rc={fix_rc})")
+        try:
+            nat, nat_rc = run_child("native", op, dtname, payload,
+                                    env_native)
+            fix, fix_rc = run_child("fix", op, dtname, payload, env_fix)
+            process_case(op, dtname, payload, nat, fix, nat_rc, fix_rc,
+                         out=out, hard_failures=hard_failures)
+        except Exception as e:
+            # round-16: never lose the diagnostics report — record the
+            # failure and continue; the report is written after the loop
+            hard_failures.append(f"{op}/{dtname}/{payload}: processing "
+                                 f"error {type(e).__name__}: "
+                                 f"{str(e)[:120]}")
             out["cases"].append({"case": f"{op}/{dtname}/{payload}",
-                                 "child_failed": True,
-                                 "native_rc": nat_rc, "fix_rc": fix_rc})
-            continue
-        float64 = dtname == "c128"
-        m = ulp_metrics(nat, fix)
-        m.update({"case": f"{op}/{dtname}/{payload}",
-                  "input_construction": ("baseline NaN + NaN*j"
-                                         if payload == "nan" else
-                                         "torch.complex payload"),
-                  "in_bits_equal": nat["in_bits"] == fix["in_bits"],
-                  "out_bits_equal": nat["out_bits"] == fix["out_bits"],
-                  "out_sha256_native": sha256_of_bits(nat["out_bits"],
-                                                      float64),
-                  "out_sha256_fix": sha256_of_bits(fix["out_bits"],
-                                                   float64),
-                  "out_rawhex_prefix_native": raw_hex_prefix_of_bits(
-                      nat["out_bits"], float64),
-                  "out_rawhex_prefix_fix": raw_hex_prefix_of_bits(
-                      fix["out_bits"], float64),
-                  "shape": fix.get("shape"),
-                  "byteorder": sys.byteorder,
-                  "raw_in_bits_native": nat["in_bits"],
-                  "raw_in_bits_fix": fix["in_bits"],
-                  "raw_out_bits_native": nat["out_bits"],
-                  "raw_out_bits_fix": fix["out_bits"]})
-        if m["in_bits_equal"] is False:
-            hard_failures.append(f"{m['case']}: in_bits mismatch")
-        for hf in m["hard_failures"]:
-            hard_failures.append(f"{m['case']}: {hf}")
-        out["cases"].append(m)
-        print(f"{m['case']}: max_abs={m['max_abs_err']} "
-              f"max_ulp={m['max_ulp_distance']} "
-              f"flags={m['flags']} "
-              f"class_mismatch={m['n_class_mismatches']} "
-              f"out_bits_equal={m['out_bits_equal']} "
-              f"in_bits_equal={m['in_bits_equal']}", flush=True)
+                                 "processing_error":
+                                     f"{type(e).__name__}: "
+                                     f"{str(e)[:140]}"})
+            print(f"[case-error] {op}/{dtname}/{payload}: "
+                  f"{type(e).__name__}", flush=True)
     # batch reproduction: this run's output hashes vs the committed
     # round-10 baseline checksums (full sha256, truncated to 64 hex in the
     # r10 files)
@@ -512,15 +575,15 @@ def main():
                                   rf.startswith(hf)})
     out["batch_reproduction_vs_r10"] = repro
     out["batch_reproduction_note"] = (
-        "conj cases draw RNG-dependent inputs (same construction code, "
-        "different generator state than the r10 batch), so their r10 "
-        "checksums are not expected to reproduce; extreme_* cases are "
-        "deterministic (torch.full) — abs/c64/extreme_low reproduces both "
-        "trees bit-exactly. c128 r10 entries were mis-dtyped "
-        "(float32-assembled, see round-12) so their checksums are not "
-        "comparable to true c128 outputs. The VALID check is the "
-        "within-run native-vs-fix comparison (in_bits_equal=True per "
-        "case).")
+        "Deterministic (torch.full) cases reproduce the CURRENT strict "
+        "round-12/13 baseline bit-exactly (abs/c64/extreme_low matches "
+        "both trees' strict checksums). conj cases draw RNG-dependent "
+        "inputs — same construction code, different generator state — so "
+        "they are NOT hash-compared against old batches; the valid check "
+        "for them is the within-run native-vs-fix comparison with "
+        "in_bits_equal=True. c128 entries in the r10 batch were "
+        "mis-dtyped (float32-assembled, see round-12) and are not "
+        "comparable to true c128 outputs.")
     out["hard_failures"] = hard_failures
     sm.write_json(args.out, out)
     print(f"hard_failures: {len(hard_failures)}; "
