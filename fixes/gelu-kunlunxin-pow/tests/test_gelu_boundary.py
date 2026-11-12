@@ -82,11 +82,20 @@ def build_inputs(dtype):
             candidates.append(int_to_float(v))
             candidates.append(-int_to_float(v))
     candidates += [float(finfo.tiny), -float(finfo.tiny)]   # min normal ±
-    # nextafter(min_normal, 0)：最大次正规数（位型按 dtype 精确给出）
-    #   fp32 0x007fffff / bf16 0x007f / fp16 0x03ff
-    nm1_bits = {32: 0x007FFFFF, 16: 0x007F}[width]
+    # nextafter(min_normal, 0)：最大次正规数——**按 dtype 选择位型**
+    #   fp32 0x007FFFFF / bf16 0x007F / fp16 0x03FF
+    #   （fp16 与 bf16 虽同为 16 位，但 fp16 exponent 5 位 => 最大次正规数
+    #    位型为 0x03FF；0x007F 是 bf16 的邻界位型）
+    nm1_bits = {torch.float32: 0x007FFFFF,
+                torch.bfloat16: 0x007F,
+                torch.float16: 0x03FF}[dtype]
     nm1 = int_to_float(nm1_bits)
     assert 0.0 < nm1 < float(finfo.tiny), f"nm1 construction broken: {nm1!r}"
+    # 邻界性断言：nm1 的下一个位型必须恰好是 finfo.tiny（防止普通次正规数
+    # 冒充邻界输入）
+    nxt_bits = int_to_float(nm1_bits + 1)
+    assert nxt_bits == float(finfo.tiny), (
+        f"nm1+1bit != min normal: {nxt_bits!r} (bits {nm1_bits + 1:#x})")
     candidates += [nm1]
     candidates += [1e-30, -1e-30]                            # may FTZ in fp16/bf16
     candidates += [1e30, -1e30, 3.0, -3.0, 0.5, -0.5]
