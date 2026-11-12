@@ -1,6 +1,6 @@
 {
   "batch_commit": "867c4b3",
-  "batch_reproduction_note": "Deterministic (torch.full) cases are compared against the CURRENT strict baseline (baseline-n.json / baseline-fix.json) and reproduce it bit-exactly (e.g. abs/c64/extreme_low matches both trees). conj cases draw RNG-dependent inputs \u2014 same construction code, different generator state \u2014 so they are NOT hash-compared against any stored batch; the valid check for them is the within-run native-vs-fix comparison with in_bits_equal=True. The r10-superseded archive is retained only as historical raw evidence (its c128 entries were mis-dtyped, see round-12).",
+  "batch_reproduction_note": "Deterministic (torch.full) cases are compared against the CURRENT strict baseline (baseline-n.json / baseline-fix.json); all four archived cases reproduce both trees bit-exactly. Cross-batch hash matches for conj cases are also recorded, but are diagnostic only: RNG state differs from the stored batch, so cross-batch hash equality is not an acceptance criterion. Within each run, native/fix input bits must match and output classification and numeric differences are checked separately. The r10-superseded archive is historical evidence only; its c128 entries were mis-dtyped (see round-12).",
   "batch_reproduction_vs_strict": [
     {
       "case": "abs/c64/extreme_low",

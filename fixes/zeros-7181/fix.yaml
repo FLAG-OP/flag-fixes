@@ -390,7 +390,7 @@ notes:
   异常输入下诊断 JSON 必写、失败聚合后非零退出；入口级负例扩展三场景
   （长度错误/缺字段/子进程失败）全部聚合非零且诊断写出——PASS。
   batch_reproduction_note 与文档对齐当前 strict baseline 口径：确定性用例
-  匹配 strict round-12/13 baseline、conj 不与旧批次 hash 直接比较（RNG
+  匹配 strict round-12/13 baseline、conj 跨批 hash 差异不作为验收失败条件（RNG
   状态不同）而以同批 native/fix 输入位级一致为有效检验、c128 r10 条目
   float32 误标不可比。diff-details.json 重生成（hard_failures=0，结构
   未变）。功能 fix 维持 draft/deployable=false/hardware_status=unverified。
@@ -399,11 +399,12 @@ notes:
   .r10-superseded 归档切换为当前 strict baseline（baseline-n.json/
   baseline-fix.json），字段更名 batch_reproduction_vs_strict（sha256 口径
   与 round-12 checksum 一致）；4 例确定性用例双树 sha256 与 strict baseline
-  完全一致，conj 用例 RNG 依赖不与存储批次比较（同批 native/fix 位级一致
+  完全一致，conj 跨批 hash 对照仅作诊断，不作为验收条件（同批 native/fix 位级一致
   为有效检验），c128 r10 条目 float32 误标不可比——note 同步改写。
   流程披露：round-17 提交因 git add -A 误带入其他并行修复包 121 文件，
   后续提交已从分支移除（文件保留磁盘未跟踪），共享文件恢复误提交前状态，
-  分支现仅含 zeros-7181 预期变更。功能 fix 维持 draft/deployable=false/
+  2091540 随后合并 main 正常继承 PR3；相对 main 的增量为 zeros-7181、
+  所需 schema 与共享索引文档。功能 fix 维持 draft/deployable=false/
   hardware_status=unverified。
 installation_status: source-checked
 upstream_issue: https://github.com/flagos-ai/FlagGems/issues/7181

@@ -1,5 +1,16 @@
 # complex dtype 反向崩溃修复（#7181 类：sum / zeros 族 / abs + conv2d constexpr + linear_backward view）
 
+## 当前结论与证据入口（合入整理）
+
+本条目为 PPU/thead 功能修复，保持 `draft / deployable=false / hardware_status=unverified`；
+合入不代表部署或平台验收完成。下方按轮次记录历史过程，冲突结论以本节及最新报告为准。
+
+- 功能回归 210/210、仅注册目标算子的随机权重小模型 9/9 通过；全量注册仍有独立跟踪的预存缺口。
+- 严格基线为 **50 项位级一致 + 8 项数值/位型差异**。差异明细中的 4 项确定性用例双树 SHA256 匹配当前 strict baseline；4 项 conj 的跨批 hash 差异仅作诊断，同批输入位型一致。有限值已测差异为按 dtype 的 1–4 ULP；NaN 项为 payload 差异。
+- 性能尚未收敛：bench-r2 中 modelB 目标注册路径耗时为 native 的 2.42–2.93 倍；大尺寸 complex zeros/zero_ 为 97–290 倍。这些是耗时比，不能写成加速。B-only 为后续优化候选，尚未替换本补丁实现。
+- [验证报告](reports/validation.md)、[小模型精度与性能报告](reports/small-model-evaluation.md)、[结果索引](results/README.md)、[后续修复项](reports/follow-up-fix-items.md)。后续复测范围为 PPU/thead；三平台任务属于 PR3/problem29。
+
+
 - ID：zeros-7181
 - 状态：draft（deployable=false，未完成平台验收与 owner 审核）
 - 负责人：待填写（owner 保持 null，不虚构）
@@ -333,7 +344,7 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   (2) u8sum 复现显式 uint8——修正后 **7/8 双树同型失败**（"4 元素小例侥幸
   正确"撤回；仅显式 int64 正确）；(3) 基线改**严格比较器**（全字节 sha256、
   双 exception/缺字段独立分类、grad 显式 N/A、负例 8 项前置强制）——定论
-  **50 numeric_equal + 8 numeric_diff**（conj ≤2 ULP、scaled-hypot 1 ULP、
+  **50 numeric_equal + 8 numeric_diff**（conj ≤2 ULP [历史量化，已由后轮 c64≤2 f32 / c128≤4 f64 ULP 替代]、scaled-hypot 1 ULP、
   NaN payload 位不保证但传播正确；"52/58 位级一致"撤回）；(4) B-only 仍为
   优化首选（真实 c64/c128 下注册 B 占优或持平全部已测布局）。历史产物标注
   superseded 对应关系（r12-superseded-manifest.md）。状态与验收口径不变。
@@ -372,4 +383,5 @@ verify 见 `results/verify-2026-11-10.json`；其余命令日志为第二轮
   ——4 例确定性用例双树与 strict baseline 完全一致；conj RNG 依赖以同批
   位级一致为有效检验；c128 r10 条目 float32 误标不可比。流程披露：round-17
   提交因 git add -A 误带入其他并行修复包 121 文件，后续提交已从分支移除
-  （磁盘保留），分支现仅含 zeros-7181 预期变更。状态与验收口径不变。
+  （磁盘保留），2091540 随后合并 main 正常继承 PR3；相对 main 的增量为 zeros-7181、
+  所需 schema 与共享索引文档。状态与验收口径不变。

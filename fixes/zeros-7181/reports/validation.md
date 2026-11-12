@@ -359,6 +359,8 @@ hardware_status=unverified`。
 
 ## 第十四轮：NaN 对照同输入化、分类完备指标与 ULP 有序映射修正（2026-11-11，意见 comment `6797761554`，基于 `ff673ce`；harness 修正提交 `7a691c8`）
 
+> 历史记录：本轮关于 raw bits 全量归档与 NaN payload 的解释尚不完整，已由第十五轮归档和第十七轮 strict SHA256 对照替代。
+
 两项 P2 全部落地：
 
 | 评审项 | 处理 | 结果 |
@@ -387,7 +389,7 @@ hardware_status=unverified`。
 | 评审项 | 处理 | 验证 |
 | --- | --- | --- |
 | P2-a 异常输入下诊断可能不写/KeyError | `ulp_metrics` **统一 schema**：所有返回路径（长度不符/缺字段）均带全字段默认值；**必需字段集中校验**（out_bits/in_bits/values/out_is_complex 缺失 → 聚合 hard failure 而非抛异常）；`process_case` 抽取为函数并置于 try/except——**诊断 JSON 必写**、失败聚合后**非零退出** | 入口级负例 `--exit-code-negative-test` 扩展为三场景：**长度错误 / 缺字段 / 子进程失败**全部聚合非零且诊断 JSON 写出——PASS；selftest 16 项继续全过 |
-| P2-b 基线说明对齐当前 strict baseline | `batch_reproduction_note` 与相关文档改为：**确定性用例匹配 strict round-12/13 baseline**（abs/c64/extreme_low 双树位级复现）；**conj 用例不与旧批次 hash 直接比较**（RNG 生成状态不同），有效检验为**同批 native/fix 输入位级一致**（in_bits_equal=True）；c128 r10 条目系 float32 误标不可比 | `diff-details.json` 重生成（结构未变，仅注记），strict 复现条目确认 |
+| P2-b 基线说明对齐当前 strict baseline | `batch_reproduction_note` 与相关文档改为：**确定性用例匹配 strict round-12/13 baseline**（abs/c64/extreme_low 双树位级复现）；**conj 跨批 hash 差异不作为验收失败条件**（RNG 生成状态不同），有效检验为**同批 native/fix 输入位级一致**（in_bits_equal=True）；c128 r10 条目系 float32 误标不可比 | `diff-details.json` 重生成（结构未变，仅注记），strict 复现条目确认 |
 
 收尾后：hard_failures=0、raw bits 与 sha256 复核通过；功能 fix 维持 `draft /
 deployable=false / hardware_status=unverified`。工具收尾后按评审建议的顺序，
@@ -412,8 +414,8 @@ FIX-ITEM-3 优先候选；三平台属 PR3/problem29。
 | sum+abs conj（RNG 依赖输入） | ✗（新批次输入） | ✗（新批次输入） |
 
 - 4 例确定性用例**双树 sha256 与 strict baseline 完全一致**（位级复现）；
-- conj 用例构造代码相同但 RNG 生成状态不同——不与任何存储批次 hash 直接
-  比较，有效检验为**同批 native vs fix 输入位级一致**（in_bits_equal=True）；
+- conj 用例构造代码相同但 RNG 生成状态不同——跨批 hash 比较结果仅作诊断，不作为验收条件；
+  同批 native/fix 输入位型必须一致，并分别检查输出分类和数值差异；
 - c128 的 r10 条目系 float32 误标（round-12 修正），其 checksum 与真实
   c128 输出不可比——已在 note 说明；
 - `.r10-superseded` 归档仅作历史 raw 证据保留（manifest 已标注）。
@@ -422,9 +424,9 @@ FIX-ITEM-3 优先候选；三平台属 PR3/problem29。
 修复包（adamw-fused / flaggems-selective-enable / gelu-kunlunxin-pow /
 kunlunxin bundle/docs 等 121 文件）带入分支；后续提交 `cd5c2d6`/`7e39f36`
 已将其从分支移除（文件保留在磁盘未跟踪，其他工作不丢失），共享文件
-（CHANGELOG/README/catalog/docs）恢复至误提交前状态。当前分支相对 `867c4b3`
-仅含 `benchmarks/diff_details.py` 与 `baseline/diff-details.json` 两个预期
-文件。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
+（CHANGELOG/README/catalog/docs）恢复至误提交前状态。随后 `2091540` 合并 main，
+正常继承已合入的 PR3；相对该 main 的增量为 zeros-7181、所需的
+`e2e_precondition` schema 和共享索引文档，未修改 PR3 修复包。功能 fix 维持 `draft / deployable=false / hardware_status=unverified`。
 
 ## 未执行（如实登记，不算通过）
 

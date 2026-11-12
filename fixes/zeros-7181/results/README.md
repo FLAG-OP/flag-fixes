@@ -1,5 +1,7 @@
 # 结果
 
+合入整理仅修正 `diff-details.json` 的说明字段；原始位型、hash、指标及运行提交保持不变，不代表新增设备运行。各轮历史记录以最新 strict baseline 与第十七轮结论为准。
+
 本机（PPU / thead / torch 2.10.0 / triton 3.6.0）实测，工具与脚本原文、未脱敏。
 **权威日志：`regression-*-2026-11-10.log` 与 `verify-2026-11-10.json` 为评审第三轮
 （测试与文档小修后，当前代码）；`*-2026-11-09.log` 为评审第二轮（11-10 回归日志
@@ -55,8 +57,8 @@ dumps 重评分——设备运行用的是当时 harness，见 run-commits.json 
 | `small-model-2026-11-10/bench-r2/u8sum-repro-{fix,prefix}.log` + `benchmarks/u8sum_repro.py` | 第十一轮 FIX-ITEM-4 专项复现：按评审清单（1d/多维/显式 dtype/>255/empty/reduction 维/非连续）直取值+dtype 双树对照——修复树与 prefix **同型 6/8 失败**（预存归因闭环；4 元素小例侥幸正确） |
 | `small-model-2026-11-10/bench-r2/strided-zero-{fix,prefix}.log` + `benchmarks/strided_zero_probe.py` | 第十一轮 FIX-ITEM-5 最小复现：注册 zero_ 对实数跨步视图稠密写（未选中 storage 污染），双树同型（预存归因闭环） |
 | `small-model-2026-11-10/bench-r2/zero-candidates-r12-{native,registered}-final.{json,log}` 等 | 第十二轮：harness 修正（dtype 贯穿——此前 c128 条目实际 float32；u8sum 显式 uint8）后的干净提交 fc71b82 重跑——候选原生 260/260、注册 224+36C（FIX-ITEM-5）；u8sum 7/8 双树同型失败（4 元素小例撤回）；严格比较器负例 8 项 |
-| `small-model-2026-11-10/baseline/`（round-12 重跑）+ `diff-details.json` | 第十二轮：严格比较器（全字节 sha256/异常与缺字段独立分类/grad 显式 N/A）定论 **50 numeric_equal + 8 numeric_diff**；8 例 ULP/误差量化（conj ≤2 ULP、scaled-hypot 1 ULP、NaN payload 位不保证传播正确）；round-10/11 的 52/58 口径标注 superseded（r12-superseded-manifest.md） |
-| `small-model-2026-11-10/baseline/diff-details.json`（round-14 重写）+ `ulp-mapping-selftest.json` | 第十四轮：位级 NaN payload 比较（同源 NaN+NaN·j 构造，in_bits_equal=True → out_checksum 差异=输出 NaN payload 位型）、分类完备指标（类不一致=失败；inf 符号/±0 位型单列 flag）、有序 ULP 映射（±0 策略）+ 精确断言自测 17/17——8 项 numeric_diff 定稿 conj ≤4 f64 ULP / abs 1–2 f32 ULP 等 |
+| `small-model-2026-11-10/baseline/`（round-12 重跑）+ `diff-details.json` | 第十二轮：严格比较器（全字节 sha256/异常与缺字段独立分类/grad 显式 N/A）定论 **50 numeric_equal + 8 numeric_diff**；8 例 ULP/误差量化（conj ≤2 ULP [历史量化，已由后轮 c64≤2 f32 / c128≤4 f64 ULP 替代]、scaled-hypot 1 ULP、NaN payload 位不保证传播正确）；round-10/11 的 52/58 口径标注 superseded（r12-superseded-manifest.md） |
+| `small-model-2026-11-10/baseline/diff-details.json`（round-14 重写）+ `ulp-mapping-selftest.json` | 第十四轮：位级 NaN payload 比较（同源 NaN+NaN·j 构造，in_bits_equal=True → out_checksum 差异=输出 NaN payload 位型）、分类完备指标（类不一致=失败；inf 符号/±0 位型单列 flag）、有序 ULP 映射（±0 策略）+ 精确断言自测 17/17——8 项 numeric_diff 定稿 conj ≤4 f64 ULP / abs extreme 1 ULP；conj c64≤2 f32 / c128≤4 f64 ULP |
 | `small-model-2026-11-10/baseline/diff-details.json`（round-15 重写） | 第十五轮：classify 符号/指数/尾数独立提取（-inf 误判 NaN 修正）+ 逐分量 raw bits 比较（NaN payload 不经 repr）+ 聚合 hard failures 非零退出 + 入口级负例 + raw in/out bits、dtype/shape/byteorder/sha256 归档 + 批次复现（abs/c64/extreme_low 双树复现 r10；conj RNG 输入属新批次说明） |
 | `small-model-2026-11-10/baseline/diff-details.json`（round-16 重生成） | 第十六轮收尾：ulp_metrics 统一 schema（全返回路径带默认字段）+ 必需字段集中校验 + process_case try/except（诊断必写、非零退出）；batch_reproduction_note 对齐 strict 口径（确定性用例匹配 strict baseline、conj 以同批位级一致为有效检验）；hard_failures=0 |
 | `small-model-2026-11-10/baseline/diff-details.json`（round-17 重生成） | 第十七轮：批次对照切换当前 strict baseline（sha256，字段 batch_reproduction_vs_strict）——4 例确定性用例双树完全一致；conj RNG 依赖以同批位级一致为有效检验；note 对齐 strict 口径 |
