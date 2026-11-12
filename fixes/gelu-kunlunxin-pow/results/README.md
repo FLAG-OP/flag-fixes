@@ -47,3 +47,17 @@ XPU-SMI 5.0.21.47 / XPU-RT 5.13.0、8× P800 OAM。详见 `../reports/validation
 
 可重复入口：`tests/verify_gelu_boundary.py`（wrapper，5 命令之一，
 `PYTHONPATH=<FlagGems-fixed 树>`），旧 schema/缺字段返回非零。
+
+### fp16 邻界覆盖状态（2026-11-12 更新，如实记录）
+
+- 评审指出 fp16 邻界位型应为 **0x03FF**（此前误用 bf16 的 0x007F）；
+  `nm1_bits` 已改为按 dtype 选择并加邻界性断言（nm1+1bit == finfo.tiny）；
+- **但 0x03FF 输入的 base/fixed dump 均未产出**：重跑时未打补丁树的
+  pow kernel 触发**驱动级 kernel exception（error 721）**并楔死设备
+  （见 `history/boundary-base-hang-2026-11-12.log`），fp16 邻界输入的
+  base 对照因此挂起；
+- 当前已提交基线的 fp16 用例使用 0x007F（实为 bf16 邻界位型，对 fp16
+  是普通次正规数）——patch 前后对照仍有效（同输入双树），但**不构成
+  fp16 邻界覆盖**；
+- 设备当前楔死（新进程 `device='cuda'` 即挂起），需平台侧重置/协调；
+  恢复后补跑：base/fixed 以 0x03FF 输入重生成 → comparator → 刷新本节。
