@@ -1,0 +1,14 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate="none") -> Tensor
+    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:352
+       new kernel: registered at /tmp/opencode/FlagGems-gelu-base/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorXX: (pid 187013,tid 12828494745XX: (pid 187898,tid 137028438366016)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 721, status= 299
+XX: (pid 187898,tid 137028438366016)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 187898,tid 137028438366016)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 721, status= 299
+XX: (pid 187898,tid 137028438366016)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 187898,tid 137028438366016)cuda/src/cui/cuistream.cc:1067:cuiStreamSynchronize cuiStreamSynchronize() failed in ctxMarkerWait, Failed to ctxMarkerWait, status= 299
+XX: (pid 187898,tid 137028438366016)cuda/src/api/apilaunch.cc:964:cuapi_xpu_wait cuapi_xpu_wait() failed in cuiStreamUserSync, status= 299

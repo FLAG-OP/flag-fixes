@@ -1,0 +1,144 @@
+{
+  "params": 336,
+  "iters": 30,
+  "rows": {
+    "stock": {
+      "step_ms": 31.207,
+      "fused_default": false,
+      "launches": 3024,
+      "distinct_kernels": 8,
+      "device_ms": 26.857,
+      "top_kernels": [
+        {
+          "name": "void xpukernel_xpu3::torch_addcdiv<bfloat16>(bfloat16 const*, bfloat16 const*, b",
+          "count": 336,
+          "ms": 8.395
+        },
+        {
+          "name": "void xpukernel_xpu3::sqrt_fwd_kl3<bfloat16>(bfloat16 const*, bfloat16*, long)",
+          "count": 336,
+          "ms": 4.24
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<3, bfloat16, float, true, bfloat16>(bflo",
+          "count": 336,
+          "ms": 3.774
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<2, bfloat16, float, false, bfloat16>(bfl",
+          "count": 672,
+          "ms": 3.036
+        },
+        {
+          "name": "void xpukernel_xpu3::addcmul<bfloat16>(bfloat16 const*, bfloat16 const*, bfloat1",
+          "count": 336,
+          "ms": 2.803
+        },
+        {
+          "name": "void xpukernel_xpu3::lerp_scalar_basic<bfloat16, float>(bfloat16 const*, bfloat1",
+          "count": 336,
+          "ms": 1.859
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<0, bfloat16, float, true, bfloat16>(bflo",
+          "count": 336,
+          "ms": 1.509
+        },
+        {
+          "name": "xpukernel_xpu3::memcpy_1d(char const*, char*, long)",
+          "count": 336,
+          "ms": 1.24
+        }
+      ]
+    },
+    "foreach": {
+      "step_ms": 27.493,
+      "fused_default": false,
+      "launches": 2688,
+      "distinct_kernels": 7,
+      "device_ms": 25.714,
+      "top_kernels": [
+        {
+          "name": "void xpukernel_xpu3::torch_addcdiv<bfloat16>(bfloat16 const*, bfloat16 const*, b",
+          "count": 336,
+          "ms": 8.406
+        },
+        {
+          "name": "void xpukernel_xpu3::sqrt_fwd_kl3<bfloat16>(bfloat16 const*, bfloat16*, long)",
+          "count": 336,
+          "ms": 4.274
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<3, bfloat16, float, true, bfloat16>(bflo",
+          "count": 336,
+          "ms": 3.808
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<2, bfloat16, float, false, bfloat16>(bfl",
+          "count": 672,
+          "ms": 3.014
+        },
+        {
+          "name": "void xpukernel_xpu3::addcmul<bfloat16>(bfloat16 const*, bfloat16 const*, bfloat1",
+          "count": 336,
+          "ms": 2.816
+        },
+        {
+          "name": "void xpukernel_xpu3::lerp_scalar_basic<bfloat16, float>(bfloat16 const*, bfloat1",
+          "count": 336,
+          "ms": 1.86
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<0, bfloat16, float, true, bfloat16>(bflo",
+          "count": 336,
+          "ms": 1.535
+        }
+      ]
+    },
+    "build_optimizer": {
+      "step_ms": 27.585,
+      "fused_default": false,
+      "launches": 2688,
+      "distinct_kernels": 7,
+      "device_ms": 25.7,
+      "top_kernels": [
+        {
+          "name": "void xpukernel_xpu3::torch_addcdiv<bfloat16>(bfloat16 const*, bfloat16 const*, b",
+          "count": 336,
+          "ms": 8.415
+        },
+        {
+          "name": "void xpukernel_xpu3::sqrt_fwd_kl3<bfloat16>(bfloat16 const*, bfloat16*, long)",
+          "count": 336,
+          "ms": 4.25
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<3, bfloat16, float, true, bfloat16>(bflo",
+          "count": 336,
+          "ms": 3.814
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<2, bfloat16, float, false, bfloat16>(bfl",
+          "count": 672,
+          "ms": 3.014
+        },
+        {
+          "name": "void xpukernel_xpu3::addcmul<bfloat16>(bfloat16 const*, bfloat16 const*, bfloat1",
+          "count": 336,
+          "ms": 2.813
+        },
+        {
+          "name": "void xpukernel_xpu3::lerp_scalar_basic<bfloat16, float>(bfloat16 const*, bfloat1",
+          "count": 336,
+          "ms": 1.86
+        },
+        {
+          "name": "void xpukernel_xpu3::tensor_calc_scalar<0, bfloat16, float, true, bfloat16>(bflo",
+          "count": 336,
+          "ms": 1.533
+        }
+      ]
+    }
+  },
+  "note": "BGE-M3-shaped 336-tensor bf16 parameter set, KunlunXIN vendor torch"
+}

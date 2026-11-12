@@ -1,0 +1,10 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+ok   include list -> only gelu family: n_ops=2 gelu=True ln=False returned=True warn=False (expect n_ops=2 gelu=True ln=False returned=True warn=False)
+ok   include absent -> full enable (stock): n_ops=full gelu=True ln=True returned=True warn=False (expect n_ops=full gelu=True ln=True returned=True warn=False)
+ok   include "none" -> full enable: n_ops=full gelu=True ln=True returned=True warn=False (expect n_ops=full gelu=True ln=True returned=True warn=False)
+ok   include ListConfig accepted: n_ops=2 gelu=True ln=False returned=True warn=False (expect n_ops=2 gelu=True ln=False returned=True warn=False)
+ok   exclude without include -> gelu still registered (FlagGems cpp-patch quirk): n_ops=full gelu=True ln=True returned=True warn=False (expect n_ops=full gelu=True ln=True returned=True warn=False)
+ok   use_flaggems=false -> no-op: n_ops=0 gelu=False ln=False returned=False warn=False (expect n_ops=0 gelu=False ln=False returned=False warn=False)
+ok   include+exclude both -> include wins with WARNING: n_ops=2 gelu=True ln=False returned=True warn=True (expect n_ops=2 gelu=True ln=False returned=True warn=True)
+PASS: all semantics cases match
