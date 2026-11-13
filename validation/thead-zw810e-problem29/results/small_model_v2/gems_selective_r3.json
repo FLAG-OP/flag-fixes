@@ -1,0 +1,150 @@
+{
+ "config": "gems_selective",
+ "device": "cuda",
+ "device_name": "PPU-ZW810E",
+ "params_all_cuda_before_optim": true,
+ "tokens_cuda": true,
+ "steps": 8,
+ "losses": [
+  4.13274610764347e-05,
+  3.449373252806254e-05,
+  2.8549427952384576e-05,
+  2.3431155568687245e-05,
+  1.9087041437160224e-05,
+  1.5445501048816368e-05,
+  1.2421048268151935e-05,
+  9.938356015481986e-06
+ ],
+ "step_ms": [
+  2168.04,
+  3.68,
+  2.94,
+  2.84,
+  2.77,
+  2.73,
+  2.8,
+  2.74
+ ],
+ "grads_all_on_cuda": true,
+ "all_grads_present": true,
+ "grad_stats": {
+  "param_0": {
+   "device": "cuda",
+   "grad_sha": "aade0bddffc0433f",
+   "grad_max_abs": 1.3850505464763074e-10,
+   "grad_finite": true,
+   "param_sha": "83fc9dce56b3c8a0"
+  },
+  "param_1": {
+   "device": "cuda",
+   "grad_sha": "f462fcdf4d04a705",
+   "grad_max_abs": 1.372000568711229e-10,
+   "grad_finite": true,
+   "param_sha": "a13bf5883072ca2b"
+  },
+  "param_2": {
+   "device": "cuda",
+   "grad_sha": "5cc22230b4f59930",
+   "grad_max_abs": 1.3665825415731803e-10,
+   "grad_finite": true,
+   "param_sha": "372c45e293ce7efa"
+  },
+  "param_3": {
+   "device": "cuda",
+   "grad_sha": "d4e51313b93a2007",
+   "grad_max_abs": 1.6800071334088784e-09,
+   "grad_finite": true,
+   "param_sha": "8849db20114037b9"
+  },
+  "param_4": {
+   "device": "cuda",
+   "grad_sha": "ae6313cbdbadedbe",
+   "grad_max_abs": 3.161546828778228e-07,
+   "grad_finite": true,
+   "param_sha": "f6e7dae5610833c7"
+  },
+  "param_5": {
+   "device": "cuda",
+   "grad_sha": "87a496b0d4d3949e",
+   "grad_max_abs": 1.0138119677094437e-08,
+   "grad_finite": true,
+   "param_sha": "763cf2d18f45e512"
+  },
+  "param_6": {
+   "device": "cuda",
+   "grad_sha": "9848245d8fde061c",
+   "grad_max_abs": 1.818786010687745e-08,
+   "grad_finite": true,
+   "param_sha": "00f8a265930d73ec"
+  },
+  "param_7": {
+   "device": "cuda",
+   "grad_sha": "4f6d8a2f3eccefde",
+   "grad_max_abs": 1.3855103175863803e-10,
+   "grad_finite": true,
+   "param_sha": "68c3d27a4060cca9"
+  },
+  "param_8": {
+   "device": "cuda",
+   "grad_sha": "72cebbf9982797d2",
+   "grad_max_abs": 1.4161274930479806e-10,
+   "grad_finite": true,
+   "param_sha": "54446ca293315546"
+  },
+  "param_9": {
+   "device": "cuda",
+   "grad_sha": "2bce2b0fa29024b7",
+   "grad_max_abs": 1.3012256550037904e-10,
+   "grad_finite": true,
+   "param_sha": "a92345d9949d0054"
+  },
+  "param_10": {
+   "device": "cuda",
+   "grad_sha": "ae2674c57e32ec5c",
+   "grad_max_abs": 1.4539931481039048e-09,
+   "grad_finite": true,
+   "param_sha": "091ca576f004fa73"
+  },
+  "param_11": {
+   "device": "cuda",
+   "grad_sha": "3be3ed2b875e35d6",
+   "grad_max_abs": 3.9544374885736033e-07,
+   "grad_finite": true,
+   "param_sha": "0026bacdd2c98c64"
+  },
+  "param_12": {
+   "device": "cuda",
+   "grad_sha": "bd98ceeb36d30b6d",
+   "grad_max_abs": 9.642783460606097e-09,
+   "grad_finite": true,
+   "param_sha": "a4215f56a3015094"
+  },
+  "param_13": {
+   "device": "cuda",
+   "grad_sha": "0bb96f9863de4be3",
+   "grad_max_abs": 1.337951083257849e-08,
+   "grad_finite": true,
+   "param_sha": "2243679a7087a822"
+  },
+  "param_14": {
+   "device": "cuda",
+   "grad_sha": "41465d5a50dc7da7",
+   "grad_max_abs": 3.882715304825979e-07,
+   "grad_finite": true,
+   "param_sha": "00380c1b7ef173f6"
+  }
+ },
+ "all_grads_finite": true,
+ "fwd_bwd_kernels_gelu": [
+  "gelu_none_kernel_rank_1",
+  "gelu_backward_none_kernel_rank_1"
+ ],
+ "fwd_bwd_kernels_sample": [
+  "void at::native::vectorized_gather_kernel<16, long>(char*, c",
+  "void at::native::elementwise_kernel<128, 2, at::native::gpu_",
+  "void at::native::elementwise_kernel<128, 2, at::native::gpu_",
+  "gemm_ktype0_aiu1_mtype1_dtypeFP32xFP32xFP32xFP32xFP32_tile25",
+  "gemm_ktype1_aiu1_mtype1_dtypeFP32xFP32xFP32xFP32xFP32_tile64",
+  "void at::native::vectorized_elementwise_kernel<4, at::native"
+ ]
+}

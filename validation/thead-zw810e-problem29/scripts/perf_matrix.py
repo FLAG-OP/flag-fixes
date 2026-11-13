@@ -56,6 +56,7 @@ def timed(fn, iters, warmup):
 def bench_set():
     g = torch.Generator(device="cuda").manual_seed(7)
     ops = {}
+    errors = []
 
     for dt_name in ("float32", "bfloat16"):
         dt = getattr(torch, dt_name)
@@ -66,14 +67,17 @@ def bench_set():
         y = F.gelu(xg)
         gy = torch.autograd.grad(y.sum(), xg, retain_graph=False, create_graph=False)
 
-        def gelu_bwd(xg=xg, gy=gy):
+        def gelu_fwd_bwd(xg=xg, gy=gy):
             xg.grad = None
             y2 = F.gelu(xg)
             y2.backward(gy[0])
             return None
 
-        ops[f"gelu_bwd_none/{dt_name}"] = gelu_bwd
-        ops[f"cast_to/{dt_name}"] = lambda x=x: x.to(torch.bfloat16).to(dt)
+        # NOTE: this times forward+backward together (label fixed per review round 2)
+        ops[f"gelu_fwd_bwd_none/{dt_name}"] = gelu_fwd_bwd
+        # round trip via fp32 (bf16->bf16 second cast would be a no-op; review round 2)
+        mid = torch.float32 if dt_name == "bfloat16" else torch.bfloat16
+        ops[f"cast_to/{dt_name}"] = lambda x=x, mid=mid: x.to(mid).to(dt)
         ops[f"pointwise_add/{dt_name}"] = lambda x=x: x + x
         ops[f"mul_scalar/{dt_name}"] = lambda x=x: x * 0.5
 
@@ -99,11 +103,16 @@ def bench_set():
             r = timed(fn, args.iters, args.warmup)
         except Exception as e:
             r = {"error": f"{type(e).__name__}: {e}"}
+            errors.append(name)
         res[name] = r
+    res["_meta"] = {"op_errors": errors, "all_ok": not errors}
     return res
 
 
 out = {"config": args.config, "device": torch.cuda.get_device_name(0), "torch": torch.__version__, "triton": __import__("triton").__version__, "iters": args.iters, "warmup": args.warmup, "results": bench_set()}
 with open(args.out, "w") as f:
     json.dump(out, f, indent=1)
-print(json.dumps(out["results"], indent=1))
+ok = out["results"]["_meta"]["all_ok"]
+print("op_errors:", out["results"]["_meta"]["op_errors"], flush=True)
+import sys
+sys.exit(0 if ok else 1)

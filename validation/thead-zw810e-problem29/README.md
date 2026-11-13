@@ -1,111 +1,93 @@
-# ZW810E problem29 平台基线（issue #5，第二轮修订）
+# ZW810E problem29 平台基线（issue #5，第三轮修订 v6）
 
-日期：2026-11-12 首轮 · 2026-11-13 按审阅意见修订 · 平台：平头哥 PPU-ZW810E（单卡，PPU 6）
-目标树：FlagGems `29e14822f6dfabf990973c41f7c2df7811a6f60f`（`v5.3.5-46-g29e14822`）
-环境与版本：`results/env_record.json` · 原始数据：`results/`（含逐迭代样本）· 复现命令见文末
+日期：2026-11-12 首轮 · 2026-11-13 第二轮（PR #6 证据落地）· 2026-11-13 第三轮（按复审 6842724980 修订）
+平台：平头哥 PPU-ZW810E（单卡）· 目标树：FlagGems `29e14822f6dfabf990973c41f7c2df7811a6f60f`（`v5.3.5-46-g29e14822`）
+环境：`results/env_record.json` · 原始数据：`results/`（逐迭代样本、逐例判定、注入自测）· 复现命令见文末
 
-**修订说明（回应 2026-11-13 审阅）**：本轮按"最小收尾顺序"补交——证据随 PR 落地远端；精度判据收敛（DIFF 三分类接受策略 + 比较器负例自测 + oracle/阈值出处）；性能归因按定向探索重做（截距/斜率拟合 + host enqueue 分解 + 直调/注册入口对照），固定开销由"假设"升级为"拟合证据"，且归因结论从"每算子固定开销"**修正为"host 侧 per-call enqueue 开销"**；全部结论限定适用范围。
+**第三轮修订（回应复审五点）**：①小模型显式迁移到 PPU 并补命中证据，v1 CPU 结果作废；②精度判定改逐位置（消除跨位置稀释，审阅反例进负例自测）；③ULP 有序映射修复（无符号位型），正常区/FTZ 区差异分开报告；④生产判定抽取为共享模块 `comparator.py`，自测直接调用生产判定，±0 按位型比较；⑤失败计数与退出码可靠化（硬失败→exit 1），注入失败自测验证生产入口。
 
-## 结论（第二轮修订口径）
+## 结论（第三轮口径）
 
-**平台判定：需优化（首轮不变）。适用范围：本 FlagGems 版本（29e14822）/ 本尺寸集（0.3M–98M，重点 12.25M PR3 口径）/ 单卡 / 本轮微基准与小模型负载；不外推至 ZW810E 全部场景，不代表优化不可行。**
+**平台判定：需优化 + gems_full 训练路径当前被平台阻断（F-1/F-2 挂起）。适用范围：FlagGems `29e14822` / 0.3M–98M 尺寸集 / 单卡 / 本轮负载；不外推。**
 
-1. **"FlagGems 13 算子 12 慢"口径与实测方向一致**：18 项微基准下 gems_full（全量 enable）17 项慢于 native（1.3–6.4×），1 项持平（cast bf16 1.01×）。**这是接入配置对照（native vs 全量 enable vs selective enable），不是三种优化实现的对照——本轮未实现任何平台优化候选**，"需优化"即"FlagGems 侧收益为负，需另行优化后才值得启用"。
-2. **归因（定向探索后修正）**：尺寸扫描线性拟合显示 **FlagGems 截距 60.4/70.0 µs vs native 4.7/4.6 µs（gelu/add fp32），斜率基本相同**（0.0033–0.0033 vs 0.0038–0.0039 ns/元素）——慢在**每调用固定成本**，不在稳态带宽。host enqueue 分解进一步定位：**native enqueue ≈ 5 µs/次，FlagGems ≈ 57–69 µs/次**（flag_gems python 分发 + libentry + triton launch 链路的 host 开销；空闲 GPU 上该延迟落入 event 窗口）。**直调入口 vs aten 注册入口调用同一 Triton kernel**（profiler 核验 `gelu_none_kernel_rank_1`，enqueue 差仅 ~5 µs）→ 注册/调度层只贡献 ~5 µs，主体在 flag_gems 调用链自身。**优化优先级应先考察 per-call host 开销（调度/launch 路径），而非直接推断"必须厂商融合"或"无需新 fix"**——原首轮该两句推断撤回。
-3. **selective 机制有效但无收益**：`only_enable` 未包含算子保持 native 性能与 native kernel（profiler 证明）；被包含 gelu 族仍带同一 ~60 µs 固定成本 → 本轮无值得注册的算子。
-4. **精度（126 用例，v5 判据）**：0 硬失败（84 PASS + 42 DIFF + 0 FAIL）。42 DIFF = 33 例 FTZ 位级不一致 + 9 例仅 ±0 符号差；NaN/Inf 掩码与 **±Inf 符号**全部一致；非次正规区相对 fp64 oracle 达标。**该结果限定于本矩阵覆盖的 op×dtype×layout×值类，不等同于平台全部算子无正确性问题**。
-5. **AdamW**：正确性 5 步轨迹一致（fp32 ≤2.4e-6、bf16 1 ulp，`adamw_check.json`）；补充性能证据：336 张量配置 stock 26.8 ms/步（2,688 launch）vs fused 11.7 ms/步（39 launch）= 2.3×/launch -98.6%，单参数两者持平（0.128 vs 0.132 ms）；显存峰值同量级（`probe6_adamw_perf.json`）。**不据此放开 vendor 白名单**；stock/fused 耗时数据仅供后续平台 fix 条目评估。
-6. **小模型**（固定种子 gated MLP + 2 层 attention，fp32）：三组接入配置 loss/梯度/参数 8 步后逐位一致（sha256 15/15）。**该结论仅限此模型与测试范围**，不概括为平台"无正确性风险"。`gelu_and_mul` 无 autograd 路径，梯度 N/A 维持。
+1. **性能（微基准 batch-2，标签与口径已修正）**：18 项微基准 gems_full **18/18 慢于 native（1.29–6.45×）**，无一项更快。归因维持第二轮的拟合证据：**FlagGems 截距 60.4/70.0 µs vs native 4.7/4.6 µs，斜率与 native 基本相同**；host enqueue 分解 **native ≈5 µs/次 vs FlagGems ≈57–69 µs/次**；直调入口与 aten 注册入口命中同一 Triton kernel（差 ~5 µs）。**该证据支持"优先探索调用提交（enqueue/launch）路径"的方向假设，但尚未拆分 python/libentry/triton-launch 各环节贡献，也未测得纯设备执行成本差——不作为最终根因结论。**
+2. **精度（v6 判据，逐位置门）**：126 用例 = **72 PASS / 39 DIFF / 15 FAIL（硬失败，exit 1）**。相比 v5 的"0 硬失败"，修复跨位置稀释后暴露了真实偏差：
+   - **15 FAIL**：`gelu_backward`（gelu_none fp32/bf16、gelu_tanh fp32）在**近抵消小梯度区**（|grad|≈1e-8–1e-6，仍属 normal zone）逐位置相对误差超过 `max(4·eps, 1.5×native同位置)`——gems 最差达 native 误差的 ~2×（例：oracle -2.90e-08、native -2.98e-08、gems -5.96e-08，即 gems 100% 偏差、native 2.7%）；gelu_tanh fp32 前向在平滑区也有 ~2.5× native 相对误差的位置（abs ~1e-7 量级）。位置数：grad 7–74 万/2.6M（large/typical），fwd 2.6–4.8K。**绝对幅度小（≤1e-6 量级），按声明的逐位置判据构成 FAIL；对训练的实际影响评估与上游 kernel 修正建议已列入移交项。** 逐例 top-5 违例四元组（位置/native/gems/oracle）已归档于 JSON。
+   - **39 DIFF（记录性差异，非失败）**：FTZ 区位型差 33 例（合计 91,135 个次正规位置，最大绝对差 1.19e-07）、±0 符号差 9 例、grad FTZ 9 例、grad ±0 3 例。**正常区位级差另列报告**：26 例存在合计 6,683,858 个 normal-zone 位级差异（±1–2 ULP，逐位置精度门内），**不再表述为"全部差异仅在 FTZ 区"**。
+   - 判据与实现：生产判定模块 `scripts/comparator.py`（accuracy_matrix 与负例自测共用）；阈值 `max(4·eps, 1.5×native同位置)` 事先声明；FTZ 定义=oracle |y| < dtype 最小正规数，按**原始位型**比较；±0 按**原始位型**比较（torch.equal 视 +0==-0，不可用）。oracle=aten fp64 精确公式——**注明边界**：fp64 解析参考在负尾（|x| 大时 gelu 下溢为 0）同样受限，非无限精度真值；比较只在有限精度意义下成立。
+   - 负例自测（设备无关）：`test_comparator_negative.py` 直接调用生产判定，**20/20 通过**（含审阅反例：FTZ 位置 native 误差不得放宽正常位——`oracle=[1e-40,1.0], native=[0,1], gems=[0,2]` 现判 FAIL）；`accuracy_matrix.py --inject-fail` 生产入口注入自测：污染用例判 FAIL 且**进程 exit 1**（`results/accuracy_matrix_inject.json`）。ULP 断言：±0 距离 1、相邻值 1、±min_normal 跨零距离 2049（fp16）、min_sub→0 距离 1。
+   - 边界位型：fp16 `0x03FF`、bf16 `0x007F`、fp32 `0x007FFFFF` 断言为最大次正规。
+3. **小模型（v2，显式 PPU 设备）**：模型/head/embedding/token 全部 `.to("cuda")`（optimizer 构造前完成，JSON 记录 device 断言 `params_all_cuda_before_optim=true`、`grads_all_on_cuda=true`）；profiler 命中证据：selective 配置前/反向命中 `gelu_none_kernel_rank_1`/`gelu_backward_none_kernel_rank_1`，native 配置命中 `GeluCUDAKernelImpl`/`GeluBackwardCUDAKe…`。**替代说明**：模型 attention 用显式 matmul+softmax（因 F-1 sdpa 挂起，见下）；结构仍为固定种子 gated MLP + 2 层 attention 块，无外部权重。**结果（native vs selective，8 步统一）**：loss 前 7 步逐位一致，第 8 步相对差 9.15e-08；各参梯度 max_abs 到 4 位有效数字一致（sha256 不同——两套 gelu kernel 数值路径不同所致，与精度矩阵 grad 差异一致）；每配置 3 独立进程损失序列逐位可复现；稳态步时 native ~2.2 ms / selective ~2.85 ms。**v1 的"三组逐位一致"结论作废**（v1 未上设备，实为 CPU aten 自身一致性），不作平台训练正确性证据。
+   - **gems_full 训练在本机当前被阻断**（F-2：matmul backward 挂起），无法提供 8 步对照——见下。
+4. **平台阻断发现（F-1/F-2，本轮新发现）**：
+   - **F-1**：FlagGems sdpa（`_flash_attention_forward` 注册路径）在训练形状 fp32 `[1,8,128,256]` **前向即挂起**（>300s 无返回、无编译活动）；推理形状 bf16 `[8,16,512,64]` 正常（微基准 0.17ms）。
+   - **F-2**：FlagGems **matmul backward** 挂起（fp32 `[8,128,256]@[256,512]`）；同形状 forward 与大 forward 正常（微基准 2.18ms）。
+   - 处置：按 issue 设备异常规则**单次隔离触发、不重试**（`probe7_platform_blockers.py`，exit 1）；**来源注记**：同一 FlagGems 树 + 小模型负载在 2026-11-12 晚间曾完整跑通（v1 产物，step 10.5–15.3 ms）——挂起与设备/驱动状态相关（11-12 21:30 至 11-13 11:30 间环境有变化，非本仓库可控）；待平台恢复后隔离复验。**F-1/F-2 未据此确认算子实现新增错误**（复审口径），作为平台阻断登记。
+5. **AdamW**：正确性（5 步轨迹一致，fp32 ≤2.4e-6 / bf16 1 ulp）与性能证据保留：336 张量 stock 26.8 ms/步（2,688 launch）vs fused 11.7 ms/步（39 launch）= **2.3×**。**为单次探针初步结果**，后续优化立项时再补独立重复与代表性参数配置；vendor 白名单维持不变。
 
-## 精度判据（事先声明，非按本批结果反推）
-
-判定门在脚本 docstring 中先于执行声明（`scripts/accuracy_matrix.py` v5，与 v3 判定门一致）：
-
-- **PASS**：NaN/Inf 掩码与 ±Inf 符号等于 native；grad 存在性一致；`rel_err(gems, oracle) ≤ max(4·eps(dtype), 1.5·rel_err(native, oracle))`（非次正规区；gems 允许更准，但不得劣于 native 的 1.5 倍）；FTZ 区逐位一致。
-- **DIFF（记录性接受，不算失败也不静默通过）**：仅次正规（FTZ）输出区与 native 位级不一致（±1–2 ulp），或仅 ±0 符号差（IEEE 0==−0；符号差单独计数，不因处于次正规区而自动忽略——本轮 9 例 ±0 符号差均在 gelu_and_mul 边界用例的乘法链路上，逐例位置与计数已归档）。
-- **FAIL**：NaN/Inf/±Inf 符号掩码不一致、grad 缺失、超容忍、异常。
-- **oracle**：aten fp64 精确公式（none：`x·Φ(x)`，Φ 用 `erf`；tanh：`x·½(1+tanh(√(2/π)(x+0.044715x³)))`；grad 为对应解析式），与被测同输入同设备计算；输入为脚本固定种子确定性构造（典型/大：cuda Generator crc32 种子；boundary：按 issue 位型拼装；来源与适用范围见脚本 `make_value_class`）。
-- **阈值出处**：`4·eps` 与 `1.5×native_rel` 在 v3 起即固定于脚本 docstring，本轮未改门、只增证据字段。
-- **边界位型确认**：fp16 `0x03FF`、bf16 `0x007F`、fp32 `0x007FFFFF` 解码后均验证为各自 dtype 的最大次正规数（`test_comparator_negative.py` 前 3 项断言）。
-- **FTZ 定义**：oracle 输出 `|y| < dtype 最小正规数`（fp16 6.103515625e-05，bf16/fp32 1.1754943508222875e-38）的位置；该区要求 native 与 gems 逐位一致，不一致记 DIFF 并归档 `ftz_diff_count`/最差位置/双方位型。
-- **比较器负例自测（设备无关，10/10 通过，exit 0）**：`scripts/test_comparator_negative.py` 证明分类会拒绝——NaN 出现、±Inf 符号翻转（v4 缺陷，v5 修复后回归）、Inf 出现、grad 缺失、越界误差、gems 劣于 native；并验证 FTZ-only 与 ±0-only 正确落入 DIFF 而非 PASS。
-- **批次关系**：v1（直调 API 无 autograd）、v2（ULP 步进按 dtype 升位虚高 + NaN 入 diff）两批判定作废未归档；归档的 `accuracy_matrix.json` 为 **v5 全量重跑**（判定门与 v3 相同 + 增加最差位置/双方位型/±0 计数/FTZ 定义/特殊值计数等证据字段），非对旧批次的重评分；输入由固定种子决定，两批逐位同源。
-
-## 微基准（p50 ms；每配置 3 独立进程，表中为"三进程 p50 的中位"；p95 为三进程 p95 的中位；分位数均为**进程内 30 次迭代统计**，不跨进程合并；逐迭代原始样本在 `results/perf_*_r*.json` 的 `samples_ms`）
+## 微基准（batch-2；p50 ms，3 独立进程取中位，分位数=进程内 30 次迭代统计；逐迭代样本在 `samples_ms`）
 
 | 算子 | native p50 | native p95 | gems_full p50 | gems_full p95 | full/native | selective p50 | selective p95 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| cast_to/bfloat16 | 0.010 | 0.011 | 0.010 | 0.011 | 0.99x | 0.010 | 0.012 |
-| cast_to/float32 | 0.026 | 0.028 | 0.083 | 0.092 | 3.18x | 0.026 | 0.027 |
-| findmax/fp32 | 0.022 | 0.022 | 0.113 | 0.144 | 5.21x | 0.021 | 0.022 |
-| gelu_and_mul/bf16 | 0.024 | 0.025 | 0.154 | 0.193 | 6.30x | 0.081 | 0.087 |
-| gelu_and_mul_fused/bf16 | 0.024 | 0.025 | 0.087 | 0.095 | 3.60x | 0.086 | 0.101 |
-| gelu_bwd_none/bfloat16 | 0.072 | 0.078 | 0.261 | 0.269 | 3.63x | 0.269 | 0.291 |
-| gelu_bwd_none/float32 | 0.124 | 0.126 | 0.263 | 0.312 | 2.11x | 0.265 | 0.302 |
-| gelu_fwd_none/bfloat16 | 0.028 | 0.028 | 0.081 | 0.085 | 2.95x | 0.085 | 0.145 |
-| gelu_fwd_none/float32 | 0.051 | 0.057 | 0.084 | 0.127 | 1.64x | 0.084 | 0.127 |
-| gelu_fwd_tanh/bfloat16 | 0.026 | 0.027 | 0.083 | 0.095 | 3.13x | 0.083 | 0.091 |
-| gelu_fwd_tanh/float32 | 0.051 | 0.052 | 0.082 | 0.095 | 1.59x | 0.083 | 0.094 |
-| mm_transposed/fp32 | 0.684 | 0.684 | 2.182 | 2.189 | 3.19x | 0.684 | 0.684 |
-| mul_scalar/bfloat16 | 0.015 | 0.015 | 0.081 | 0.092 | 5.57x | 0.015 | 0.016 |
-| mul_scalar/float32 | 0.048 | 0.049 | 0.090 | 0.101 | 1.88x | 0.048 | 0.050 |
-| pointwise_add/bfloat16 | 0.014 | 0.015 | 0.085 | 0.096 | 6.09x | 0.014 | 0.017 |
-| pointwise_add/float32 | 0.049 | 0.050 | 0.096 | 0.116 | 1.96x | 0.049 | 0.050 |
-| sdpa_fwd/bf16 | 0.132 | 0.132 | 0.169 | 0.188 | 1.29x | 0.131 | 0.132 |
-| transpose_copy/fp32 | 0.040 | 0.041 | 0.103 | 0.119 | 2.57x | 0.043 | 0.043 |
+| cast_to/bfloat16 | 0.108 | 0.109 | 0.142 | 0.159 | 1.32x | 0.108 | 0.109 |
+| cast_to/float32 | 0.026 | 0.027 | 0.083 | 0.088 | 3.13x | 0.026 | 0.028 |
+| findmax/fp32 | 0.021 | 0.022 | 0.113 | 0.136 | 5.32x | 0.021 | 0.023 |
+| gelu_and_mul/bf16 | 0.024 | 0.025 | 0.155 | 0.180 | 6.45x | 0.082 | 0.086 |
+| gelu_and_mul_fused/bf16 | 0.024 | 0.025 | 0.086 | 0.093 | 3.58x | 0.087 | 0.095 |
+| gelu_fwd_bwd_none/bfloat16 | 0.071 | 0.078 | 0.264 | 0.270 | 3.73x | 0.264 | 0.284 |
+| gelu_fwd_bwd_none/float32 | 0.125 | 0.126 | 0.266 | 0.306 | 2.13x | 0.263 | 0.290 |
+| gelu_fwd_none/bfloat16 | 0.028 | 0.028 | 0.080 | 0.086 | 2.88x | 0.081 | 0.106 |
+| gelu_fwd_none/float32 | 0.051 | 0.057 | 0.082 | 0.130 | 1.60x | 0.083 | 0.123 |
+| gelu_fwd_tanh/bfloat16 | 0.027 | 0.027 | 0.082 | 0.098 | 3.08x | 0.082 | 0.088 |
+| gelu_fwd_tanh/float32 | 0.051 | 0.052 | 0.082 | 0.095 | 1.58x | 0.081 | 0.087 |
+| mm_transposed/fp32 | 0.684 | 0.685 | 2.180 | 2.189 | 3.19x | 0.684 | 0.684 |
+| mul_scalar/bfloat16 | 0.014 | 0.014 | 0.080 | 0.088 | 5.73x | 0.014 | 0.015 |
+| mul_scalar/float32 | 0.048 | 0.049 | 0.089 | 0.100 | 1.85x | 0.048 | 0.050 |
+| pointwise_add/bfloat16 | 0.013 | 0.014 | 0.084 | 0.095 | 6.24x | 0.013 | 0.014 |
+| pointwise_add/float32 | 0.049 | 0.050 | 0.094 | 0.114 | 1.93x | 0.049 | 0.050 |
+| sdpa_fwd/bf16 | 0.131 | 0.132 | 0.170 | 0.180 | 1.29x | 0.131 | 0.132 |
+| transpose_copy/fp32 | 0.040 | 0.041 | 0.101 | 0.118 | 2.52x | 0.043 | 0.044 |
 
-形状：行向量 [12288000]（12.25M，PR3 归因口径）；gelu_and_mul (16384,2560)；findmax (4096,1280)；mm [4096,1280]@[1280,2048]ᵀ；sdpa (8,16,512,64)。warmup 5 次（排除 JIT/首编译）后 30 次 CUDA event 同步计时。`gelu_and_mul/bf16` 为建模代码常见写法（gelu+mul 两 kernel），`gelu_and_mul_fused/bf16` 为 flag_gems API。
+口径修正：`gelu_fwd_bwd_none` = **前向+反向合计**计时（原 `gelu_bwd_none` 标签不准确）；`cast_to/bfloat16` = bf16→fp32→bf16 往返（原 bf16→bf16 为 no-op，已修正）；`gelu_and_mul` 实测形状 **(4096,1280)**（第二轮 README 误写 (16384,2560)，以本表为准）；mm `[4096,1280]@[1280,2048]ᵀ`；sdpa `[8,16,512,64]` bf16 推理。warmup 5（排除 JIT/首编译），30 次 CUDA event 同步计时。batch-1 旧数据存 `results/perf_batch1_superseded/`（数字与 batch-2 一致性已核对，方向不变）。
 
-## 归因证据（probe5，方法注记见 JSON `method_notes`）
-
-**尺寸扫描 + 线性拟合**（进程严格隔离：native 进程不 import flag_gems；`results/probe5_overhead_attribution.json`）：
+## 归因证据（probe5 v2，进程隔离）
 
 | op | native 截距 | gems 截距 | native 斜率 | gems 斜率 |
 |---|---:|---:|---:|---:|
 | gelu fp32 | 4.73 µs | 60.43 µs | 0.0039 ns/元素 | 0.0033 ns/元素 |
 | add fp32 | 4.60 µs | 70.02 µs | 0.0038 ns/元素 | 0.0030 ns/元素 |
 
-范围 0.3M–98M 共 6 点。**首版 probe5 曾在同一进程内 enable 后标"native"，标签失真已作废**；归档为 v2 进程隔离版。
+host enqueue：native 4.9–5.5 µs/次 vs FlagGems 56.7–68.7 µs/次（gelu/add，1.2M/12.25M）；直调 vs aten 注册入口同一 kernel、enqueue 差 ~5 µs。**注**：python/libentry/launch 各环节贡献未拆分，"纯设备执行成本无差"未单独测量——方向假设非最终根因。
 
-**host enqueue 分解**（空闲 GPU 上 event 窗口含 enqueue 延迟；enqueue = 无同步批量提交 50 次的 host 墙钟均值，5 批取最小）：
+## 精度矩阵判定汇总（v6，逐位置门）
 
-| 配置 | gelu event (1.2M) | gelu enqueue | add enqueue | native 对照 enqueue |
-|---|---:|---:|---:|---:|
-| native 进程 | 0.0135 ms | — | — | **4.9–5.5 µs** |
-| gems 进程 | 0.0739 ms | 57.0 µs | 68.5 µs | — |
-
-12.25M 时 gems gelu enqueue 56.7 µs（event 0.079 ms）vs native enqueue 5.0 µs（event 0.0448 ms）→ **固定成本主体 = host 侧 flag_gems 调用链（python 分发 + libentry + triton launch），而非 GPU kernel 本体或注册层**。
-
-**直调 vs aten 注册入口**（同一 gems 进程）：profiler 核验两者命中同一 `gelu_none_kernel_rank_1`；enqueue 55.6–60.7 µs（直调低 ~5 µs）→ 注册层贡献 ~5 µs。
-
-**profiler 计时注记**：profiler 会放大 device_time（同一 1.2M gelu 报 0.58 ms vs event 0.07 ms），故 profiler 仅用于命中/kernel 名证据，不用于计时声明。
-
-## AdamW（新增性能证据）
-
-| 配置 | stock | fused | Δ |
-|---|---:|---:|---|
-| 单参数 [1024,1024] | 0.128 ms/步，8 launch | 0.132 ms/步，2 launch | 持平；首步 447.8→15.4 ms（首调编译） |
-| 336 张量（BGE-M3 口径） | 26.8 ms/步，2,688 launch，峰值 10.63 GB | **11.7 ms/步，39 launch**，峰值 10.57 GB | **2.3×，launch -98.6%** |
-
-正确性见 `adamw_check.json`（5 步轨迹一致）。vendor 白名单维持不变。
+| 判定 | 数量 | 说明 |
+|---|---:|---|
+| PASS | 72 | 与 native 位级一致，或逐位置满足 `rel ≤ max(4·eps, 1.5×native同位置)` 且 FTZ 区位型一致 |
+| DIFF | 39 | FTZ 区位型差（33 例 / 91,135 位置，max abs 1.19e-07）；±0 符号差（9 例）；grad FTZ（9）/grad ±0（3）——记录性接受 |
+| FAIL | 15 | 逐位置门违例（见结论 §2，top-5 违例四元组逐例归档）；**进程 exit 1** |
 
 ## 覆盖与 pending
 
-- ✅ 环境/dispatch/注册入口/命中证明：`env_record.json`、`probe1_dispatch.json`、`probe3_scaling_hits.json`
-- ✅ 三接入配置对照（native / gems_full / gems_selective）×3 进程逐迭代样本：`perf_*_r{1..3}.json`
-- ✅ 精度 126 用例 v5 判据 + 逐例证据 + 负例自测：`accuracy_matrix.json`、`test_comparator_negative.log`
-- ✅ AdamW 正确性 + 性能：`adamw_check.json`、`probe6_adamw_perf.json`
-- ✅ 归因（截距/斜率、enqueue 分解、入口对照）：`probe5_overhead_attribution.json`
-- ⏳ pending（不计通过，拆分为后续任务）：真实 BGE-M3 / x-benchmark 整模型；多卡/通信整步；ZW810E 平台 fix 条目（若立项，优先评估 per-call host 开销路径）；`_FUSED_ADAMW_VALIDATED_VENDORS` 加入（需 owner 审核）
-- 本轮为**平台基线记录**，不构成任何 fix 的硬件验收；现有条目 `draft / deployable=false / hardware_status=unverified` 维持不变；本轮不代表 PR2 性能瓶颈已修复。
+- ✅ 环境/dispatch/命中证据：`env_record.json`、`probe1_dispatch.json`、`probe3_scaling_hits.json`、小模型逐配置 kernel 命中（v2 JSON 内）
+- ✅ 三接入配置微基准（batch-2）×3 进程逐迭代样本 + 错误聚合退出码
+- ✅ 精度 v6（生产判定 + 注入自测 + 负例 20/20 + 逐例证据 + top-5 违例四元组）
+- ✅ 小模型 native/selective 上设备对照（8 步、device 断言、命中证据、3 进程确定性）
+- ✅ 平台阻断 F-1/F-2 单次触发出证（`probe7_platform_blockers.json`）
+- ⏳ pending（拆分为后续任务，不计通过）：真实 BGE-M3 / x-benchmark 整模型；多卡/通信整步；F-1/F-2 平台恢复后隔离复验；ZW810E 平台 fix 立项（含 enqueue 路径探索与 gelu_backward 小梯度区分位置的数值评估）；`_FUSED_ADAMW_VALIDATED_VENDORS` 加入（需独立条目 + owner 审核）
+- 本轮为平台基线记录，不构成任何 fix 的硬件验收；现有条目 `draft / deployable=false / hardware_status=unverified` 维持不变；不代表 PR2 性能瓶颈已修复；`-15.3%` 不外推三平台。
 
 ## 复现命令
 
 ```bash
 export PYTHONPATH=/path/to/FlagGems/src   # 29e14822
 export CUDA_VISIBLE_DEVICES=0
-python3 scripts/accuracy_matrix.py --out results/accuracy_matrix.json   # v5 判据
-python3 scripts/test_comparator_negative.py                             # 设备无关，exit 0
+python3 scripts/comparator.py                     # 生产判定单元自测, exit 0
+python3 scripts/test_comparator_negative.py       # 负例 20/20, exit 0
+PYTHONPATH=$PYTHONPATH python3 scripts/accuracy_matrix.py --out results/accuracy_matrix_inject.json --inject-fail
+                                                  # 注入自测: FAIL + exit 1（预期非零）
+python3 scripts/accuracy_matrix.py --out results/accuracy_matrix.json
+                                                  # v6 全量: 72/39/15, exit 1（存在硬失败, 预期非零）
 python3 scripts/adamw_check.py --out results/adamw_check.json
 python3 scripts/probe6_adamw_perf.py
 for cfg in native gems_full gems_selective; do
@@ -113,15 +95,16 @@ for cfg in native gems_full gems_selective; do
     python3 scripts/perf_matrix.py --config $cfg --out results/perf_${cfg}_r${rep}.json
   done
 done
-python3 scripts/probe5_overhead_attribution.py   # 进程隔离版（v2）
+python3 scripts/probe5_overhead_attribution.py
 python3 scripts/probe3_scaling_hits.py
-for cfg in native gems_full gems_selective; do
-  python3 scripts/small_model.py --config $cfg --out results/small_model_${cfg}.json
+for cfg in native gems_selective; do              # gems_full 训练被 F-2 阻断，暂不可跑
+  python3 scripts/small_model.py --config $cfg --out results/small_model_v2/small_${cfg}.json
 done
-python3 scripts/probe4_small_model.py
+python3 scripts/probe7_platform_blockers.py       # F-1/F-2 出证, exit 1（预期非零）
 ```
 
 ## 修订记录
 
-- 2026-11-12 首轮（RESULTS.md 原文，见 git 历史或 issue 评论）：判定"需优化"；"每算子固定开销 ~60–80 µs"为假设；"无需新 fix / 厂商融合优先"为过度推断；小模型逐位一致表述过宽。
-- 2026-11-13 第二轮（本文件）：撤回过度推断；固定开销升级为拟合证据并修正为 host enqueue 归因；判据三分类 + 负例自测；批次关系披露；结论限定适用范围；AdamW 性能证据补充；native/full/selective 明确为接入配置而非优化实现。
+- 2026-11-12 首轮：判定"需优化"；固定开销为假设；小模型未上设备（不知情缺陷）；"0 硬失败"基于稀释门。
+- 2026-11-13 第二轮（PR #6 f288df6）：证据落地；判据三分类 + 负例自测（发现并修 ±Inf 符号缺口）；归因修正为 host enqueue；结论限定范围。
+- 2026-11-13 第三轮（本文件）：v6 判据逐位置化（审阅反例入自测）、ULP 修复、正常区/FTZ 区分开报告、**15 硬 FAIL 如实报告**；小模型上设备重跑（v1 作废），native/selective 训练数值差异量化；发现并登记 F-1/F-2 平台阻断（gems_full 训练阻断、sdpa 挂起、matmul backward 挂起）；perf batch-2 重跑（标签/口径修正）；失败计数与退出码可靠化。

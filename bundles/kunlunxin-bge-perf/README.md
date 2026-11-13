@@ -80,7 +80,7 @@ problem29 覆盖三个平台；**本 bundle 当前的证据只覆盖昆仑芯单
 |---|---|---|
 | 昆仑芯 P800/XPU3 | 本 PR 有单卡重建负载证据（整步 A/B 矩阵 + 组合验收）；整模型平台验收未完成 | 完成 x-benchmark、owner 审核与多卡/FSDP2 验收 |
 | 昇腾 910C | 未实现、未验证（仅微基线数据存在于平台文档） | 单独建立 backend/fix 条目；确认 torch/npu 与算子注册路径 |
-| 平头哥 ZW810E | 2026-11-12/13 首轮平台基线完成（issue #5，非 fix 验收）：判定"需优化"——FlagGems `29e14822` 全量 enable 18 项微基准 17 项慢于 native（1.3–6.4×），归因=host 侧 per-call enqueue 固定成本 ~55–69 µs（截距拟合 60.4/70.0 vs 4.7/4.6 µs，斜率与 native 相同）；gelu 族 126 用例精度矩阵 0 硬失败（42 DIFF=FTZ ±1–2 ulp + ±0 符号差）；"平台文档 13 算子 12 慢"口径与实测方向一致 | 证据：[validation/thead-zw810e-problem29](../../validation/thead-zw810e-problem29/README.md)；后续：优先评估 per-call host 开销路径与厂商 kernel/融合移交项，fix 条目与验收另立 |
+| 平头哥 ZW810E | 2026-11-12/13 首轮平台基线完成（issue #5，非 fix 验收，第三轮修订）：判定"需优化 + gems_full 训练当前被平台阻断"——FlagGems `29e14822` 全量 enable 18 项微基准 18/18 慢于 native（1.29–6.45×），归因=host 侧 per-call enqueue 固定成本 ~55–69 µs（截距拟合 60.4/70.0 vs 4.7/4.6 µs，斜率与 native 相同，环节拆分未做、非最终根因）；gelu 族 126 用例 v6 逐位置判据 72 PASS/39 DIFF/15 FAIL（15 硬失败=gelu_backward 小梯度近抵消区 gems 达 native ~2×、abs ≤1e-6；gelu_tanh fp32 平滑区 ~2.5×）；**平台阻断 F-1/F-2**（sdpa 训练形状前向挂起、matmul backward 挂起，单次触发出证，待平台恢复隔离复验）；"平台文档 13 算子 12 慢"口径与实测方向一致 | 证据：[validation/thead-zw810e-problem29](../../validation/thead-zw810e-problem29/README.md)；后续：F-1/F-2 平台恢复复验、enqueue 路径探索、gelu_backward 数值评估、厂商 kernel/融合移交项，fix 条目与验收另立 |
 
 `adamw-fused` 的 fused 选择已按评审加入 vendor 护栏：非 KunlunXIN 平台
 默认 stock（显式请求也回退并记录原因），后续平台验证完成后再加入

@@ -1,0 +1,10 @@
+PASS fp16 max_sub<->min_normal ulp == 1
+PASS fp16 +0/-0 ulp == 1
+PASS fp16 +min_normal/-min_normal ulp == 2049 (1024 steps to each zero +1)
+PASS fp16 min_sub->+0 ulp == 1
+PASS fp32 +0/-0 ulp == 1
+PASS fp16 negative adjacent ulp == 1
+PASS bf16 0x007F max subnormal
+PASS review counter-example -> FAIL (no cross-position dilution)
+PASS zero-sign-only -> DIFF (raw bits)
+PASS bits_equal distinguishes +0/-0

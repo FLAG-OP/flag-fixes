@@ -1,15 +1,24 @@
-PASS fp16 0x03FF is max subnormal (< min normal 0x0400)
-PASS bf16 0x007F is max subnormal (< min normal 0x0080)
-PASS fp32 0x007FFFFF is max subnormal (< min normal 0x00800000)
-PASS NaN appearance rejected
-PASS +Inf vs -Inf rejected
-PASS Inf appearance rejected
-PASS grad presence mismatch rejected
-PASS out-of-tolerance error rejected
-PASS gems within tol vs native accepted
-PASS gems less accurate than native rejected
-PASS FTZ-only mismatch -> DIFF
-PASS zero-sign-only -> DIFF
-PASS bitwise identical -> PASS
+PASS comparator.selftest: fp16 max_sub<->min_normal ulp == 1
+PASS comparator.selftest: fp16 +0/-0 ulp == 1
+PASS comparator.selftest: fp16 +min_normal/-min_normal ulp == 2049 (1024 steps to each zero +1)
+PASS comparator.selftest: fp16 min_sub->+0 ulp == 1
+PASS comparator.selftest: fp32 +0/-0 ulp == 1
+PASS comparator.selftest: fp16 negative adjacent ulp == 1
+PASS comparator.selftest: bf16 0x007F max subnormal
+PASS comparator.selftest: review counter-example -> FAIL (no cross-position dilution)
+PASS comparator.selftest: zero-sign-only -> DIFF (raw bits)
+PASS comparator.selftest: bits_equal distinguishes +0/-0
+PASS fp16 0x03FF is max subnormal
+PASS bf16 0x007F is max subnormal
+PASS fp32 0x007FFFFF is max subnormal
+PASS production: NaN appearance -> FAIL
+PASS production: +Inf vs -Inf -> FAIL
+PASS production: grad presence mismatch -> FAIL
+PASS production: out-of-tolerance -> FAIL
+PASS production: gems better than native -> PASS
+PASS production: gems worse than native -> FAIL
+PASS production: FTZ-only mismatch -> DIFF (recorded)
+PASS production: zero-sign-only -> DIFF (raw bits)
+PASS production: bitwise identical -> PASS
 
 0 failure(s)

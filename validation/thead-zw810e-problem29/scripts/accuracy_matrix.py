@@ -1,35 +1,39 @@
-"""ZW810E problem29 accuracy matrix v3: gelu(none/tanh) fwd+bwd, gelu_and_mul.
+"""ZW810E problem29 accuracy matrix v6 (issue #5, review round 2).
 
-Phases (single process, deterministic inputs built up-front so both modes see
-bit-identical inputs):
-  P0  build all inputs (no flag_gems import yet -> native RNG)
-  P1  native aten reference outputs/grads -> CPU  (reference first, per issue #5)
-      + fp64 oracle (out & grad) computed on-device
-  P2  import flag_gems + enable, recompute THROUGH ATEN (autograd-aware,
-      profiler-proven to hit flag_gems triton kernels) and compare.
+Uses the PRODUCTION comparator (scripts/comparator.py) — single gate source,
+also exercised by test_comparator_negative.py.
 
-Verdict (documented gates, per issue #5 "明确精度门槛后执行"):
-  A specials : NaN/Inf masks must equal native; grad presence must match.
-  B accuracy : gems must not be meaningfully less accurate than native:
-      rel_err(gems, oracle) <= max(4*eps(dtype), 1.5 * rel_err(native, oracle)),
-      evaluated on finite positions with |oracle| >= denormal floor of dtype.
-  C FTZ zone : positions whose oracle output is subnormal (< dtype min normal):
-      native and gems must agree bitwise (both flush or both keep).
-  D grads    : same B/C rule on x.grad.
-  zero-sign mismatch is recorded as a note (IEEE 0 == -0).
-  gelu_and_mul has no autograd path: forward gates only, grad = N/A.
+v6 changes vs v5 (per review comment 6842724980):
+  - normal-zone gate is PER-POSITION (rel <= max(4*eps, 1.5*native_rel) at the
+    same position); native errors at denormal positions can no longer relax
+    normal positions (review counter-example now FAILs);
+  - FTZ zone compared on RAW BIT patterns (torch.equal treats +0==-0);
+  - signed zero compared via raw bits; zero-sign-only -> DIFF (production rule,
+    consistent with the self-test);
+  - ULP ordinal mapping fixed (unsigned bits; ±0 distance 1); selftest asserts;
+  - normal-zone and FTZ-zone bit differences REPORTED SEPARATELY (no claim
+    that all differences are FTZ-only);
+  - summary counts passed/diff/hard_failed separately; exit code is
+    non-zero iff hard failures exist (aggregated, with diagnostic JSON always
+    written first);
+  - --inject-fail: deterministic selftest that corrupts one gems output
+    (x2) -> that case must be FAIL and the process must exit non-zero.
+
+Batch note: v1/v2/v5 batches VOID / superseded; this file is the current one.
 """
 import argparse
 import hashlib
 import json
 import math
+import sys
 import zlib
 
 import torch
 import torch.nn.functional as F
 
-MIN_NORMAL = {"float32": 1.1754943508222875e-38, "bfloat16": 1.1754943508222875e-38, "float16": 6.103515625e-05}
-EPS = {"float32": 1.1920929e-07, "bfloat16": 0.0078125, "float16": 0.0009765625}
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent))
+import comparator as C  # production gate
+
 DTYPE_BITS = {
     "float16": {"max_sub": 0x03FF, "min_norm": 0x0400, "min_sub": 0x0001, "inf": 0x7C00, "nan": 0x7E00},
     "bfloat16": {"max_sub": 0x007F, "min_norm": 0x0080, "min_sub": 0x0001, "inf": 0x7F80, "nan": 0x7FC0},
@@ -94,23 +98,6 @@ def sha256_tensor(t):
     return hashlib.sha256(t.cpu().contiguous().view(torch.uint8).numpy().tobytes()).hexdigest()[:16]
 
 
-def mask(t, kind):
-    f = t.float()
-    if kind == "nan":
-        return torch.isnan(f)
-    if kind == "inf":
-        return torch.isinf(f)
-    if kind == "posinf":
-        return torch.isposinf(f)
-    if kind == "neginf":
-        return torch.isinf(f) & torch.signbit(f)
-    if kind == "negzero":
-        return (f == 0) & torch.signbit(f)
-    if kind == "poszero":
-        return (f == 0) & ~torch.signbit(f)
-    raise ValueError(kind)
-
-
 def oracle_out(x, op, b=None):
     xx = x.double()
     if op == "gelu_none":
@@ -141,38 +128,6 @@ def oracle_grad(x, op, b=None):
     return g
 
 
-def rel_err(a_cpu_f, oracle):
-    """a: float cpu tensor; oracle: fp64 cpu tensor, same shape."""
-    if a_cpu_f.numel() == 0:
-        return 0.0
-    af = a_cpu_f.double()
-    fin = torch.isfinite(af) & torch.isfinite(oracle)
-    if not fin.any():
-        return 0.0
-    denom = oracle[fin].abs().clamp_min(1e-300)
-    return float(((af[fin] - oracle[fin]).abs() / denom).max())
-
-
-def dt_ulp(a, b, dtype):
-    """exact ulp distance in the ORIGINAL dtype via ordinal mapping."""
-    import numpy as np
-
-    if a.numel() == 0:
-        return 0
-    nbits = 16 if dtype != "float32" else 32
-    ai = a.view(torch.uint16 if nbits == 16 else torch.uint32).numpy().astype(np.int64)
-    bi = b.view(torch.uint16 if nbits == 16 else torch.uint32).numpy().astype(np.int64)
-    sign_hi = 1 << (nbits - 1)
-    def to_ord(x):
-        pos = (x & (sign_hi - 1))
-        return np.where(x & sign_hi == 0, pos + sign_hi, ~pos & (2 * sign_hi - 1))
-    fa, fb = a.float(), b.float()
-    m = ~(torch.isnan(fa) | torch.isnan(fb) | torch.isinf(fa) | torch.isinf(fb)).numpy()
-    if not m.any():
-        return 0
-    return int(np.abs(to_ord(ai) - to_ord(bi))[m].max())
-
-
 CASES = []
 
 
@@ -190,11 +145,13 @@ def build_cases():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--inject-fail", action="store_true", help="selftest: corrupt first case gems output (x2); that case must FAIL and exit code must be non-zero")
     args = ap.parse_args()
-    print("accuracy_matrix v5 (adds sign-aware Inf comparison to hard gate; supersedes v4): gates identical to v3; additive per-case evidence fields "
-          "(worst position/bits, signed-zero count, FTZ definition, special counts). "
-          "v1 (autograd bug) and v2 (ULP walker + NaN-in-diff) batches are VOID; "
-          "this run is the final full re-run on identical deterministic inputs.", flush=True)
+
+    print("accuracy_matrix v6: production comparator (per-position normal gate, "
+          "raw-bit FTZ/±0, fixed ULP ordinals), separate passed/diff/hard counts, "
+          "non-zero exit on hard failures. v1/v2/v5 batches superseded; this is the "
+          "current full run." + (" [INJECT-FAIL SELFTEST]" if args.inject_fail else ""), flush=True)
 
     build_cases()
 
@@ -228,7 +185,7 @@ def main():
         except Exception as e:
             native[name] = {"error": f"{type(e).__name__}: {e}"}
 
-    # ---- P2: flag_gems (aten path) ----
+    # ---- P2: flag_gems (aten path, autograd-aware; hit evidence in probe1/probe4) ----
     import flag_gems
 
     flag_gems.enable()
@@ -250,12 +207,14 @@ def main():
                 torch.cuda.synchronize()
                 rec["out"] = y.detach().cpu().clone()
                 rec["grad"] = xv.grad.detach().cpu().clone()
+            if args.inject_fail and name == CASES[0][0]:
+                rec["out"] = rec["out"] * 2  # deterministic corruption -> must FAIL
             rec["out_sha"] = sha256_tensor(rec["out"])
         except Exception as e:
             rec["error"] = f"{type(e).__name__}: {e}"
         gems[name] = rec
 
-    # ---- compare ----
+    # ---- compare via production comparator ----
     rows = []
     for name, (op, dtype, layout, cls), _ in CASES:
         n, gm = native.get(name, {}), gems.get(name, {})
@@ -264,112 +223,38 @@ def main():
             row["native_error"] = n.get("error")
             row["gems_error"] = gm.get("error")
             row["verdict"] = "FAIL"
+            row["fail_reasons"] = ["exception"]
             rows.append(row)
             continue
-        yo, yg = n["out"], gm["out"]
-        orc = oracles[name]["out"]
-        mn = MIN_NORMAL[dtype]
-        row["bitwise_equal_out"] = bool(torch.equal(yo, yg))
-        row["nan_mask_equal"] = bool(torch.equal(mask(yo, "nan"), mask(yg, "nan")))
-        row["inf_mask_equal"] = bool(torch.equal(mask(yo, "inf"), mask(yg, "inf")))
-        row["inf_sign_equal"] = bool(
-            torch.equal(mask(yo, "posinf"), mask(yg, "posinf")) and torch.equal(mask(yo, "neginf"), mask(yg, "neginf"))
-        )
-        row["zero_sign_equal"] = bool(torch.equal(mask(yo, "negzero"), mask(yg, "negzero")) and torch.equal(mask(yo, "poszero"), mask(yg, "poszero")))
-        row["ulp_out"] = dt_ulp(yo, yg, dtype)
-        row["out_nan_count"] = int(mask(yo, "nan").sum())
-        row["out_inf_count"] = int(mask(yo, "inf").sum())
-        if yo.numel():
-            d = (yo.float() - yg.float()).abs()
-            d[~torch.isfinite(d)] = -1  # specials compared via masks
-            wi = int(d.argmax())
-            row["worst_position"] = wi
-            sc = torch.int16 if dtype != "float32" else torch.int32
-            row["worst_native_hex"] = hex(int(yo.contiguous().view(-1)[wi].view(sc)) & 0xFFFFFFFF)
-            row["worst_gems_hex"] = hex(int(yg.contiguous().view(-1)[wi].view(sc)) & 0xFFFFFFFF)
-            row["worst_abs_diff"] = float(d.max())
-        row["signed_zero_diff_count"] = int((mask(yo, "negzero") != mask(yg, "negzero")).sum() + (mask(yo, "poszero") != mask(yg, "poszero")).sum())
-        row["ftz_definition"] = "oracle(|out|) < dtype min normal (fp16 6.103515625e-05, bf16/fp32 1.1754943508222875e-38)"
-        row["native_rel_vs_oracle"] = rel_err(yo.float(), orc)
-        row["gems_rel_vs_oracle"] = rel_err(yg.float(), orc)
-        # FTZ zone: oracle output subnormal-or-zero -> bitwise agreement required
-        of = orc.clone()
-        ftz = torch.isfinite(of) & (of.abs() < mn)
-        if ftz.any() and yo.numel():
-            row["ftz_bitwise_equal"] = bool(torch.equal(yo[ftz], yg[ftz]))
-            row["ftz_positions"] = int(ftz.sum())
-            if not row["ftz_bitwise_equal"]:
-                fd = yo[ftz] != yg[ftz]
-                row["ftz_diff_count"] = int(fd.sum())
-                row["ftz_diff_max_abs"] = float((yo[ftz][fd].float() - yg[ftz][fd].float()).abs().max())
-        # normal zone rel gate
-        tol = max(4 * EPS[dtype], 1.5 * row["native_rel_vs_oracle"])
-        row["acc_gate_tol"] = tol
-        row["acc_gate_pass"] = row["gems_rel_vs_oracle"] <= tol
-        if n.get("grad") is not None and gm.get("grad") is not None:
-            go, gg = n["grad"], gm["grad"]
-            gorc = oracles[name]["grad"]
-            row["ulp_grad"] = dt_ulp(go, gg, dtype)
-            row["grad_nan_equal"] = bool(torch.equal(mask(go, "nan"), mask(gg, "nan")))
-            row["grad_inf_equal"] = bool(
-                torch.equal(mask(go, "posinf"), mask(gg, "posinf")) and torch.equal(mask(go, "neginf"), mask(gg, "neginf"))
+        try:
+            ev = C.compare_case(
+                n["out"], gm["out"], n.get("grad"), gm.get("grad"),
+                oracles[name]["out"], oracles[name].get("grad"), dtype,
             )
-            row["grad_native_rel_vs_oracle"] = rel_err(go.float(), gorc)
-            row["grad_gems_rel_vs_oracle"] = rel_err(gg.float(), gorc)
-            gftz = torch.isfinite(gorc) & (gorc.abs() < mn)
-            if gftz.any() and go.numel():
-                row["grad_ftz_bitwise_equal"] = bool(torch.equal(go[gftz], gg[gftz]))
-                row["grad_ftz_positions"] = int(gftz.sum())
-                if not row["grad_ftz_bitwise_equal"]:
-                    fd = go[gftz] != gg[gftz]
-                    row["grad_ftz_diff_count"] = int(fd.sum())
-                    row["grad_ftz_diff_max_abs"] = float((go[gftz][fd].float() - gg[gftz][fd].float()).abs().max())
-            gtol = max(4 * EPS[dtype], 1.5 * row["grad_native_rel_vs_oracle"])
-            row["grad_gate_tol"] = gtol
-            row["grad_gate_pass"] = row["grad_gems_rel_vs_oracle"] <= gtol
-        elif n.get("grad") is None and gm.get("grad") is None:
-            row["grad"] = "N/A"
-            row["grad_nan_equal"] = True
-            row["grad_inf_equal"] = True
-            row["grad_gate_pass"] = True
-        else:
-            row["grad_presence_mismatch"] = True
-
-        hard_fail = not (
-            row["nan_mask_equal"]
-            and row["inf_mask_equal"]
-            and row.get("inf_sign_equal", False)
-            and row.get("acc_gate_pass", False)
-            and row.get("grad_gate_pass", False)
-            and row.get("grad_nan_equal", False)
-            and row.get("grad_inf_equal", False)
-            and not row.get("grad_presence_mismatch", False)
-        )
-        soft_diff = not (
-            row.get("ftz_bitwise_equal", True)
-            and row.get("grad_ftz_bitwise_equal", True)
-        )
-        if hard_fail:
+            row.update(ev)
+            row["gems_out_sha"] = gm.get("out_sha")
+            row["ftz_definition"] = "oracle(|y|) < dtype min normal; raw-bit comparison"
+            row["verdict"] = ev["verdict"]
+        except Exception as e:
+            import traceback
             row["verdict"] = "FAIL"
-        elif soft_diff:
-            row["verdict"] = "DIFF"
-        else:
-            row["verdict"] = "PASS"
-        if not row["zero_sign_equal"]:
-            row["note"] = "zero-sign differs (recorded)"
+            row["fail_reasons"] = [f"comparator_exception:{type(e).__name__}: {e}"]
+            row["comparator_traceback"] = traceback.format_exc()[-800:]
         rows.append(row)
 
-    total = len(rows)
-    passed = sum(1 for r in rows if r["verdict"] == "PASS")
+    hard = sum(1 for r in rows if r["verdict"] == "FAIL")
     difft = sum(1 for r in rows if r["verdict"] == "DIFF")
-    notes = sum(1 for r in rows if r.get("note"))
-    summary = {"total": total, "passed": passed, "diff": difft, "failed": total - passed, "zero_sign_notes": notes}
+    passed = sum(1 for r in rows if r["verdict"] == "PASS")
+    summary = {"total": len(rows), "passed": passed, "diff": difft, "hard_failed": hard,
+               "note": "hard_failed excludes DIFF; exit code is 1 iff hard_failed > 0",
+               "inject_fail": bool(args.inject_fail)}
     with open(args.out, "w") as f:
         json.dump({"summary": summary, "rows": rows}, f, indent=1)
     print(json.dumps(summary))
     for r in rows:
         if r["verdict"] != "PASS":
-            print(r["verdict"] + ":", json.dumps(r)[:260])
+            print(r["verdict"] + ":", json.dumps(r)[:240])
+    sys.exit(1 if hard else 0)
 
 
 if __name__ == "__main__":
