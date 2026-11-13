@@ -71,7 +71,7 @@ host enqueue：native 4.9–5.5 µs/次 vs FlagGems 56.7–68.7 µs/次（gelu/a
 
 - ✅ 环境/dispatch/命中证据：`env_record.json`、`probe1_dispatch.json`、`probe3_scaling_hits.json`、小模型逐配置 kernel 命中（v2 JSON 内）
 - ✅ 三接入配置微基准（batch-2）×3 进程逐迭代样本 + 错误聚合退出码
-- ✅ 精度 v6（生产判定 + 注入自测 + 负例 20/20 + 逐例证据 + top-5 违例四元组）
+- ✅ 精度 v6（生产判定 + 注入自测 + 负例 22/22 + 逐例证据 + top-5 违例四元组）
 - ✅ 小模型 native/selective 上设备对照（8 步、device 断言、命中证据、3 进程确定性）
 - ✅ 平台阻断 F-1/F-2 单次触发出证（`probe7_platform_blockers.json`）
 - ⏳ pending（拆分为后续任务，不计通过；按复审 6845369130 列明）：
@@ -87,7 +87,7 @@ host enqueue：native 4.9–5.5 µs/次 vs FlagGems 56.7–68.7 µs/次（gelu/a
 export PYTHONPATH=/path/to/FlagGems/src   # 29e14822
 export CUDA_VISIBLE_DEVICES=0
 python3 scripts/comparator.py                     # 生产判定单元自测, exit 0
-python3 scripts/test_comparator_negative.py       # 负例 20/20, exit 0
+python3 scripts/test_comparator_negative.py       # 负例 22/22, exit 0
 PYTHONPATH=$PYTHONPATH python3 scripts/accuracy_matrix.py --out results/accuracy_matrix_inject.json --inject-fail
                                                   # 注入自测: FAIL + exit 1（预期非零）
 python3 scripts/accuracy_matrix.py --out results/accuracy_matrix.json
