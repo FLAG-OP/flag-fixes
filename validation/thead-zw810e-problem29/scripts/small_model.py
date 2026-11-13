@@ -77,18 +77,22 @@ def main():
     params = list(blocks.parameters()) + [head]
     rec = {"config": args.config, "device": str(DEVICE), "device_name": torch.cuda.get_device_name(0)}
 
-    # device assertions BEFORE optimizer construction
-    rec["params_all_cuda_before_optim"] = all(p.device.type == "cuda" for p in params)
-
-    opt = torch.optim.AdamW(params, lr=1e-3, weight_decay=0.01)
-
+    # embedding created BEFORE optimizer and included in params (review round 3:
+    # trainable embedding, not a frozen operator-path-only test)
     g = torch.Generator().manual_seed(42)
     tok = torch.randint(0, 64, (B, S), generator=g).to(DEVICE)
     emb = torch.nn.Embedding(64, D).to(DEVICE)
     with torch.no_grad():
         emb.weight.copy_((torch.randn(64, D, generator=g) * 0.02).to(DEVICE))
+    params = params + list(emb.parameters())
+
+    # device assertions BEFORE optimizer construction
+    rec["params_all_cuda_before_optim"] = all(p.device.type == "cuda" for p in params)
+
+    opt = torch.optim.AdamW(params, lr=1e-3, weight_decay=0.01)
 
     rec["tokens_cuda"] = tok.device.type == "cuda"
+    rec["embedding_trainable_in_params"] = any(p is emb.weight for p in params)
     rec["steps"] = args.steps
     losses, step_ms = [], []
     for st in range(args.steps):
@@ -117,7 +121,7 @@ def main():
     rec["all_grads_present"] = all(p.grad is not None for p in params)
     rec["grad_stats"] = {}
     for i, p in enumerate(params):
-        n = f"param_{i}"
+        n = f"param_{i}" + ("_embedding_weight" if p is emb.weight else "")
         rec["grad_stats"][n] = {
             "device": p.grad.device.type if p.grad is not None else None,
             "grad_sha": sha(p.grad) if p.grad is not None else None,
