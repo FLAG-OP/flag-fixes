@@ -116,3 +116,62 @@ python3 scripts/probe7_platform_blockers.py       # F-1/F-2 出证, exit 1（预
 - 2026-11-12 首轮：判定"需优化"；固定开销为假设；小模型未上设备（不知情缺陷）；"0 硬失败"基于稀释门。
 - 2026-11-13 第二轮（PR #6 f288df6）：证据落地；判据三分类 + 负例自测（发现并修 ±Inf 符号缺口）；归因修正为 host enqueue；结论限定范围。
 - 2026-11-13 第三轮 v3.1（本文件，回应复审 6845369130 两处口径）：负例自测改 22/22；embedding 改为 optimizer 前创建并纳入参数（16 参数 + 梯度证据）；小模型口径改"逐步差 ≤1.2e-07、不能表述为逐位一致"；补列四项跟进任务与状态口径。第三轮原文：v6 判据逐位置化（审阅反例入自测）、ULP 修复、正常区/FTZ 区分开报告、**15 硬 FAIL 如实报告**；小模型上设备重跑（v1 作废），native/selective 训练数值差异量化；发现并登记 F-1/F-2 平台阻断（gems_full 训练阻断、sdpa 挂起、matmul backward 挂起）；perf batch-2 重跑（标签/口径修正）；失败计数与退出码可靠化。
+
+---
+
+## issue #7 第一轮（2026-11-13）：fused AdamW 与调用提交开销
+
+面向 issue #7（A–E）。新脚本：`scripts/{adamw_deep,probe8_enqueue_candidates,fail_attribution,small_model,probe7_platform_blockers}.py`；新数据：`results/{adamw_deep,probe8_enqueue_candidates,fail_attribution_gelu_bwd,probe7_recheck_2026-11-13}.json`、`results/small_model_e/`。
+
+### B. fused AdamW（torch.optim 层完整验证）
+
+| 配置 | dtype | stock | foreach | fused | 收益 | 正确性 |
+|---|---|---:|---:|---:|---:|---|
+| single [1024,1024] | fp32 | 0.190 ms | 0.186 | 0.106 | 1.8× | step1 ≤2 ulp@scale ✓；100 步发散 2.4e-07（有界）|
+| single | bf16 | 0.192 | 0.189 | 0.109 | 1.8× | 同上（100 步 4.2e-03 = 线性 ulp 累积）|
+| multi (8) | fp32 | 0.212 | 0.207 | 0.121 | 1.8× | ✓ |
+| multi (8) | mixed | 0.294 | 0.287 | 0.142 | 2.1× | ✓ |
+| bge336 | fp32 | 29.67 | 29.50 | **10.54** | **2.8×** | ✓；launch 2,688→39 |
+| bge336 | bf16 | 16.49 | 16.44 | **8.94** | **1.84×** | ✓ |
+| bge336 | mixed | 30.50 | 30.70 | **10.48** | **2.9×** | ✓ |
+
+- **foreach ≡ stock（逐位一致）且无收益**——不是候选。
+- **fused 与 stock 同公式**（fp64 闭式归因：两者均匹配 eps-out 公式 A，≤1 fp32 ulp）；100 步发散有界（fp32 ≤2.7e-07 abs；bf16/fp16 线性 ulp 累积，如实报告）；无 NaN/Inf。
+- **新发现（fp16）**：stock/foreach fp16 AdamW 在本栈产生 Inf/NaN（single 45,378 位置；bge336 25,588,726 位置）——机制：fp16 下 `v_hat=g²` 下溢为 0 且 `eps=1e-8` 下溢为 0 → 0 除；**fused 内部 fp32 计算，是唯一干净的 fp16 路径**（0 污染）。fp16 训练必须用 fused（或 fp32 优化器状态）。
+- checkpoint 保存/恢复（fused bge336, 50+50 步）：**参数与状态逐位一致**。
+- 收益跨实验稳定：probe6 2.3×、adamw_deep 2.8×、小模型 optimizer 段 1.76–1.9×/整步 -5.6~-11%（§E）。FlagScale `build_optimizer` 集成路径验证 **pending**（本机无 FlagScale 运行环境）；vendor 白名单维持不变，待集成验证 + owner 审核。
+
+### C. 提交开销：CUDA Graph 捕获/重放在 ZW810E 可用（候选 1 成立）
+
+gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
+
+| 尺寸 | event | graph replay/iter | 提升 |
+|---|---:|---:|---:|
+| 1.2M | 0.0731 ms | **0.0058 ms** | **12.6×**（enqueue 完全消除）|
+| 12.25M | 0.0868 | 0.0519 | 1.67× |
+| 98M | 0.3823 | 0.3875 | 持平（纯设备时间）|
+
+→ 证实提交开销假设（重放后 1.2M 5.8 µs ≈ 纯设备执行），**图捕获/重放为可行候选**（静态 shape 边界）；组件级拆分（python/libentry/launch）与 raw-kernel 直调入口未完成（生产 wrapper introspection 未暴露稳定入口，如实记录）。thead 无独立 gelu 覆写（回退共享 `ops/gelu.py`；pow 出现 7 处但 none-path 主项为 erf/exp，非昆仑芯 pow 热点同型——不套用昆仑芯根因）。
+
+### D. 15 hard FAIL 归因（gelu_backward 负尾）+ F-1/F-2 复验
+
+- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；对训练影响可忽略（该区梯度本身 ≤1e-7）。证据：`fail_attribution_gelu_bwd.json`（含 fp64 双公式复算）。
+- F-1/F-2 复验（2026-11-13 第二次，单次触发）：**仍挂起**（控制组正常）——full-enable training 保持 blocked；等平台/设备恢复后按记录字段复验。
+
+### E. 小模型 × fused optimizer（可训练 embedding，8 步，全部 finite）
+
+| 配置 | optimizer 段 | 整步 | loss 相对差 vs native/stock |
+|---|---:|---:|---:|
+| native/stock | 0.422 ms | 2.27 ms | — |
+| native/fused | 0.219 ms（1.9×）| 2.01 ms（-11%）| ≤4.7e-07 |
+| selective/stock | 0.394 ms | 2.84 ms | ≤1.2e-07 |
+| selective/fused | 0.224 ms（1.76×）| 2.68 ms（-5.6%）| ≤4.7e-07 |
+
+### 结论（issue #7 第一轮）
+
+| 候选 | 状态 |
+|---|---|
+| fused AdamW（fp32/bf16/mixed、bge336 级负载） | **有效且精度通过**：2.8–2.9×（optimizer 段）、整步 -5.6~-11%（小模型）；checkpoint 逐位一致；fp16 场景 fused 为唯一可靠路径。候选 fix 定位：FlagScale `adamw-fused` 白名单扩 thead（集成验证 pending）+ fp16 训练强制 fused 建议 |
+| CUDA graph 捕获/重放（静态 shape） | **可行候选**（1.2M 12.6×），组件拆分与选择性接入方式待下一轮 |
+| selective enable | 维持（无变化）|
+| full-enable training | blocked（F-1/F-2）|

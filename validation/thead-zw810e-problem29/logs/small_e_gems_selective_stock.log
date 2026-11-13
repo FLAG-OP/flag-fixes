@@ -1,0 +1,13 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::gelu(Tensor self, *, str approximate="none") -> Tensor
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at ../aten/src/ATen/functorch/BatchRulesUnaryOps.cpp:63
+       new kernel: registered at /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+/usr/local/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+{"config": "gems_selective", "params_all_cuda_before_optim": true, "grads_all_on_cuda": true, "losses": [4.13274610764347e-05, 3.0769791919738054e-05, 2.2509651898872107e-05, 1.6174028132809326e-05, 1.1430865015427116e-05, 7.969447324285284e-06, 5.516843884834088e-06, 3.846366780635435e-06], "fwd_bwd_kernels_gelu": ["gelu_none_kernel_rank_1", "gelu_backward_none_kernel_rank_1"]}

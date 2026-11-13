@@ -1,0 +1,67 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "triton": "3.6.0",
+ "C1_sizes": {
+  "1228800": {
+   "gelu": {
+    "host_sync_each_ms": 0.0711,
+    "enqueue_ms": 0.0582,
+    "event_ms": 0.0731
+   },
+   "add": {
+    "host_sync_each_ms": 0.0819,
+    "enqueue_ms": 0.0698,
+    "event_ms": 0.084
+   },
+   "gelu_graph_replay_ms_per_iter": 0.0058,
+   "graph_capture": "ok"
+  },
+  "12288000": {
+   "gelu": {
+    "host_sync_each_ms": 0.1031,
+    "enqueue_ms": 0.0585,
+    "event_ms": 0.0868
+   },
+   "add": {
+    "host_sync_each_ms": 0.1038,
+    "enqueue_ms": 0.0696,
+    "event_ms": 0.1007
+   },
+   "gelu_graph_replay_ms_per_iter": 0.0519,
+   "graph_capture": "ok"
+  },
+  "98304000": {
+   "gelu": {
+    "host_sync_each_ms": 0.4432,
+    "enqueue_ms": 0.0587,
+    "event_ms": 0.3823
+   },
+   "add": {
+    "host_sync_each_ms": 0.4523,
+    "enqueue_ms": 0.0696,
+    "event_ms": 0.3793
+   },
+   "gelu_graph_replay_ms_per_iter": 0.3875,
+   "graph_capture": "ok"
+  }
+ },
+ "C2_entries": {
+  "aten_event_ms": 0.0743,
+  "direct_event_ms": 0.0701,
+  "aten_enqueue_ms": 0.0587,
+  "direct_enqueue_ms": 0.0555,
+  "aten_host_sync_ms": 0.0724,
+  "direct_host_sync_ms": 0.0687,
+  "C2_introspection": {
+   "flag_gems_ops_gelu_type": "<class 'function'>"
+  }
+ },
+ "C3_thead_gelu_source": [],
+ "C3_generic_gelu": {
+  "pow_mentions": 7,
+  "libdevice": false,
+  "tanh_uses_mul": false
+ },
+ "C3_note": "check whether _thead overrides gelu or falls back to shared ops/gelu.py"
+}
