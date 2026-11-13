@@ -1,0 +1,29 @@
+{
+ "F1_sdpa_fwd_fp32_training_shape": {
+  "completed": false,
+  "rc": "TIMEOUT",
+  "note": "no completion within 300s; killed; no triton compile activity observed in prior runs"
+ },
+ "F1_control_sdpa_bf16_inference_shape": {
+  "completed": true,
+  "rc": 0,
+  "stdout_tail": "DONE torch.Size([8, 16, 512, 64])",
+  "stderr_tail": "mespace.\nWARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace."
+ },
+ "F2_matmul_bwd_fp32": {
+  "completed": false,
+  "rc": "TIMEOUT",
+  "note": "no completion within 300s; killed; no triton compile activity observed in prior runs"
+ },
+ "F2_control_matmul_fwd_fp32": {
+  "completed": true,
+  "rc": 0,
+  "stdout_tail": "DONE torch.Size([8, 128, 512])",
+  "stderr_tail": "mespace.\nWARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace."
+ },
+ "conclusion": {
+  "F1": "FlagGems sdpa flash-attention path hangs on ZW810E for fp32 training shape; inference bf16 works -> full-enable training with sdpa is BLOCKED",
+  "F2": "FlagGems matmul BACKWARD hangs (fp32 small shape); forward works -> full-enable training with matmul (any model) is BLOCKED",
+  "policy": "single isolated trigger per hang, no retries (issue #5 device-anomaly rule); platform/device recovery + isolated re-verification pending"
+ }
+}

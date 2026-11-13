@@ -1,0 +1,32 @@
+{
+ "torch": "2.10.0",
+ "device": "PPU-ZW810E",
+ "single": {
+  "stock": {
+   "step_ms_median": 0.128,
+   "step_ms_first": 447.792,
+   "peak_mem_bytes": 25165824,
+   "cuda_kernel_launches_per_step": 8
+  },
+  "fused": {
+   "step_ms_median": 0.132,
+   "step_ms_first": 15.403,
+   "peak_mem_bytes": 16777728,
+   "cuda_kernel_launches_per_step": 2
+  }
+ },
+ "bge336": {
+  "stock": {
+   "step_ms_median": 26.826,
+   "step_ms_first": 58.293,
+   "peak_mem_bytes": 10634854400,
+   "cuda_kernel_launches_per_step": 2688
+  },
+  "fused": {
+   "step_ms_median": 11.685,
+   "step_ms_first": 17.811,
+   "peak_mem_bytes": 10572111872,
+   "cuda_kernel_launches_per_step": 39
+  }
+ }
+}

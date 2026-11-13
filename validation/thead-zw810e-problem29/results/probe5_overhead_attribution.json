@@ -1,0 +1,154 @@
+{
+ "child_measure": {
+  "native": {
+   "1228800": {
+    "gelu_event_ms": 0.0135,
+    "gelu_enqueue_ms": 0.0049,
+    "add_event_ms": 0.014,
+    "add_enqueue_ms": 0.0053
+   },
+   "12288000": {
+    "gelu_event_ms": 0.0448,
+    "gelu_enqueue_ms": 0.005,
+    "add_event_ms": 0.0461,
+    "add_enqueue_ms": 0.0055
+   }
+  },
+  "gems": {
+   "1228800": {
+    "gelu_event_ms": 0.0739,
+    "gelu_enqueue_ms": 0.057,
+    "add_event_ms": 0.0846,
+    "add_enqueue_ms": 0.0685
+   },
+   "12288000": {
+    "gelu_event_ms": 0.079,
+    "gelu_enqueue_ms": 0.0567,
+    "add_event_ms": 0.0926,
+    "add_enqueue_ms": 0.0687
+   }
+  }
+ },
+ "size_sweep": {
+  "gelu": {
+   "rows": [
+    {
+     "elements": 307200,
+     "native_ms": 0.0133,
+     "gems_ms": 0.0741
+    },
+    {
+     "elements": 1228800,
+     "native_ms": 0.0132,
+     "gems_ms": 0.0722
+    },
+    {
+     "elements": 4915200,
+     "native_ms": 0.0165,
+     "gems_ms": 0.0718
+    },
+    {
+     "elements": 12288000,
+     "native_ms": 0.0472,
+     "gems_ms": 0.0818
+    },
+    {
+     "elements": 49152000,
+     "native_ms": 0.1952,
+     "gems_ms": 0.2248
+    },
+    {
+     "elements": 98304000,
+     "native_ms": 0.3854,
+     "gems_ms": 0.386
+    }
+   ],
+   "fit_native": {
+    "intercept_us": 4.73,
+    "slope_ns_per_elem": 0.0039
+   },
+   "fit_gems": {
+    "intercept_us": 60.43,
+    "slope_ns_per_elem": 0.0033
+   },
+   "fit_range": "0.3M..98M, 6 points, per-process isolation"
+  },
+  "add": {
+   "rows": [
+    {
+     "elements": 307200,
+     "native_ms": 0.0138,
+     "gems_ms": 0.0852
+    },
+    {
+     "elements": 1228800,
+     "native_ms": 0.0138,
+     "gems_ms": 0.0837
+    },
+    {
+     "elements": 4915200,
+     "native_ms": 0.0139,
+     "gems_ms": 0.0841
+    },
+    {
+     "elements": 12288000,
+     "native_ms": 0.0476,
+     "gems_ms": 0.0956
+    },
+    {
+     "elements": 49152000,
+     "native_ms": 0.1947,
+     "gems_ms": 0.1939
+    },
+    {
+     "elements": 98304000,
+     "native_ms": 0.3833,
+     "gems_ms": 0.3834
+    }
+   ],
+   "fit_native": {
+    "intercept_us": 4.6,
+    "slope_ns_per_elem": 0.0038
+   },
+   "fit_gems": {
+    "intercept_us": 70.02,
+    "slope_ns_per_elem": 0.003
+   },
+   "fit_range": "0.3M..98M, 6 points, per-process isolation"
+  }
+ },
+ "direct_vs_aten": {
+  "1228800": {
+   "aten_kernels": [
+    "gelu_none_kernel_rank_1"
+   ],
+   "direct_kernels": [
+    "gelu_none_kernel_rank_1"
+   ],
+   "same_kernel_set": true,
+   "aten_event_ms": 0.0758,
+   "direct_event_ms": 0.0713,
+   "aten_enqueue_ms": 0.0607,
+   "direct_enqueue_ms": 0.0557
+  },
+  "12288000": {
+   "aten_kernels": [
+    "gelu_none_kernel_rank_1"
+   ],
+   "direct_kernels": [
+    "gelu_none_kernel_rank_1"
+   ],
+   "same_kernel_set": true,
+   "aten_event_ms": 0.0881,
+   "direct_event_ms": 0.0829,
+   "aten_enqueue_ms": 0.0603,
+   "direct_enqueue_ms": 0.0556
+  }
+ },
+ "method_notes": {
+  "event": "median of 30 CUDA-event timed iterations after 5 warmup (JIT excluded); on idle GPU the event window includes host enqueue latency",
+  "enqueue": "min over 5 batches of (host wall to enqueue 50 calls without sync)/50; measures HOST-side per-call cost only",
+  "profiler": "kernel-name evidence only; profiler inflates device_time (v1 measured 0.58ms reported vs 0.07ms event for the same 1.2M gelu) so profiler numbers are NOT used for timing claims",
+  "native_vs_gems": "strict per-process isolation: native process never imports flag_gems"
+ }
+}

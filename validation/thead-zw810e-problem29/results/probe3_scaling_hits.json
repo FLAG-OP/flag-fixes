@@ -1,0 +1,104 @@
+{
+ "native": {
+  "scaling": {
+   "1.2M": {
+    "gelu_fp32": 0.0136,
+    "add_fp32": 0.014,
+    "gelu_bf16": 0.0214,
+    "cast_fp16": 0.0158
+   },
+   "12.25M": {
+    "gelu_fp32": 0.0453,
+    "add_fp32": 0.0458,
+    "gelu_bf16": 0.0753,
+    "cast_fp16": 0.0256
+   },
+   "98M": {
+    "gelu_fp32": 0.3847,
+    "add_fp32": 0.383,
+    "gelu_bf16": 0.489,
+    "cast_fp16": 0.2786
+   }
+  },
+  "mode": "native",
+  "gelu_bf16_kernels": [
+   "void at::native::vectorized_elementwise_kernel<4, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#4}::operator()() const::{lambda(c10::BFloat16)#1}, std::array<char*, 2ul> >(int, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#4}::operator()() const::{lambda(c10::BFloat16)#1}, std::array<char*, 2ul>)"
+  ],
+  "findmax_kernels": [
+   "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda",
+   "Memset (Device)",
+   "void at::native::reduce_kernel<512, 1, at::native::ReduceOp<float, at::native::M"
+  ],
+  "add_bf16_kernels": [
+   "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<c1"
+  ]
+ },
+ "full": {
+  "scaling": {
+   "1.2M": {
+    "gelu_fp32": 0.0759,
+    "add_fp32": 0.0893,
+    "gelu_bf16": 0.139,
+    "cast_fp16": 0.0746
+   },
+   "12.25M": {
+    "gelu_fp32": 0.09,
+    "add_fp32": 0.1069,
+    "gelu_bf16": 0.1479,
+    "cast_fp16": 0.0816
+   },
+   "98M": {
+    "gelu_fp32": 0.3858,
+    "add_fp32": 0.382,
+    "gelu_bf16": 0.5772,
+    "cast_fp16": 0.278
+   }
+  },
+  "mode": "full",
+  "gelu_bf16_kernels": [
+   "gelu_none_kernel_rank_1"
+  ],
+  "findmax_kernels": [
+   "_to_copy_func_kernel_rank_1",
+   "max_kernel",
+   "zeros_kernel"
+  ],
+  "add_bf16_kernels": [
+   "add_func_kernel_rank_1"
+  ]
+ },
+ "selective": {
+  "scaling": {
+   "1.2M": {
+    "gelu_fp32": 0.0779,
+    "add_fp32": 0.0142,
+    "gelu_bf16": 0.0869,
+    "cast_fp16": 0.0156
+   },
+   "12.25M": {
+    "gelu_fp32": 0.0811,
+    "add_fp32": 0.0482,
+    "gelu_bf16": 0.0906,
+    "cast_fp16": 0.0257
+   },
+   "98M": {
+    "gelu_fp32": 0.3862,
+    "add_fp32": 0.3827,
+    "gelu_bf16": 0.5786,
+    "cast_fp16": 0.2789
+   }
+  },
+  "mode": "selective",
+  "gelu_bf16_kernels": [
+   "gelu_none_kernel_rank_1"
+  ],
+  "findmax_kernels": [
+   "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda",
+   "Memset (Device)",
+   "void at::native::reduce_kernel<512, 1, at::native::ReduceOp<float, at::native::M"
+  ],
+  "add_bf16_kernels": [
+   "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<c1"
+  ]
+ }
+}
