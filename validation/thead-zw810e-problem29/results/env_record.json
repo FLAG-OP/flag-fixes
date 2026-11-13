@@ -1,0 +1,59 @@
+{
+  "issue": "FLAG-OP/flag-fixes#5",
+  "platform": "T-Head ZW810E (problem29)",
+  "date": "2026-11-12",
+  "host": {
+    "os": "linux docker",
+    "cpu_mem": "2015 GB",
+    "device_count_visible": 1,
+    "device_count_node": 16
+  },
+  "device": {
+    "product": "PPU-ZW810E",
+    "architecture": "Beethoven",
+    "compute_capability": "8.0",
+    "memory_gb": 96,
+    "sm_count": 64,
+    "pcie": "Gen5",
+    "serial_ppu6": "GUQB22K10561Y04"
+  },
+  "software": {
+    "driver": "1.5.1-1d747a",
+    "hggc": "13.0",
+    "ppu_sdk": "2.1.0-a5f865 (/usr/local/PPU_SDK, PPU_VERSION=v2.1.0)",
+    "torch": "2.10.0",
+    "triton": "3.6.0",
+    "python": "3.12.3",
+    "flaggems_tree": "/tmp/opencode/FlagGems-base @ 29e14822f6dfabf990973c41f7c2df7811a6f60f (git describe v5.3.5-46-g29e14822)"
+  },
+  "env_vars": {
+    "PPU_SDK": "/usr/local/PPU_SDK",
+    "PPU_HOME": "/usr/local/PPU_SDK",
+    "PPU_PATH": "/usr/local/PPU_SDK",
+    "PPU_VERSION": "v2.1.0",
+    "PPUS": "6,7",
+    "CUDA_VISIBLE_DEVICES_per_run": "0",
+    "GEMS_VENDOR/FLAGGEMS_VENDOR": null,
+    "XMLIR_*": null
+  },
+  "dispatch": {
+    "vendor_resolution": "PPU_SDK env present -> flag_gems vendor 'thead' (_thead backend dir present); device/dispatch key = cuda (torch.cuda API on PPU)",
+    "registration_entry": "flag_gems.enable() overrides aten CUDA dispatch key; selective via flag_gems.only_enable(include=[...])",
+    "hit_evidence": "profiler: aten::gelu -> gelu_none_kernel_rank_1 / gelu_tanh_kernel_rank_1 + gelu_backward_tanh_kernel_rank_2; F.gelu(a)*b under enable -> gelu_none_and_mul... ; torch.max -> max_kernel; x+x -> add_func_kernel_rank_1; selective keeps add/max/cast on aten::native kernels",
+    "reference_path_untouched": "native outputs captured BEFORE enable() in every accuracy run (accuracy_matrix.py P1)"
+  },
+  "exit_codes": {
+    "probe1_dispatch.py": 0,
+    "accuracy_matrix.py": 0,
+    "adamw_check.py": 0,
+    "perf_matrix.py (native/gems_full/gems_selective x3 reps)": "9 runs, all exit 0",
+    "probe3_scaling_hits.py": 0,
+    "small_model.py (3 configs)": "all exit 0",
+    "probe4_small_model.py": 0
+  },
+  "limitations": [
+    "single-card only; no multi-card/FSDP2 environment claim tested (issue asks to register pending, not count as acceptance)",
+    "no problem29 original BGE-M3 runner on this machine; micro-benchmarks + small-model proxy instead (sizes chosen from PR3 attribution 12.25M row)",
+    "device clocks not pinned; med-of-3 independent processes used to bound noise"
+  ]
+}

@@ -1,0 +1,15 @@
+PASS fp16 0x03FF is max subnormal (< min normal 0x0400)
+PASS bf16 0x007F is max subnormal (< min normal 0x0080)
+PASS fp32 0x007FFFFF is max subnormal (< min normal 0x00800000)
+PASS NaN appearance rejected
+PASS +Inf vs -Inf rejected
+PASS Inf appearance rejected
+PASS grad presence mismatch rejected
+PASS out-of-tolerance error rejected
+PASS gems within tol vs native accepted
+PASS gems less accurate than native rejected
+PASS FTZ-only mismatch -> DIFF
+PASS zero-sign-only -> DIFF
+PASS bitwise identical -> PASS
+
+0 failure(s)

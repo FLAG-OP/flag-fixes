@@ -4,4 +4,8 @@
 
 本次仓库初始化未执行 NPU/XPU 测试。三方报告仍是来源仓库的历史证据，不能改写为本仓库新验收。大日志/模型/制品使用发布附件，不提交机器绝对路径、凭据或备份。
 
+现有记录：
+
+- [thead-zw810e-problem29](thead-zw810e-problem29/README.md)（2026-11-12 首轮 / 2026-11-13 修订，issue #5）：平头哥 PPU-ZW810E 单卡平台基线，判定"需优化"（FlagGems `29e14822` 全量 enable 为净负收益，归因=host 侧 per-call enqueue 固定成本；selective 有效但本轮无有益算子），gelu 族 126 用例精度矩阵 0 硬失败 + 比较器负例自测 10/10。
+
 管理工具和来源检查的现有结果见 [当前结果汇总](../docs/current-status.md)，全部文档入口见 [文档导航](../docs/index.md)。

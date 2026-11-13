@@ -1,0 +1,41 @@
+{
+  "env": {
+    "PPU_SDK": "/usr/local/PPU_SDK",
+    "PPU_VERSION": "v2.1.0",
+    "GEMS_VENDOR": null,
+    "FLAGGEMS_VENDOR": null,
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "torch": "2.10.0",
+  "triton": "3.6.0",
+  "device": "PPU-ZW810E",
+  "cc": [
+    8,
+    0
+  ],
+  "vendor": "unknown",
+  "native_gelu_finite": true,
+  "native_gelu_kernel_names": [
+    "aten::gelu",
+    "void at::native::vectorized_elementwise_kernel<4, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul> >(int, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>)"
+  ],
+  "gems_gelu_kernel_names": [
+    "aten::gelu",
+    "gelu_none_kernel_rank_1"
+  ],
+  "gelu_fp32_max_abs_diff_native_vs_gems": 0.0,
+  "gelu_bitwise_equal_native_vs_gems": true,
+  "gems_tanh_bwd_kernel_names": [
+    "GeluBackward0",
+    "aten::gelu",
+    "aten::gelu_backward",
+    "autograd::engine::evaluate_function: GeluBackward0",
+    "gelu_backward_tanh_kernel_rank_2",
+    "gelu_tanh_kernel_rank_1"
+  ],
+  "gems_gelu_and_mul_kernel_names": [
+    "GeluAndMul",
+    "gelu_none_and_mul_kernel_kernel_rank_1"
+  ],
+  "_thead_exists": true
+}
