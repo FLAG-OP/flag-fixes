@@ -136,8 +136,13 @@ python3 scripts/probe7_platform_blockers.py       # F-1/F-2 出证, exit 1（预
 | bge336 | mixed | 30.50 | 30.70 | **10.48** | **2.9×** | ✓ |
 
 - **foreach ≡ stock（逐位一致）且无收益**——不是候选。
-- **fused 与 stock 同公式**（fp64 闭式归因：两者均匹配 eps-out 公式 A，≤1 fp32 ulp）；100 步发散有界（fp32 ≤2.7e-07 abs；bf16/fp16 线性 ulp 累积，如实报告）；无 NaN/Inf。
-- **新发现（fp16）**：stock/foreach fp16 AdamW 在本栈产生 Inf/NaN（single 45,378 位置；bge336 25,588,726 位置）——机制：fp16 下 `v_hat=g²` 下溢为 0 且 `eps=1e-8` 下溢为 0 → 0 除；**fused 内部 fp32 计算，是唯一干净的 fp16 路径**（0 污染）。fp16 训练必须用 fused（或 fp32 优化器状态）。
+- **fused 正确性按四个独立层次区分（不得混用）**：
+  1. **单步更新 vs fp64 闭式公式**：≤1 fp32 ulp（同公式确认）；
+  2. **100 步轨迹 vs stock**：存在可观漂移——fp32 100 步大量位置超过 4·eps（max abs 2.7e-07）、bf16 max ~29,564 ULP——独立舍入路径的预期累积，**fused 不承诺与 stock 长期逐位一致**；
+  3. **checkpoint 恢复**：本批次内部逐位一致（50+50 步）；
+  4. **无 NaN/Inf**（fused 全配置）。
+  验收口径以后续 fused vs fp64/稳定参考的误差与训练行为为主，不以 stock 逐位一致为门槛（待补）。
+- **新发现（fp16，限定本轮已测配置：本设备/已测形状/lr=1e-3/eps=1e-8）**：stock 与 foreach 的 fp16 AdamW **数值损坏**（Inf/NaN：single 45,378 位置、bge336 25,588,726 位置；机制：fp16 下 `v_hat=g²` 下溢为 0 且 `eps=1e-8` 下溢为 0 → 0 除）；**fused 在当前配置下无污染**（0 NaN/Inf）。二者分别报告、不合并为"所有 fp16 AdamW 配置"的普遍定理；**fp32 优化器状态（master weights）为不依赖 fused 的替代方案**，其对照待补。
 - checkpoint 保存/恢复（fused bge336, 50+50 步）：**参数与状态逐位一致**。
 - 收益跨实验稳定：probe6 2.3×、adamw_deep 2.8×、小模型 optimizer 段 1.76–1.9×/整步 -5.6~-11%（§E）。FlagScale `build_optimizer` 集成路径验证 **pending**（本机无 FlagScale 运行环境）；vendor 白名单维持不变，待集成验证 + owner 审核。
 
@@ -151,11 +156,11 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 | 12.25M | 0.0868 | 0.0519 | 1.67× |
 | 98M | 0.3823 | 0.3875 | 持平（纯设备时间）|
 
-→ 证实提交开销假设（重放后 1.2M 5.8 µs ≈ 纯设备执行），**图捕获/重放为可行候选**（静态 shape 边界）；组件级拆分（python/libentry/launch）与 raw-kernel 直调入口未完成（生产 wrapper introspection 未暴露稳定入口，如实记录）。thead 无独立 gelu 覆写（回退共享 `ops/gelu.py`；pow 出现 7 处但 none-path 主项为 erf/exp，非昆仑芯 pow 热点同型——不套用昆仑芯根因）。
+→ 证实提交开销假设（重放后 1.2M 5.8 µs ≈ 纯设备执行），**图捕获/重放为组件级、静态 shape 候选**；12.6× 为微基准结论，**不得外推为整步收益**（尚未接入训练整步 fwd+bwd+optimizer 子图，动态 shape 边界、内存池/捕获限制、与 optimizer 组合收益均未测，捕获失败回退策略未定）；组件级拆分（python/libentry/launch）与 raw-kernel 直调入口未完成（生产 wrapper introspection 未暴露稳定入口，如实记录）。thead 无独立 gelu 覆写（回退共享 `ops/gelu.py`；pow 出现 7 处但 none-path 主项为 erf/exp，非昆仑芯 pow 热点同型——不套用昆仑芯根因）。
 
 ### D. 15 hard FAIL 归因（gelu_backward 负尾）+ F-1/F-2 复验
 
-- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；对训练影响可忽略（该区梯度本身 ≤1e-7）。证据：`fail_attribution_gelu_bwd.json`（含 fp64 双公式复算）。
+- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。证据：`fail_attribution_gelu_bwd.json`（含 fp64 双公式复算）。
 - F-1/F-2 复验（2026-11-13 第二次，单次触发）：**仍挂起**（控制组正常）——full-enable training 保持 blocked；等平台/设备恢复后按记录字段复验。
 
 ### E. 小模型 × fused optimizer（可训练 embedding，8 步，全部 finite）
@@ -172,6 +177,10 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 | 候选 | 状态 |
 |---|---|
 | fused AdamW（fp32/bf16/mixed、bge336 级负载） | **有效且精度通过**：2.8–2.9×（optimizer 段）、整步 -5.6~-11%（小模型）；checkpoint 逐位一致；fp16 场景 fused 为唯一可靠路径。候选 fix 定位：FlagScale `adamw-fused` 白名单扩 thead（集成验证 pending）+ fp16 训练强制 fused 建议 |
-| CUDA graph 捕获/重放（静态 shape） | **可行候选**（1.2M 12.6×），组件拆分与选择性接入方式待下一轮 |
+| CUDA graph 捕获/重放（静态 shape） | **可行候选**（1.2M 12.6×，组件级微基准）；未接入训练整步，不得外推整步收益；组件拆分、动态边界、回退策略待下一轮 |
 | selective enable | 维持（无变化）|
 | full-enable training | blocked（F-1/F-2）|
+
+### 第一轮复审口径修订（2026-11-13，意见 6857432618）
+
+四处口径已按审阅修正：①fused 正确性四层次区分（单步闭式 ≤1 ulp / 100 步轨迹漂移不承诺逐位 / checkpoint 内部一致 / 无 NaN/Inf）；②fp16 分别报告 stock 损坏与 fused 当前配置无污染，限定范围并补 fp32-state 替代方案；③GELU 负尾影响改"候选较小、待训练验证"；④CUDA graph 明确组件级静态 shape 候选、12.6× 不外推整步。下一轮顺序按审阅执行：FlagScale 集成 → AdamW 数值验收（vs fp64/稳定参考）→ CUDA Graph 训练段接入 → GELU 归因训练闭环 → F-1/F-2 持续复验 → 整步/多卡。
