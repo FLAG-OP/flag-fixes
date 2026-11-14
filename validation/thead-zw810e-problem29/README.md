@@ -136,7 +136,7 @@ python3 scripts/probe7_platform_blockers.py       # F-1/F-2 出证, exit 1（预
 | bge336 | mixed | 30.50 | 30.70 | **10.48** | **2.9×** | ✓ |
 
 - **foreach ≡ stock（逐位一致）且无收益**——不是候选。
-- **fused 正确性按四个独立层次区分（不得混用）**：
+- **fused 正确性按四个独立层次区分（不得混用）**【第三轮补充：状态比较声明修正——v2 脚本的 state_compare 因 `id(p)` 索引错位实为空集，v3 已修复并重跑（5,520 项状态对比）：foreach 状态与 stock 逐位一致；fused 的 exp_avg/exp_avg_sq 相对 stock 存在声明容差内外的偏离（求和顺序 + 低精度内部 fp32 计算），逐项记录于 `adamw_deep_v3.json`。旧 `adamw_deep.json`（v2）superseded】：
   1. **单步更新 vs fp64 闭式公式**：≤1 fp32 ulp（同公式确认）；
   2. **100 步轨迹 vs stock**：存在可观漂移——fp32 100 步大量位置超过 4·eps（max abs 2.7e-07）、bf16 max ~29,564 ULP——独立舍入路径的预期累积，**fused 不承诺与 stock 长期逐位一致**；
   3. **checkpoint 恢复**：本批次内部逐位一致（50+50 步）；
@@ -160,7 +160,7 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 
 ### D. 15 hard FAIL 归因（gelu_backward 负尾）+ F-1/F-2 复验
 
-- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。证据：`fail_attribution_gelu_bwd.json`（含 fp64 双公式复算）。
+- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。第三轮归因修正与扩展（`fail_attribution_v2.json`，v1 `fail_attribution_gelu_bwd.json` superseded）：①修正 v1 错误的 aten 参考公式（误用前向项，正确导数为 `Phi(x)+x·phi(x)`）；②参考改 erfc 稳定 fp64 形式；③violation 掩码改用生产 comparator（与 v6 一致）；④覆盖全部 15 个 FAIL 类别——**根因精确定位为 kernel 求和顺序量化**：编译后 TTIR 显示 gems 按先求和后加 0.5 的顺序组装（`pdf + 0.5·erf` → `+0.5`），负尾 pdf 项在 0.5 量级栅格（fp32 ulp=2^-24≈5.96e-08）上被量化或舍入为精确 0——TTIR 顺序 fp32 模拟在全部 15 类、39,303,952/39,321,600 位置复现设备输出（gelu_none 100%），46/46 违例样本值落在 2^-24 栅格；违例计数与 v6 基线一致（如 bf16 contig large 503,890）。另 v1 的 "fp64 双公式确认数学等价" 结论**撤回**（其参考公式有误）。
 - F-1/F-2 复验（2026-11-13 第二次，单次触发）：**仍挂起**（控制组正常）——full-enable training 保持 blocked；等平台/设备恢复后按记录字段复验。
 
 ### E. 小模型 × fused optimizer（可训练 embedding，8 步，全部 finite）
@@ -176,7 +176,7 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 
 | 候选 | 状态 |
 |---|---|
-| fused AdamW（fp32/bf16/mixed、bge336 级负载） | **有效且精度通过**：2.8–2.9×（optimizer 段）、整步 -5.6~-11%（小模型）；checkpoint 逐位一致；fp16 场景 fused 为唯一可靠路径。候选 fix 定位：FlagScale `adamw-fused` 白名单扩 thead（集成验证 pending）+ fp16 训练强制 fused 建议 |
+| fused AdamW（fp32/bf16/mixed、bge336 级负载） | **有效且精度通过**：2.8–2.9×（optimizer 段）、整步 -5.6~-11%（小模型）；checkpoint 批次内逐位一致；fp16 仅在本轮已测配置下 fused 无非有限值（非普遍定理）。候选 fix 定位：FlagScale `adamw-fused` 集成验证 pending + fp16 建议改为"当前配置下 fused 为已验证可用路径，fp32-state 替代待对照" |
 | CUDA graph 捕获/重放（静态 shape） | **可行候选**（1.2M 12.6×，组件级微基准）；未接入训练整步，不得外推整步收益；组件拆分、动态边界、回退策略待下一轮 |
 | selective enable | 维持（无变化）|
 | full-enable training | blocked（F-1/F-2）|
@@ -184,3 +184,10 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 ### 第一轮复审口径修订（2026-11-13，意见 6857432618）
 
 四处口径已按审阅修正：①fused 正确性四层次区分（单步闭式 ≤1 ulp / 100 步轨迹漂移不承诺逐位 / checkpoint 内部一致 / 无 NaN/Inf）；②fp16 分别报告 stock 损坏与 fused 当前配置无污染，限定范围并补 fp32-state 替代方案；③GELU 负尾影响改"候选较小、待训练验证"；④CUDA graph 明确组件级静态 shape 候选、12.6× 不外推整步。下一轮顺序按审阅执行：FlagScale 集成 → AdamW 数值验收（vs fp64/稳定参考）→ CUDA Graph 训练段接入 → GELU 归因训练闭环 → F-1/F-2 持续复验 → 整步/多卡。
+
+### 第三轮实施与 provenance（复审 6876765307）
+
+- `adamw_deep.py` v3：状态按参数稳定索引对齐（修复 `id(clone)` 错位）、shape/dtype 校验、缺状态/空对比/数量不符=硬失败、mixed 逐张量 dtype、checkpoint 失败进入退出码、错误 schema 统一（非有限 step1 含全字段）、`--selftest` 入口级负例 3/3。**重跑 12 组合**（`adamw_deep_v3.json`，exit 1——状态容差违例如实入账）：5,520 项状态对比（foreach 逐位一致；fused exp_avg/exp_avg_sq 偏离记录）；fp16 stock/foreach nan/inf 证据保留；checkpoint 逐位一致。`adamw_deep.json`（v2，state_compare 空集）**superseded**。
+- `fail_attribution_v2.py`/`fail_attribution_v2.json`：公式修正 + erfc 稳定参考 + 生产 comparator 掩码 + 全 15 类覆盖 + TTIR 顺序模拟（见上）。`fail_attribution_gelu_bwd.json`（v1）**superseded**（其 aten 参考公式有误）。
+- `probe8_graph_output_verify.py`/`...json`：图重放输出对照（新输入写入 → 重放 → 与 eager 逐位一致）。
+- 设备未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1 均维持既有产物（复审确认可保留）。

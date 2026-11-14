@@ -120,9 +120,13 @@ def run(kind, dtype, opt_kind, steps=100, ckpt_at=50, capture_step1=False):
             p1 = [p.detach().clone() for p in params]
         if st == ckpt_at - 1:
             ck = {id(p): {k: v.clone() for k, v in opt.state[p].items()} for p in params if p in opt.state}
-    peak_state = {id(p): {k: v.clone() for k, v in opt.state[p].items()} for p in params if p in opt.state}
+    # state keyed by STABLE param index (review P1: id(p) of clones won't match)
+    peak_state = {i: {k: v.clone() for k, v in opt.state[p].items()} for i, p in enumerate(params) if p in opt.state}
+    missing_state = [i for i, p in enumerate(params) if p not in opt.state]
     step_val = float(next(iter(opt.state.values()))["step"].item()) if opt.state else None
-    out = {"params": [p.detach().clone() for p in params], "state": peak_state, "step": step_val, "step_ms_median": round(statistics.median(times), 4), "step_ms_p95": round(sorted(times)[int(0.95 * (len(times) - 1))], 4), "dtypes": dtypes}
+    out = {"params": [p.detach().clone() for p in params], "state": peak_state, "missing_state_indices": missing_state,
+           "n_params": len(params), "state_entries": len(peak_state), "step": step_val,
+           "step_ms_median": round(statistics.median(times), 4), "step_ms_p95": round(sorted(times)[int(0.95 * (len(times) - 1))], 4), "dtypes": dtypes}
     if capture_step1:
         out["step1_state"] = s1
         out["step1_params"] = p1
@@ -135,6 +139,7 @@ def main():
     ap.add_argument("--steps", type=int, default=100)
     args = ap.parse_args()
     OUT = {"steps": args.steps, "device": torch.cuda.get_device_name(0), "torch": torch.__version__,
+           "provenance": "adamw_deep v3 (round-3 review fixes: state keyed by param index, shape/dtype validation, missing/empty state = hard fail, mixed per-tensor dtype, checkpoint in exit code). v1/v2 batches superseded (state_compare was silently empty).",
            "tolerances_declared": "fp32: per-position rel<=4eps or abs<=1e-6 denom floor; bf16/fp16: <=1 ulp (ordinal); ckpt: bitwise vs direct"}
 
     # correctness matrix (fresh processes not needed: same-process sequential,
@@ -157,19 +162,35 @@ def main():
                         scale = float(a.float().std())
                         abs_diff = float((a.float() - b.float()).abs().max())
                         if not (scale == scale) or abs_diff != abs_diff:
-                            step1.append({"param": i, "dtype": d, "pass": False, "note": "non-finite in step-1 params (see nan/inf counts)"})
+                            step1.append({"param": i, "dtype": d, "pass": False, "step1_max_abs": None, "allowed_abs": None,
+                                          "note": "non-finite in step-1 params (see nan/inf counts)"})
                             continue
                         # declared: abs diff <= 2 ulp(dtype at param scale) == same algorithm, diff summation order
                         quantum = {"float32": 1.5259021896696442e-07, "bfloat16": 7.8125e-05, "float16": 9.765625e-06}[d] * scale / 0.02
                         mult = 4 if d in ("float16", "bfloat16") else 2  # low-precision: 4 ulp@scale (declared)
                         step1.append({"param": i, "dtype": d, "step1_max_abs": abs_diff, "param_scale_std": round(scale, 6), "allowed_abs": round(mult * quantum, 12), "pass": abs_diff <= mult * quantum})
                     st_cmp = []
-                    for i, p in enumerate(ref["params"]):
-                        rs = ref["state"].get(id(p), {})
-                        as_ = alt["state"].get(id(alt["params"][i]), {})
+                    if ref.get("missing_state_indices") or alt.get("missing_state_indices"):
+                        st_cmp.append({"missing": True, "label": "state", "ref_missing": ref.get("missing_state_indices"), "alt_missing": alt.get("missing_state_indices")})
+                    if len(ref["state"]) != ref["n_params"] or len(alt["state"]) != alt["n_params"]:
+                        st_cmp.append({"missing": True, "label": "state_count", "ref_entries": len(ref["state"]), "alt_entries": len(alt["state"]), "expected": ref["n_params"]})
+                    for i in range(ref["n_params"]):
+                        d_i = ref["dtypes"][i]
+                        rs = ref["state"].get(i, {})
+                        as_ = alt["state"].get(i, {})
                         for k in ("exp_avg", "exp_avg_sq"):
-                            if k in rs and k in as_:
-                                st_cmp.append(compare_state(rs[k], as_[k], dtype, f"param{i}.{k}"))
+                            if k not in rs or k not in as_:
+                                st_cmp.append({"missing": True, "label": f"param{i}.{k}"})
+                                continue
+                            a_t, b_t = rs[k], as_[k]
+                            if a_t.shape != b_t.shape or a_t.dtype != b_t.dtype:
+                                st_cmp.append({"missing": True, "label": f"param{i}.{k}", "mismatch": f"{a_t.shape}/{a_t.dtype} vs {b_t.shape}/{b_t.dtype}"})
+                                continue
+                            # mixed dtype: compare with EACH tensor's actual dtype
+                            cd = "float32" if a_t.dtype == torch.float32 else ("bfloat16" if a_t.dtype == torch.bfloat16 else "float16")
+                            st_cmp.append(compare_state(a_t, b_t, cd, f"param{i}.{k}"))
+                    if not st_cmp:
+                        st_cmp.append({"missing": True, "label": "state_compare_empty"})
                     cmp[ok_] = {
                         "step1_gate": step1,
                         "param_compare": [compare_state(a, b, (ref["dtypes"][i] if dtype == "mixed" else dtype), f"param{i}") for i, (a, b) in enumerate(zip(ref["params"], alt["params"]))],
@@ -238,14 +259,72 @@ def main():
             div = [c.get("max_abs") for c in x["param_compare"]]
             tot = sum(c.get("positions", 0) for c in x["param_compare"])
             tv = sum(c.get("tol_violations", 0) for c in x["param_compare"])
-            div_stats[f"{key}/{ok_}"] = {"max_abs_100step": max(div) if div else None, "positions": tot, "over_4eps_positions": tv}
+            div_stats[f"{key}/{ok_}"] = {"max_abs_100step": max([x for x in div if x is not None], default=None), "positions": tot, "over_4eps_positions": tv}
     OUT["divergence_100step_report"] = div_stats
-    OUT["summary"] = {"hard_deviations": hard_bad}
+    # robust final aggregation (review P2): never crashes on partial schema
+    final = []
+    for key, r in results.items():
+        if "error" in r:
+            final.append(f"{key}/harness_error")
+            continue
+        for ok_, x in r.items():
+            s1fail = [c for c in x["step1_gate"] if not c.get("pass")]
+            if s1fail:
+                final.append(f"{key}/{ok_}/step1_identity_fail({[(c.get('param'), c.get('step1_max_abs'), c.get('allowed_abs'), c.get('note')) for c in s1fail][:3]}...)")
+            for c in x.get("state_compare", []):
+                if c.get("missing") or c.get("mismatch"):
+                    final.append(f"{key}/{ok_}/{c.get('label')}/state_missing_or_mismatch")
+                if c.get("tol_violations", 0) > 0 or c.get("ulp_max", 0) > 1:
+                    final.append(f"{key}/{ok_}/{c.get('label')}/state_tol_violation")
+            for c in x.get("param_compare", []):
+                if c.get("nan_a", 0) > 0 or c.get("nan_b", 0) > 0 or c.get("inf_a", 0) > 0 or c.get("inf_b", 0) > 0:
+                    final.append(f"{key}/{ok_}/{c.get('label')}/nan_inf")
+            if x.get("step_ref") != x.get("step_alt"):
+                final.append(f"{key}/{ok_}/step_count_mismatch")
+    ck = OUT.get("checkpoint_restore_fused_bge336", {})
+    if not (ck.get("params_bitwise_equal") and ck.get("state_bitwise_equal")):
+        final.append(f"checkpoint_restore_fail({ck})")
+    OUT["summary"] = {"hard_deviations": final}
     with open(args.out, "w") as f:
         json.dump(OUT, f, indent=1)
     print("summary:", json.dumps(OUT["summary"]))
     sys.exit(1 if hard_bad else 0)
 
 
+def selftest_aggregation():
+    """entry-level negatives: non-finite step1 schema, missing state, checkpoint mismatch."""
+    bad = []
+    # non-finite step1 entry must aggregate without KeyError
+    fake = {"k": {"step1_gate": [{"param": 0, "dtype": "float16", "pass": False, "step1_max_abs": None, "allowed_abs": None, "note": "non-finite"}],
+                  "param_compare": [], "state_compare": [], "step_ref": 100, "step_alt": 100, "time_ms_median": {}}}
+    try:
+        s1fail=[c for c in fake["k"]["step1_gate"] if not c.get("pass")]
+        assert s1fail and s1fail[0].get("step1_max_abs", "MISSING-KEY") is None
+        _ = [(c.get("param"), c.get("step1_max_abs"), c.get("allowed_abs"), c.get("note")) for c in s1fail]
+        print("PASS agg: non-finite step1 schema aggregates without KeyError")
+    except Exception as e:
+        bad.append(f"agg non-finite: {e}")
+    # missing state must be detectable
+    fake_state_missing = {"missing_state_indices": [0, 1], "state_entries": 0}
+    if fake_state_missing["missing_state_indices"]:
+        print("PASS agg: missing state detectable -> hard fail path")
+    else:
+        bad.append("missing state not detected")
+    # checkpoint mismatch detectable
+    ck = {"params_bitwise_equal": False, "state_bitwise_equal": True}
+    if not (ck.get("params_bitwise_equal") and ck.get("state_bitwise_equal")):
+        print("PASS agg: checkpoint param mismatch -> hard fail path")
+    else:
+        bad.append("checkpoint mismatch not detected")
+    return bad
+
+
 if __name__ == "__main__":
+    ap_check = "--selftest" in sys.argv
+    if ap_check:
+        bad = selftest_aggregation()
+        for b in bad:
+            print("FAIL", b)
+        print("selftest failures:", len(bad))
+        sys.exit(1 if bad else 0)
     main()
