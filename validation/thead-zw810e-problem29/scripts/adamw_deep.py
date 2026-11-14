@@ -139,7 +139,7 @@ def main():
     ap.add_argument("--steps", type=int, default=100)
     args = ap.parse_args()
     OUT = {"steps": args.steps, "device": torch.cuda.get_device_name(0), "torch": torch.__version__,
-           "provenance": "adamw_deep v3 (round-3 review fixes: state keyed by param index, shape/dtype validation, missing/empty state = hard fail, mixed per-tensor dtype, checkpoint in exit code). v1/v2 batches superseded (state_compare was silently empty).",
+           "provenance": "adamw_deep v4 (round-4 review: SINGLE production aggregate() — summary and exit code same-source; --selftest injects through real aggregate(); v1-v3 batches superseded: v1/v2 state_compare silently empty, v3 dual aggregation lists)",
            "tolerances_declared": "fp32: per-position rel<=4eps or abs<=1e-6 denom floor; bf16/fp16: <=1 ulp (ordinal); ckpt: bitwise vs direct"}
 
     # correctness matrix (fresh processes not needed: same-process sequential,
@@ -243,25 +243,32 @@ def main():
 
     with open(args.out, "w") as f:
         json.dump(OUT, f, indent=1)
-    hard_bad = []
     div_stats = {}
     for key, r in results.items():
         if "error" in r:
-            hard_bad.append(key)
             continue
         for ok_, x in r.items():
-            s1fail = [c for c in x["step1_gate"] if not c.get("pass")]
-            if s1fail:  # declared: abs diff <= 2 ulp(dtype at scale) == same algorithm, diff summation order
-                hard_bad.append(f"{key}/{ok_}/step1_identity_fail({[(c['param'], c['step1_max_abs'], c['allowed_abs']) for c in s1fail]})")
-            for c in x["param_compare"]:
-                if c.get("nan_a", 0) > 0 or c.get("nan_b", 0) > 0 or c.get("inf_a", 0) > 0 or c.get("inf_b", 0) > 0:
-                    hard_bad.append(f"{key}/{ok_}/{c['label']}/nan_inf(nan_a={c.get('nan_a')},inf_a={c.get('inf_a')},nan_b={c.get('nan_b')},inf_b={c.get('inf_b')})")
-            div = [c.get("max_abs") for c in x["param_compare"]]
-            tot = sum(c.get("positions", 0) for c in x["param_compare"])
-            tv = sum(c.get("tol_violations", 0) for c in x["param_compare"])
-            div_stats[f"{key}/{ok_}"] = {"max_abs_100step": max([x for x in div if x is not None], default=None), "positions": tot, "over_4eps_positions": tv}
+            ma = [c.get("max_abs") for c in x.get("param_compare", []) if c.get("max_abs") is not None]
+            tot = sum(c.get("positions", 0) for c in x.get("param_compare", []))
+            tv = sum(c.get("tol_violations", 0) for c in x.get("param_compare", []))
+            div_stats[f"{key}/{ok_}"] = {"max_abs_100step": max(ma, default=None), "positions": tot, "over_4eps_positions": tv}
+    final = aggregate(results, OUT.get("checkpoint_restore_fused_bge336", {}))
     OUT["divergence_100step_report"] = div_stats
-    # robust final aggregation (review P2): never crashes on partial schema
+    OUT["summary"] = {"hard_deviations": final, "exit_code_rule": "exit 1 iff summary.hard_deviations non-empty (single production aggregation)"}
+
+    with open(args.out, "w") as f:
+        json.dump(OUT, f, indent=1)
+    print("summary:", json.dumps(OUT["summary"]))
+    sys.exit(1 if final else 0)
+
+
+def aggregate(results, checkpoint):
+    """SINGLE production aggregation: summary AND exit code both use this result.
+
+    Robust to partial schemas (review P2/round-4): uses .get everywhere; any
+    missing state / mismatch / tolerance violation / step mismatch / checkpoint
+    failure / harness error lands in the returned list; empty list == exit 0.
+    """
     final = []
     for key, r in results.items():
         if "error" in r:
@@ -281,41 +288,68 @@ def main():
                     final.append(f"{key}/{ok_}/{c.get('label')}/nan_inf")
             if x.get("step_ref") != x.get("step_alt"):
                 final.append(f"{key}/{ok_}/step_count_mismatch")
-    ck = OUT.get("checkpoint_restore_fused_bge336", {})
+    ck = checkpoint or {}
     if not (ck.get("params_bitwise_equal") and ck.get("state_bitwise_equal")):
         final.append(f"checkpoint_restore_fail({ck})")
-    OUT["summary"] = {"hard_deviations": final}
-    with open(args.out, "w") as f:
-        json.dump(OUT, f, indent=1)
-    print("summary:", json.dumps(OUT["summary"]))
-    sys.exit(1 if hard_bad else 0)
+    return final
 
 
 def selftest_aggregation():
-    """entry-level negatives: non-finite step1 schema, missing state, checkpoint mismatch."""
+    """Entry-level negatives THROUGH the real production aggregate() function.
+
+    Each injected case must produce non-empty summary AND the exit-code rule
+    must map it to non-zero; the all-pass control must aggregate empty.
+    """
     bad = []
-    # non-finite step1 entry must aggregate without KeyError
-    fake = {"k": {"step1_gate": [{"param": 0, "dtype": "float16", "pass": False, "step1_max_abs": None, "allowed_abs": None, "note": "non-finite"}],
-                  "param_compare": [], "state_compare": [], "step_ref": 100, "step_alt": 100, "time_ms_median": {}}}
-    try:
-        s1fail=[c for c in fake["k"]["step1_gate"] if not c.get("pass")]
-        assert s1fail and s1fail[0].get("step1_max_abs", "MISSING-KEY") is None
-        _ = [(c.get("param"), c.get("step1_max_abs"), c.get("allowed_abs"), c.get("note")) for c in s1fail]
-        print("PASS agg: non-finite step1 schema aggregates without KeyError")
-    except Exception as e:
-        bad.append(f"agg non-finite: {e}")
-    # missing state must be detectable
-    fake_state_missing = {"missing_state_indices": [0, 1], "state_entries": 0}
-    if fake_state_missing["missing_state_indices"]:
-        print("PASS agg: missing state detectable -> hard fail path")
-    else:
-        bad.append("missing state not detected")
-    # checkpoint mismatch detectable
-    ck = {"params_bitwise_equal": False, "state_bitwise_equal": True}
-    if not (ck.get("params_bitwise_equal") and ck.get("state_bitwise_equal")):
-        print("PASS agg: checkpoint param mismatch -> hard fail path")
-    else:
-        bad.append("checkpoint mismatch not detected")
+    empty_cmp = lambda i, lab: {"label": lab, "ulp_max": 0, "max_abs": 0.0, "nan_a": 0, "nan_b": 0, "inf_a": 0, "inf_b": 0}
+    good_x = lambda: {
+        "step1_gate": [{"param": 0, "dtype": "float32", "pass": True, "step1_max_abs": 0.0, "allowed_abs": 1e-6}],
+        "param_compare": [empty_cmp(0, "param0")],
+        "state_compare": [empty_cmp(0, "param0.exp_avg"), empty_cmp(0, "param0.exp_avg_sq")],
+        "step_ref": 100, "step_alt": 100, "time_ms_median": {"stock": 1.0},
+    }
+
+    def agg(results, ck):
+        return aggregate(results, ck)
+
+    # 1. only checkpoint failure
+    f = agg({"k/float32": {"foreach": good_x(), "fused": good_x()}}, {"params_bitwise_equal": False, "state_bitwise_equal": True})
+    ok1 = len(f) == 1 and f[0].startswith("checkpoint_restore_fail")
+    print(("PASS" if ok1 else "FAIL") + " aggregate: only-checkpoint-fail -> [" + "; ".join(f) + "]")
+    if not ok1: bad.append("checkpoint")
+
+    # 2. only state missing
+    r2 = {"k/float32": {"foreach": good_x(), "fused": dict(good_x(), state_compare=[{"label": "param0.exp_avg", "missing": True}])}}
+    f2 = agg(r2, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+    ok2 = len(f2) == 1 and "state_missing_or_mismatch" in f2[0]
+    print(("PASS" if ok2 else "FAIL") + " aggregate: only-state-missing -> " + "; ".join(f2))
+    if not ok2: bad.append("state missing")
+
+    # 3. only state over tolerance
+    r3 = {"k/float32": {"foreach": good_x(), "fused": dict(good_x(), state_compare=[dict(empty_cmp(0, "param0.exp_avg"), tol_violations=5)])}}
+    f3 = agg(r3, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+    ok3 = len(f3) == 1 and "state_tol_violation" in f3[0]
+    print(("PASS" if ok3 else "FAIL") + " aggregate: only-state-tolerance -> " + "; ".join(f3))
+    if not ok3: bad.append("state tolerance")
+
+    # 4. only step mismatch
+    r4 = {"k/float32": {"foreach": good_x(), "fused": dict(good_x(), step_ref=100, step_alt=101)}}
+    f4 = agg(r4, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+    ok4 = len(f4) == 1 and "step_count_mismatch" in f4[0]
+    print(("PASS" if ok4 else "FAIL") + " aggregate: only-step-mismatch -> " + "; ".join(f4))
+    if not ok4: bad.append("step mismatch")
+
+    # 5. normal control -> empty
+    f5 = agg({"k/float32": {"foreach": good_x(), "fused": good_x()}}, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+    ok5 = len(f5) == 0
+    print(("PASS" if ok5 else "FAIL") + " aggregate: all-pass control -> empty (exit 0)")
+    if not ok5: bad.append("control")
+
+    # exit-code rule: same-source mapping
+    rule = lambda lst: 1 if lst else 0
+    ok6 = rule(f) == 1 and rule(f2) == 1 and rule(f3) == 1 and rule(f4) == 1 and rule(f5) == 0
+    print(("PASS" if ok6 else "FAIL") + " exit-code rule uses aggregate() result")
+    if not ok6: bad.append("exit rule")
     return bad
 
 

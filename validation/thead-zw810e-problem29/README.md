@@ -160,7 +160,13 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 
 ### D. 15 hard FAIL 归因（gelu_backward 负尾）+ F-1/F-2 复验
 
-- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。第三轮归因修正与扩展（`fail_attribution_v2.json`，v1 `fail_attribution_gelu_bwd.json` superseded）：①修正 v1 错误的 aten 参考公式（误用前向项，正确导数为 `Phi(x)+x·phi(x)`）；②参考改 erfc 稳定 fp64 形式；③violation 掩码改用生产 comparator（与 v6 一致）；④覆盖全部 15 个 FAIL 类别——**根因精确定位为 kernel 求和顺序量化**：编译后 TTIR 显示 gems 按先求和后加 0.5 的顺序组装（`pdf + 0.5·erf` → `+0.5`），负尾 pdf 项在 0.5 量级栅格（fp32 ulp=2^-24≈5.96e-08）上被量化或舍入为精确 0——TTIR 顺序 fp32 模拟在全部 15 类、39,303,952/39,321,600 位置复现设备输出（gelu_none 100%），46/46 违例样本值落在 2^-24 栅格；违例计数与 v6 基线一致（如 bf16 contig large 503,890）。另 v1 的 "fp64 双公式确认数学等价" 结论**撤回**（其参考公式有误）。
+- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。第四轮归因修正与扩展（复审 6876765307；v1/v2 归因批次 superseded，现行 `fail_attribution_stats_v3.json`）：①v1 参考公式错误已撤回（正确导数 `Phi(x)+x·phi(x)`）；②参考改 erfc 稳定 fp64 形式；③violation 掩码用生产 comparator；④**全 15 FAIL 类别三级匹配统计**（违例子集内，对 TTIR 顺序 fp32 模拟）：
+- **gelu_none 全 12 类（4,443,214-2 个违例位置，负尾为主）：unexplained=0**——exact 位级 95–100%（bf16 100%）、ulp≤2 覆盖其余、容差 100%；**求和顺序量化机制证实**（编译后 TTIR：`pdf + 0.5·erf` 在 0.5 量级舍入、fp32 ulp=2^-24≈5.96e-08，再 `+0.5` → 负尾梯度被量化到 2^-24 栅格或精确 0）；
+- **gelu_tanh backward 6 类：unexplained 836/444,667**（每类 118–290 位置未解释——模拟公式与编译内核细节差异，独立调查）；
+- **gelu_tanh forward 6 类：22,242 个前向违例位置全部未解释**（前向 TTIR 顺序模拟与设备不符，独立调查，不称已归因）。
+- 栅格命中按存档样本逐个判定：**none 类 25/26（96.2%）、tanh 类 1/19（5.3%）、合计 26/45**（v2 报告的 46 为分母缺陷，已修正）。
+- 容差匹配口径声明：`|sim-device| ≤ 6e-8 + 2·|device|·4.77e-07` 下全张量匹配 **39,304,592/39,321,600（99.957%）**——该容差非位级精确证明（6e-8 接近 2^-24 量化间隔本身）。
+- TTIR 证据归档：`results/ttir_evidence/{gelu_backward_none_kernel_rank_2,gelu_tanh_kernel_rank_1,gelu_tanh_kernel_rank_2}.ttir` + SHA256SUMS；归因适用范围=已编译内核与已测布局，不概括其他路径。
 - F-1/F-2 复验（2026-11-13 第二次，单次触发）：**仍挂起**（控制组正常）——full-enable training 保持 blocked；等平台/设备恢复后按记录字段复验。
 
 ### E. 小模型 × fused optimizer（可训练 embedding，8 步，全部 finite）
@@ -191,3 +197,10 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 - `fail_attribution_v2.py`/`fail_attribution_v2.json`：公式修正 + erfc 稳定参考 + 生产 comparator 掩码 + 全 15 类覆盖 + TTIR 顺序模拟（见上）。`fail_attribution_gelu_bwd.json`（v1）**superseded**（其 aten 参考公式有误）。
 - `probe8_graph_output_verify.py`/`...json`：图重放输出对照（新输入写入 → 重放 → 与 eager 逐位一致）。
 - 设备未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1 均维持既有产物（复审确认可保留）。
+
+### 第四轮实施与 provenance（复审 6876765307 下一轮顺序第 1–3 步）
+
+- `adamw_deep.py` v4：**唯一生产聚合函数 `aggregate()`**（summary 与 exit code 同源；v3 的双聚合列表已删）；`--selftest` 注入五类用例经真实 `aggregate()`（仅 checkpoint 失败/仅状态缺失/仅状态超差/仅 step 不匹配 → 全部映射非零；全过对照 → 空+exit 0）6/6。**重跑 12 组合**（`adamw_deep_v4.json`，exit 1 与 hard_deviations 2,702 项同源）：状态验证已执行且存在超差/非有限失败（如实入账）；v1–v3 批次 superseded（v1/v2 state_compare 静默空、v3 双聚合列表）。
+- `fail_attribution_stats.py`/`fail_attribution_stats_v3.json`：违例子集三级匹配（exact 位级 / ulp≤2 / 声明容差）+ tanh 前向独立归因 + 未解释位置示例（见上第四轮归因段）。exit 1（unexplained>0，如实）。
+- `probe8_graph_output_verify.py` 修正捕获次数显式化（捕获循环/计时分母/元数据同源），重跑：每调用摊销 0.0053 ms（修正此前 100 倍低估）、输出对照逐位一致。
+- 未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1、F-1/F-2（保持 blocked）。

@@ -30,9 +30,11 @@ with torch.cuda.stream(s):
     for _ in range(3):
         torch.nn.functional.gelu(x, out=y)
 torch.cuda.current_stream().wait_stream(s)
+CAPTURE_CALLS = 100  # explicit: used in capture loop, timing denominator, and JSON metadata
 graph = torch.cuda.CUDAGraph()
 with torch.cuda.graph(graph):
-    torch.nn.functional.gelu(x, out=y)
+    for _ in range(CAPTURE_CALLS):
+        torch.nn.functional.gelu(x, out=y)
 
 sha = lambda t: hashlib.sha256(t.cpu().contiguous().view(torch.uint8).numpy().tobytes()).hexdigest()[:16]
 
@@ -61,9 +63,10 @@ for st, e in ev:
     graph.replay()
     e.record()
 torch.cuda.synchronize()
-per_call = statistics.median(st.elapsed_time(e) for st, e in ev) / 100
-OUT["graph_replay_per_call_amortized_ms"] = round(per_call, 4)
-OUT["wording_note"] = "100 calls captured; per-call amortized cost of replay (includes graph dispatch; input buffer reused). NOT 'enqueue eliminated' and NOT independent kernel time."
+per_call = statistics.median(st.elapsed_time(e) for st, e in ev) / CAPTURE_CALLS
+OUT["capture_calls"] = CAPTURE_CALLS
+OUT["graph_replay_per_call_amortized_ms"] = round(per_call, 6)
+OUT["wording_note"] = f"{CAPTURE_CALLS} calls captured; per-call amortized cost of replay (includes graph dispatch; input buffer reused). NOT 'enqueue eliminated' and NOT independent kernel time."
 
 with open("results/probe8_graph_output_verify.json", "w") as f:
     json.dump(OUT, f, indent=1)
