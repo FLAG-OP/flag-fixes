@@ -116,3 +116,99 @@ python3 scripts/probe7_platform_blockers.py       # F-1/F-2 出证, exit 1（预
 - 2026-11-12 首轮：判定"需优化"；固定开销为假设；小模型未上设备（不知情缺陷）；"0 硬失败"基于稀释门。
 - 2026-11-13 第二轮（PR #6 f288df6）：证据落地；判据三分类 + 负例自测（发现并修 ±Inf 符号缺口）；归因修正为 host enqueue；结论限定范围。
 - 2026-11-13 第三轮 v3.1（本文件，回应复审 6845369130 两处口径）：负例自测改 22/22；embedding 改为 optimizer 前创建并纳入参数（16 参数 + 梯度证据）；小模型口径改"逐步差 ≤1.2e-07、不能表述为逐位一致"；补列四项跟进任务与状态口径。第三轮原文：v6 判据逐位置化（审阅反例入自测）、ULP 修复、正常区/FTZ 区分开报告、**15 硬 FAIL 如实报告**；小模型上设备重跑（v1 作废），native/selective 训练数值差异量化；发现并登记 F-1/F-2 平台阻断（gems_full 训练阻断、sdpa 挂起、matmul backward 挂起）；perf batch-2 重跑（标签/口径修正）；失败计数与退出码可靠化。
+
+---
+
+## issue #7 第一轮（2026-11-13）：fused AdamW 与调用提交开销
+
+面向 issue #7（A–E）。新脚本：`scripts/{adamw_deep,probe8_enqueue_candidates,fail_attribution,small_model,probe7_platform_blockers}.py`；新数据：`results/{adamw_deep,probe8_enqueue_candidates,fail_attribution_gelu_bwd,probe7_recheck_2026-11-13}.json`、`results/small_model_e/`。
+
+### B. fused AdamW（torch.optim 层完整验证）
+
+| 配置 | dtype | stock | foreach | fused | 收益 | 正确性 |
+|---|---|---:|---:|---:|---:|---|
+| single [1024,1024] | fp32 | 0.190 ms | 0.186 | 0.106 | 1.8× | step1 ≤2 ulp@scale ✓；100 步发散 2.4e-07（有界）|
+| single | bf16 | 0.192 | 0.189 | 0.109 | 1.8× | 同上（100 步 4.2e-03 = 线性 ulp 累积）|
+| multi (8) | fp32 | 0.212 | 0.207 | 0.121 | 1.8× | ✓ |
+| multi (8) | mixed | 0.294 | 0.287 | 0.142 | 2.1× | ✓ |
+| bge336 | fp32 | 29.67 | 29.50 | **10.54** | **2.8×** | ✓；launch 2,688→39 |
+| bge336 | bf16 | 16.49 | 16.44 | **8.94** | **1.84×** | ✓ |
+| bge336 | mixed | 30.50 | 30.70 | **10.48** | **2.9×** | ✓ |
+
+- **foreach ≡ stock（逐位一致）且无收益**——不是候选。
+- **fused 正确性按四个独立层次区分（不得混用）**【第三轮补充：状态比较声明修正——v2 脚本的 state_compare 因 `id(p)` 索引错位实为空集，v3 已修复并重跑（5,520 项状态对比）：foreach 状态与 stock 逐位一致；fused 的 exp_avg/exp_avg_sq 相对 stock 存在声明容差内外的偏离（求和顺序 + 低精度内部 fp32 计算），逐项记录于 `adamw_deep_v3.json`。旧 `adamw_deep.json`（v2）superseded】：
+  1. **单步更新 vs fp64 闭式公式**：≤1 fp32 ulp（同公式确认）；
+  2. **100 步轨迹 vs stock**：存在可观漂移——fp32 100 步大量位置超过 4·eps（max abs 2.7e-07）、bf16 max ~29,564 ULP——独立舍入路径的预期累积，**fused 不承诺与 stock 长期逐位一致**；
+  3. **checkpoint 恢复**：本批次内部逐位一致（50+50 步）；
+  4. **无 NaN/Inf**（fused 全配置）。
+  验收口径以后续 fused vs fp64/稳定参考的误差与训练行为为主，不以 stock 逐位一致为门槛（待补）。
+- **新发现（fp16，限定本轮已测配置：本设备/已测形状/lr=1e-3/eps=1e-8）**：stock 与 foreach 的 fp16 AdamW **数值损坏**（Inf/NaN：single 45,378 位置、bge336 25,588,726 位置；机制：fp16 下 `v_hat=g²` 下溢为 0 且 `eps=1e-8` 下溢为 0 → 0 除）；**fused 在当前配置下无污染**（0 NaN/Inf）。二者分别报告、不合并为"所有 fp16 AdamW 配置"的普遍定理；**fp32 优化器状态（master weights）为不依赖 fused 的替代方案**，其对照待补。
+- checkpoint 保存/恢复（fused bge336, 50+50 步）：**参数与状态逐位一致**。
+- 收益跨实验稳定：probe6 2.3×、adamw_deep 2.8×、小模型 optimizer 段 1.76–1.9×/整步 -5.6~-11%（§E）。FlagScale `build_optimizer` 集成路径验证 **pending**（本机无 FlagScale 运行环境）；vendor 白名单维持不变，待集成验证 + owner 审核。
+
+### C. 提交开销：CUDA Graph 捕获/重放在 ZW810E 可用（候选 1 成立）
+
+gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
+
+| 尺寸 | event | graph replay/iter | 提升 |
+|---|---:|---:|---:|
+| 1.2M | 0.0731 ms | **0.0058 ms** | **12.6×**（enqueue 完全消除）|
+| 12.25M | 0.0868 | 0.0519 | 1.67× |
+| 98M | 0.3823 | 0.3875 | 持平（纯设备时间）|
+
+→ 证实提交开销假设（重放后 1.2M 5.8 µs ≈ 纯设备执行），**图捕获/重放为组件级、静态 shape 候选**；12.6× 为微基准结论，**不得外推为整步收益**（尚未接入训练整步 fwd+bwd+optimizer 子图，动态 shape 边界、内存池/捕获限制、与 optimizer 组合收益均未测，捕获失败回退策略未定）；组件级拆分（python/libentry/launch）与 raw-kernel 直调入口未完成（生产 wrapper introspection 未暴露稳定入口，如实记录）。thead 无独立 gelu 覆写（回退共享 `ops/gelu.py`；pow 出现 7 处但 none-path 主项为 erf/exp，非昆仑芯 pow 热点同型——不套用昆仑芯根因）。
+
+### D. 15 hard FAIL 归因（gelu_backward 负尾）+ F-1/F-2 复验
+
+- 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。第四轮归因修正与扩展（复审 6876765307；v1/v2 归因批次 superseded，现行 `fail_attribution_stats_v3.json`）：①v1 参考公式错误已撤回（正确导数 `Phi(x)+x·phi(x)`）；②参考改 erfc 稳定 fp64 形式；③violation 掩码用生产 comparator；④**全 15 FAIL 类别三级匹配统计**（违例子集内，对 TTIR 顺序 fp32 模拟）：
+- **gelu_none 9 类（4,012,714 个违例位置，负尾为主）：unexplained=0**——exact 位级 bf16 100%、fp32 ~91–99%；ulp≤2 补齐（合计 ulp≤2 = 4,290,428/4,443,214 = 96.57%）；容差 100%；**求和顺序量化机制（按当前证据范围）成立**（编译后 TTIR：`pdf + 0.5·erf` 在 0.5 量级舍入、fp32 ulp=2^-24≈5.96e-08，再 `+0.5` → 负尾梯度被量化到 2^-24 栅格或精确 0）；
+- **gelu_tanh backward 6 类：unexplained 3,190/430,500**（每类 426–628 位置未解释——模拟公式与编译内核细节差异，独立调查）；
+- **gelu_tanh forward 6 类：前向模拟公式 x²→x³ 修正后，unexplained 26/22,242**（其余 99.88% 被修正后模拟解释；剩余 26 位置独立调查）。
+- 栅格命中按存档样本逐个判定：**none 类 25/26（96.2%）、tanh 类 1/19（5.3%）、合计 26/45**（v2 报告的 46 为分母缺陷，已修正）。三级匹配总量（最终 JSON）：exact 4,192,640（94.36%）、ulp≤2 4,290,428（96.57%）、容差 4,440,024（99.93%）——**容差匹配非位级证明**。
+- 容差匹配口径声明（统一常量后）：`|sim-device| ≤ 6e-8 + |device|·2×4.77e-07` 下全张量匹配 **39,304,592/39,321,600（99.957%）**——该容差非位级精确证明（6e-8 接近 2^-24 量化间隔本身）。
+- TTIR 证据归档：`results/ttir_evidence/{gelu_backward_none_kernel_rank_2,gelu_tanh_kernel_rank_1,gelu_tanh_kernel_rank_2}.ttir` + SHA256SUMS；归因适用范围=已编译内核与已测布局，不概括其他路径。
+- F-1/F-2 复验（2026-11-13 第二次，单次触发）：**仍挂起**（控制组正常）——full-enable training 保持 blocked；等平台/设备恢复后按记录字段复验。
+
+### E. 小模型 × fused optimizer（可训练 embedding，8 步，全部 finite）
+
+| 配置 | optimizer 段 | 整步 | loss 相对差 vs native/stock |
+|---|---:|---:|---:|
+| native/stock | 0.422 ms | 2.27 ms | — |
+| native/fused | 0.219 ms（1.9×）| 2.01 ms（-11%）| ≤4.7e-07 |
+| selective/stock | 0.394 ms | 2.84 ms | ≤1.2e-07 |
+| selective/fused | 0.224 ms（1.76×）| 2.68 ms（-5.6%）| ≤4.7e-07 |
+
+### 结论（issue #7 第一轮）
+
+| 候选 | 状态 |
+|---|---|
+| fused AdamW（fp32/bf16/mixed、bge336 级负载） | **有效且精度通过**：2.8–2.9×（optimizer 段）、整步 -5.6~-11%（小模型）；checkpoint 批次内逐位一致；fp16 仅在本轮已测配置下 fused 无非有限值（非普遍定理）。候选 fix 定位：FlagScale `adamw-fused` 集成验证 pending + fp16 建议改为"当前配置下 fused 为已验证可用路径，fp32-state 替代待对照" |
+| CUDA graph 捕获/重放（静态 shape） | **可行候选**（1.2M 12.6×，组件级微基准）；未接入训练整步，不得外推整步收益；组件拆分、动态边界、回退策略待下一轮 |
+| selective enable | 维持（无变化）|
+| full-enable training | blocked（F-1/F-2）|
+
+### 第一轮复审口径修订（2026-11-13，意见 6857432618）
+
+四处口径已按审阅修正：①fused 正确性四层次区分（单步闭式 ≤1 ulp / 100 步轨迹漂移不承诺逐位 / checkpoint 内部一致 / 无 NaN/Inf）；②fp16 分别报告 stock 损坏与 fused 当前配置无污染，限定范围并补 fp32-state 替代方案；③GELU 负尾影响改"候选较小、待训练验证"；④CUDA graph 明确组件级静态 shape 候选、12.6× 不外推整步。下一轮顺序按审阅执行：FlagScale 集成 → AdamW 数值验收（vs fp64/稳定参考）→ CUDA Graph 训练段接入 → GELU 归因训练闭环 → F-1/F-2 持续复验 → 整步/多卡。
+
+### 第三轮实施与 provenance（复审 6876765307）
+
+- `adamw_deep.py` v3：状态按参数稳定索引对齐（修复 `id(clone)` 错位）、shape/dtype 校验、缺状态/空对比/数量不符=硬失败、mixed 逐张量 dtype、checkpoint 失败进入退出码、错误 schema 统一（非有限 step1 含全字段）、`--selftest` 入口级负例 3/3。**重跑 12 组合**（`adamw_deep_v3.json`，exit 1——状态容差违例如实入账）：5,520 项状态对比（foreach 逐位一致；fused exp_avg/exp_avg_sq 偏离记录）；fp16 stock/foreach nan/inf 证据保留；checkpoint 逐位一致。`adamw_deep.json`（v2，state_compare 空集）**superseded**。
+- `fail_attribution_v2.py`/`fail_attribution_v2.json`：公式修正 + erfc 稳定参考 + 生产 comparator 掩码 + 全 15 类覆盖 + TTIR 顺序模拟（见上）。`fail_attribution_gelu_bwd.json`（v1）**superseded**（其 aten 参考公式有误）。
+- `probe8_graph_output_verify.py`/`...json`：图重放输出对照（新输入写入 → 重放 → 与 eager 逐位一致）。
+- 设备未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1 均维持既有产物（复审确认可保留）。
+
+### 第四轮实施与 provenance（复审 6876765307 下一轮顺序第 1–3 步）
+
+- `adamw_deep.py` v4：**唯一生产聚合函数 `aggregate()`**（summary 与 exit code 同源；v3 的双聚合列表已删）；`--selftest` 注入五类用例经真实 `aggregate()`（仅 checkpoint 失败/仅状态缺失/仅状态超差/仅 step 不匹配 → 全部映射非零；全过对照 → 空+exit 0）6/6。**重跑 12 组合**（`adamw_deep_v4.json`，exit 1 与 hard_deviations 2,702 项同源）：状态验证已执行且存在超差/非有限失败（如实入账）；v1–v3 批次 superseded（v1/v2 state_compare 静默空、v3 双聚合列表）。
+- `fail_attribution_stats.py`/`fail_attribution_stats_v3.json`：违例子集三级匹配（exact 位级 / ulp≤2 / 声明容差）+ tanh 前向独立归因 + 未解释位置示例（见上第四轮归因段）。exit 1（unexplained>0，如实）。
+- `probe8_graph_output_verify.py` 修正捕获次数显式化（捕获循环/计时分母/元数据同源），重跑：每调用摊销 0.0053 ms（修正此前 100 倍低估）、输出对照逐位一致。
+- 未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1、F-1/F-2（保持 blocked）。
+
+### 第五轮实施（复审 6879678135）
+
+- **tanh 前向模拟公式修正**（x²→x³；CPU 反例 x=2：1.94005→1.95460 与解析值一致）+ 前向公式自测（0/±2/尾部 5 点，含复审反例）；修正后重跑前向归因：unexplained **26/22,242**（99.88% 被修正后模拟解释；此前 22,242 全未解释系公式错误）。
+- **三级匹配统计修正**：bf16/fp16 的 exact 比较改在目标 dtype 位表示（此前 fp32→int16 拆分致 exact 双计——bf16 503,890 而非 1,007,780）；TOL_REL 统一为单一常量、判据只用一次；`explained = exact ∪ ulp≤2 ∪ tol`、`unexplained` = 补集（口径显式）；不变量自测 `0≤count≤gate_violations` 内置 assert。最终：exact 94.36%、ulp≤2 96.57%、容差 99.93%、unexplained 3,216/4,443,214（backward 3,190 + forward 26）。
+- **AdamW 聚合补齐**：compare_state fp32 分支记录 nan/inf/nonfinite 计数；`aggregate()` 将状态 NaN/Inf 列为硬失败；自测新增**仅状态 NaN / 仅状态 Inf**（经真实 `aggregate()`，8/8 通过）。v5 聚合语义应用于 v4 设备数据 → 2,702 项硬偏差（与归档一致），v4 及更早聚合版本 superseded。
+- 文档数字全部由最终 JSON 生成：none 9 类（非 12）、tanh backward 3,190/430,500、tanh forward 26/22,242、三级匹配 94.36%/96.57%/99.93%。
+- 未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1、F-1/F-2（blocked）。AdamW 状态 NaN/Inf 新增计数无需设备重跑（利用 v4 已有数据；新计数路径由自测覆盖）。

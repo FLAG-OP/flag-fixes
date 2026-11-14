@@ -1,0 +1,67 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/tmp/opencode/FlagGems-base/src/flag_gems/config.py:171: UserWarning: resolve_user_setting: no exclude ops found; returning empty list
+  warnings.warn(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::__ilshift__.Tensor(Tensor(a!) self, Tensor other) -> Tensor(a!)
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at aten/src/ATen/RegisterCPU_3.cpp:7149
+       new kernel: registered at /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Scalar's behavior for CUDA dispatch key and aten namespace.
+WARNING:root:Skipped registering operator: This is not allowed since there's already a kernel registered from python overriding ne_.Tensor's behavior for CUDA dispatch key and aten namespace.
+  fwd selftest x=0.0: sim=0.000000 fp64=0.000000
+  fwd selftest x=2.0: sim=1.954598 fp64=1.954598
+  fwd selftest x=-2.0: sim=-0.045402 fp64=-0.045402
+  fwd selftest x=6.0: sim=6.000000 fp64=6.000000
+  fwd selftest x=2 matches corrected formula 1.95460 (x^2 bug fixed)
+{
+ "grand_totals": {
+  "gate_viol": 4443214,
+  "exact": 4192640,
+  "ulp_le2": 4290428,
+  "tol": 4440024,
+  "unexplained": 3190
+ },
+ "tanh_forward": [
+  {
+   "case": "gelu_tanh|float32|contig|large",
+   "fwd_gate_violations": 2620,
+   "sim_also_deviates_and_matches_device_within_tol": 2613,
+   "unexplained_fwd": 7
+  },
+  {
+   "case": "gelu_tanh|float32|contig|typical",
+   "fwd_gate_violations": 4813,
+   "sim_also_deviates_and_matches_device_within_tol": 4811,
+   "unexplained_fwd": 2
+  },
+  {
+   "case": "gelu_tanh|float32|sliced|large",
+   "fwd_gate_violations": 2614,
+   "sim_also_deviates_and_matches_device_within_tol": 2606,
+   "unexplained_fwd": 8
+  },
+  {
+   "case": "gelu_tanh|float32|sliced|typical",
+   "fwd_gate_violations": 4762,
+   "sim_also_deviates_and_matches_device_within_tol": 4762,
+   "unexplained_fwd": 0
+  },
+  {
+   "case": "gelu_tanh|float32|transposed|large",
+   "fwd_gate_violations": 2620,
+   "sim_also_deviates_and_matches_device_within_tol": 2613,
+   "unexplained_fwd": 7
+  },
+  {
+   "case": "gelu_tanh|float32|transposed|typical",
+   "fwd_gate_violations": 4813,
+   "sim_also_deviates_and_matches_device_within_tol": 4811,
+   "unexplained_fwd": 2
+  }
+ ]
+}
+exit_rule: {"backward_unexplained": 3190, "forward_unexplained": 26, "exit": 1}

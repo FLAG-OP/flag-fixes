@@ -1,0 +1,202 @@
+{
+ "failing_classes": 15,
+ "classes": [
+  "gelu_none|bfloat16|contig|large",
+  "gelu_none|bfloat16|sliced|large",
+  "gelu_none|bfloat16|transposed|large",
+  "gelu_none|float32|contig|large",
+  "gelu_none|float32|contig|typical",
+  "gelu_none|float32|sliced|large",
+  "gelu_none|float32|sliced|typical",
+  "gelu_none|float32|transposed|large",
+  "gelu_none|float32|transposed|typical",
+  "gelu_tanh|float32|contig|large",
+  "gelu_tanh|float32|contig|typical",
+  "gelu_tanh|float32|sliced|large",
+  "gelu_tanh|float32|sliced|typical",
+  "gelu_tanh|float32|transposed|large",
+  "gelu_tanh|float32|transposed|typical"
+ ],
+ "per_class": [
+  {
+   "case": "gelu_none|bfloat16|contig|large",
+   "grad_normal_gate_violations": 503890,
+   "violation_examples_gems_values": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "violation_examples_on_2pi24_grid": 5,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|bfloat16|sliced|large",
+   "grad_normal_gate_violations": 504284,
+   "violation_examples_gems_values": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "violation_examples_on_2pi24_grid": 5,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|bfloat16|transposed|large",
+   "grad_normal_gate_violations": 503890,
+   "violation_examples_gems_values": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "violation_examples_on_2pi24_grid": 5,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|float32|contig|large",
+   "grad_normal_gate_violations": 718368,
+   "violation_examples_gems_values": [
+    -5.960464477539063e-08,
+    -5.960464477539063e-08,
+    -5.960464477539063e-08
+   ],
+   "violation_examples_on_2pi24_grid": 5,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|float32|contig|typical",
+   "grad_normal_gate_violations": 114941,
+   "violation_examples_gems_values": [
+    1.519918441772461e-06,
+    -2.9802322387695312e-06,
+    -1.0073184967041016e-05
+   ],
+   "violation_examples_on_2pi24_grid": 4,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|float32|sliced|large",
+   "grad_normal_gate_violations": 719138,
+   "violation_examples_gems_values": [
+    -5.960464477539063e-08,
+    -5.960464477539063e-08,
+    -5.960464477539063e-08
+   ],
+   "violation_examples_on_2pi24_grid": 5,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|float32|sliced|typical",
+   "grad_normal_gate_violations": 114894,
+   "violation_examples_gems_values": [
+    1.519918441772461e-06,
+    1.519918441772461e-06,
+    -2.9802322387695312e-06
+   ],
+   "violation_examples_on_2pi24_grid": 3,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|float32|transposed|large",
+   "grad_normal_gate_violations": 718368,
+   "violation_examples_gems_values": [
+    -5.960464477539063e-08,
+    -5.960464477539063e-08,
+    -5.960464477539063e-08
+   ],
+   "violation_examples_on_2pi24_grid": 5,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_none|float32|transposed|typical",
+   "grad_normal_gate_violations": 114941,
+   "violation_examples_gems_values": [
+    1.519918441772461e-06,
+    -2.9802322387695312e-06,
+    -1.0073184967041016e-05
+   ],
+   "violation_examples_on_2pi24_grid": 4,
+   "sim_match_count_all_positions": 2621440,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_tanh|float32|contig|large",
+   "grad_normal_gate_violations": 69677,
+   "violation_examples_gems_values": [
+    -1.8388032913208008e-05,
+    -1.1354684829711914e-05,
+    -5.65648078918457e-05
+   ],
+   "violation_examples_on_2pi24_grid": 1,
+   "sim_match_count_all_positions": 2617817,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_tanh|float32|contig|typical",
+   "grad_normal_gate_violations": 73643,
+   "violation_examples_gems_values": [
+    -7.450580596923828e-08,
+    -7.450580596923828e-08,
+    1.519918441772461e-06
+   ],
+   "violation_examples_on_2pi24_grid": 1,
+   "sim_match_count_all_positions": 2619431,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_tanh|float32|sliced|large",
+   "grad_normal_gate_violations": 69704,
+   "violation_examples_gems_values": [
+    -1.8388032913208008e-05,
+    -1.8388032913208008e-05,
+    -4.0143728256225586e-05
+   ],
+   "violation_examples_on_2pi24_grid": 0,
+   "sim_match_count_all_positions": 2617734,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_tanh|float32|sliced|typical",
+   "grad_normal_gate_violations": 74156,
+   "violation_examples_gems_values": [
+    1.519918441772461e-06,
+    1.519918441772461e-06,
+    3.56137752532959e-06
+   ],
+   "violation_examples_on_2pi24_grid": 1,
+   "sim_match_count_all_positions": 2619402,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_tanh|float32|transposed|large",
+   "grad_normal_gate_violations": 69677,
+   "violation_examples_gems_values": [
+    -1.8388032913208008e-05,
+    -1.1354684829711914e-05,
+    -5.65648078918457e-05
+   ],
+   "violation_examples_on_2pi24_grid": 1,
+   "sim_match_count_all_positions": 2617817,
+   "positions": 2621440
+  },
+  {
+   "case": "gelu_tanh|float32|transposed|typical",
+   "grad_normal_gate_violations": 73643,
+   "violation_examples_gems_values": [
+    -7.450580596923828e-08,
+    -7.450580596923828e-08,
+    1.519918441772461e-06
+   ],
+   "violation_examples_on_2pi24_grid": 1,
+   "sim_match_count_all_positions": 2619431,
+   "positions": 2621440
+  }
+ ]
+}
