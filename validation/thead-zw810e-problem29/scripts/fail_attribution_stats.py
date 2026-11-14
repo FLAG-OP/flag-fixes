@@ -101,10 +101,36 @@ def sim_forward(x, op):
         t = xf * S1
         return 0.5 * xf * (1 + torch.erf(t))
     c = 0.79788456
-    return 0.5 * xf * (1 + torch.tanh(c * (xf + 0.044715 * xf ** 2)))
+    # round-5 fix: x + 0.044715*x^3 (was x^2 — wrong formula)
+    return 0.5 * xf * (1 + torch.tanh(c * (xf + 0.044715 * xf ** 3)))
+
+
+def forward_formula_selftest():
+    """round-5: analytic checks incl. +/-2, 0, tail; CPU fp64 reference."""
+    bad = []
+    c = 0.79788456
+    for xv in (0.0, 2.0, -2.0, 6.0):
+        x64 = torch.tensor(xv, dtype=torch.float64)
+        ref = 0.5 * x64 * (1 + torch.tanh(c * (x64 + 0.044715 * x64 ** 3)))
+        got = float(sim_forward(torch.tensor([xv]), "gelu_tanh")[0])
+        exp = float(ref)
+        if abs(got - exp) > 1e-3:
+            bad.append(f"x={xv}: sim {got} vs fp64 {exp}")
+        print(f"  fwd selftest x={xv}: sim={got:.6f} fp64={exp:.6f}")
+    # review's counterexample: x=2 -> ~1.95460 (wrong x^2 formula gives ~1.94005)
+    if abs(float(sim_forward(torch.tensor([2.0]), "gelu_tanh")[0]) - 1.95460) > 1e-3:
+        bad.append("x=2 forward value does not match corrected formula (~1.95460)")
+    else:
+        print("  fwd selftest x=2 matches corrected formula 1.95460 (x^2 bug fixed)")
+    return bad
 
 
 def main():
+    fb = forward_formula_selftest()
+    for b in fb:
+        print("FAIL fwd selftest:", b)
+    if fb:
+        sys.exit(2)
     import flag_gems
 
     acc = json.load(open(Path(__file__).parent.parent / "results" / "accuracy_matrix.json"))
@@ -126,7 +152,7 @@ def main():
     flag_gems.enable()
 
     TOL_ABS = 6e-8
-    TOL_REL = 2 * 4.76837158203125e-07
+    TOL_REL = 2 * 4.76837158203125e-07  # single constant, used once in criterion (round-5 unification)
     per_class = []
     grand = {"gate_viol": 0, "exact": 0, "ulp_le2": 0, "tol": 0, "unexplained": 0}
     fwd_attrib = []
@@ -159,7 +185,13 @@ def main():
 
         # ---- grad violating subset: three-level match vs TTIR-order sim ----
         gg = gems_grad.float().reshape(-1)
-        simg = sim_grad(x, op).float().reshape(-1).cpu()
+        simg_raw = sim_grad(x, op).float().reshape(-1).cpu()
+        # target-dtype representation: simulation rounded to the OUTPUT dtype
+        # (bf16/fp16 kernels truncate output; one count per original position)
+        if dtype in ("bfloat16", "float16"):
+            simg = simg_raw.to(getattr(torch, dtype)).float()
+        else:
+            simg = simg_raw
         # gate-violating positions: reuse comparator examples + full-array rel-vs-oracle gate recomputed identically
         rel_n = ((native_grad.double() - orc_grad).abs() / orc_grad.abs().clamp_min(1e-300)).reshape(-1)
         rel_g = ((gems_grad.double() - orc_grad).abs() / orc_grad.abs().clamp_min(1e-300)).reshape(-1)
@@ -172,7 +204,10 @@ def main():
             sim_v = simg[gv_idx]
             dev_v = gg[gv_idx]
             dt = dtype if dtype in ("float32",) else dtype
-            exact = (sim_v.view(C.INT_VIEW[dtype]) == dev_v.view(C.INT_VIEW[dtype]))
+            # round-5 fix: exact compared in TARGET dtype representation (sim rounded
+            # to output dtype, one raw-bit count per original position)
+            tgt = getattr(torch, dtype)
+            exact = (sim_v.to(tgt).view(C.INT_VIEW[dtype]) == dev_v.to(tgt).view(C.INT_VIEW[dtype]))
             # vectorized ordinal ULP per position (uint interpretation, same mapping as comparator.dt_ulp)
             import numpy as np
             nbits = 16 if dtype != "float32" else 32
@@ -191,10 +226,16 @@ def main():
             stats["ulp_max"] = int(ulp_arr.max()) if ulp_arr.size else 0
             stats["ulp_le2"] = int((ulp_arr <= 2).sum())
             stats["ulp_le2_frac"] = round(float((ulp_arr <= 2).mean()), 6) if ulp_arr.size else 0.0
-            tol = (sim_v - dev_v).abs() <= (TOL_ABS + 2 * dev_v.abs() * TOL_REL)
+            tol = (sim_v - dev_v).abs() <= (TOL_ABS + dev_v.abs() * TOL_REL)
             stats["exact"] = int(exact.sum())
+            # invariant selftest: every count within [0, gate_violations]
+            for k in ("exact", "ulp_le2", "tol", "unexplained"):
+                v = stats[k]
+                assert 0 <= v <= stats["gate_violations"], f"invariant violated: {k}={v} gate={stats['gate_violations']}"
             stats["tol"] = int(tol.sum())
-            unexp_mask = ~tol
+            explained = exact | (torch.tensor(ulp_arr <= 2)) | tol
+            unexp_mask = ~explained
+            stats["explained_union"] = int(explained.sum())
             stats["unexplained"] = int(unexp_mask.sum())
             if unexp_mask.any():
                 ue = torch.nonzero(unexp_mask, as_tuple=False).reshape(-1)[:5]
@@ -221,7 +262,7 @@ def main():
             fviol &= torch.isfinite(rel_gf) & torch.isfinite(rel_nf)
             # explained: sim also deviates beyond the same gate (formula/rounding path), i.e. sim reproduces device
             fviol_idx = torch.nonzero(fviol, as_tuple=False).reshape(-1)
-            sim_match_v = ((simf - gf).abs() <= (TOL_ABS + 2 * gf.abs() * TOL_REL))[fviol_idx] if fviol_idx.numel() else torch.tensor([])
+            sim_match_v = ((simf - gf).abs() <= (TOL_ABS + gf.abs() * TOL_REL))[fviol_idx] if fviol_idx.numel() else torch.tensor([])
             fwd_attrib.append({
                 "case": f"{op}|{dtype}|{layout}|{cls}",
                 "fwd_gate_violations": int(fviol.sum()),
@@ -246,8 +287,12 @@ def main():
     with open("results/fail_attribution_stats_v3.json", "w") as f:
         json.dump(out, f, indent=1)
     print(json.dumps({"grand_totals": grand, "tanh_forward": fwd_attrib}, indent=1))
-    # hard rule: any unexplained -> exit 1 (honest reporting)
-    sys.exit(1 if grand["unexplained"] > 0 else 0)
+    # hard rule: backward OR forward unexplained -> exit 1 (declared union)
+    fwd_unexp = sum(a.get("unexplained_fwd", 0) for a in fwd_attrib)
+    out["exit_rule"] = {"backward_unexplained": grand["unexplained"], "forward_unexplained": fwd_unexp,
+                        "exit": 1 if (grand["unexplained"] + fwd_unexp) > 0 else 0}
+    print("exit_rule:", json.dumps(out["exit_rule"]))
+    sys.exit(1 if (grand["unexplained"] + fwd_unexp) > 0 else 0)
 
 
 if __name__ == "__main__":

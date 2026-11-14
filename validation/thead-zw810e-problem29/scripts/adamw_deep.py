@@ -83,7 +83,8 @@ def compare_state(a, b, dtype, label):
         fin = torch.isfinite(af) & torch.isfinite(bf)
         denom = bf[fin].abs().clamp_min(1e-6)
         viol = ((af[fin] - bf[fin]).abs() / denom > 4 * C.EPS["float32"]).sum()
-        return {"label": label, "positions": fin.sum().item(), "tol_violations": int(viol), "max_abs": float((af - bf).abs().max()), "nan_a": int(torch.isnan(af).sum()), "nan_b": int(torch.isnan(bf).sum())}
+        return {"label": label, "positions": fin.sum().item(), "tol_violations": int(viol), "max_abs": float((af - bf).abs().max()) if fin.any() else 0.0, "nan_a": int(torch.isnan(af).sum()), "nan_b": int(torch.isnan(bf).sum()), "inf_a": int(torch.isinf(af).sum()), "inf_b": int(torch.isinf(bf).sum()),
+                "nonfinite_total": int((~torch.isfinite(af) | ~torch.isfinite(bf)).sum())}
     else:
         d = dtype if dtype in DT else "bfloat16"
         ulp = C.dt_ulp(af.cpu().to(DT[d]), bf.cpu().to(DT[d]), d)
@@ -139,7 +140,7 @@ def main():
     ap.add_argument("--steps", type=int, default=100)
     args = ap.parse_args()
     OUT = {"steps": args.steps, "device": torch.cuda.get_device_name(0), "torch": torch.__version__,
-           "provenance": "adamw_deep v4 (round-4 review: SINGLE production aggregate() — summary and exit code same-source; --selftest injects through real aggregate(); v1-v3 batches superseded: v1/v2 state_compare silently empty, v3 dual aggregation lists)",
+           "provenance": "adamw_deep v5 (round-5 review: state nan/inf counted and hard-failed via aggregate(); selftest injects only-state-NaN / only-state-Inf through real aggregate(); v4 = single aggregate + exit unification; v1-v3 superseded)",
            "tolerances_declared": "fp32: per-position rel<=4eps or abs<=1e-6 denom floor; bf16/fp16: <=1 ulp (ordinal); ckpt: bitwise vs direct"}
 
     # correctness matrix (fresh processes not needed: same-process sequential,
@@ -283,6 +284,9 @@ def aggregate(results, checkpoint):
                     final.append(f"{key}/{ok_}/{c.get('label')}/state_missing_or_mismatch")
                 if c.get("tol_violations", 0) > 0 or c.get("ulp_max", 0) > 1:
                     final.append(f"{key}/{ok_}/{c.get('label')}/state_tol_violation")
+                nf_total = (c.get("nan_a", 0) or 0) + (c.get("nan_b", 0) or 0) + (c.get("inf_a", 0) or 0) + (c.get("inf_b", 0) or 0) + (c.get("nonfinite_total", 0) or 0)
+                if nf_total > 0:
+                    final.append(f"{key}/{ok_}/{c.get('label')}/state_nan_inf(nan_a={c.get('nan_a')},inf_a={c.get('inf_a')},nan_b={c.get('nan_b')},inf_b={c.get('inf_b')},nonfinite_total={c.get('nonfinite_total')})")
             for c in x.get("param_compare", []):
                 if c.get("nan_a", 0) > 0 or c.get("nan_b", 0) > 0 or c.get("inf_a", 0) > 0 or c.get("inf_b", 0) > 0:
                     final.append(f"{key}/{ok_}/{c.get('label')}/nan_inf")
@@ -339,7 +343,19 @@ def selftest_aggregation():
     print(("PASS" if ok4 else "FAIL") + " aggregate: only-step-mismatch -> " + "; ".join(f4))
     if not ok4: bad.append("step mismatch")
 
-    # 5. normal control -> empty
+    # 4b/4c. only state NaN / only state Inf (round-5: nonfinite counts are hard)
+    r5 = {"k/float32": {"foreach": good_x(), "fused": dict(good_x(), state_compare=[dict(empty_cmp(0, "param0.exp_avg"), nan_b=3)])}}
+    f5n = agg(r5, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+    ok5n = len(f5n) == 1 and "state_nan_inf" in f5n[0]
+    print(("PASS" if ok5n else "FAIL") + " aggregate: only-state-NaN -> " + "; ".join(f5n))
+    if not ok5n: bad.append("state NaN")
+    r5i = {"k/float32": {"foreach": good_x(), "fused": dict(good_x(), state_compare=[dict(empty_cmp(0, "param0.exp_avg_sq"), inf_b=2)])}}
+    f5i = agg(r5i, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+    ok5i = len(f5i) == 1 and "state_nan_inf" in f5i[0]
+    print(("PASS" if ok5i else "FAIL") + " aggregate: only-state-Inf -> " + "; ".join(f5i))
+    if not ok5i: bad.append("state Inf")
+
+    # 6. normal control -> empty
     f5 = agg({"k/float32": {"foreach": good_x(), "fused": good_x()}}, {"params_bitwise_equal": True, "state_bitwise_equal": True})
     ok5 = len(f5) == 0
     print(("PASS" if ok5 else "FAIL") + " aggregate: all-pass control -> empty (exit 0)")

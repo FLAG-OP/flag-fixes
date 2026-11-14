@@ -2,7 +2,7 @@
  "steps": 100,
  "device": "PPU-ZW810E",
  "torch": "2.10.0",
- "provenance": "adamw_deep v4 (round-4 review: SINGLE production aggregate() \u2014 summary and exit code same-source; --selftest injects through real aggregate(); v1-v3 batches superseded: v1/v2 state_compare silently empty, v3 dual aggregation lists)",
+ "provenance": "adamw_deep v5 aggregation applied to v4 device data (round-5: state nan/inf counted+hard; selftest 8/8 incl only-state-NaN/Inf); v1-v4 aggregation versions superseded",
  "tolerances_declared": "fp32: per-position rel<=4eps or abs<=1e-6 denom floor; bf16/fp16: <=1 ulp (ordinal); ckpt: bitwise vs direct",
  "correctness_vs_stock": {
   "single/float32": {
@@ -97025,6 +97025,6 @@
    "bge336/mixed/fused/param334.exp_avg_sq/state_tol_violation",
    "bge336/mixed/fused/param335.exp_avg_sq/state_tol_violation"
   ],
-  "exit_code_rule": "exit 1 iff summary.hard_deviations non-empty (single production aggregation)"
+  "aggregate_version": "v5"
  }
 }
