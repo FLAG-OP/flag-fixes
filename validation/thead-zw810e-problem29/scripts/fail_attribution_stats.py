@@ -228,15 +228,17 @@ def main():
             stats["ulp_le2_frac"] = round(float((ulp_arr <= 2).mean()), 6) if ulp_arr.size else 0.0
             tol = (sim_v - dev_v).abs() <= (TOL_ABS + dev_v.abs() * TOL_REL)
             stats["exact"] = int(exact.sum())
-            # invariant selftest: every count within [0, gate_violations]
-            for k in ("exact", "ulp_le2", "tol", "unexplained"):
-                v = stats[k]
-                assert 0 <= v <= stats["gate_violations"], f"invariant violated: {k}={v} gate={stats['gate_violations']}"
             stats["tol"] = int(tol.sum())
-            explained = exact | (torch.tensor(ulp_arr <= 2)) | tol
+            explained = exact | torch.tensor(ulp_arr <= 2) | tol
             unexp_mask = ~explained
             stats["explained_union"] = int(explained.sum())
             stats["unexplained"] = int(unexp_mask.sum())
+            # round-6: invariant checks AFTER all assignments + union identity
+            for k in ("exact", "ulp_le2", "tol", "explained_union", "unexplained"):
+                v = stats[k]
+                assert 0 <= v <= stats["gate_violations"], f"invariant violated: {k}={v} gate={stats['gate_violations']}"
+            assert stats["explained_union"] + stats["unexplained"] == stats["gate_violations"], \
+                f"union identity violated: {stats['explained_union']}+{stats['unexplained']} != {stats['gate_violations']}"
             if unexp_mask.any():
                 ue = torch.nonzero(unexp_mask, as_tuple=False).reshape(-1)[:5]
                 stats["unexplained_examples"] = [
@@ -272,8 +274,11 @@ def main():
 
         per_class.append({"case": f"{op}|{dtype}|{layout}|{cls}", **stats, "fwd_gate_violations": fv})
 
+    bwd_unexp = grand["unexplained"]
+    fwd_unexp_total = sum(a.get("unexplained_fwd", 0) for a in fwd_attrib)
+    exit_verdict = 1 if (bwd_unexp + fwd_unexp_total) > 0 else 0
     out = {
-        "batch": "v3 (round-4): three-level stats on violating subsets + tanh-forward separate attribution",
+        "batch": "v3.1 (round-6): three-level stats on violating subsets + tanh-forward separate attribution; exit_rule persisted in JSON",
         "criteria": {
             "exact": "sim bits == device bits (raw)",
             "ulp_le2": "dtype ordinal ulp distance <= 2",
@@ -284,15 +289,39 @@ def main():
         "grand_totals": grand,
         "tanh_forward_attribution": fwd_attrib,
     }
+    out["exit_rule"] = {"backward_unexplained": bwd_unexp, "forward_unexplained": fwd_unexp_total,
+                        "exit": exit_verdict, "rule": "exit 1 iff backward_unexplained + forward_unexplained > 0"}
+    # round-6: auto-generated summary with per-group denominators (README/PR must quote these)
+    none_c = [c for c in per_class if c["case"].startswith("gelu_none")]
+    tanh_b = [c for c in per_class if c["case"].startswith("gelu_tanh")]
+    n_den = sum(c["gate_violations"] for c in none_c)
+    n_exact = sum(c["exact"] for c in none_c)
+    n_ulp = sum(c["ulp_le2"] for c in none_c)
+    n_tol = sum(c["tol"] for c in none_c)
+    t_den = sum(c["gate_violations"] for c in tanh_b)
+    t_unexp = sum(c["unexplained"] for c in tanh_b)
+    fwd_den = sum(a["fwd_gate_violations"] for a in fwd_attrib)
+    fwd_unexp = sum(a["unexplained_fwd"] for a in fwd_attrib)
+    out["auto_summary"] = {
+        "none_backward": {"classes": len(none_c), "denominator": n_den,
+                          "exact": n_exact, "exact_pct": round(100 * n_exact / n_den, 2) if n_den else None,
+                          "ulp_le2": n_ulp, "ulp_le2_pct": round(100 * n_ulp / n_den, 2) if n_den else None,
+                          "tol": n_tol, "tol_pct": round(100 * n_tol / n_den, 2) if n_den else None,
+                          "unexplained": sum(c["unexplained"] for c in none_c)},
+        "tanh_backward": {"classes": len(tanh_b), "denominator": t_den, "unexplained": t_unexp,
+                          "unexplained_ratio": f"{t_unexp}/{t_den}"},
+        "tanh_forward": {"denominator": fwd_den, "unexplained": fwd_unexp,
+                         "unexplained_ratio": f"{fwd_unexp}/{fwd_den}"},
+        "overall_denominators_note": "per-group denominators; do not mix overall ratios with subset ratios",
+    }
+    # round-6: serialize THEN re-read, assert saved exit verdict matches actual decision
     with open("results/fail_attribution_stats_v3.json", "w") as f:
         json.dump(out, f, indent=1)
-    print(json.dumps({"grand_totals": grand, "tanh_forward": fwd_attrib}, indent=1))
-    # hard rule: backward OR forward unexplained -> exit 1 (declared union)
-    fwd_unexp = sum(a.get("unexplained_fwd", 0) for a in fwd_attrib)
-    out["exit_rule"] = {"backward_unexplained": grand["unexplained"], "forward_unexplained": fwd_unexp,
-                        "exit": 1 if (grand["unexplained"] + fwd_unexp) > 0 else 0}
-    print("exit_rule:", json.dumps(out["exit_rule"]))
-    sys.exit(1 if (grand["unexplained"] + fwd_unexp) > 0 else 0)
+    reloaded = json.load(open("results/fail_attribution_stats_v3.json"))
+    saved_exit = reloaded["exit_rule"]["exit"]
+    assert saved_exit == exit_verdict, f"saved exit {saved_exit} != verdict {exit_verdict}"
+    print(json.dumps({"grand_totals": grand, "tanh_forward": fwd_attrib, "exit_rule": reloaded["exit_rule"]}, indent=1))
+    sys.exit(exit_verdict)
 
 
 if __name__ == "__main__":

@@ -355,6 +355,20 @@ def selftest_aggregation():
     print(("PASS" if ok5i else "FAIL") + " aggregate: only-state-Inf -> " + "; ".join(f5i))
     if not ok5i: bad.append("state Inf")
 
+    # 5d. FULL-CHAIN: compare_state (real fn, CPU tensors w/ NaN/Inf) -> aggregate (round-6)
+    try:
+        a_bad = torch.tensor([1.0, float("nan"), 3.0])
+        b_bad = torch.tensor([1.0, float("inf"), 3.0])
+        cs = compare_state(a_bad, b_bad, "float32", "param0.exp_avg")
+        r6 = {"k/float32": {"foreach": good_x(), "fused": dict(good_x(), state_compare=[cs])}}
+        f6 = agg(r6, {"params_bitwise_equal": True, "state_bitwise_equal": True})
+        ok6c = len(f6) == 1 and "state_nan_inf" in f6[0]
+        print(("PASS" if ok6c else "FAIL") + " full-chain compare_state(NaN/Inf)->aggregate -> " + "; ".join(f6))
+        if not ok6c: bad.append("full-chain nan/inf")
+    except Exception as e:
+        bad.append(f"full-chain nan/inf raised: {e}")
+        print("FAIL full-chain nan/inf raised", e)
+
     # 6. normal control -> empty
     f5 = agg({"k/float32": {"foreach": good_x(), "fused": good_x()}}, {"params_bitwise_equal": True, "state_bitwise_equal": True})
     ok5 = len(f5) == 0
@@ -363,9 +377,9 @@ def selftest_aggregation():
 
     # exit-code rule: same-source mapping
     rule = lambda lst: 1 if lst else 0
-    ok6 = rule(f) == 1 and rule(f2) == 1 and rule(f3) == 1 and rule(f4) == 1 and rule(f5) == 0
-    print(("PASS" if ok6 else "FAIL") + " exit-code rule uses aggregate() result")
-    if not ok6: bad.append("exit rule")
+    ok7 = rule(f) == 1 and rule(f2) == 1 and rule(f3) == 1 and rule(f4) == 1 and rule(f5) == 0 and rule(f6) == 1
+    print(("PASS" if ok7 else "FAIL") + " exit-code rule uses aggregate() result")
+    if not ok7: bad.append("exit rule")
     return bad
 
 

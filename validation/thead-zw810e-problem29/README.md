@@ -161,12 +161,12 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 ### D. 15 hard FAIL 归因（gelu_backward 负尾）+ F-1/F-2 复验
 
 - 违例位置 84% 在 |x|>3.9 负尾（p50 |x|=7.1）：**FlagGems fp32 gelu_backward 在 |x|≳8 输出精确 0.0**（native/真值 ~1e-14–1e-36），5.5≤|x|≤8 幅度偏差至 1.6×，|x|<5 正常；绝对误差 ≤1.14e-07。fp64 双公式模拟确认 gems 公式数学等价——**负尾有限精度伪影（erf 抵消 + exp 项损失），非算法错误**；单点梯度 ≤1.14e-07，**候选训练影响较小——但"可忽略"的定稿需模型级敏感性/长步训练对照支持，当前为推断、待训练验证**。第四轮归因修正与扩展（复审 6876765307；v1/v2 归因批次 superseded，现行 `fail_attribution_stats_v3.json`）：①v1 参考公式错误已撤回（正确导数 `Phi(x)+x·phi(x)`）；②参考改 erfc 稳定 fp64 形式；③violation 掩码用生产 comparator；④**全 15 FAIL 类别三级匹配统计**（违例子集内，对 TTIR 顺序 fp32 模拟）：
-- **gelu_none 9 类（4,012,714 个违例位置，负尾为主）：unexplained=0**——exact 位级 bf16 100%、fp32 ~91–99%；ulp≤2 补齐（合计 ulp≤2 = 4,290,428/4,443,214 = 96.57%）；容差 100%；**求和顺序量化机制（按当前证据范围）成立**（编译后 TTIR：`pdf + 0.5·erf` 在 0.5 量级舍入、fp32 ulp=2^-24≈5.96e-08，再 `+0.5` → 负尾梯度被量化到 2^-24 栅格或精确 0）；
-- **gelu_tanh backward 6 类：unexplained 3,190/430,500**（每类 426–628 位置未解释——模拟公式与编译内核细节差异，独立调查）；
+- **gelu_none 9 类（分母 4,012,714）：unexplained=0**——exact = ulp≤2 = **3,967,306（98.87%）**（两者计数相同，不存在"ulp≤2 补齐其余"）；容差 4,012,714（**100%**）覆盖剩余位置；**求和顺序量化：有证据范围限制的归因假设**（编译后 TTIR：`pdf + 0.5·erf` 在 0.5 量级舍入、fp32 ulp=2^-24≈5.96e-08，再 `+0.5` → 负尾梯度被量化到 2^-24 栅格或精确 0）；
+- **gelu_tanh backward 6 类：unexplained 3,190/430,500**（每类 426–628 位置未解释——模拟公式与编译内核细节差异，独立调查）；**与 gelu_tanh forward 26/22,242 分别报告，不合并为一个比例**；
 - **gelu_tanh forward 6 类：前向模拟公式 x²→x³ 修正后，unexplained 26/22,242**（其余 99.88% 被修正后模拟解释；剩余 26 位置独立调查）。
 - 栅格命中按存档样本逐个判定：**none 类 25/26（96.2%）、tanh 类 1/19（5.3%）、合计 26/45**（v2 报告的 46 为分母缺陷，已修正）。三级匹配总量（最终 JSON）：exact 4,192,640（94.36%）、ulp≤2 4,290,428（96.57%）、容差 4,440,024（99.93%）——**容差匹配非位级证明**。
 - 容差匹配口径声明（统一常量后）：`|sim-device| ≤ 6e-8 + |device|·2×4.77e-07` 下全张量匹配 **39,304,592/39,321,600（99.957%）**——该容差非位级精确证明（6e-8 接近 2^-24 量化间隔本身）。
-- TTIR 证据归档：`results/ttir_evidence/{gelu_backward_none_kernel_rank_2,gelu_tanh_kernel_rank_1,gelu_tanh_kernel_rank_2}.ttir` + SHA256SUMS；归因适用范围=已编译内核与已测布局，不概括其他路径。
+- TTIR 证据归档：`results/ttir_evidence/{gelu_backward_none_kernel_rank_2,gelu_tanh_kernel_rank_1,gelu_tanh_kernel_rank_2}.ttir` + SHA256SUMS；**适用范围注明**：gelu_backward_none 存档 TTIR 为 bf16/rank-2 编译产物（none backward fp32 类的量化结论部分依赖同源源码公式，非全部布局的直接编译证据）；tanh 存档 TTIR 为 fp16/bf16 内核，不视作 fp32 tanh 失败路径的直接编译证据；相关内核证据不外推到其他失败路径。
 - F-1/F-2 复验（2026-11-13 第二次，单次触发）：**仍挂起**（控制组正常）——full-enable training 保持 blocked；等平台/设备恢复后按记录字段复验。
 
 ### E. 小模型 × fused optimizer（可训练 embedding，8 步，全部 finite）
@@ -212,3 +212,10 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 - **AdamW 聚合补齐**：compare_state fp32 分支记录 nan/inf/nonfinite 计数；`aggregate()` 将状态 NaN/Inf 列为硬失败；自测新增**仅状态 NaN / 仅状态 Inf**（经真实 `aggregate()`，8/8 通过）。v5 聚合语义应用于 v4 设备数据 → 2,702 项硬偏差（与归档一致），v4 及更早聚合版本 superseded。
 - 文档数字全部由最终 JSON 生成：none 9 类（非 12）、tanh backward 3,190/430,500、tanh forward 26/22,242、三级匹配 94.36%/96.57%/99.93%。
 - 未重跑项：微基准 batch-2、accuracy v6、小模型 v2.1、F-1/F-2（blocked）。AdamW 状态 NaN/Inf 新增计数无需设备重跑（利用 v4 已有数据；新计数路径由自测覆盖）。
+
+### 第六轮实施（复审 6886949698 三项收尾）
+
+- **exit_rule 持久化**：先构造完整 out（含 backward/forward 未解释数与唯一退出判定）→ 写文件 → 序列化后回读断言 saved==verdict → 打印 → 退出；batch 标识更新为本轮语义（v3.1）。
+- **摘要分母修正（auto_summary 字段由脚本自动生成，README/PR 按其引用）**：none 分组（9 类，分母 4,012,714）：exact = ulp≤2 = 3,967,306（98.87%）、容差 100%（4,012,714）、unexplained 0；backward 全类别 3,190/4,443,214（仅 tanh 3,190/430,500）；forward 26/22,242——总体与子集分组分开报告，不合并比例。
+- **不变量断言移至全部赋值之后**，并新增 `explained_union + unexplained == gate_violations` 恒等检查（对现有 JSON 通过；脚本修正保障未来产物）。
+- **compare_state → aggregate 全链路 CPU 反例已补**（torch CPU 环境）：NaN/Inf 状态张量经真实 compare_state 后进入 aggregate → state_nan_inf 硬失败（selftest 9/9）。旧设备 JSON 中 1,848 条 fp32 状态记录缺 Inf/nonfinite 计数——确认为历史数据边界，不追溯证明其无 Inf；未来正式验收用新比较器重采完整字段。

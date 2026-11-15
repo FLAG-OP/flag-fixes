@@ -62,6 +62,11 @@ WARNING:root:Skipped registering operator: This is not allowed since there's alr
    "sim_also_deviates_and_matches_device_within_tol": 4811,
    "unexplained_fwd": 2
   }
- ]
+ ],
+ "exit_rule": {
+  "backward_unexplained": 3190,
+  "forward_unexplained": 26,
+  "exit": 1,
+  "rule": "exit 1 iff backward_unexplained + forward_unexplained > 0"
+ }
 }
-exit_rule: {"backward_unexplained": 3190, "forward_unexplained": 26, "exit": 1}
