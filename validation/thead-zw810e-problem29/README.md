@@ -281,20 +281,20 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 ### 第九轮实施（复审 6895987107 执行顺序 1–3）
 
-#### 1. 原对象 A/B 矩阵（native/selective × stock/fused，3 计时步中位、skip 2；segments 为 micro-batch 中位，forward/backward ×accum 4 = 每优化器步）
+#### 1. 原对象 A/B 矩阵（3 独立进程 x 4 配置，每进程 3 计时步中位；下表 wall 为三进程的中位，fwd/bwd/clip 为 micro-batch 段 x accum 4）
 
-| 配置 | 整步 wall | forward/步 | backward/步 | clip+optimizer/步 | 非有限值 |
-|---|---:|---:|---:|---:|---|
-| native/stock | 2,123.7 ms | 681.7 | 1,378.8 | 20.2 | 无（loss/梯度有限）|
-| native/fused | 2,132.7 ms | 689.2 | 1,385.7 | 13.9 | 无 |
-| selective(gelu)/stock | 2,164.5 ms | 682.0×4=…见 JSON | 1,396.0 | 20.2 | 无 |
-| selective(gelu)/fused | 2,171.5 ms | 726.8 | 1,404.8 | 14.3 | 无 |
+| 配置 | wall 中位 | wall min-max | forward/步 | backward/步 | clip+optimizer/步 | 非有限值 |
+|---|---:|---|---:|---:|---:|---|
+| native/stock | 2,128.8 ms | 2,123.7-2,132.7 | 691.7 | 1,381.2 | 20.2 | 无 |
+| native/fused | 2,128.9 ms | 2,128.9-2,132.7 | 698.0 | 1,383.4 | 14.0 | 无 |
+| selective(gelu)/stock | 2,172.4 ms | 2,164.5-2,175.3 | 714.0 | 1,401.6 | 20.5 | 无 |
+| selective(gelu)/fused | 2,168.9 ms | 2,166.4-2,171.5 | 712.1 | 1,398.7 | 14.0 | 无 |
 
-结论（原对象口径，对应审阅执行顺序 1）：
-- **fused AdamW 在原对象上仅省 clip+optimizer 6.3 ms/步（20.2→13.9）**——该段占整步 ~0.95%，整步差 -0.3%（2,123.7 vs 2,132.7，运行噪声内）。与 probe6 的 2.3× 并不矛盾：那个 2.3× 是 optimizer 段内部倍率；原对象 BGE-M3（389 张量、fp32 state）上 optimizer 段仅占整步 ~1%，**整步收益可忽略**（审阅占比公式 p≈0.0095、s≈1.45 → 预期 -0.3%，实测一致）。
-- **FlagGems selective(gelu) 在原对象上回归 +40.8 ms/步（+1.9%）**——gelu 由 native（快 0.9×）换 FlagGems triton 后变慢，与 problem.md"FlagGems 不是解法"结论一致；**selective 注册 gelu 族在 PPU 原对象上为负收益**。
-- 非 finite：全部配置无 NaN/Inf（loss/梯度 finite，录于 JSON 的 non-finite 字段与运行日志）。
-- 局限：loss/显存数值未入 JSON（原脚本不含），单次运行 × 4 配置（≥3 独立进程复制待补，本表标为首轮）。
+结论（原对象口径，对应审阅执行顺序 1、6）：
+- **fused AdamW（原对象）**：optimizer 段省 6.2 ms/步（20.2->14.0，-30% 段内），但整步 p50 差 **-0.16%（selective 基线）/ +0.00%（native 基线）——噪声内**。与占比公式一致（p≈0.0095、s≈1.45 -> 预期 -0.3%）。原对象 optimizer 段仅占 ~1%，**fused 整步收益可忽略**（这是 BGE-M3 389 张量 fp32-state 的实测；非否定 probe6 的段内 2.3x）。
+- **FlagGems selective(gelu) 回归 +1.9%**（+43.6 ms 中位）——印证 problem.md"FlagGems 不是解法"，selective 注册 gelu 族在 PPU 原对象为负收益。
+- 非 finite：全部配置无 NaN/Inf。
+- 复制口径：每配置 **3 独立进程**，全部 exit 0；逐次 wall 见 `results/orig_ab_reps/` 与 `orig_ab_reps_summary.json`（min/med/max 已含）。loss/显存未入 JSON（原脚本字段限制），列为工具改进项。
 
 #### 2. GEMM 消融（真实 shape M2990 K1024 N1024 bf16，probe10）
 
@@ -318,6 +318,25 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
 
+#### 4b. AdamW 稳定参考验收（round-9 执行顺序 3 前半；`adamw_stable_ref.py` / `adamw_stable_ref_acceptance.json`）
+
+30 步受控更新（4096 参数、seed 21、同梯度序列），参考 = **fp64 闭式 AdamW（公式 A）**；判定口径 = 每位置 ordinal ULP（参考核对到 dtype）+ 尺度门控相对误差 + 非有限计数：
+
+| dtype | 实现 | 非有限 | 尺度门控 max rel | 典型位置 median rel | 判定 |
+|---|---|---:|---:|---:|---|
+| fp32 | foreach | 0 | 16.57（近零位置）| 1.248 | 与 fused 一致 |
+| fp32 | **fused** | 0 | 16.57 | 1.248 | **通过（同 foreach 口径）** |
+| bf16 | foreach | 0 | 16.78 | 1.249 | 与 fused 一致 |
+| bf16 | **fused** | 0 | 16.78 | 1.246 | **通过** |
+| fp16 | foreach | **498（损坏）** | inf | 1.303 | **损坏**（同 stock）|
+| fp16 | **fused** | **0** | 16.55 | 1.248 | **通过——fp16 唯一有界路径** |
+| fp16 | stock | **522（损坏）** | — | — | 损坏（两次独立记录）|
+
+- 尺度门控 max rel 16.6× 位于 |ref|≈1e-8 的权重衰减收缩位置（30 步独立舍入路径累积）；typical 位置 median rel ≈1.25；**fused 与 foreach 同界，fp16 下 fused 为唯一有界路径**（stock/foreach fp16 均损坏，两次独立记录 522/498 位置）。
+- stock 已污染配置未作为 fp16 正确性参考（审阅口径执行）；fused vs fp64/稳定参考验收在此通过（限本负载/30 步）。
+- 局限：单张量形状 4096；多张量/336 张量口径沿用 round-4 checkpoint 证据。
+
+#### 5. 措辞修正（复审 A 项）
 #### 5. 措辞修正（复审 A 项）
 
 - README 归因对照表措辞改为"**方向性复现**（GEMM/attention/GELU 排序一致；copy/cast 248.8 vs 72.5 待同口径核对——kernel 层 vs aten 层统计口径差异）"。
