@@ -220,7 +220,61 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 - **不变量断言移至全部赋值之后**，并新增 `explained_union + unexplained == gate_violations` 恒等检查（对现有 JSON 通过；脚本修正保障未来产物）。
 - **compare_state → aggregate 全链路 CPU 反例已补**（torch CPU 环境）：NaN/Inf 状态张量经真实 compare_state 后进入 aggregate → state_nan_inf 硬失败（selftest 9/9）。旧设备 JSON 中 1,848 条 fp32 状态记录缺 Inf/nonfinite 计数——确认为历史数据边界，不追溯证明其无 Inf；未来正式验收用新比较器重采完整字段。
 
-### 第六轮补充归档（非阻塞收尾，复审 6887416894）
+---
 
-- `logs/adamw_selftest_v5_9of9.log`：round-5/6 版自测完整 **9/9** 日志（旧 6 项日志为历史版本；新增仅状态 NaN/Inf 与 compare_state→aggregate 全链路两类）。脚本版本见 provenance（adamw_deep v5）。
-- 性能表口径按审阅补充基线标识：以 **selective FlagGems + stock（2.84 ms）** 为 FlagGems 基线时，fused optimizer 带来整步 **2.84→2.68 ms（-5.6%，吞吐约 +6%）**；**native/stock→native/fused 的 -11% 不记在 FlagGems 基线**；selective/fused 2.68 ms 仍较 native/stock 2.27 ms 慢约 18%，不称 FlagGems 相对原生正收益；Graph 12.6× 为 0.0731→0.0058 ms/调用组件微基准（同批），输出验证批次 0.0053 ms/调用单独标注、不与旧批拼接。
+## 第八轮（复审 6887760539 + 6888593048）：回到 problem29 原对象——核查清单与 native 基线
+
+按审阅要求回到 problem29 原问题仓库中的测试对象、训练入口与配置。完整清单见 `results/orig_entry/`（含原入口验证文件）与本节；本节仅列事实。
+
+### 来源（真实入口，全部已验证）
+
+- 原问题仓库：https://github.com/wxj630/FlagScale/tree/feat/retrieval-flagos（problem.md 首行给定；分支 HEAD `6862134`）
+- FlagScale 基线 commit：flagos-ai/FlagScale @ `89f342e690053e07dda845f1365089ec00464e09`（"docs(retrieval): record the real 3-epoch wall clock, and add a three-platform watcher"）
+- 训练入口：`flagscale/train/train_retrieval.py`（1,325 行）——**sha256 = 5ee5757…11df，与 fixes/adamw-fused/fix.yaml `before_sha256` 完全一致**（adamw-fused 的目标文件即此文件）
+- 配置：`examples/retrieval/conf/train/bge_m3.yaml`（batch 10、gradient_accumulation 4、bf16、max_length 512、lr 2e-5、T²-Ranking triplet-15）
+- profiling 脚本：`examples/retrieval/profile_step_segments.py`、`profile_op_micro.py`（problem.md §二/§三的工具）
+- 原始命令：`python examples/retrieval/profile_step_segments.py --conf examples/retrieval/conf/train/bge_m3.yaml --steps 3 --skip 2 --prof-steps 4 --device cuda`
+- 权重：BAAI/bge-m3（hf-mirror 下载 `pytorch_model.bin` 2,269,966,336 B + `sparse_linear.pt`/`colbert_linear.pt`/tokenizer）
+- 数据：sentence-transformers/t2ranking `triplet-15/`（11 parquet，1.1 GB，schema anchor/positive/negative_1..15；与 FlagScale 文档"11 个文件, 340,111 行"一致；conf 数据路径同名同 schema）
+- x-benchmark 容器入口：`/home/wuyiqiang/x-benchmark` + `run_model.py`——**不在本机**（见阻碍②）
+
+### 对象与差异
+
+原对象 = BGE-M3（XLM-R large 24 层/hidden 1024/vocab 250002，bf16，CLS pooling + sparse/colbert 头，对比损失 temperature 0.05，AdamW lr 2e-5，真实 T²-Ranking triplet-15 数据，length-sort 窗口 256）。与自建小模型（2 层/D256/fp32/随机 token/MSE）和昆仑芯重建负载（XLM-R large 随机权重、非预训练）的差异已按审阅表格要求列于 `results/original_object_checklist.md` §二。
+
+### 已执行（native 基线，exit 0）
+
+- 权重 + 数据下载（hf-mirror，3.4 GB 落盘）；入口文件 sha256 与 fix.yaml before 完全一致
+- **整步 wall = 2,131.9 ms**（batch 10 × accum 4 = 200 texts/step，3 计时步中位，skip 2）
+- 分段：forward 707.5 ms（33.2%）/ backward 1,380.5 ms（64.8%）/ clip+optimizer 20.3 ms（1.0%）；device compute = 2,029.5 ms（95.2%）
+- **aten 归因（每步，175 条目仅取 aten:: 层——遵循 problem.md §5.2 PPU 双层重复计数警告）**：
+
+| 类别 | ms/step | calls/step | %aten |
+|---|---:|---:|---:|
+| GEMM（aten::mm 675.3 + addmm 337.2）| **1,012.5** | mm **5,776** | **53.1%** |
+| attention（efficient fwd 225.8 + bwd 347.8）| **573.5** | 480/960 | 30.1% |
+| pointwise | 91.2 | 11,095 | 4.8% |
+| copy/cast（aten::copy_ 72.5）| 72.5 | 9,820 | 3.8% |
+| layer_norm | 39.9 | 1,960 | 2.1% |
+| GELU | **32.6** | 960 | 1.7% |
+
+- **aten::mm 5,776 次/step 与 problem.md 原始 PPU 归因逐次一致**；GEMM/attention/copy-cast/GELU 排序与 problem.md §4.3（GEMM 44.3% 主导、GELU 0.9× 非瓶颈）方向一致——原对象 native 基线在本机复现了原始归因。
+- attention 走 `_efficient_attention` 后端的原因已由 `probe9b_sdpa_masked.json` 定位：**bool padding mask 下 flash "No available kernel"** → 回落 efficient（4.5× 慢于无掩码 flash）/math（9.5×）。
+
+### 阻碍（逐项，含证据与影响）
+
+| # | 阻碍 | 证据 | 影响 | 动作 |
+|---|---|---|---|---|
+| ① | 磁盘 df=100% | 实测仍可写（1.1 GB 瞬时成功；本轮落盘 3.4 GB）| 大规模数据/多 checkpoint | 必要下载已完成；扩容需平台 |
+| ② | x-benchmark 容器不在本机 | `/home/wuyiqiang`、`/data/ppu-benchmark` 为另一训练机路径（zeros-7181 problem.md）| x-benchmark 整模型口径 | 平台提供容器/入口 |
+| ③ | T²-Ranking 官方原始集未下载 | 已用 conf 同名镜像 triplet-15（schema 对齐文档）| 官方 parquet 逐字节同源性 | 后续按 FlagScale 流程重建 |
+| ④ | FlagGems full-enable blocked | F-1/F-2 两次单次触发出证（见第六轮）| full-enable 原对象训练 | 隔离复验待设备状态（平台+后续）|
+| ⑤ | FSDP2 多卡口径 | 本机单卡分配 | 多卡验收 | 多卡环境就绪后按 §5.5 单列通信（后续）|
+
+### 未尝试（明确标注）
+
+官方 T²-Ranking parquet 逐字节同源重建；真实 3-epoch 收敛训练（仅 3 计时步基线）；FSDP2 多卡；x-benchmark 容器运行；FlagGems full-enable 在原对象上的运行（blocked）。
+
+### 定位声明
+
+PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组件级"；本节为 problem29 原对象在 ZW810E 的**首轮 native 基线**——下一步按审阅排序在原对象上做优化前后对照（GEMM 真实 shape 调优、SDPA 掩码路径、copy/cast），full-enable 复验通过后再补 FlagGems 配置。
