@@ -219,3 +219,8 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 - **摘要分母修正（auto_summary 字段由脚本自动生成，README/PR 按其引用）**：none 分组（9 类，分母 4,012,714）：exact = ulp≤2 = 3,967,306（98.87%）、容差 100%（4,012,714）、unexplained 0；backward 全类别 3,190/4,443,214（仅 tanh 3,190/430,500）；forward 26/22,242——总体与子集分组分开报告，不合并比例。
 - **不变量断言移至全部赋值之后**，并新增 `explained_union + unexplained == gate_violations` 恒等检查（对现有 JSON 通过；脚本修正保障未来产物）。
 - **compare_state → aggregate 全链路 CPU 反例已补**（torch CPU 环境）：NaN/Inf 状态张量经真实 compare_state 后进入 aggregate → state_nan_inf 硬失败（selftest 9/9）。旧设备 JSON 中 1,848 条 fp32 状态记录缺 Inf/nonfinite 计数——确认为历史数据边界，不追溯证明其无 Inf；未来正式验收用新比较器重采完整字段。
+
+### 第六轮补充归档（非阻塞收尾，复审 6887416894）
+
+- `logs/adamw_selftest_v5_9of9.log`：round-5/6 版自测完整 **9/9** 日志（旧 6 项日志为历史版本；新增仅状态 NaN/Inf 与 compare_state→aggregate 全链路两类）。脚本版本见 provenance（adamw_deep v5）。
+- 性能表口径按审阅补充基线标识：以 **selective FlagGems + stock（2.84 ms）** 为 FlagGems 基线时，fused optimizer 带来整步 **2.84→2.68 ms（-5.6%，吞吐约 +6%）**；**native/stock→native/fused 的 -11% 不记在 FlagGems 基线**；selective/fused 2.68 ms 仍较 native/stock 2.27 ms 慢约 18%，不称 FlagGems 相对原生正收益；Graph 12.6× 为 0.0731→0.0058 ms/调用组件微基准（同批），输出验证批次 0.0053 ms/调用单独标注、不与旧批拼接。
