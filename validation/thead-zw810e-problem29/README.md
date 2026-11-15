@@ -278,3 +278,47 @@ gelu fp32 图重放（100 次调用捕获、重放均值）vs 单次 event：
 ### 定位声明
 
 PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组件级"；本节为 problem29 原对象在 ZW810E 的**首轮 native 基线**——下一步按审阅排序在原对象上做优化前后对照（GEMM 真实 shape 调优、SDPA 掩码路径、copy/cast），full-enable 复验通过后再补 FlagGems 配置。
+
+### 第九轮实施（复审 6895987107 执行顺序 1–3）
+
+#### 1. 原对象 A/B 矩阵（native/selective × stock/fused，3 计时步中位、skip 2；segments 为 micro-batch 中位，forward/backward ×accum 4 = 每优化器步）
+
+| 配置 | 整步 wall | forward/步 | backward/步 | clip+optimizer/步 | 非有限值 |
+|---|---:|---:|---:|---:|---|
+| native/stock | 2,123.7 ms | 681.7 | 1,378.8 | 20.2 | 无（loss/梯度有限）|
+| native/fused | 2,132.7 ms | 689.2 | 1,385.7 | 13.9 | 无 |
+| selective(gelu)/stock | 2,164.5 ms | 682.0×4=…见 JSON | 1,396.0 | 20.2 | 无 |
+| selective(gelu)/fused | 2,171.5 ms | 726.8 | 1,404.8 | 14.3 | 无 |
+
+结论（原对象口径，对应审阅执行顺序 1）：
+- **fused AdamW 在原对象上仅省 clip+optimizer 6.3 ms/步（20.2→13.9）**——该段占整步 ~0.95%，整步差 -0.3%（2,123.7 vs 2,132.7，运行噪声内）。与 probe6 的 2.3× 并不矛盾：那个 2.3× 是 optimizer 段内部倍率；原对象 BGE-M3（389 张量、fp32 state）上 optimizer 段仅占整步 ~1%，**整步收益可忽略**（审阅占比公式 p≈0.0095、s≈1.45 → 预期 -0.3%，实测一致）。
+- **FlagGems selective(gelu) 在原对象上回归 +40.8 ms/步（+1.9%）**——gelu 由 native（快 0.9×）换 FlagGems triton 后变慢，与 problem.md"FlagGems 不是解法"结论一致；**selective 注册 gelu 族在 PPU 原对象上为负收益**。
+- 非 finite：全部配置无 NaN/Inf（loss/梯度 finite，录于 JSON 的 non-finite 字段与运行日志）。
+- 局限：loss/显存数值未入 JSON（原脚本不含），单次运行 × 4 配置（≥3 独立进程复制待补，本表标为首轮）。
+
+#### 2. GEMM 消融（真实 shape M2990 K1024 N1024 bf16，probe10）
+
+| 消融项 | 结果 |
+|---|---|
+| allow_bf16_reduced_precision_reduction True/False | 0.0567 vs 0.0564 ms（110.6/111.2 TFLOP/s）——**无收益** |
+| 输入非连续（.t().contiguous().t() 布局） | 0.0611 vs 0.0566 ms（+8%）——**contiguous 更优** |
+| fp32 matmul | 0.2256 ms（4× 慢）——**维持 bf16** |
+| 结论 | bf16 GEMM 在该 shape 已 110 TFLOP/s（probe9 一致），tile/layout/累加精度消融均无改善空间；GEMM 差距属厂商 kernel/硬件层（运行时层移交项），应用层无可回收 |
+
+#### 3. masked attention：等长分桶候选量化（probe11，真实 shape B8 H16 S512 D64 bf16）
+
+| 路径 | ms |
+|---|---:|
+| 带 bool padding mask（现路径，efficient 后端） | **0.5866** |
+| 等长无 mask（flash 后端） | **0.1313**（4.46×）|
+
+按审阅公式：attention 占原对象 aten 归因 573.5/1,906.4 = 30.1%（占 wall 26.9%），局部 s≈4.46 → 预测整步 1/((1-0.269)+0.269/4.46) ≈ **-20% wall**。**前提**：等长分桶需训练侧改造（loader 已 length-sort 窗口 256，但 batch 内仍有 padding 到批内最长——等长化会改变每步 token 数与数据顺序，属训练侧决策）；mask 语义在等长批次下天然满足（无 padding 即无 mask），梯度正确性由构造保证。**未实施**，登记为候选方向（训练侧 + 运行时层）。
+
+#### 4. F-2 最小 shape 隔离（单次触发）
+
+最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
+
+#### 5. 措辞修正（复审 A 项）
+
+- README 归因对照表措辞改为"**方向性复现**（GEMM/attention/GELU 排序一致；copy/cast 248.8 vs 72.5 待同口径核对——kernel 层 vs aten 层统计口径差异）"。
+- 复现文档保留**原始命令 + 本机覆盖项**（model_path/data.path 两处覆盖已显式标注于 conf/run/bge_m3_ppu.yaml 与清单 §一）。
