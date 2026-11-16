@@ -17,7 +17,7 @@ Measured 2026-10-30 (BGE-M3, batch 10 x accum 4 = 200 texts/step):
     A100      1830 ms/step, 85.6% device compute, 6.0% tokenize, 0.04% dataloader
     Kunlunxin 3368 ms/step, 89.4% device compute, 3.2% tokenize, 0.03% dataloader
 """
-import argparse, json, os, time, statistics
+import argparse, json, math, os, time, statistics
 import torch
 from omegaconf import OmegaConf
 
@@ -65,6 +65,11 @@ def main():
     from flagscale.train.train_retrieval import build_optimizer, autocast_context
     from flagscale.models.retrieval import build_retrieval_model
 
+    # issue #7: fix seeds so all A/B configs see the SAME batch stream
+    import random
+    random.seed(42)
+    torch.manual_seed(42)
+
     # issue #7 A/B variants (env-controlled; default = unchanged original path)
     fg_mode = os.environ.get("FL_FLAGGEMS", "")  # "" | selective
     if fg_mode == "selective":
@@ -95,6 +100,7 @@ def main():
     model, processor = build_retrieval_model(str(cfg.model.model_type), cfg.model, dev)
     model.train()
     trainable = [p for p in model.parameters() if p.requires_grad]
+    torch.cuda.reset_peak_memory_stats()
     optimizer = build_optimizer(cfg.optimizer, trainable, allow_adafactor=False)
     if os.environ.get("FL_ADAMW_FUSED") == "1":
         optimizer = torch.optim.AdamW(trainable, lr=float(cfg.optimizer.lr),
@@ -103,6 +109,7 @@ def main():
     loaders = build_split_loaders(task, data_cfg, batch_rows, pin_memory=True, seed=42)
     stream = iter(loaders[0])
     print(f"device={dev} platform={platform.name() if platform else dev.type}", flush=True)
+    print(f"params={sum(p.numel() for p in trainable)}", flush=True)
 
     seg = {k: [] for k in ("data", "tokenize", "h2d", "forward", "backward", "clip_step")}
     prof = None
@@ -138,6 +145,8 @@ def main():
             optimizer.zero_grad(set_to_none=True)
             if recording:
                 prof.start()
+            losses_run = []
+            grad_norms_run = []
             for _ in range(accum):
                 t0 = time.perf_counter(); batch = next(stream); dt = time.perf_counter() - t0
                 if timed:
@@ -162,6 +171,7 @@ def main():
                 sync(); dt = time.perf_counter() - t0
                 if timed:
                     seg["forward"].append(dt)
+                losses_run.append(float(loss.detach()))  # after sync: no timing pollution
 
                 sync(); t0 = time.perf_counter()
                 (loss / accum).backward()
@@ -170,12 +180,15 @@ def main():
                     seg["backward"].append(dt)
 
             sync(); t0 = time.perf_counter()
+            gn = None
             if float(cfg.optimizer.get("max_grad_norm", 0) or 0) > 0:
-                torch.nn.utils.clip_grad_norm_(trainable, float(cfg.optimizer.max_grad_norm))
+                gn = torch.nn.utils.clip_grad_norm_(trainable, float(cfg.optimizer.max_grad_norm))
             optimizer.step()
             sync(); dt = time.perf_counter() - t0
             if timed:
                 seg["clip_step"].append(dt)
+                if gn is not None:
+                    grad_norms_run.append(float(gn))
             if recording:
                 prof.stop()
             if timed:
@@ -199,6 +212,14 @@ def main():
            "per_step_ms": per_step, "sum_segments_ms": acc,
            "unaccounted_ms": wall_ms - acc}
 
+    out["correctness"] = {
+        "losses": losses_run,
+        "losses_finite": all(math.isfinite(v) for v in losses_run),
+        "grad_norms": grad_norms_run,
+        "grad_norms_finite": all(math.isfinite(v) for v in grad_norms_run),
+        "peak_mem_bytes": torch.cuda.max_memory_allocated(),
+        "nonfinite_param_count": int(sum((~torch.isfinite(p.detach().float())).sum() for p in trainable)),
+    }
     if prof is not None:
         ops = {}
         for e in prof.key_averages():

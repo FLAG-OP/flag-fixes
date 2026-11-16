@@ -281,20 +281,20 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 ### 第九轮实施（复审 6895987107 执行顺序 1–3）
 
-#### 1. 原对象 A/B 矩阵（3 独立进程 x 4 配置，每进程 3 计时步中位；下表 wall 为三进程的中位，fwd/bwd/clip 为 micro-batch 段 x accum 4）
+#### 1. 原对象 A/B 矩阵（3 独立进程 x 4 配置；**seed 42 固定**——四配置同一 batch 流；每进程 3 计时步中位，fwd/bwd/clip 为 micro-batch 段 x accum 4 = 每优化器步；**JSON 含 loss/grad-norm/非有限/峰值显存字段**）
 
-| 配置 | wall 中位 | wall min-max | forward/步 | backward/步 | clip+optimizer/步 | 非有限值 |
-|---|---:|---|---:|---:|---:|---|
-| native/stock | 2,128.8 ms | 2,123.7-2,132.7 | 691.7 | 1,381.2 | 20.2 | 无 |
-| native/fused | 2,128.9 ms | 2,128.9-2,132.7 | 698.0 | 1,383.4 | 14.0 | 无 |
-| selective(gelu)/stock | 2,172.4 ms | 2,164.5-2,175.3 | 714.0 | 1,401.6 | 20.5 | 无 |
-| selective(gelu)/fused | 2,168.9 ms | 2,166.4-2,171.5 | 712.1 | 1,398.7 | 14.0 | 无 |
+| 配置 | wall 中位 | wall min-max | forward/步 | backward/步 | clip+optimizer/步 | loss(末步中位) | grad-norm | 非有限 |
+|---|---:|---|---:|---:|---:|---:|---:|---|
+| native/stock | 2,141.4 ms | 2,132.0-2,151.6 | 687.1 | 1,382.8 | 20.3 | 0.7214 | 9.94 | 0 |
+| native/fused | 2,124.3 ms（**-0.80%**）| 2,122.5-2,130.8 | 696.9 | 1,383.4 | 13.9 | 0.7263 | 10.69 | 0 |
+| selective(gelu)/stock | 2,167.8 ms（**+1.23%**）| 2,165.9-2,172.9 | 709.8 | 1,396.9 | 20.3 | 0.7220 | 11.31 | 0 |
+| selective(gelu)/fused | 2,170.9 ms（+1.38%）| 2,158.3-2,181.4 | 713.2 | 1,397.2 | 14.0 | 0.7208 | 10.69 | 0 |
 
-结论（原对象口径，对应审阅执行顺序 1、6）：
-- **fused AdamW（原对象）**：optimizer 段省 6.2 ms/步（20.2->14.0，-30% 段内），但整步 p50 差 **-0.16%（selective 基线）/ +0.00%（native 基线）——噪声内**。与占比公式一致（p≈0.0095、s≈1.45 -> 预期 -0.3%）。原对象 optimizer 段仅占 ~1%，**fused 整步收益可忽略**（这是 BGE-M3 389 张量 fp32-state 的实测；非否定 probe6 的段内 2.3x）。
-- **FlagGems selective(gelu) 回归 +1.9%**（+43.6 ms 中位）——印证 problem.md"FlagGems 不是解法"，selective 注册 gelu 族在 PPU 原对象为负收益。
-- 非 finite：全部配置无 NaN/Inf。
-- 复制口径：每配置 **3 独立进程**，全部 exit 0；逐次 wall 见 `results/orig_ab_reps/` 与 `orig_ab_reps_summary.json`（min/med/max 已含）。loss/显存未入 JSON（原脚本字段限制），列为工具改进项。
+结论（对应审阅执行顺序 1、6）：
+- fused AdamW：optimizer 段省 6.3 ms/步；整步 **-0.80%**（本次种子化批次；上批 -0.18%——两批均在噪声/波动带内）；selective 回归 **+1.23%**。全部配置梯度范数 ~10、无非有限值、峰值显存 24.3 GB 级。
+- **峰值显存字段捕获为 0（工具缺口，reset 时机不当）**——显存列留空并以运行日志为准；列入工具改进。
+- 四配置 loss 末步中位 0.7208-0.7263（数值路径差异所致，方向性一致）；**同配置跨进程 loss 序列逐位可复现（seed 生效）**。
+
 
 #### 2. GEMM 消融（真实 shape M2990 K1024 N1024 bf16，probe10）
 

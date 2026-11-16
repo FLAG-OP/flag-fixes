@@ -1,0 +1,40 @@
+{
+ "batch_rows": 10,
+ "accum": 4,
+ "texts_per_step": 200,
+ "wall_ms": 2172.899584984407,
+ "segments_ms_median": {
+  "data": 0.21080998703837395,
+  "tokenize": 14.480488491244614,
+  "h2d": 0.2621134917717427,
+  "forward": 178.1047965050675,
+  "backward": 351.1349979962688,
+  "clip_step": 20.207704044878483
+ },
+ "per_step_ms": {
+  "data": 0.8432399481534958,
+  "forward": 712.41918602027,
+  "backward": 1404.5399919850752,
+  "clip_step": 20.207704044878483,
+  "tokenize_seen_inside_forward": 57.92195396497846,
+  "h2d_seen_inside_forward": 1.0484539670869708,
+  "forward_pure_compute": 653.4487780882046
+ },
+ "sum_segments_ms": 2138.010121998377,
+ "unaccounted_ms": 34.889462986029685,
+ "correctness": {
+  "losses": [
+   0.6859375238418579,
+   0.8274902105331421,
+   0.553417980670929,
+   0.7481445074081421
+  ],
+  "losses_finite": true,
+  "grad_norms": [
+   11.3125
+  ],
+  "grad_norms_finite": true,
+  "peak_mem_bytes": 26092513280,
+  "nonfinite_param_count": 0
+ }
+}
