@@ -1,0 +1,19 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::gelu(Tensor self, *, str approximate="none") -> Tensor
+    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesUnaryOps.cpp:64
+       new kernel: registered at /workspace/FlagGems-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)
+  self.m.impl(
+[flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/workspace/evidence/.flaggems, TRITON_CACHE_DIR=/workspace/evidence/.triton, TORCH_EXTENSIONS_DIR=/workspace/evidence/.torch_ext)
+`torch_dtype` is deprecated! Use `dtype` instead!
+step 0: loss=1.301263 wall=18547ms param=cec73acfbdcb71e4 grad=7b0770ce31c82a95
+step 1: loss=1.103607 wall=18147ms param=1d4bca337a846504 grad=e68a974576dc5db7
+step 2: loss=0.853772 wall=13779ms param=c954b29efe834bca grad=1209da6f3daee5f1
+step 3: loss=0.730161 wall=15623ms param=4bf1e0efdf9b1955 grad=b8476def45dde0e9
+step 4: loss=0.844385 wall=11133ms param=1b0e70db8223beea grad=cada6ae3b977b5e3
+step 5: loss=0.803595 wall=3314ms param=5ec49cb4df18cff0 grad=220817dc5cb686e9
+saved /workspace/evidence/results/numerics/gelu_only.json

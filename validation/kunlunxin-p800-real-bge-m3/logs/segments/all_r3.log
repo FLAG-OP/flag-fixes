@@ -1,0 +1,32 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate="none") -> Tensor
+    registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:352
+       new kernel: registered at /workspace/FlagGems-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)
+  self.m.impl(
+[flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/workspace/evidence/.flaggems, TRITON_CACHE_DIR=/workspace/evidence/.triton, TORCH_EXTENSIONS_DIR=/workspace/evidence/.torch_ext)
+[segments_with_fixes] enable_flaggems -> True include=['gelu', 'gelu_backward']
+`torch_dtype` is deprecated! Use `dtype` instead!
+device=cuda:0 platform=cuda
+  step 2: 2888 ms
+  step 3: 2973 ms
+  step 4: 3087 ms
+
+=== batch 10 rows x accum 4 = 200 texts/step ===
+wall/step             2972.8 ms
+segment                              per step   % wall
+data (next(stream))                      1.06      0.0
+forward (incl tokenize+h2d)           1191.73     40.1
+  . tokenize alone                     108.89      3.7
+  . H2D alone                            2.24      0.1
+  . residual = device compute         1080.59     36.3
+backward                              1726.07     58.1
+clip + optimizer.step                   38.87      1.3
+sum                                   2957.72     99.5
+unaccounted                             15.06      0.5
+device compute (fwd+bwd)              2806.66     94.4
+kernel (kernel)     2535.5     85.3% of wall  [3 steps, 7606 ms total]

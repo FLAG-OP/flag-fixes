@@ -1,0 +1,31 @@
+1794886218.638032965 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794886219.089915809 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794886219.092681232 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+1794886219.095364692   warn(RuntimeWarning(msg))
+1794886220.322188224 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794886220.776264627 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794886227.028737911 reproducibility: seed=42 per_rank=42 deterministic=False world_size=1 platform=cuda
+1794886228.720503545 `torch_dtype` is deprecated! Use `dtype` instead!
+1794886231.333334494 parallelism=ddp master_dtype=bf16 compute_dtype=bf16
+1794886231.336282509 lr schedule: cosine 2e-05 -> 2e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+1794886231.339852963 WANDB_API_KEY is not set; continuing without W&B logging
+1794886234.855819331 epoch=1 optimizer_step=1 running_loss=0.932562 window_loss=0.932562 lr=2.000e-07
+1794886238.185731184 epoch=1 optimizer_step=2 running_loss=0.870772 window_loss=0.808981 lr=3.000e-07
+1794886241.600781624 epoch=1 optimizer_step=3 running_loss=0.942877 window_loss=1.087088 lr=4.000e-07
+1794886245.211610597 epoch=1 optimizer_step=4 running_loss=0.870894 window_loss=0.654944 lr=5.000e-07
+1794886249.035451958 epoch=1 optimizer_step=5 running_loss=0.835430 window_loss=0.693573 lr=6.000e-07
+1794886252.865669572 epoch=1 optimizer_step=6 running_loss=0.808137 window_loss=0.671674 lr=7.000e-07
+1794886256.418849051 epoch=1 optimizer_step=7 running_loss=0.832730 window_loss=0.980286 lr=8.000e-07
+1794886259.725881377 epoch=1 optimizer_step=8 running_loss=0.853125 window_loss=0.995892 lr=9.000e-07
+1794886263.115329412 epoch=1 optimizer_step=9 running_loss=0.850868 window_loss=0.832813 lr=1.000e-06
+1794886266.616416489 epoch=1 optimizer_step=10 running_loss=0.844416 window_loss=0.786346 lr=1.100e-06
+1794886270.352376889 epoch=1 optimizer_step=11 running_loss=0.832229 window_loss=0.710358 lr=1.200e-06
+1794886274.186713855 epoch=1 optimizer_step=12 running_loss=0.822481 window_loss=0.715259 lr=1.300e-06
+1794886278.014041478 epoch=1 optimizer_step=13 running_loss=0.820052 window_loss=0.790903 lr=1.400e-06
+1794886281.372111688 epoch=1 optimizer_step=14 running_loss=0.813478 window_loss=0.728010 lr=1.500e-06
+1794886285.125005280 epoch=1 optimizer_step=15 running_loss=0.812867 window_loss=0.804312 lr=1.600e-06
+1794886285.139257912 lr schedule anchored at epoch 1: 15 steps so far -> total 15 for 1 epochs
+1794886293.910977917 epoch=1/1 train_loss=0.812867 validation_loss=0.871082 device=cuda:0
+1794886295.165577843 saved epoch 1 checkpoint to /workspace/evidence/results-clean/trainer/native/checkpoint-epoch-1
+1794886303.975340498 test_loss=0.880794 epochs=1 elapsed=72.6s
+1794886305.163927829 saved checkpoint to /workspace/evidence/results-clean/trainer/native

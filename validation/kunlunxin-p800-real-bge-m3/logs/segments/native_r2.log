@@ -1,0 +1,23 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[segments_with_fixes] enable_flaggems -> False include=None
+`torch_dtype` is deprecated! Use `dtype` instead!
+device=cuda:0 platform=cuda
+  step 2: 3434 ms
+  step 3: 3563 ms
+  step 4: 3787 ms
+
+=== batch 10 rows x accum 4 = 200 texts/step ===
+wall/step             3563.4 ms
+segment                              per step   % wall
+data (next(stream))                      0.87      0.0
+forward (incl tokenize+h2d)           1351.44     37.9
+  . tokenize alone                     104.53      2.9
+  . H2D alone                            2.29      0.1
+  . residual = device compute         1244.61     34.9
+backward                              2136.51     60.0
+clip + optimizer.step                   61.09      1.7
+sum                                   3549.92     99.6
+unaccounted                             13.51      0.4
+device compute (fwd+bwd)              3381.13     94.9
+kernel (kernel)     3240.8     90.9% of wall  [3 steps, 9723 ms total]

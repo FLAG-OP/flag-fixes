@@ -1,0 +1,101 @@
+{
+ "label": "gelu_only",
+ "conf": "/workspace/FlagScale/examples/retrieval/conf/train/bge_m3.yaml",
+ "steps": [
+  {
+   "step": 0,
+   "wall_ms": 18547.5,
+   "micro_losses": [
+    2.182227,
+    1.487793,
+    0.812353,
+    0.722681
+   ],
+   "step_loss_mean": 1.301263,
+   "grad_sha_16": "7b0770ce31c82a95",
+   "param_sha_16": "cec73acfbdcb71e4",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 1,
+   "wall_ms": 18147.1,
+   "micro_losses": [
+    1.20564,
+    1.431543,
+    1.072754,
+    0.704492
+   ],
+   "step_loss_mean": 1.103607,
+   "grad_sha_16": "e68a974576dc5db7",
+   "param_sha_16": "1d4bca337a846504",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 2,
+   "wall_ms": 13778.5,
+   "micro_losses": [
+    0.967285,
+    1.279395,
+    0.684375,
+    0.484033
+   ],
+   "step_loss_mean": 0.853772,
+   "grad_sha_16": "1209da6f3daee5f1",
+   "param_sha_16": "c954b29efe834bca",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 3,
+   "wall_ms": 15622.6,
+   "micro_losses": [
+    0.617957,
+    0.742285,
+    0.683984,
+    0.876416
+   ],
+   "step_loss_mean": 0.730161,
+   "grad_sha_16": "b8476def45dde0e9",
+   "param_sha_16": "4bf1e0efdf9b1955",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 4,
+   "wall_ms": 11133.2,
+   "micro_losses": [
+    0.928906,
+    1.106348,
+    0.428711,
+    0.913574
+   ],
+   "step_loss_mean": 0.844385,
+   "grad_sha_16": "cada6ae3b977b5e3",
+   "param_sha_16": "1b0e70db8223beea",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 5,
+   "wall_ms": 3314.3,
+   "micro_losses": [
+    0.86936,
+    0.385376,
+    0.88811,
+    1.071533
+   ],
+   "step_loss_mean": 0.803595,
+   "grad_sha_16": "220817dc5cb686e9",
+   "param_sha_16": "5ec49cb4df18cff0",
+   "params_nonfinite": 0
+  }
+ ],
+ "seed": 42,
+ "batch_rows": 10,
+ "accum": 4,
+ "flaggems_include": "gelu,gelu_backward",
+ "gems_enabled": true,
+ "flagscale_root": "/workspace/FlagScale",
+ "adamw_fused_env": "0",
+ "max_memory_allocated_GB": 26.714,
+ "first_step_wall_ms": 18547.5,
+ "param_sha_16_final": "5ec49cb4df18cff0",
+ "grad_sha_16_final": "220817dc5cb686e9"
+}

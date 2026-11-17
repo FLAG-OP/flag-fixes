@@ -8,6 +8,13 @@ transpose 等算子严重拖慢昆仑芯 P800 训练吞吐（BGE-M3 对 A100 ker
 组合验收已完成（整步实测，见"组合证据"）——单项 fix 的独立验证见各自
 `fixes/<id>/`。
 
+> **2026-11-17 更新（issue #9）**：三个 fix + GEMM env 已在**真实 BGE-M3 入口**
+> （真权重 + 官方 THUIR/T2Ranking 重建 triplet-15 + 原始 FlagScale
+> `examples/retrieval/`）完成基线与消融：单卡 wall **-16.8%**（native
+> 3,572.4 → all-fixes 2,972.8 ms，3 独立进程），GELU 类目 -47.3%、其余类目
+> 零变化，数值轨迹跨进程逐位可复现。下表 `-15.3%` 为重建负载口径，两者不可
+> 互换。详见 [validation/kunlunxin-p800-real-bge-m3](../../validation/kunlunxin-p800-real-bge-m3/README.md)。
+
 ## 组成与应用顺序
 
 | 序 | fix ID | 目标包 | 目标文件 | 内容 |
@@ -61,8 +68,11 @@ gemm(env) -32.7，其余类目零变化——**修复只动了该动的地方**�
   （cuBLASLt EPILOGUE_GELU 先例，预估 200–300 ms/步）；③libdevice erf/exp
   质量（40 ns/元素）；④50+ XMLIR/HYDRA env 语义；⑤两个 Triton 编译器
   崩溃 bug（最小复现在 problem29/probes/）。
-- 真实多卡 FSDP2：`cluster_cast_kl3`（12,399 次/步）单卡复现不出，需真实
-  节点归因。
+- 真实多卡 FSDP2：`cluster_cast_kl3`（12,399 次/步）的**单卡归因缺口已于
+  2026-11-17 关闭**——真实 BGE-M3 入口单卡即出现 12,460 次/步（112.9 ms），
+  见 validation/kunlunxin-p800-real-bge-m3 §C；多卡 FSDP2 本身登记**平台阻断
+  F-P800-1**（XCCL all-gather 停在任意 SeqNum，7 触发 0 成功），通信分解待
+  平台解决后按 `validation/kunlunxin-p800-real-bge-m3/scripts/run_fsdp2.sh` 复测。
 - 边界验证遗留（PR3 四轮评审）：fp16 邻界输入（0x03FF）的 base/fixed
   dump **pending**——未打补丁 pow 路径触发 error 721 驱动异常并楔死
   设备（现场：gelu-kunlunxin-pow/results/history/），设备恢复后按
@@ -78,7 +88,7 @@ problem29 覆盖三个平台；**本 bundle 当前的证据只覆盖昆仑芯单
 
 | 平台 | 当前状态 | 后续动作 |
 |---|---|---|
-| 昆仑芯 P800/XPU3 | 本 PR 有单卡重建负载证据（整步 A/B 矩阵 + 组合验收）；整模型平台验收未完成 | 完成 x-benchmark、owner 审核与多卡/FSDP2 验收 |
+| 昆仑芯 P800/XPU3 | 2026-11-17 起有**真实 BGE-M3 入口**单卡证据（issue #9）：真权重 + 官方 T2Ranking 重建 triplet-15 + 原始 FlagScale 入口，3 独立进程消融 native 3,572.4 → all-fixes 2,972.8 ms（**-16.8%**），GELU 类目 -47.3% 且厂商 `*_highprecision_nv` kernel 全部切换、其余类目零变化；数值轨迹跨进程逐位可复现；原始 problem29 kernel 次数口径全部重现（cluster_cast_kl3 12,460 次/步单卡复现，归因缺口关闭）；FSDP2 2 卡登记**平台阻断 F-P800-1**（XCCL all-gather 停在任意 SeqNum，7 触发 0 成功；单卡 DDP 全轮可用）。整模型平台 x-benchmark 与 owner 审核仍未完成 | 证据：[validation/kunlunxin-p800-real-bge-m3](../../validation/kunlunxin-p800-real-bge-m3/README.md)；后续：x-benchmark、owner 审核、F-P800-1 解决后 FSDP2 复测与通信分解、FlagGems 变长 shape 开销（4.8×）与冷缓存编译停顿移交项 |
 | 昇腾 910C | 未实现、未验证（仅微基线数据存在于平台文档） | 单独建立 backend/fix 条目；确认 torch/npu 与算子注册路径 |
 | 平头哥 ZW810E | 2026-11-12/13 首轮平台基线完成（issue #5，非 fix 验收，第三轮修订）：判定"需优化 + gems_full 训练当前被平台阻断"——FlagGems `29e14822` 全量 enable 18 项微基准 18/18 慢于 native（1.29–6.45×），归因=host 侧 per-call enqueue 固定成本 ~55–69 µs（截距拟合 60.4/70.0 vs 4.7/4.6 µs，斜率与 native 相同，环节拆分未做、非最终根因）；gelu 族 126 用例 v6 逐位置判据 72 PASS/39 DIFF/15 FAIL（15 硬失败=gelu_backward 小梯度近抵消区 gems 达 native ~2×、abs ≤1e-6；gelu_tanh fp32 平滑区 ~2.5×）；**平台阻断 F-1/F-2**（sdpa 训练形状前向挂起、matmul backward 挂起，单次触发出证，待平台恢复隔离复验）；"平台文档 13 算子 12 慢"口径与实测方向一致 | 证据：[validation/thead-zw810e-problem29](../../validation/thead-zw810e-problem29/README.md)；后续：F-1/F-2 平台恢复复验、enqueue 路径探索、gelu_backward 数值评估、厂商 kernel/融合移交项，fix 条目与验收另立 |
 
