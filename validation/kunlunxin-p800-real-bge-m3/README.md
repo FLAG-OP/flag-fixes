@@ -72,7 +72,7 @@ FlagScale-stock，flaggems.py 在两棵树分别等于 fix 的 after/before hash
   `results/segments/native_r*.json` 的 `ops` 字段；汇总见 `results/summary.json`
   与 `results/aggregate-stdout.txt`（由 `scripts/aggregate.py` 从本批 JSON 生成）。
 
-### B. GELU（P0）— ✅ 优化生效 + 路径确认 + 数值通过；残余为 shape 处理开销
+### B. GELU（P0）— ✅ 优化生效 + 路径切换确认；数值为六步轨迹观察（形式验收 pending）；tanh 候选重新打开
 
 1. **路径切换证据（真实入口）**：native 的 480 次/步 `gelu_highprecision_nv` +
    480 次/步 `gelu_bwd_highprecision_nv` 在 gelu 配置下**完全消失**，替换为
@@ -99,22 +99,26 @@ FlagScale-stock，flaggems.py 在两棵树分别等于 fix 的 after/before hash
 5. **数值轨迹（六步观察，精度验收 pending）**：数值运行与性能配置共用定义
    （`scripts/ablation_configs.sh`）：all_fixes_v2 数值运行含与性能 all 完全一致的
    env（XMLIR fast GEMM + adamw auto + gelu include）。固定 seed 6 步、相同输入
-   顺序（首 batch 指纹一致）与 RNG：native 三独立进程（r1/r2/r3）逐步**逐位一致**
+   顺序（全批输入指纹一致）与 RNG：native 三独立进程（r1/r2/r3）逐步**逐位一致**
    （loss 序列与 param/grad sha256 全同，过程内噪声下限=0）。跨配置**量化对比**
-   （`results/numerics/compare_*.json`，张量级 max_abs/L2-rel/逐位一致占比）：
+   （`results/numerics/compare_*.json`，张量级 numeric-equal 占比/max_abs/
+   L2-rel（逐张量最大值，ref 范数非零者）/grad L2 差范数）：
 
-   | 对比 | loss 逐步最大相对差 | param L2 rel（defined） | param max_abs | grad 异常 |
+   | 对比 | loss 逐步最大相对差 | param L2 rel（逐张量最大值） | param max_abs | grad 异常 |
    |---|---:|---:|---:|---|
    | gelu_only_v2 vs native_r3 | 1.24% | 0.60% | 3.66e-4 | 小范数 LayerNorm 张量（‖g‖≈0.01）上 L2-rel 至 2.8×，绝对量级 1e-2 |
    | all_fixes_v2 vs native_r3 | 0.72% | 0.62% | 3.66e-4 | 同上量级 |
-   | gemm_env_v2 vs native_r3 | 0.53% | 0.61% | 3.66e-4 | — |
+   | gemm_env_v2 vs native_r3 | 0.43% | 0.50% | 3.66e-4 | — |
 
-   **GEMM env 在真实变长 shape 上改变数值**（loss ~0.5%）：固定形状 sweep 的
+   **GEMM env 在真实变长 shape 上改变数值**（loss ~0.4–0.5%）：固定形状 sweep 的
    "逐位一致"只在 M=2990 成立，不可外推到变长训练——此点为本轮修正。
    6 步轨迹内无非有限参数，峰值显存 26.7 GB 一致。预声明的暂定判据
-   （loss rel ≤2%、param L2 ≤1%、非有限=0；`scripts/numerics_compare.py` docstring）
-   中 loss/L2/非有限满足；**形式精度验收 pending**（判据需 owner 对最终配置签核，
-   当前仅为六步轨迹观察）。量化对比所用张量快照（每配置 ~4.6 GB .pt）不入库，
+   （`scripts/numerics_compare.py` docstring，声明于运行前）中 loss/param L2/
+   非有限满足，**逐位占比判据不满足**（6 步后约 2/3 参数元素有 ±ULP 级差异，
+   param max_abs 3.66e-4 ≈ 数个 bf16 ULP）、grad L2 差范数 0.2–0.5（超出 2e-3
+   参考线）——**不据此判定算法错误，也不据此宣布通过；形式精度验收 pending**
+   （判据需 owner 对最终配置签核，当前仅为六步轨迹观察）。量化对比所用张量
+   快照（每配置 ~4.6 GB .pt）不入库，
     以逐位 sha256 与上述量化 JSON 代之，复跑用 `numerics_check.py --save-final`
     重建。边界输入证据沿用 gelu-kunlunxin-pow 的
    `verify_gelu_boundary.py`/`test_gelu_boundary.py` 与 2026-11-11 边界对照
@@ -146,11 +150,13 @@ FlagScale-stock，flaggems.py 在两棵树分别等于 fix 的 after/before hash
 3. **多卡边界**：cluster_cast_kl3 的 12,460 次/步在单卡即存在，其归因不再
    依赖真实多卡节点；多卡下的通信等待与带宽分离仍需运行时层（见 §E）。
 
-### D. GEMM（P1）— ✅ env 有小收益、逐位一致；算法层无更多 headroom
+### D. GEMM（P1）— ✅ env 有小收益（wall -2.3%）；固定形状无 headroom；数值边界见 §B
 
-1. **真入口 A/B**：GEMM 类目 911.0 → 772.0 ms/步（**-139.0 ms，-15.3%**，env
-   逐位一致），整步 wall -2.3%。收益来自变长 M 分布（真入口每 batch M=10×padded，
-   1,400–5,120 变动），厂商 fast algo 对该分布整体提速。
+1. **真入口 A/B**：GEMM 类目 911.0 → 772.0 ms/步（**-139.0 ms，-15.3%**），整步
+   wall -2.3%。收益来自变长 M 分布（真入口每 batch M=10×padded，1,400–5,120
+   变动），厂商 fast algo 对该分布整体提速。**数值边界**：该 env 在真实变长
+   shape 上改变训练数值（6 步 loss 最大相对差 ~0.5%，见 §B 数值表）——固定
+   形状 sweep 的"输出逐位一致"只在 M=2990 成立，不外推到变长训练。
 2. **固定形状微 sweep（7 env × 真实 N/K）**：base 42.9/153.8/141.7 TFLOPS
    （qkv/ffn_up/ffn_down @M=2990，bf16）；`XMLIR_MATMUL_FAST_*`、
    `KLX_USE_AUTOTUNE`、`XMLIR_ENABLE_XBLAS_ADDMM`、`XMLIR_FC_AUTOTUNE_BOOL`、

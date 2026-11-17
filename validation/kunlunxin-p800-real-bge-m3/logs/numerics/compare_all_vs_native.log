@@ -1,0 +1,34 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+{
+ "loss_max_rel": 0.00719,
+ "summary": {
+  "param": {
+   "min_numeric_equal_frac": 0.333984375,
+   "max_abs": 0.0003662109375,
+   "max_l2_rel_defined": 0.00623706541955471,
+   "max_l2_diff_norm": 0.0547107458114624,
+   "zero_ref_norm_tensors": 1,
+   "undefined_l2_rel_tensors": 1
+  },
+  "grad": {
+   "max_abs": 0.0458984375,
+   "max_l2_diff_norm": 0.20885558426380157,
+   "max_l2_rel_defined": 1.9686164855957031,
+   "zero_ref_norm_tensors": 0,
+   "both_none_grads": 2,
+   "undefined_l2_rel_tensors": 0
+  }
+ },
+ "nonfinite": 0,
+ "outlier_count": 558,
+ "provisional_criteria": {
+  "criteria": "PROVISIONAL reference thresholds (script docstring); NOT a formal acceptance gate",
+  "nonfinite_zero": true,
+  "param_min_numeric_equal_frac_ge_99pct": false,
+  "param_max_abs_le_1e-3": true,
+  "param_l2_rel_le_1e-2": true,
+  "grad_l2_diff_norm_le_2e-3": false,
+  "all": false
+ }
+}

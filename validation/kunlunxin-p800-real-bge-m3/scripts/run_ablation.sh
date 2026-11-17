@@ -1,52 +1,46 @@
 #!/usr/bin/env bash
-# Real BGE-M3 ablation matrix on KunlunXIN P800 (issue #9 sections A+E).
-# Each config = 3 independent processes; each process = skip 2 + 3 timed steps
-# (median), the problem29 methodology, on the ORIGINAL FlagScale entry
+# One ablation config, one rep: run the ORIGINAL FlagScale segments harness
 # (examples/retrieval/profile_step_segments.py via segments_with_fixes.py).
-#
-# Configs (ablation, gains are NOT assumed additive):
-#   native : stock entry, no FlagGems, no vendor env
-#   gemm   : + XMLIR_MATMUL_FAST_MODE/FAST_TUNE (vendor GEMM fast algo env)
-#   gelu   : + patched FlagGems via flaggems_include=[gelu,gelu_backward]
-#            (FLAGSCALE_ADAMW_FUSED=0 forces stock AdamW so only GELU differs)
-#   glue   : + XMLIR_ENABLE_LINEAR_FC_FUSION=0 (only locally switchable glue
-#            knob; PR3 attribution says net-negative — measured, not assumed)
-#   all    : gelu + adamw-fused(auto) + GEMM env, FlagScale integration path
+# Configs come from the shared ablation_configs.sh (same source as the
+# numerics runner). Failure semantics (review round-2 P1): the training
+# command is passed AS ARGUMENTS to run_one so timeout/log-redirect/JSON
+# validation always wrap it; any failure is recorded and propagated via
+# exit code (fail-fast off; matrix aggregates).
 set -uo pipefail
-ROOT=/workspace/evidence
-FS=${FS_TREE:-/workspace/FlagScale}            # flagscale tree with selective-enable patch
-FS_STOCK=${FS_STOCK_TREE:-/workspace/FlagScale-stock} # pristine flagscale tree (native baseline)
-FG=${FG_TREE:-/workspace/FlagGems-fixed/src}    # patched FlagGems tree
-CONF=/workspace/FlagScale/examples/retrieval/conf/train/bge_m3.yaml
-OUT=${SEG_OUT:-$ROOT/results-clean/segments}
-LOG=${SEG_LOG:-$ROOT/logs-clean/segments}
-mkdir -p "$OUT" "$LOG"
+EV=/workspace/evidence
+# shellcheck source=ablation_configs.sh
+source $EV/ablation_configs.sh
+OUT=${SEG_OUT:-$EV/results-clean/segments}
+LOG=${SEG_LOG:-$EV/logs-clean/segments}
+FAILS_FILE=${SEG_FAILS:-$EV/logs-clean/ablation_failures.txt}
+mkdir -p "$OUT" "$LOG" "$(dirname "$FAILS_FILE")"
 
-# Keep cache dirs off $HOME and constant across configs.
 export TRITON_CACHE_DIR=/workspace/evidence/.triton
 export FLAGGEMS_CACHE_DIR=/workspace/evidence/.flaggems
 export TORCH_EXTENSIONS_DIR=/workspace/evidence/.torch_ext
-export KLX_USE_AUTOTUNE=0          # constant across the whole matrix
-export XPU_ENABLE_PROFILER_TRACING=1   # kunlunxin torch.profiler requirement (problem29 §3.2)
-export XPU_CUPTI_ENABLE_DEVICE=0       # logical device 0, not physical card id
-unset USE_FLAGGEMS                  # legacy env read by nothing; avoid surprises
+export KLX_USE_AUTOTUNE=0
+export XPU_ENABLE_PROFILER_TRACING=1
+export XPU_CUPTI_ENABLE_DEVICE=0
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false
 export OMP_NUM_THREADS=1
+unset USE_FLAGGEMS
 
 CFG=$1
 REP=$2
-FAILS_FILE=${SEG_FAILS:-/workspace/evidence/logs-clean/ablation_failures.txt}
+
+IFS='|' read -r pp fs env <<< "$(config_$CFG)"
+include=""
+if config_uses_gems "$CFG"; then include=$GELU_INCLUDE; fi
 
 run_one () {
-  local name=$1 tag=$2; shift 2
-  local out=$OUT/${name}_r${REP}.json
-  local log=$LOG/${name}_r${REP}.log
-  echo "=== [$name rep$REP] $(date +%H:%M:%S) -> $out"
+  local name=$1 rep=$2; shift 2
+  local out=$OUT/${name}_r${rep}.json
+  local log=$LOG/${name}_r${rep}.log
+  echo "=== [$name rep$rep] $(date +%H:%M:%S) -> $out"
   timeout 3000 "$@" > "$log" 2>&1
   local rc=$?
   echo "rc=$rc"
   tail -6 "$log" | sed 's/^/    /'
-  # validate the produced JSON has the required fields (step-level wall etc.)
   python3 - "$out" <<'PY' || rc=1
 import json, sys
 try:
@@ -57,9 +51,22 @@ except Exception as e:
     print(f"JSON VALIDATION FAILED: {e}")
     sys.exit(1)
 PY
+  # record the effective config next to the artifact (config provenance)
+  python3 - "$out" "$pp" "$fs" "$env" "$include" <<'PY' || rc=1
+import json, sys
+out, pp, fs, env, include = sys.argv[1:6]
+meta = {"pythonpath": pp, "flagscale_root": fs,
+        "env": dict(kv.split("=", 1) for kv in env.split() if "=" in kv),
+        "flaggems_include": [s for s in include.split(",") if s]}
+try:
+    json.dump(meta, open(out + ".env.json", "w"), indent=1)
+except Exception as e:
+    print(f"ENV META FAILED: {e}")
+    sys.exit(1)
+PY
   if [ $rc -ne 0 ]; then
-    echo "!!! $name rep$REP FAILED rc=$rc"
-    echo "$name rep$REP rc=$rc" >> "$FAILS_FILE"
+    echo "!!! $name rep$rep FAILED rc=$rc"
+    echo "$name rep$rep rc=$rc" >> "$FAILS_FILE"
   fi
   return $rc
 }
@@ -67,35 +74,29 @@ PY
 rc_total=0
 case $CFG in
   native)
-    run_one native $REP || rc_total=1 env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
-      PYTHONPATH=$FS_STOCK \
-      python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
-      --flagscale-root $FS_STOCK --out $OUT/native_r${REP}.json
+    run_one native "$REP" env CUDA_VISIBLE_DEVICES=${CARD:-1} PYTHONPATH=$pp \
+      python3 $EV/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
+      --flagscale-root $fs --out $OUT/native_r${REP}.json || rc_total=1
     ;;
   gemm)
-    run_one gemm $REP || rc_total=1 env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
-      PYTHONPATH=$FS_STOCK XMLIR_MATMUL_FAST_MODE=1 XMLIR_MATMUL_FAST_TUNE=1 \
-      python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
-      --flagscale-root $FS_STOCK --out $OUT/gemm_r${REP}.json
+    run_one gemm "$REP" env CUDA_VISIBLE_DEVICES=${CARD:-1} $env PYTHONPATH=$pp \
+      python3 $EV/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
+      --flagscale-root $fs --out $OUT/gemm_r${REP}.json || rc_total=1
     ;;
   glue)
-    run_one glue $REP || rc_total=1 env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
-      PYTHONPATH=$FS_STOCK XMLIR_ENABLE_LINEAR_FC_FUSION=0 \
-      python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
-      --flagscale-root $FS_STOCK --out $OUT/glue_r${REP}.json
+    run_one glue "$REP" env CUDA_VISIBLE_DEVICES=${CARD:-1} $env PYTHONPATH=$pp \
+      python3 $EV/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
+      --flagscale-root $fs --out $OUT/glue_r${REP}.json || rc_total=1
     ;;
   gelu)
-    run_one gelu $REP || rc_total=1 env CUDA_VISIBLE_DEVICES=${CARD:-1} FLAGSCALE_ADAMW_FUSED=0 \
-      GEMS_VENDOR=kunlunxin PYTHONPATH=$FS:$FG \
-      python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
-      --flagscale-root $FS --flaggems-include gelu,gelu_backward --out $OUT/gelu_r${REP}.json
+    run_one gelu "$REP" env CUDA_VISIBLE_DEVICES=${CARD:-1} $env PYTHONPATH=$pp \
+      python3 $EV/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
+      --flagscale-root $fs --flaggems-include $include --out $OUT/gelu_r${REP}.json || rc_total=1
     ;;
   all)
-    run_one all $REP || rc_total=1 env CUDA_VISIBLE_DEVICES=${CARD:-1} \
-      GEMS_VENDOR=kunlunxin PYTHONPATH=$FS:$FG \
-      XMLIR_MATMUL_FAST_MODE=1 XMLIR_MATMUL_FAST_TUNE=1 \
-      python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
-      --flagscale-root $FS --flaggems-include gelu,gelu_backward --out $OUT/all_r${REP}.json
+    run_one all "$REP" env CUDA_VISIBLE_DEVICES=${CARD:-1} $env PYTHONPATH=$pp \
+      python3 $EV/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
+      --flagscale-root $fs --flaggems-include $include --out $OUT/all_r${REP}.json || rc_total=1
     ;;
   *) echo "unknown config $CFG"; exit 2;;
 esac

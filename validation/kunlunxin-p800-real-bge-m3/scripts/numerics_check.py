@@ -75,11 +75,15 @@ def main():
     stream = iter(loaders[0])
     dtype_name = str(cfg.model.get("torch_dtype", "bf16"))
 
-    # input-order fingerprint: first batch anchors (same seed + same loader =>
-    # identical across configs, verified by equal fingerprints)
-    _b0 = next(stream)
-    _b0 = {k: list(v) for k, v in sorted(_b0.items())}
-    batch_fp = hashlib.sha256(json.dumps(_b0, ensure_ascii=False).encode()).hexdigest()[:16]
+    # input-order fingerprint over ALL batches consumed by the run (review
+    # round-2: a first-batch hash proves only part of the input stream)
+    input_fp = hashlib.sha256()
+    batches_for_fp = accum * a.steps
+    for _ in range(batches_for_fp):
+        b = next(stream)
+        input_fp.update(json.dumps(
+            {k: list(v) for k, v in sorted(b.items())}, ensure_ascii=False).encode())
+    input_fp = input_fp.hexdigest()[:16]
     stream = iter(loaders[0])
 
     steps = []
@@ -128,7 +132,9 @@ def main():
             "fused": bool(optimizer.param_groups[0].get("fused", False)),
             "foreach": str(optimizer.param_groups[0].get("foreach", "default")),
         },
-        "first_batch_anchor_sha16": batch_fp,
+        "first_batch_anchor_sha16": None,
+        "input_fingerprint_all_batches_sha16": input_fp,
+        "input_fingerprint_batches": batches_for_fp,
         "max_memory_allocated_GB": round(torch.cuda.max_memory_allocated() / 1e9, 3),
         "first_step_wall_ms": round(t_first * 1000, 1),
         "steps": steps,
