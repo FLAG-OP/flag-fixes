@@ -250,6 +250,7 @@ def main():
         ref = fp64_reference(p0_dt.double(), [g.double() for g in grads_dt])
         entry = {}
         for kind in ("stock", "foreach", "fused"):
+            snaps = run_impl(kind, dtype, p0_dt, grads_dt)
             # snapshot completeness check (round-12 P1): count, step set, no duplicates
             expected_count = len(SNAP_AT)
             snap_steps = [s.get("step", -1) for s in snaps]
