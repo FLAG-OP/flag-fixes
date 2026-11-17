@@ -65,10 +65,6 @@ def main():
     from flagscale.train.train_retrieval import build_optimizer, autocast_context
     from flagscale.models.retrieval import build_retrieval_model
 
-    import random
-    random.seed(42)
-    torch.manual_seed(42)
-
     # issue #7 A/B variants (env-controlled; default = unchanged original path)
     fg_mode = os.environ.get("FL_FLAGGEMS", "")  # "" | selective
     if fg_mode == "selective":
@@ -144,7 +140,9 @@ def main():
             optimizer.zero_grad(set_to_none=True)
             if recording:
                 prof.start()
-            for micro in range(accum):
+            losses_run = []
+            grad_norms_run = []
+            for _ in range(accum):
                 t0 = time.perf_counter(); batch = next(stream); dt = time.perf_counter() - t0
                 if timed:
                     seg["data"].append(dt)
@@ -168,7 +166,7 @@ def main():
                 sync(); dt = time.perf_counter() - t0
                 if timed:
                     seg["forward"].append(dt)
-                losses_run.append(float(loss.detach()))
+                losses_run.append(float(loss.detach()))  # after sync: no timing pollution
 
                 sync(); t0 = time.perf_counter()
                 (loss / accum).backward()
