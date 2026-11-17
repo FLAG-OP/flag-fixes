@@ -65,11 +65,6 @@ def main():
     from flagscale.train.train_retrieval import build_optimizer, autocast_context
     from flagscale.models.retrieval import build_retrieval_model
 
-    # issue #7: fix seeds so all A/B configs see the SAME batch stream
-    import random
-    random.seed(42)
-    torch.manual_seed(42)
-
     # issue #7 A/B variants (env-controlled; default = unchanged original path)
     fg_mode = os.environ.get("FL_FLAGGEMS", "")  # "" | selective
     if fg_mode == "selective":

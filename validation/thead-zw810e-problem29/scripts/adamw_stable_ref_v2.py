@@ -114,11 +114,17 @@ def run_impl(kind, dtype, p0_dt, grads_dt):
 
 
 def verdict(snap_impl, snap_ref, dtype):
-    """SINGLE production verdict for one snapshot (gates declared in module docstring).
+    """SINGLE production verdict for one snapshot. Shared by experiment and selftest.
 
-    Returns dict with per-gate booleans and verdict PASS/FAIL (FAIL includes
-    non-finite, tau violation on p/m/v, step mismatch, missing tensors).
+    Completeness gates (round-12 P1): snapshot must have p/m/v/step keys;
+    exp_avg/exp_avg_sq non-None; step must be a finite number.
     """
+    missing_keys = [k for k in ("p", "m", "v", "step") if k not in snap_impl]
+    if missing_keys:
+        return {"verdict": "FAIL", "gates": {"missing_keys": missing_keys}, "missing": missing_keys}
+    for k in ("p", "m", "v"):
+        if snap_impl[k] is None:
+            return {"verdict": "FAIL", "gates": {"none_" + k: True}, "missing": [k]}
     dt = getattr(torch, dtype)
     gates = {}
     missing = [k for k in ("p", "m", "v", "step") if k not in snap_impl]
@@ -244,7 +250,21 @@ def main():
         ref = fp64_reference(p0_dt.double(), [g.double() for g in grads_dt])
         entry = {}
         for kind in ("stock", "foreach", "fused"):
-            snaps = run_impl(kind, dtype, p0_dt, grads_dt)
+            # snapshot completeness check (round-12 P1): count, step set, no duplicates
+            expected_count = len(SNAP_AT)
+            snap_steps = [s.get("step", -1) for s in snaps]
+            if len(snaps) != expected_count:
+                per_snap = [{"verdict": "FAIL", "gates": {"incomplete": True},
+                             "error": f"expected {expected_count} snapshots, got {len(snaps)}"}]
+                entry[kind] = {"snapshots": per_snap, "verdict": "FAIL"}
+                hard.append(f"{dtype}/{kind}/incomplete_snapshots")
+                continue
+            seen_steps = [s.get("step") for s in snaps]
+            if len(set(seen_steps)) != len(seen_steps):
+                per_snap = [{"verdict": "FAIL", "gates": {"duplicate_steps": True}}]
+                entry[kind] = {"snapshots": per_snap, "verdict": "FAIL"}
+                hard.append(f"{dtype}/{kind}/duplicate_steps")
+                continue
             per_snap = []
             any_fail = False
             for si, snap in enumerate(snaps):
@@ -278,11 +298,14 @@ def main():
         json.dump(out, f, indent=1)
     import os
     os.replace(tmp, "results/adamw_stable_ref_v4.json")
-    total_impls = sum(len(v) for v in out["results"].values())
-    fails = sum(1 for dtype in out["results"] for kind in out["results"][dtype]
-                if out["results"][dtype][kind]["verdict"] == "FAIL")
-    print(f"impl verdicts: {fails}/{total_impls} FAIL")
-    sys.exit(1 if fails > 0 else 0)
+    total_impls = 0; total_fail = 0
+    for dtype in out["results"]:
+        for kind in out["results"][dtype]:
+            total_impls += 1
+            if out["results"][dtype][kind]["verdict"] == "FAIL":
+                total_fail += 1
+    print(f"impl verdicts: {total_fail}/{total_impls} FAIL")
+    sys.exit(1 if total_fail > 0 else 0)
 
 
 if __name__ == "__main__":

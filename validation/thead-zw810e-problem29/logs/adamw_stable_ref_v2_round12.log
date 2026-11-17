@@ -1,0 +1,13 @@
+PASS selftest: all-pass control -> PASS
+PASS selftest: param over tau -> FAIL
+PASS selftest: state NaN -> FAIL
+PASS selftest: state Inf -> FAIL
+PASS selftest: step mismatch -> FAIL
+PASS selftest: missing record -> FAIL
+Traceback (most recent call last):
+  File "/tmp/opencode/zw810e-problem29/scripts/adamw_stable_ref_v2.py", line 312, in <module>
+    main()
+  File "/tmp/opencode/zw810e-problem29/scripts/adamw_stable_ref_v2.py", line 255, in main
+    snap_steps = [s.get("step", -1) for s in snaps]
+                                             ^^^^^
+NameError: name 'snaps' is not defined. Did you mean: 'snap'?
