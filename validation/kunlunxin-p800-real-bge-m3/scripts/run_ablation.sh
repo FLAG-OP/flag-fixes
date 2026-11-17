@@ -35,6 +35,7 @@ export OMP_NUM_THREADS=1
 
 CFG=$1
 REP=$2
+FAILS_FILE=${SEG_FAILS:-/workspace/evidence/logs-clean/ablation_failures.txt}
 
 run_one () {
   local name=$1 tag=$2; shift 2
@@ -45,36 +46,52 @@ run_one () {
   local rc=$?
   echo "rc=$rc"
   tail -6 "$log" | sed 's/^/    /'
-  if [ $rc -ne 0 ]; then echo "!!! $name rep$REP FAILED rc=$rc"; fi
+  # validate the produced JSON has the required fields (step-level wall etc.)
+  python3 - "$out" <<'PY' || rc=1
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+    for k in ("wall_ms", "kernel_ms_per_step", "per_step_ms", "ops"):
+        assert k in d, f"missing {k}"
+except Exception as e:
+    print(f"JSON VALIDATION FAILED: {e}")
+    sys.exit(1)
+PY
+  if [ $rc -ne 0 ]; then
+    echo "!!! $name rep$REP FAILED rc=$rc"
+    echo "$name rep$REP rc=$rc" >> "$FAILS_FILE"
+  fi
+  return $rc
 }
 
+rc_total=0
 case $CFG in
   native)
-    run_one native $REP env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
+    run_one native $REP || rc_total=1 env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
       PYTHONPATH=$FS_STOCK \
       python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
       --flagscale-root $FS_STOCK --out $OUT/native_r${REP}.json
     ;;
   gemm)
-    run_one gemm $REP env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
+    run_one gemm $REP || rc_total=1 env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
       PYTHONPATH=$FS_STOCK XMLIR_MATMUL_FAST_MODE=1 XMLIR_MATMUL_FAST_TUNE=1 \
       python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
       --flagscale-root $FS_STOCK --out $OUT/gemm_r${REP}.json
     ;;
   glue)
-    run_one glue $REP env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
+    run_one glue $REP || rc_total=1 env -u GEMS_VENDOR CUDA_VISIBLE_DEVICES=${CARD:-1} \
       PYTHONPATH=$FS_STOCK XMLIR_ENABLE_LINEAR_FC_FUSION=0 \
       python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
       --flagscale-root $FS_STOCK --out $OUT/glue_r${REP}.json
     ;;
   gelu)
-    run_one gelu $REP env CUDA_VISIBLE_DEVICES=${CARD:-1} FLAGSCALE_ADAMW_FUSED=0 \
+    run_one gelu $REP || rc_total=1 env CUDA_VISIBLE_DEVICES=${CARD:-1} FLAGSCALE_ADAMW_FUSED=0 \
       GEMS_VENDOR=kunlunxin PYTHONPATH=$FS:$FG \
       python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
       --flagscale-root $FS --flaggems-include gelu,gelu_backward --out $OUT/gelu_r${REP}.json
     ;;
   all)
-    run_one all $REP env CUDA_VISIBLE_DEVICES=${CARD:-1} \
+    run_one all $REP || rc_total=1 env CUDA_VISIBLE_DEVICES=${CARD:-1} \
       GEMS_VENDOR=kunlunxin PYTHONPATH=$FS:$FG \
       XMLIR_MATMUL_FAST_MODE=1 XMLIR_MATMUL_FAST_TUNE=1 \
       python3 $ROOT/segments_with_fixes.py --conf $CONF --steps 3 --skip 2 --device cuda \
@@ -82,3 +99,5 @@ case $CFG in
     ;;
   *) echo "unknown config $CFG"; exit 2;;
 esac
+
+exit $rc_total

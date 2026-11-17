@@ -22,6 +22,12 @@ def tensor_digest(t: torch.Tensor) -> str:
     return h.hexdigest()[:16]
 
 
+ENV_KEYS = ("XMLIR_MATMUL_FAST_MODE", "XMLIR_MATMUL_FAST_TUNE", "KLX_USE_AUTOTUNE",
+            "XMLIR_ENABLE_LINEAR_FC_FUSION", "XMLIR_ENABLE_XBLAS_ADDMM",
+            "XMLIR_FC_AUTOTUNE_BOOL", "XMLIR_BMM_DISPATCH_VALUE",
+            "FLAGSCALE_ADAMW_FUSED", "GEMS_VENDOR")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--conf", default="/workspace/FlagScale/examples/retrieval/conf/train/bge_m3.yaml")
@@ -30,6 +36,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--flagscale-root", default="/workspace/FlagScale")
     ap.add_argument("--flaggems-include", default=None)
+    ap.add_argument("--save-final", default=None, help="save final params+grads tensors for cross-config quantified diff")
     ap.add_argument("--label", default="run")
     a = ap.parse_args()
 
@@ -67,6 +74,13 @@ def main():
     loaders = build_split_loaders(task, cfg.data, batch_rows, pin_memory=True, seed=42)
     stream = iter(loaders[0])
     dtype_name = str(cfg.model.get("torch_dtype", "bf16"))
+
+    # input-order fingerprint: first batch anchors (same seed + same loader =>
+    # identical across configs, verified by equal fingerprints)
+    _b0 = next(stream)
+    _b0 = {k: list(v) for k, v in sorted(_b0.items())}
+    batch_fp = hashlib.sha256(json.dumps(_b0, ensure_ascii=False).encode()).hexdigest()[:16]
+    stream = iter(loaders[0])
 
     steps = []
     t_first = None
@@ -108,7 +122,13 @@ def main():
         "batch_rows": batch_rows, "accum": accum,
         "flaggems_include": a.flaggems_include, "gems_enabled": bool(gems_enabled),
         "flagscale_root": sys_path,
-        "adamw_fused_env": os.environ.get("FLAGSCALE_ADAMW_FUSED", "auto"),
+        "env_snapshot": {k: os.environ.get(k) for k in ENV_KEYS},
+        "optimizer_impl": {
+            "type": type(optimizer).__name__,
+            "fused": bool(optimizer.param_groups[0].get("fused", False)),
+            "foreach": str(optimizer.param_groups[0].get("foreach", "default")),
+        },
+        "first_batch_anchor_sha16": batch_fp,
         "max_memory_allocated_GB": round(torch.cuda.max_memory_allocated() / 1e9, 3),
         "first_step_wall_ms": round(t_first * 1000, 1),
         "steps": steps,
@@ -116,7 +136,16 @@ def main():
         "grad_sha_16_final": steps[-1]["grad_sha_16"],
     }
     json.dump(out, open(a.out, "w"), indent=1)
-    print("saved", a.out)
+    print("saved", a.out, flush=True)
+
+    if a.save_final:
+        state = {
+            "params": [p.detach().clone() for p in trainable],
+            "grads": [p.grad.detach().clone() if p.grad is not None else None for p in trainable],
+            "meta": {"label": a.label, "step": a.steps, "seed": 42},
+        }
+        torch.save(state, a.save_final)
+        print("saved final tensors:", a.save_final, flush=True)
 
 
 if __name__ == "__main__":

@@ -15,9 +15,13 @@ all            0.0     615.9     772.5     322.6      71.8     264.4     165.1  
 
 == numerics ==
 all_fixes    final_loss=0.813812 relmax_vs_native_r1=0.006345 nonfinite=0 mem=26.714GB param=5e0ea7269baa570c
+all_fixes_v2 final_loss=0.810117 relmax_vs_native_r1=0.00719 nonfinite=0 mem=26.73GB param=845f5a7c9ae66996
 gelu_only    final_loss=0.803595 relmax_vs_native_r1=0.012421 nonfinite=0 mem=26.714GB param=5ec49cb4df18cff0
+gelu_only_v2 final_loss=0.803595 relmax_vs_native_r1=0.012421 nonfinite=0 mem=26.714GB param=5ec49cb4df18cff0
+gemm_env_v2  final_loss=0.810684 relmax_vs_native_r1=0.005345 nonfinite=0 mem=26.729GB param=ccbc99dd6afdc3a8
 native_r1    final_loss=0.813702 relmax_vs_native_r1=0.0 nonfinite=0 mem=26.714GB param=51d4c40083d81b8c
 native_r2    final_loss=0.813702 relmax_vs_native_r1=0.0 nonfinite=0 mem=26.714GB param=51d4c40083d81b8c
+native_r3    final_loss=0.813702 relmax_vs_native_r1=0.0 nonfinite=0 mem=26.714GB param=51d4c40083d81b8c
 
 == gemm sweep ==
 base                   qkv_attnout_1024x1024=0.1463ms/42.9TF ffn_up_1024x4096=0.163ms/153.8TF ffn_down_4096x1024=0.177ms/141.7TF

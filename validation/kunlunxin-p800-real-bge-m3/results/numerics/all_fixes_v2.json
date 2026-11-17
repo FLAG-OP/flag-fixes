@@ -1,0 +1,117 @@
+{
+ "label": "all_fixes_v2",
+ "conf": "/workspace/FlagScale/examples/retrieval/conf/train/bge_m3.yaml",
+ "steps": [
+  {
+   "step": 0,
+   "wall_ms": 4979.7,
+   "micro_losses": [
+    2.179297,
+    1.492188,
+    0.810791,
+    0.723413
+   ],
+   "step_loss_mean": 1.301422,
+   "grad_sha_16": "c0ee0a88d0279e38",
+   "param_sha_16": "49d8fabad84519f1",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 1,
+   "wall_ms": 2824.1,
+   "micro_losses": [
+    1.205029,
+    1.432971,
+    1.072803,
+    0.702539
+   ],
+   "step_loss_mean": 1.103336,
+   "grad_sha_16": "2183f6b796f7c497",
+   "param_sha_16": "f1cef06a69262285",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 2,
+   "wall_ms": 2827.2,
+   "micro_losses": [
+    0.978516,
+    1.253418,
+    0.679883,
+    0.48042
+   ],
+   "step_loss_mean": 0.848059,
+   "grad_sha_16": "e286cd3be42ea585",
+   "param_sha_16": "933dcf9452433dc2",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 3,
+   "wall_ms": 4050.2,
+   "micro_losses": [
+    0.612347,
+    0.743652,
+    0.675488,
+    0.878711
+   ],
+   "step_loss_mean": 0.72755,
+   "grad_sha_16": "60399733ccfa3c21",
+   "param_sha_16": "e2965c565dccb917",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 4,
+   "wall_ms": 3058.5,
+   "micro_losses": [
+    0.930273,
+    1.09602,
+    0.427881,
+    0.928613
+   ],
+   "step_loss_mean": 0.845697,
+   "grad_sha_16": "3f2005d245e8c784",
+   "param_sha_16": "5e8eb4e3ea1e8bc3",
+   "params_nonfinite": 0
+  },
+  {
+   "step": 5,
+   "wall_ms": 3086.2,
+   "micro_losses": [
+    0.877197,
+    0.398682,
+    0.887781,
+    1.076807
+   ],
+   "step_loss_mean": 0.810117,
+   "grad_sha_16": "459cd005fdeb3c86",
+   "param_sha_16": "845f5a7c9ae66996",
+   "params_nonfinite": 0
+  }
+ ],
+ "seed": 42,
+ "batch_rows": 10,
+ "accum": 4,
+ "flaggems_include": "gelu,gelu_backward",
+ "gems_enabled": true,
+ "flagscale_root": "/workspace/FlagScale",
+ "env_snapshot": {
+  "XMLIR_MATMUL_FAST_MODE": "1",
+  "XMLIR_MATMUL_FAST_TUNE": "1",
+  "KLX_USE_AUTOTUNE": "0",
+  "XMLIR_ENABLE_LINEAR_FC_FUSION": null,
+  "XMLIR_ENABLE_XBLAS_ADDMM": null,
+  "XMLIR_FC_AUTOTUNE_BOOL": null,
+  "XMLIR_BMM_DISPATCH_VALUE": null,
+  "FLAGSCALE_ADAMW_FUSED": "auto",
+  "GEMS_VENDOR": "kunlunxin"
+ },
+ "optimizer_impl": {
+  "type": "AdamW",
+  "fused": true,
+  "foreach": "None"
+ },
+ "first_batch_anchor_sha16": "1b00e9e900125391",
+ "max_memory_allocated_GB": 26.73,
+ "first_step_wall_ms": 4979.7,
+ "param_sha_16_final": "845f5a7c9ae66996",
+ "grad_sha_16_final": "459cd005fdeb3c86"
+}

@@ -2,14 +2,20 @@
  "segments": {
   "all": {
    "reps": 3,
-   "wall_ms_p50": 2972.8,
    "wall_ms_per_rep": [
     2984.2,
     2967.9,
     2972.8
    ],
-   "wall_ms_p95": 2972.8,
+   "wall_ms_p50": 2972.8,
+   "wall_ms_range": [
+    2967.9,
+    2984.2
+   ],
    "device_ms_p50": 2810.5,
+   "forward_ms_median": 1190.7,
+   "backward_ms_median": 1726.1,
+   "clip_step_ms_median": 38.8,
    "tokenize_ms_p50": 108.9,
    "dataloader_ms_p50": 1.06,
    "kernel_ms_p50": 2535.3,
@@ -17,14 +23,20 @@
   },
   "gelu": {
    "reps": 3,
-   "wall_ms_p50": 3070.2,
    "wall_ms_per_rep": [
     3086.8,
     3065.2,
     3070.2
    ],
-   "wall_ms_p95": 3070.2,
+   "wall_ms_p50": 3070.2,
+   "wall_ms_range": [
+    3065.2,
+    3086.8
+   ],
    "device_ms_p50": 2880.0,
+   "forward_ms_median": 1218.0,
+   "backward_ms_median": 1767.6,
+   "clip_step_ms_median": 62.1,
    "tokenize_ms_p50": 106.1,
    "dataloader_ms_p50": 1.05,
    "kernel_ms_p50": 2687.1,
@@ -32,14 +44,20 @@
   },
   "gemm": {
    "reps": 3,
-   "wall_ms_p50": 3488.8,
    "wall_ms_per_rep": [
     3488.8,
     3490.1,
     3483.6
    ],
-   "wall_ms_p95": 3488.8,
+   "wall_ms_p50": 3488.8,
+   "wall_ms_range": [
+    3483.6,
+    3490.1
+   ],
    "device_ms_p50": 3293.2,
+   "forward_ms_median": 1302.6,
+   "backward_ms_median": 2097.2,
+   "clip_step_ms_median": 62.0,
    "tokenize_ms_p50": 106.1,
    "dataloader_ms_p50": 1.06,
    "kernel_ms_p50": 3113.5,
@@ -47,14 +65,20 @@
   },
   "glue": {
    "reps": 3,
-   "wall_ms_p50": 3594.7,
    "wall_ms_per_rep": [
     3593.0,
     3604.6,
     3594.7
    ],
-   "wall_ms_p95": 3594.7,
+   "wall_ms_p50": 3594.7,
+   "wall_ms_range": [
+    3593.0,
+    3604.6
+   ],
    "device_ms_p50": 3392.6,
+   "forward_ms_median": 1299.6,
+   "backward_ms_median": 2202.0,
+   "clip_step_ms_median": 61.5,
    "tokenize_ms_p50": 104.6,
    "dataloader_ms_p50": 1.04,
    "kernel_ms_p50": 3348.1,
@@ -62,14 +86,20 @@
   },
   "native": {
    "reps": 3,
-   "wall_ms_p50": 3572.4,
    "wall_ms_per_rep": [
     3580.4,
     3563.4,
     3572.4
    ],
-   "wall_ms_p95": 3572.4,
+   "wall_ms_p50": 3572.4,
+   "wall_ms_range": [
+    3563.4,
+    3580.4
+   ],
    "device_ms_p50": 3375.3,
+   "forward_ms_median": 1341.3,
+   "backward_ms_median": 2140.1,
+   "clip_step_ms_median": 62.1,
    "tokenize_ms_p50": 107.2,
    "dataloader_ms_p50": 1.1,
    "kernel_ms_p50": 3240.8,
@@ -142,7 +172,42 @@
    "grad_final": "970fc63a875a7470",
    "params_nonfinite": 0,
    "max_mem_GB": 26.714,
+   "env_snapshot": null,
+   "optimizer_impl": null,
+   "first_batch_anchor_sha16": null,
    "loss_rel_vs_first_native": 0.006345
+  },
+  "all_fixes_v2": {
+   "losses": [
+    1.301422,
+    1.103336,
+    0.848059,
+    0.72755,
+    0.845697,
+    0.810117
+   ],
+   "param_final": "845f5a7c9ae66996",
+   "grad_final": "459cd005fdeb3c86",
+   "params_nonfinite": 0,
+   "max_mem_GB": 26.73,
+   "env_snapshot": {
+    "XMLIR_MATMUL_FAST_MODE": "1",
+    "XMLIR_MATMUL_FAST_TUNE": "1",
+    "KLX_USE_AUTOTUNE": "0",
+    "XMLIR_ENABLE_LINEAR_FC_FUSION": null,
+    "XMLIR_ENABLE_XBLAS_ADDMM": null,
+    "XMLIR_FC_AUTOTUNE_BOOL": null,
+    "XMLIR_BMM_DISPATCH_VALUE": null,
+    "FLAGSCALE_ADAMW_FUSED": "auto",
+    "GEMS_VENDOR": "kunlunxin"
+   },
+   "optimizer_impl": {
+    "type": "AdamW",
+    "fused": true,
+    "foreach": "None"
+   },
+   "first_batch_anchor_sha16": "1b00e9e900125391",
+   "loss_rel_vs_first_native": 0.00719
   },
   "gelu_only": {
    "losses": [
@@ -157,7 +222,74 @@
    "grad_final": "220817dc5cb686e9",
    "params_nonfinite": 0,
    "max_mem_GB": 26.714,
+   "env_snapshot": null,
+   "optimizer_impl": null,
+   "first_batch_anchor_sha16": null,
    "loss_rel_vs_first_native": 0.012421
+  },
+  "gelu_only_v2": {
+   "losses": [
+    1.301263,
+    1.103607,
+    0.853772,
+    0.730161,
+    0.844385,
+    0.803595
+   ],
+   "param_final": "5ec49cb4df18cff0",
+   "grad_final": "220817dc5cb686e9",
+   "params_nonfinite": 0,
+   "max_mem_GB": 26.714,
+   "env_snapshot": {
+    "XMLIR_MATMUL_FAST_MODE": null,
+    "XMLIR_MATMUL_FAST_TUNE": null,
+    "KLX_USE_AUTOTUNE": "0",
+    "XMLIR_ENABLE_LINEAR_FC_FUSION": null,
+    "XMLIR_ENABLE_XBLAS_ADDMM": null,
+    "XMLIR_FC_AUTOTUNE_BOOL": null,
+    "XMLIR_BMM_DISPATCH_VALUE": null,
+    "FLAGSCALE_ADAMW_FUSED": "0",
+    "GEMS_VENDOR": "kunlunxin"
+   },
+   "optimizer_impl": {
+    "type": "AdamW",
+    "fused": false,
+    "foreach": "None"
+   },
+   "first_batch_anchor_sha16": "1b00e9e900125391",
+   "loss_rel_vs_first_native": 0.012421
+  },
+  "gemm_env_v2": {
+   "losses": [
+    1.297357,
+    1.106726,
+    0.853442,
+    0.733855,
+    0.847211,
+    0.810684
+   ],
+   "param_final": "ccbc99dd6afdc3a8",
+   "grad_final": "f7973307bdb7fe1e",
+   "params_nonfinite": 0,
+   "max_mem_GB": 26.729,
+   "env_snapshot": {
+    "XMLIR_MATMUL_FAST_MODE": "1",
+    "XMLIR_MATMUL_FAST_TUNE": "1",
+    "KLX_USE_AUTOTUNE": "0",
+    "XMLIR_ENABLE_LINEAR_FC_FUSION": null,
+    "XMLIR_ENABLE_XBLAS_ADDMM": null,
+    "XMLIR_FC_AUTOTUNE_BOOL": null,
+    "XMLIR_BMM_DISPATCH_VALUE": null,
+    "FLAGSCALE_ADAMW_FUSED": null,
+    "GEMS_VENDOR": "kunlunxin"
+   },
+   "optimizer_impl": {
+    "type": "AdamW",
+    "fused": false,
+    "foreach": "None"
+   },
+   "first_batch_anchor_sha16": "1b00e9e900125391",
+   "loss_rel_vs_first_native": 0.005345
   },
   "native_r1": {
    "losses": [
@@ -172,6 +304,9 @@
    "grad_final": "0ac153f30fbead55",
    "params_nonfinite": 0,
    "max_mem_GB": 26.714,
+   "env_snapshot": null,
+   "optimizer_impl": null,
+   "first_batch_anchor_sha16": null,
    "loss_rel_vs_first_native": 0.0
   },
   "native_r2": {
@@ -187,6 +322,41 @@
    "grad_final": "0ac153f30fbead55",
    "params_nonfinite": 0,
    "max_mem_GB": 26.714,
+   "env_snapshot": null,
+   "optimizer_impl": null,
+   "first_batch_anchor_sha16": null,
+   "loss_rel_vs_first_native": 0.0
+  },
+  "native_r3": {
+   "losses": [
+    1.300555,
+    1.100842,
+    0.85249,
+    0.732819,
+    0.847382,
+    0.813702
+   ],
+   "param_final": "51d4c40083d81b8c",
+   "grad_final": "0ac153f30fbead55",
+   "params_nonfinite": 0,
+   "max_mem_GB": 26.714,
+   "env_snapshot": {
+    "XMLIR_MATMUL_FAST_MODE": null,
+    "XMLIR_MATMUL_FAST_TUNE": null,
+    "KLX_USE_AUTOTUNE": "0",
+    "XMLIR_ENABLE_LINEAR_FC_FUSION": null,
+    "XMLIR_ENABLE_XBLAS_ADDMM": null,
+    "XMLIR_FC_AUTOTUNE_BOOL": null,
+    "XMLIR_BMM_DISPATCH_VALUE": null,
+    "FLAGSCALE_ADAMW_FUSED": null,
+    "GEMS_VENDOR": "kunlunxin"
+   },
+   "optimizer_impl": {
+    "type": "AdamW",
+    "fused": false,
+    "foreach": "None"
+   },
+   "first_batch_anchor_sha16": "1b00e9e900125391",
    "loss_rel_vs_first_native": 0.0
   }
  },
