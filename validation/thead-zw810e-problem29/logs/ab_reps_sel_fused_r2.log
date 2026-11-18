@@ -2,10 +2,10 @@
   resolved_benchmark = resolve_benchmarker(
 /usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
   Overriding a previously registered kernel for the same operator and the same dispatch key
-  operator: aten::gelu(Tensor self, *, str approximate="none") -> Tensor
+  operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate="none") -> Tensor
     registered at aten/src/ATen/RegisterSchema.cpp:6
   dispatch key: CUDA
-  previous kernel: registered at ../aten/src/ATen/functorch/BatchRulesUnaryOps.cpp:63
+  previous kernel: registered at ../aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:353
        new kernel: registered at /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
   self.m.impl(
 FlagGems selective enabled (gelu family)
@@ -17,20 +17,20 @@ optimizer: fused AdamW
   @custom_bwd
 device=cuda:0 platform=cuda
 params=567754752
-  step 2: 1938 ms
-  step 3: 2181 ms
-  step 4: 2409 ms
+  step 2: 1959 ms
+  step 3: 2169 ms
+  step 4: 2401 ms
 
 === batch 10 rows x accum 4 = 200 texts/step ===
-wall/step             2181.4 ms
+wall/step             2168.9 ms
 segment                              per step   % wall
-data (next(stream))                      0.95      0.0
-forward (incl tokenize+h2d)            721.11     33.1
-  . tokenize alone                      62.44      2.9
-  . H2D alone                            1.00      0.0
-  . residual = device compute          657.67     30.1
-backward                              1397.17     64.0
-clip + optimizer.step                   14.03      0.6
-sum                                   2133.26     97.8
-unaccounted                             48.16      2.2
-device compute (fwd+bwd)              2054.84     94.2
+data (next(stream))                      0.77      0.0
+forward (incl tokenize+h2d)            726.31     33.5
+  . tokenize alone                      58.85      2.7
+  . H2D alone                            1.09      0.1
+  . residual = device compute          666.37     30.7
+backward                              1405.04     64.8
+clip + optimizer.step                   13.95      0.6
+sum                                   2146.08     98.9
+unaccounted                             22.78      1.1
+device compute (fwd+bwd)              2071.41     95.5

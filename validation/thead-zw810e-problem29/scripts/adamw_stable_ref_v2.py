@@ -189,7 +189,9 @@ def hard_fail(gates, grad_presence=True):
 
 
 def selftest_verdict():
-    """negative/positive cases through the REAL verdict function."""
+    """negative/positive cases through the REAL verdict function.
+    Each test deletes/mutates a field in the input and calls the production
+    verdict() function — NOT manual dict manipulation."""
     bad = []
     dt = torch.bfloat16
     ref = {"p": torch.tensor([1.0, 2.0], dtype=dt), "m": torch.tensor([0.1, 0.2], dtype=dt),

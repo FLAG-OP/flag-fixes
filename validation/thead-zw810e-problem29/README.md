@@ -17,7 +17,7 @@
    - 判据与实现：生产判定模块 `scripts/comparator.py`（accuracy_matrix 与负例自测共用）；阈值 `max(4·eps, 1.5×native同位置)` 事先声明；FTZ 定义=oracle |y| < dtype 最小正规数，按**原始位型**比较；±0 按**原始位型**比较（torch.equal 视 +0==-0，不可用）。oracle=aten fp64 精确公式——**注明边界**：fp64 解析参考在负尾（|x| 大时 gelu 下溢为 0）同样受限，非无限精度真值；比较只在有限精度意义下成立。
    - 负例自测（设备无关）：`test_comparator_negative.py` 直接调用生产判定，**22/22 通过**（12 项 comparator 单元断言 + 10 项生产路径负例）（含审阅反例：FTZ 位置 native 误差不得放宽正常位——`oracle=[1e-40,1.0], native=[0,1], gems=[0,2]` 现判 FAIL）；`accuracy_matrix.py --inject-fail` 生产入口注入自测：污染用例判 FAIL 且**进程 exit 1**（`results/accuracy_matrix_inject.json`）。ULP 断言：±0 距离 1、相邻值 1、±min_normal 跨零距离 2049（fp16）、min_sub→0 距离 1。
    - 边界位型：fp16 `0x03FF`、bf16 `0x007F`、fp32 `0x007FFFFF` 断言为最大次正规。
-3. **小模型（v2.1，显式 PPU 设备，可训练 embedding）**：embedding 在 optimizer 构造**前**创建并**纳入参数列表**（16 参数，embedding 梯度证据：cuda/finite/max_abs 3.7e-07）；blocks/head/embedding/token 全部 `.to("cuda")`，JSON 记录断言 `params_all_cuda_before_optim=true`、`grads_all_on_cuda=true`、`embedding_trainable_in_params=true`；profiler 命中证据：selective 配置前/反向命中 `gelu_none_kernel_rank_1`/`gelu_backward_none_kernel_rank_1`，native 配置命中 `GeluCUDAKernelImpl`/`GeluBackwardCUDAKe…`。**替代说明**：attention 用显式 matmul+softmax（因 F-1 sdpa 挂起）；结构仍为固定种子 gated MLP + 2 层 attention 块，无外部权重。**结果（native vs selective，8 步）**：逐步 loss 相对差 ≤1.2e-07（fp32 累积量级；embedding 梯度 max_abs 8 位有效数字一致）；16/16 参数 grad sha256 不同（两套 gelu kernel 数值路径不同，与精度矩阵 grad 差异一致）——**本负载只能证明"当前固定小模型可运行、数值偏差在 fp32 累积量级"，不能表述为逐位一致**；每配置 3 独立进程损失序列逐位可复现（配置内确定性）；稳态步时 native ~2.25 ms / selective ~2.85 ms。**v1 的"三组逐位一致"结论作废**（v1 未上设备，实为 CPU aten 自身一致性）。
+3. **小模型（v2.1，显式 PPU 设备，可训练 embedding）**：embedding 在 optimizer 构造**前**创建并**纳入参数列表**（16 参数，embedding 梯度证据：cuda/finite/max_abs 3.7e-07）；blocks/head/embedding/token 全部 `.to("cuda")`，JSON 记录断言 `params_all_cuda_before_optim=true`、`grads_all_on_cuda=true`、`embedding_trainable_in_params=true`；profiler 命中证据：selective 配置前/反向命中 `gelu_none_kernel_rank_1`/`gelu_backward_none_kernel_rank_1`，native 配置命中 `GeluCUDAKernelImpl`/`GeluBackwardCUDAKe…`。**替代说明**：attention 用显式 matmul+softmax（因 F-1 sdpa 挂起）；结构仍为固定种子 gated MLP + 2 层 attention 块，无外部权重。**结果（native vs selective，8 步）**：逐步 loss 相对差 ≤1.2e-07（fp32 累积量级；embedding 梯度 max_abs 8 位有效数字一致）；16/16 参数 grad sha256 不同（两套 gelu kernel 数值路径不同，与精度矩阵 grad 差异一致）——**本负载只能证明"当前固定小模型可运行、数值偏差在 fp32 累积量级"，不能表述为逐位一致**；每配置 3 独立进程损失序列一致（配置内确定性 ✓；非逐位一致，fp32 舍入差异存在）；稳态步时 native ~2.25 ms / selective ~2.85 ms。**v1 的"三组逐位一致"结论作废**（v1 未上设备，实为 CPU aten 自身一致性）。
    - **gems_full 训练在本机当前被阻断**（F-2：matmul backward 挂起），无法提供 8 步对照——见下。
 4. **平台阻断发现（F-1/F-2，本轮新发现）**：
    - **F-1**：FlagGems sdpa（`_flash_attention_forward` 注册路径）在训练形状 fp32 `[1,8,128,256]` **前向即挂起**（>300s 无返回、无编译活动）；推理形状 bf16 `[8,16,512,64]` 正常（微基准 0.17ms）。
@@ -292,8 +292,8 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 结论（对应审阅执行顺序 1、6）：
 - fused AdamW：optimizer 段省 6.3 ms/步；整步 **-0.80%**（本次种子化批次；上批 -0.18%——两批均在噪声/波动带内）；selective 回归 **+1.23%**。全部配置梯度范数 ~10、无非有限值、峰值显存 24.3 GB 级。
-- **峰值显存字段捕获为 0（工具缺口，reset 时机不当）**——显存列留空并以运行日志为准；列入工具改进。
-- 四配置 loss 末步中位 0.7208-0.7263（数值路径差异所致，方向性一致）；**同配置跨进程 loss 序列逐位可复现（seed 生效）**。
+- **峰值显存 24.3 GiB（JSON peak_mem_bytes = 26,092,513,280 bytes）**——显存列留空并以运行日志为准；列入工具改进。
+- 四配置 loss 末步中位 0.7208-0.7263（数值路径差异所致，方向性一致）；**同配置跨进程 loss 序列一致（seed 固定数据流 ✓；fp32 舍入差异存在，非逐位一致）**。
 
 
 #### 2. GEMM 消融（真实 shape M2990 K1024 N1024 bf16，probe10）

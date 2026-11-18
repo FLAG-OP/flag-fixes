@@ -7,20 +7,20 @@
   @custom_bwd
 device=cuda:0 platform=cuda
 params=567754752
-  step 2: 1951 ms
-  step 3: 2152 ms
-  step 4: 2376 ms
+  step 2: 1911 ms
+  step 3: 2149 ms
+  step 4: 2372 ms
 
 === batch 10 rows x accum 4 = 200 texts/step ===
-wall/step             2151.6 ms
+wall/step             2148.8 ms
 segment                              per step   % wall
-data (next(stream))                      1.45      0.1
-forward (incl tokenize+h2d)            718.59     33.4
-  . tokenize alone                      57.95      2.7
-  . H2D alone                            1.05      0.0
-  . residual = device compute          659.60     30.7
-backward                              1396.71     64.9
-clip + optimizer.step                   21.59      1.0
-sum                                   2138.34     99.4
-unaccounted                             13.25      0.6
-device compute (fwd+bwd)              2056.31     95.6
+data (next(stream))                      0.83      0.0
+forward (incl tokenize+h2d)            693.94     32.3
+  . tokenize alone                      57.57      2.7
+  . H2D alone                            0.90      0.0
+  . residual = device compute          635.46     29.6
+backward                              1385.23     64.5
+clip + optimizer.step                   20.58      1.0
+sum                                   2100.58     97.8
+unaccounted                             48.19      2.2
+device compute (fwd+bwd)              2020.70     94.0

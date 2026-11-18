@@ -17,19 +17,19 @@ FlagGems selective enabled (gelu family)
 device=cuda:0 platform=cuda
 params=567754752
   step 2: 1937 ms
-  step 3: 2166 ms
-  step 4: 2398 ms
+  step 3: 2172 ms
+  step 4: 2397 ms
 
 === batch 10 rows x accum 4 = 200 texts/step ===
-wall/step             2165.9 ms
+wall/step             2172.3 ms
 segment                              per step   % wall
-data (next(stream))                      0.77      0.0
-forward (incl tokenize+h2d)            709.80     32.8
-  . tokenize alone                      56.77      2.6
-  . H2D alone                            1.02      0.0
-  . residual = device compute          652.01     30.1
-backward                              1396.86     64.5
-clip + optimizer.step                   20.32      0.9
-sum                                   2127.75     98.2
-unaccounted                             38.14      1.8
-device compute (fwd+bwd)              2048.87     94.6
+data (next(stream))                      0.65      0.0
+forward (incl tokenize+h2d)            714.61     32.9
+  . tokenize alone                      52.43      2.4
+  . H2D alone                            0.93      0.0
+  . residual = device compute          661.25     30.4
+backward                              1400.67     64.5
+clip + optimizer.step                   20.35      0.9
+sum                                   2136.27     98.3
+unaccounted                             36.06      1.7
+device compute (fwd+bwd)              2061.91     94.9
