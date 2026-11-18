@@ -26,7 +26,8 @@ xnc=x.t().contiguous().t()
 res["noncontig_input_ms"]=timed(lambda: xnc @ wk.t())
 res["contig_input_ms"]=timed(lambda: x.contiguous() @ wk.t())
 # fp32 accumulate reference via float() matmul
-res["fp32_matmul_ms"]=timed(lambda: x.float() @ w.t().float())
+xf32=x.float(); wf32=w.t().float()  # pre-convert outside timed region
+res["fp32_matmul_ms"]=timed(lambda: xf32 @ wf32.t())
 OUT["results"]=res
 json.dump(OUT,open("results/probe10_gemm_ablation.json","w"),indent=1)
 print(json.dumps(OUT,indent=1))
