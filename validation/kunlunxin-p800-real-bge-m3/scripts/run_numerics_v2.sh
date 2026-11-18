@@ -24,6 +24,11 @@ num () {
   local include=""
   if config_uses_gems "$cfgname"; then include=$GELU_INCLUDE; fi
   echo "=== numerics $name (config=$cfgname env='$env' include='$include') $(date +%H:%M:%S)"
+  # stale-artifact isolation: previous JSON/PT must never pass for this run
+  mkdir -p $STATDIR/history
+  for f in $NUMDIR/$name.json $STATDIR/$name.pt; do
+    [ -e "$f" ] && mv "$f" "$STATDIR/history/${name}_$(date +%Y%m%d-%H%M%S)_$(basename "$f")"
+  done
   env CUDA_VISIBLE_DEVICES=${CARD:-2} $env \
     PYTHONPATH=$pp \
     python3 $EV/numerics_check.py --label $name --steps 6 \
@@ -42,6 +47,7 @@ num () {
 cmp () {
   local tgt=$1 out=$2.json
   echo "=== compare $tgt vs native_r3 -> $out"
+  rm -f $NUMDIR/$out
   CUDA_VISIBLE_DEVICES= python3 $EV/numerics_compare.py \
     $NUMDIR/native_r3.json $STATDIR/native_r3.pt \
     $NUMDIR/$tgt.json $STATDIR/$tgt.pt \

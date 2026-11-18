@@ -99,16 +99,30 @@ FlagScale-stock，flaggems.py 在两棵树分别等于 fix 的 after/before hash
 5. **数值轨迹（六步观察，精度验收 pending）**：数值运行与性能配置共用定义
    （`scripts/ablation_configs.sh`）：all_fixes_v2 数值运行含与性能 all 完全一致的
    env（XMLIR fast GEMM + adamw auto + gelu include）。固定 seed 6 步、相同输入
-   顺序（全批输入指纹一致）与 RNG：native 三独立进程（r1/r2/r3）逐步**逐位一致**
+   顺序（native_r3 为全批输入指纹，gelu/all/gemm 存档为首 batch 指纹口径，
+   见下方指纹覆盖现状）与 RNG：native 三独立进程（r1/r2/r3）逐步**逐位一致**
    （loss 序列与 param/grad sha256 全同，过程内噪声下限=0）。跨配置**量化对比**
    （`results/numerics/compare_*.json`，张量级 numeric-equal 占比/max_abs/
-   L2-rel（逐张量最大值，ref 范数非零者）/grad L2 差范数）：
+   L2-rel（逐张量最大值，ref 范数非零者）/grad L2 差范数）。
 
-   | 对比 | loss 逐步最大相对差 | param L2 rel（逐张量最大值） | param max_abs | grad 异常 |
-   |---|---:|---:|---:|---|
-   | gelu_only_v2 vs native_r3 | 1.24% | 0.60% | 3.66e-4 | 小范数 LayerNorm 张量（‖g‖≈0.01）上 L2-rel 至 2.8×，绝对量级 1e-2 |
-   | all_fixes_v2 vs native_r3 | 0.72% | 0.62% | 3.66e-4 | 同上量级 |
-   | gemm_env_v2 vs native_r3 | 0.43% | 0.50% | 3.66e-4 | — |
+   **指纹覆盖现状（2026-11-18 设备事件）**：全批次输入指纹升级重跑时，卡 2
+   触发驱动 error 299（wait for noc idle timeout）→ 清理后卡 1 出现堆损坏、
+   卡 2/3 初始化挂起——设备楔死，需平台侧重置（与 PR3 记录的 error-721 楔死
+   同类；现场日志 `logs/numerics/native_r3_device299_incident.log`）。
+   native_r3 在楔死前完成并记录全批指纹（24 批）；gelu/all/gemm 的存档为
+   楔死前一日运行（首 batch 指纹口径），全批指纹刷新 **pending 设备恢复**。
+   复审要求的"运行前旧产物隔离/发布门禁"已在 runner 落地并用 CPU 替身验证
+   （exit-0 无产物负例 → runner 失败；有效产物 → 发布+sidecar）。
+
+
+   | 对比 | loss 逐步最大相对差 | param L2 rel（逐张量最大值） | param max_abs | grad max_abs / L2 差范数（逐张量最大值） | grad L2-rel（defined，逐张量最大值） |
+   |---|---:|---:|---:|---|---:|
+   | gelu_only_v2 vs native_r3 | 1.24% | 0.60% | 3.66e-4 | 5.57e-2 / 0.256 | 2.80 |
+   | all_fixes_v2 vs native_r3 | 0.72% | 0.62% | 3.66e-4 | **0.125 / 0.500** | **4.68** |
+   | gemm_env_v2 vs native_r3 | 0.43% | 0.50% | 3.66e-4 | 4.79e-2 / 0.196 | 2.00 |
+
+   grad 的大相对/大 L2 项集中在小范数 LayerNorm 张量（‖g‖≈0.01–0.03，绝对差
+   1e-2 量级）——如实记录为观察，不据此判定算法错误，也不作为合入门槛。
 
    **GEMM env 在真实变长 shape 上改变数值**（loss ~0.4–0.5%）：固定形状 sweep 的
    "逐位一致"只在 M=2990 成立，不可外推到变长训练——此点为本轮修正。

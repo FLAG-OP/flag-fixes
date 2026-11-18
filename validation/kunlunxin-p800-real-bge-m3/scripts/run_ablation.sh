@@ -36,23 +36,42 @@ run_one () {
   local name=$1 rep=$2; shift 2
   local out=$OUT/${name}_r${rep}.json
   local log=$LOG/${name}_r${rep}.log
+  local hist=$OUT/history
+  mkdir -p "$hist"
+  # isolate stale artifacts: a previous run's JSON/sidecar must never be able
+  # to pass for this run's result (review round-3 P2). They are moved aside
+  # before training and only restored there, never republished.
+  for f in "$out" "$out.env.json"; do
+    [ -e "$f" ] && mv "$f" "$hist/${name}_r${rep}_$(date +%Y%m%d-%H%M%S)_$(basename "$f")"
+  done
   echo "=== [$name rep$rep] $(date +%H:%M:%S) -> $out"
   timeout 3000 "$@" > "$log" 2>&1
   local rc=$?
   echo "rc=$rc"
   tail -6 "$log" | sed 's/^/    /'
+  # publish gate: a FRESH artifact must exist and carry the required numeric
+  # fields (positive finite wall/kernel, finite non-negative segments)
   python3 - "$out" <<'PY' || rc=1
-import json, sys
+import json, math, sys
 try:
     d = json.load(open(sys.argv[1]))
     for k in ("wall_ms", "kernel_ms_per_step", "per_step_ms", "ops"):
         assert k in d, f"missing {k}"
+    for k in ("wall_ms", "kernel_ms_per_step"):
+        v = d[k]
+        assert isinstance(v, (int, float)) and not isinstance(v, bool), f"{k} not numeric: {v!r}"
+        assert math.isfinite(v) and v > 0, f"{k} not positive finite: {v!r}"
+    for k, v in d.get("per_step_ms", {}).items():
+        assert isinstance(v, (int, float)) and not isinstance(v, bool), f"per_step_ms.{k} not numeric: {v!r}"
+        assert math.isfinite(v) and v >= 0, f"per_step_ms.{k} not finite non-negative: {v!r}"
 except Exception as e:
     print(f"JSON VALIDATION FAILED: {e}")
     sys.exit(1)
 PY
-  # record the effective config next to the artifact (config provenance)
-  python3 - "$out" "$pp" "$fs" "$env" "$include" <<'PY' || rc=1
+  # config provenance sidecar is written only if training AND the publish
+  # gate both passed (never for a failed/missing artifact)
+  if [ $rc -eq 0 ]; then
+    python3 - "$out" "$pp" "$fs" "$env" "$include" <<'PY' || rc=1
 import json, sys
 out, pp, fs, env, include = sys.argv[1:6]
 meta = {"pythonpath": pp, "flagscale_root": fs,
@@ -64,6 +83,7 @@ except Exception as e:
     print(f"ENV META FAILED: {e}")
     sys.exit(1)
 PY
+  fi
   if [ $rc -ne 0 ]; then
     echo "!!! $name rep$rep FAILED rc=$rc"
     echo "$name rep$rep rc=$rc" >> "$FAILS_FILE"

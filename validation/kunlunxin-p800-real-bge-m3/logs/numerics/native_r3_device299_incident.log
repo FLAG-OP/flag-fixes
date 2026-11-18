@@ -1,0 +1,35 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+`torch_dtype` is deprecated! Use `dtype` instead!
+XX: (pid 133259,tid 126981951997760)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 721, status= 299
+XX: (pid 133259,tid 126981951997760)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 133259,tid 126981951997760)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 721, status= 299
+XX: (pid 133259,tid 126981951997760)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 133259,tid 126981951997760)cuda/src/cui/cuistream.cc:1067:cuiStreamSynchronize cuiStreamSynchronize() failed in ctxMarkerWait, Failed to ctxMarkerWait, status= 299
+XX: (pid 133259,tid 126981951997760)cuda/src/api/apilaunch.cc:964:cuapi_xpu_wait cuapi_xpu_wait() failed in cuiStreamUserSync, status= 299
+Traceback (most recent call last):
+  File "/workspace/evidence/numerics_check.py", line 158, in <module>
+    main()
+  File "/workspace/evidence/numerics_check.py", line 70, in main
+    model, processor = build_retrieval_model(str(cfg.model.model_type), cfg.model, dev)
+  File "/workspace/FlagScale-stock/flagscale/models/retrieval/registry.py", line 54, in build_retrieval_model
+    model = RETRIEVAL_MODEL_REGISTRY[name].from_pretrained(model_cfg, device)
+  File "/workspace/FlagScale-stock/flagscale/models/retrieval/bge_m3.py", line 44, in from_pretrained
+    model.load_to_device(device)
+  File "/workspace/FlagScale-stock/flagscale/models/retrieval/base.py", line 111, in load_to_device
+    self.to(device)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1371, in to
+    return self._apply(convert)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 957, in _apply
+    param_applied = fn(param)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1357, in convert
+    return t.to(
+RuntimeError: [RUNTIME ERROR]: error code= 299, wait for noc idle timeout;
+XX: (pid 133259,tid 126981951997760)cuda/src/api/apilaunch.cc:952:cuapi_xpu_wait cuapi_xpu_wait() failed in cuiInitCheckEx, status= 299
+XX: (pid 133259,tid 126981951997760)cuda/src/api/apimem.cc:302:cuapiMemFree_common cuapiMemFree() failed in cuiInitCheckCtx, Incompatible context or Context error, status= 299
