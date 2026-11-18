@@ -1,0 +1,493 @@
+{
+ "batch_rows": 10,
+ "accum": 4,
+ "texts_per_step": 200,
+ "wall_ms": 2972.780075004266,
+ "segments_ms_median": {
+  "data": 0.2639545018610079,
+  "tokenize": 27.223507499002153,
+  "h2d": 0.5594204994849861,
+  "forward": 297.9314795011305,
+  "backward": 431.516903998272,
+  "clip_step": 38.8679109964869
+ },
+ "per_step_ms": {
+  "data": 1.0558180074440315,
+  "forward": 1191.725918004522,
+  "backward": 1726.067615993088,
+  "clip_step": 38.8679109964869,
+  "tokenize_seen_inside_forward": 108.89402999600861,
+  "h2d_seen_inside_forward": 2.2376819979399443,
+  "forward_pure_compute": 1080.5942060105735
+ },
+ "sum_segments_ms": 2957.717263001541,
+ "unaccounted_ms": 15.062812002724968,
+ "profiled_steps": 3,
+ "kernel_ms": 7606.46875399997,
+ "kernel_ms_per_step": 2535.489584666657,
+ "kernel_level": "kernel",
+ "kernel_ms_all_entries": 7606.46875399997,
+ "ops": {
+  "void xpukernel_xpu3::host2device_async<2048>(signed char*, KernelParams<2048>, int)": {
+   "calls": 26,
+   "ms": 0.08372199999972213
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<15, long, long, false, bool>(long const*, bool*, long, long, long)": {
+   "calls": 60,
+   "ms": 0.1386850000002048
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<bool, int>(bool const*, int*, long)": {
+   "calls": 60,
+   "ms": 0.13561499999931403
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<int, long>(int const*, long*, long)": {
+   "calls": 120,
+   "ms": 0.2535480000019263
+  },
+  "void xpukernel_xpu3::cumsum_mt1<long>(long const*, long*, bool, bool, long, long)": {
+   "calls": 60,
+   "ms": 0.3064179999993512
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<long, int>(long const*, int*, long)": {
+   "calls": 180,
+   "ms": 0.4264949999969613
+  },
+  "xpukernel_xpu3::memcpy_1d(char const*, char*, long)": {
+   "calls": 3036,
+   "ms": 27.6102490000043
+  },
+  "void xpukernel_xpu3::tensor_calc_basic<2, int, int, int, int>(int const*, int const*, int*, int, long)": {
+   "calls": 60,
+   "ms": 0.1293489999991052
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<0, long, long, true, long>(long const*, long*, long, long, long)": {
+   "calls": 60,
+   "ms": 0.15630800000089812
+  },
+  "void xpukernel_xpu3::embedding_fwd<long>(long const*, char const*, char*, long, long, long, long)": {
+   "calls": 180,
+   "ms": 7.2592519999994405
+  },
+  "xpukernel_xpu3::broadcast_mtn_kl3(signed char const*, signed char*, long, long, long)": {
+   "calls": 6356,
+   "ms": 73.71333799998988
+  },
+  "void xpukernel_xpu3::tensor_calc_basic<0, bfloat16, float, bfloat16, bfloat16>(bfloat16 const*, bfloat16 const*, bfloat16*, float, long)": {
+   "calls": 28155,
+   "ms": 285.6738909999785
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<bfloat16, float>(bfloat16 const*, float*, long)": {
+   "calls": 19638,
+   "ms": 168.66607200001704
+  },
+  "void xpukernel_xpu3::layer_norm_fwd<float, float>(float, long, long, float const*, float*, float const*, float const*, float*, float*, bool)": {
+   "calls": 2940,
+   "ms": 78.68771200000359
+  },
+  "void xpukernel_xpu3::dropout_sdnn<float>(long, int, float, unsigned int, float const*, float*, unsigned char*)": {
+   "calls": 60,
+   "ms": 1.4554449999995691
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<10, long, long, false, bool>(long const*, bool*, long, long, long)": {
+   "calls": 60,
+   "ms": 0.1387519999990991
+  },
+  "void xpukernel_xpu3::reduce_1d<6, bool, bool>(bool const*, bool*, long, AuxParam)": {
+   "calls": 60,
+   "ms": 0.12962600000053454
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<long, float>(long const*, float*, long)": {
+   "calls": 56,
+   "ms": 1.9824500000006824
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<2, float, float, false, float>(float const*, float*, float, float, long)": {
+   "calls": 56,
+   "ms": 0.5017279999985731
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<1, float, float, false, float>(float const*, float*, float, float, long)": {
+   "calls": 56,
+   "ms": 0.4930220000015916
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<float, bool>(float const*, bool*, long)": {
+   "calls": 56,
+   "ms": 0.4013539999992413
+  },
+  "void xpukernel_xpu3::masked_fill_scalar<float>(signed char const*, long, float const*, float, long, float*)": {
+   "calls": 116,
+   "ms": 0.7128580000039137
+  },
+  "void xpukernel_xpu3::cluster_cast_kl3<float, bfloat16>(float const*, bfloat16*, long)": {
+   "calls": 17271,
+   "ms": 166.6447310000008
+  },
+  "void xblas_xpu3::fc_bf16_rn_one_loop<ArgsJL1_7688372687262396678>(gemm::algo9::MMArgsBase<ArgsJL1_7688372687262396678>, gemm::algo9::GlobalBlockArgs<ArgsJL1_7688372687262396678>, gemm::algo9::FragmentArgs<ArgsJL1_7688372687262396678>, gemm::algo9::UnisramArgs<ArgsJL1_7688372687262396678>, gemm::algo9::L1inArgs<ArgsJL1_7688372687262396678>)": {
+   "calls": 1651,
+   "ms": 30.11911600000348
+  },
+  "void xpukernel_xpu3::nan_to_num<float>(float const*, float*, long, float, float, float)": {
+   "calls": 2688,
+   "ms": 32.49271499999488
+  },
+  "void fa_xpu3::flash_attention_fwd_2_sdnn_two_layer_loop_in_q_dropout<bfloat16, bfloat16, float, tfloat32, float, float>(bfloat16 const*, bfloat16 const*, bfloat16 const*, float const*, bfloat16*, float, float*, int, int, int, int, int, int, int, int, int, int const*, int const*, int const*, int const*, float const*, int, bool, float, int, bool, bool, long, float*, bool, TwoLayerLoopInQBlockArgs, TwoLayerLoopInQUnisramArgs, TwoLayerLoopInQL1DWArgs, TwoLayerLoopInQLoadStoreConfig, int, float const*, int, float*, float*, float*, int)": {
+   "calls": 1440,
+   "ms": 413.50682699999857
+  },
+  "void fa_xpu3::fa_fwd_after_process<bfloat16, float>(bfloat16*, float*, int, int, int, int, int, int*)": {
+   "calls": 1344,
+   "ms": 7.638716000001375
+  },
+  "void xpukernel_xpu3::transpose_0213_cluster<float16>(float16 const*, float16*, long, long, long, long)": {
+   "calls": 8928,
+   "ms": 121.58322099999407
+  },
+  "void xpu3::findmax1d_cluster<bfloat16>(bfloat16 const*, long, float*)": {
+   "calls": 14400,
+   "ms": 129.0237230000037
+  },
+  "hydra_internal_kernel::cast_te(bfloat16 const*, float const*, float16*, float*, long)": {
+   "calls": 14400,
+   "ms": 215.3709069999978
+  },
+  "void xblas_xpu3::fc_bf16_rn_one_loop<ArgsJL1_5089895436789239416>(gemm::algo9::MMArgsBase<ArgsJL1_5089895436789239416>, gemm::algo9::GlobalBlockArgs<ArgsJL1_5089895436789239416>, gemm::algo9::FragmentArgs<ArgsJL1_5089895436789239416>, gemm::algo9::UnisramArgs<ArgsJL1_5089895436789239416>, gemm::algo9::L1inArgs<ArgsJL1_5089895436789239416>)": {
+   "calls": 1464,
+   "ms": 49.3409549999966
+  },
+  "void xpukernel_xpu3::tensor_calc_k_nk<0, true, bfloat16, float, bfloat16, bfloat16>(bfloat16 const*, bfloat16 const*, bfloat16*, float, long, long)": {
+   "calls": 2880,
+   "ms": 51.79303000000237
+  },
+  "void xpukernel_xpu3::dropout_sdnn<bfloat16>(long, int, float, unsigned int, bfloat16 const*, bfloat16*, unsigned char*)": {
+   "calls": 2880,
+   "ms": 104.15929199999951
+  },
+  "void xpukernel_xpu3::tensor_calc_basic<0, float, float, float, float>(float const*, float const*, float*, float, long)": {
+   "calls": 8700,
+   "ms": 209.1388720000101
+  },
+  "gelu_none_kernel_rank_1": {
+   "calls": 1440,
+   "ms": 792.7054800000005
+  },
+  "void xblas_xpu3::fc_bf16_rn_mn_kmn<ArgsJL1_5089895436789239416>(gemm::algo9::MMArgsBase<ArgsJL1_5089895436789239416>, gemm::algo9::GlobalBlockArgs<ArgsJL1_5089895436789239416>, gemm::algo9::FragmentArgs<ArgsJL1_5089895436789239416>, gemm::algo9::UnisramArgs<ArgsJL1_5089895436789239416>, gemm::algo9::L1inArgs<ArgsJL1_5089895436789239416>)": {
+   "calls": 1416,
+   "ms": 170.45052699999422
+  },
+  "xpukernel_xpu3::strided_slice_copy2d(signed char const*, signed char*, long, long, long, long)": {
+   "calls": 1164,
+   "ms": 4.148051000002008
+  },
+  "void xpukernel_xpu3::tanh_fwd<bfloat16>(bfloat16 const*, bfloat16*, long)": {
+   "calls": 60,
+   "ms": 0.17435000000106082
+  },
+  "void xpukernel_xpu3::reduce_mt<5, float, float>(float const*, float*, long, long, ReduceParam)": {
+   "calls": 1227,
+   "ms": 6.8971740000031785
+  },
+  "void xpukernel_xpu3::clamp<float>(float const*, float*, long, float, float)": {
+   "calls": 60,
+   "ms": 0.11763899999936257
+  },
+  "void xpukernel_xpu3::tensor_calc_basic<3, float, float, float, float>(float const*, float const*, float*, float, long)": {
+   "calls": 240,
+   "ms": 0.5947769999971788
+  },
+  "void xpukernel_xpu3::host2device_async<3072>(signed char*, KernelParams<3072>, int)": {
+   "calls": 33,
+   "ms": 0.3015360000000146
+  },
+  "void xpukernel_xpu3::transpose_021_sdnn_bsp<float16>(float16 const*, float16*, long, long, long)": {
+   "calls": 10006,
+   "ms": 149.25130499999395
+  },
+  "xblas_xpu3::findmax_bf16(bfloat16 const*, float*, long, long, long)": {
+   "calls": 26970,
+   "ms": 216.55628999997523
+  },
+  "xblas_xpu3::init_te(bfloat16 const*, float const*, xbfloat16*, float*, long)": {
+   "calls": 26970,
+   "ms": 370.55384400001344
+  },
+  "void xblas_xpu3::fc_bf16_rn_one_loop<ArgsJL1_1312101569118811963>(gemm::algo8::MMArgsBase<ArgsJL1_1312101569118811963>, gemm::algo8::GlobalBlockArgs<ArgsJL1_1312101569118811963>, gemm::algo8::FragmentArgs<ArgsJL1_1312101569118811963>, gemm::algo8::UnisramArgs<ArgsJL1_1312101569118811963>, gemm::algo8::L1inArgs<ArgsJL1_1312101569118811963>)": {
+   "calls": 7021,
+   "ms": 291.1300599999984
+  },
+  "void xpukernel_xpu3::constant<bfloat16>(char*, long, bfloat16)": {
+   "calls": 504,
+   "ms": 16.080945000001062
+  },
+  "xpukernel_xpu3::pad_single_dim_kl(char const*, char*, long, long, long, long)": {
+   "calls": 384,
+   "ms": 1.0389740000019834
+  },
+  "void xblas_xpu3::fc_bf16_rn_mn_kmn<ArgsJL1_7688372687262396678>(gemm::algo9::MMArgsBase<ArgsJL1_7688372687262396678>, gemm::algo9::GlobalBlockArgs<ArgsJL1_7688372687262396678>, gemm::algo9::FragmentArgs<ArgsJL1_7688372687262396678>, gemm::algo9::UnisramArgs<ArgsJL1_7688372687262396678>, gemm::algo9::L1inArgs<ArgsJL1_7688372687262396678>)": {
+   "calls": 35,
+   "ms": 1.435521000000488
+  },
+  "void xblas_xpu3::fc_bf16_rn_kn_mnk<ArgsJL1_1312101569118811963>(gemm::algo8::MMArgsBase<ArgsJL1_1312101569118811963>, gemm::algo8::GlobalBlockArgs<ArgsJL1_1312101569118811963>, gemm::algo8::FragmentArgs<ArgsJL1_1312101569118811963>, gemm::algo8::UnisramArgs<ArgsJL1_1312101569118811963>, gemm::algo8::L1inArgs<ArgsJL1_1312101569118811963>)": {
+   "calls": 1033,
+   "ms": 146.44136600000184
+  },
+  "void xpukernel_xpu3::host2device_async<32>(signed char*, KernelParams<32>, int)": {
+   "calls": 12,
+   "ms": 0.015395000000193249
+  },
+  "xpukernel_xpu3::concat_allonedim(char*, long, long, char*, long)": {
+   "calls": 15,
+   "ms": 0.11367600000003586
+  },
+  "void xpukernel_xpu3::transpose_021_sdnn_bsp<float>(float const*, float*, long, long, long)": {
+   "calls": 36,
+   "ms": 0.1740669999999809
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<3, bfloat16, float, true, bfloat16>(bfloat16 const*, bfloat16*, float, float, long)": {
+   "calls": 36,
+   "ms": 0.0815650000005844
+  },
+  "void xpukernel_xpu3::arange<long, long>(long*, long, long, long)": {
+   "calls": 12,
+   "ms": 0.019015999999886846
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<2, long, long, false, long>(long const*, long*, long, long, long)": {
+   "calls": 12,
+   "ms": 0.022428000000538306
+  },
+  "xpukernel_xpu3::memcpy_2d(char const*, long, char*, long, long, long)": {
+   "calls": 108,
+   "ms": 0.25166300000151387
+  },
+  "void xpukernel_xpu3::log_softmax<bfloat16>(bfloat16 const*, bfloat16*, long, long)": {
+   "calls": 12,
+   "ms": 0.03782200000033481
+  },
+  "void xpukernel_xpu3::nll_loss_fwd_stage1<float, long>(float const*, float*, float*, float*, float*, long, long, long const*, float const*, long, long)": {
+   "calls": 12,
+   "ms": 0.05084799999941606
+  },
+  "void xpukernel_xpu3::nll_loss_fwd_stage2<float, 1>(float*, float*, float*, float*, long)": {
+   "calls": 12,
+   "ms": 0.021523999999801164
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<3, float, float, true, float>(float const*, float*, float, float, long)": {
+   "calls": 24,
+   "ms": 0.042073000000382305
+  },
+  "void xpukernel_xpu3::constant<float>(char*, long, float)": {
+   "calls": 192,
+   "ms": 0.7246199999984237
+  },
+  "void xpukernel_xpu3::nll_loss_bwd<float, long>(float const*, float*, long, long, long const*, float const*, int, long, float const*)": {
+   "calls": 12,
+   "ms": 0.07056100000091828
+  },
+  "void xpukernel_xpu3::log_softmax_bwd<bfloat16>(bfloat16 const*, bfloat16 const*, bfloat16*, long, long)": {
+   "calls": 12,
+   "ms": 0.03448000000003958
+  },
+  "void xblas_xpu3::fc_bf16_rn_one_loop<ArgsJL1_7478687724941877419>(gemm::algo9::MMArgsBase<ArgsJL1_7478687724941877419>, gemm::algo9::GlobalBlockArgs<ArgsJL1_7478687724941877419>, gemm::algo9::FragmentArgs<ArgsJL1_7478687724941877419>, gemm::algo9::UnisramArgs<ArgsJL1_7478687724941877419>, gemm::algo9::L1inArgs<ArgsJL1_7478687724941877419>)": {
+   "calls": 2300,
+   "ms": 37.003041000006604
+  },
+  "void xpukernel_xpu3::neg<float>(float const*, float*, long)": {
+   "calls": 60,
+   "ms": 0.1327609999984852
+  },
+  "void xpukernel_xpu3::tensor_calc_basic<2, float, float, float, float>(float const*, float const*, float*, float, long)": {
+   "calls": 60,
+   "ms": 0.1356900000004098
+  },
+  "void xpukernel_xpu3::reduce_mt<0, float, float>(float const*, float*, long, long, ReduceParam)": {
+   "calls": 60,
+   "ms": 0.1815890000006766
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<12, float, float, true, bool>(float const*, bool*, float, float, long)": {
+   "calls": 60,
+   "ms": 0.10929400000034366
+  },
+  "void xpukernel_xpu3::tensor_calc_3in_basic<21, float, signed char, float, float, signed char>(float const*, signed char const*, float const*, float*, signed char, long)": {
+   "calls": 60,
+   "ms": 0.11158199999999488
+  },
+  "void xpukernel_xpu3::tensor_calc_n_nk<3, true, float, float, float, float>(float const*, float const*, float*, float, long, long)": {
+   "calls": 60,
+   "ms": 0.27590500000171597
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<10, float, float, false, bool>(float const*, bool*, float, float, long)": {
+   "calls": 60,
+   "ms": 0.10838299999810988
+  },
+  "void xpukernel_xpu3::tensor_calc_n_nk<2, false, float, float, float, float>(float const*, float const*, float*, float, long, long)": {
+   "calls": 60,
+   "ms": 0.18180299999937416
+  },
+  "void xpukernel_xpu3::layernorm_bwd_scale_bias_part<float, float>(long, long, long, long, float, long, long, float const*, float const*, float const*, float const*, float*, float*, bool, bool, bool)": {
+   "calls": 2940,
+   "ms": 61.80837100000231
+  },
+  "void xpukernel_xpu3::layernorm_bwd_scale_bias_reduce<float>(long, long, float const*, float*)": {
+   "calls": 5880,
+   "ms": 15.489572999991012
+  },
+  "void xpukernel_xpu3::layernorm_bwd_dx<float, float>(float, long, long, float const*, float const*, float const*, float const*, float const*, float*, bool)": {
+   "calls": 2940,
+   "ms": 124.09210900000105
+  },
+  "void xpukernel_xpu3::dropout_rand_bwd_v2<bfloat16>(unsigned char const*, bfloat16 const*, bfloat16*, float, long)": {
+   "calls": 2880,
+   "ms": 82.86583800000406
+  },
+  "void xblas_xpu3::fc_bf16_rn_kn_mnk<ArgsJL1_5744101378125734252>(gemm::algo9::MMArgsBase<ArgsJL1_5744101378125734252>, gemm::algo9::GlobalBlockArgs<ArgsJL1_5744101378125734252>, gemm::algo9::FragmentArgs<ArgsJL1_5744101378125734252>, gemm::algo9::UnisramArgs<ArgsJL1_5744101378125734252>, gemm::algo9::L1inArgs<ArgsJL1_5744101378125734252>)": {
+   "calls": 1032,
+   "ms": 146.40299599999992
+  },
+  "void xblas_xpu3::fc_bf16_rn_mn_kmn<ArgsJL1_9206085401046207930>(gemm::algo9::MMArgsBase<ArgsJL1_9206085401046207930>, gemm::algo9::GlobalBlockArgs<ArgsJL1_9206085401046207930>, gemm::algo9::FragmentArgs<ArgsJL1_9206085401046207930>, gemm::algo9::UnisramArgs<ArgsJL1_9206085401046207930>, gemm::algo9::L1inArgs<ArgsJL1_9206085401046207930>)": {
+   "calls": 1008,
+   "ms": 188.63220599999616
+  },
+  "void xpukernel_xpu3::reduce_tn<0, bfloat16, float>(bfloat16 const*, float*, long, long, long, ReduceParam)": {
+   "calls": 6048,
+   "ms": 87.99097500000417
+  },
+  "void xpukernel_xpu3::reduce_tn<0, float, bfloat16>(float const*, bfloat16*, long, long, long, ReduceParam)": {
+   "calls": 6048,
+   "ms": 24.638213000003713
+  },
+  "gelu_backward_none_kernel_rank_1": {
+   "calls": 1440,
+   "ms": 1055.0100469999904
+  },
+  "void xblas_xpu3::fc_bf16_rn_mn_kmn<ArgsJL1_1312101569118811963>(gemm::algo8::MMArgsBase<ArgsJL1_1312101569118811963>, gemm::algo8::GlobalBlockArgs<ArgsJL1_1312101569118811963>, gemm::algo8::FragmentArgs<ArgsJL1_1312101569118811963>, gemm::algo8::UnisramArgs<ArgsJL1_1312101569118811963>, gemm::algo8::L1inArgs<ArgsJL1_1312101569118811963>)": {
+   "calls": 5406,
+   "ms": 520.1060770000039
+  },
+  "void xblas_xpu3::fc_bf16_rn_one_loop<ArgsJL1_5744101378125734252>(gemm::algo9::MMArgsBase<ArgsJL1_5744101378125734252>, gemm::algo9::GlobalBlockArgs<ArgsJL1_5744101378125734252>, gemm::algo9::FragmentArgs<ArgsJL1_5744101378125734252>, gemm::algo9::UnisramArgs<ArgsJL1_5744101378125734252>, gemm::algo9::L1inArgs<ArgsJL1_5744101378125734252>)": {
+   "calls": 1824,
+   "ms": 57.73949900000851
+  },
+  "void xblas_xpu3::fc_bf16_rn_mn_knm<ArgsJL1_9206085401046207930>(gemm::algo9::MMArgsBase<ArgsJL1_9206085401046207930>, gemm::algo9::GlobalBlockArgs<ArgsJL1_9206085401046207930>, gemm::algo9::FragmentArgs<ArgsJL1_9206085401046207930>, gemm::algo9::UnisramArgs<ArgsJL1_9206085401046207930>, gemm::algo9::L1inArgs<ArgsJL1_9206085401046207930>)": {
+   "calls": 1008,
+   "ms": 67.25841499999574
+  },
+  "void xpu3::host2device_async_sdnn<64>(signed char*, KernelParams<64>, int)": {
+   "calls": 2880,
+   "ms": 3.3407280000018074
+  },
+  "void fa_xpu3::flash_bwd_dot_do_o_kernel<bfloat16, float, int>(int, int, int, int, int const*, bfloat16 const*, bfloat16 const*, float*, long)": {
+   "calls": 1440,
+   "ms": 29.439838000002084
+  },
+  "void fa_xpu3::flash_attn_bwd_xpu3_radical_v2<bfloat16, bfloat16, bfloat16, bfloat16, bfloat16, float, tfloat32, float, float>(fa_bwd_xpu3::FABwdParams, fa_bwd_xpu3::FABwdCalcConfig, float const*, int, fa_bwd_xpu3::FaBwdUnisramDesc, fa_bwd_xpu3::FaBwdL1DWDesc, float const*, float const*, float const*, float const*, float*, float)": {
+   "calls": 1440,
+   "ms": 541.7005430000022
+  },
+  "void fa_xpu3::flash_attention_bwd_cluster_reduce_dq_v2<float, bfloat16, int>(long, long, long, long, long, int const*, int const*, float const*, bfloat16*, int, int, bool, bool, long, int, int, int)": {
+   "calls": 1008,
+   "ms": 12.488393999991647
+  },
+  "void xpukernel_xpu3::dropout_rand_bwd_v2<float>(unsigned char const*, float const*, float*, float, long)": {
+   "calls": 60,
+   "ms": 1.2833939999994473
+  },
+  "void xpukernel_xpu3::radixsort_with_index<int, int>(int const*, unsigned int, int*, int*)": {
+   "calls": 120,
+   "ms": 3.2740090000021156
+  },
+  "void xpukernel_xpu3::unique<int, int>(int const*, unsigned int, int*, int*, unsigned int*)": {
+   "calls": 120,
+   "ms": 0.6119789999993518
+  },
+  "void xpukernel_xpu3::sum_and_scatter<bfloat16, int>(bfloat16 const*, bfloat16*, long, long, long, int*, int*, unsigned int*, int*, int, int)": {
+   "calls": 120,
+   "ms": 30.779506999999576
+  },
+  "void xpukernel_xpu3::embedding_bwd_small<bfloat16, long>(long const*, bfloat16 const*, float*, long, long, long, long, long)": {
+   "calls": 60,
+   "ms": 62.78745300000138
+  },
+  "void xblas_xpu3::fc_bf16_rn_km_nmk<ArgsJL1_9206085401046207930>(gemm::algo9::MMArgsBase<ArgsJL1_9206085401046207930>, gemm::algo9::GlobalBlockArgs<ArgsJL1_9206085401046207930>, gemm::algo9::FragmentArgs<ArgsJL1_9206085401046207930>, gemm::algo9::UnisramArgs<ArgsJL1_9206085401046207930>, gemm::algo9::L1inArgs<ArgsJL1_9206085401046207930>)": {
+   "calls": 48,
+   "ms": 2.4611219999996248
+  },
+  "void xpukernel_xpu3::reduce_tn<0, bfloat16, bfloat16>(bfloat16 const*, bfloat16*, long, long, long, ReduceParam)": {
+   "calls": 2592,
+   "ms": 20.900432999987505
+  },
+  "void xblas_xpu3::fc_bf16_rn_mn_kmn<ArgsJL1_7478687724941877419>(gemm::algo9::MMArgsBase<ArgsJL1_7478687724941877419>, gemm::algo9::GlobalBlockArgs<ArgsJL1_7478687724941877419>, gemm::algo9::FragmentArgs<ArgsJL1_7478687724941877419>, gemm::algo9::UnisramArgs<ArgsJL1_7478687724941877419>, gemm::algo9::L1inArgs<ArgsJL1_7478687724941877419>)": {
+   "calls": 18,
+   "ms": 1.3794500000005354
+  },
+  "void xblas_xpu3::fc_bf16_rn_one_loop<ArgsJL1_9206085401046207930>(gemm::algo9::MMArgsBase<ArgsJL1_9206085401046207930>, gemm::algo9::GlobalBlockArgs<ArgsJL1_9206085401046207930>, gemm::algo9::FragmentArgs<ArgsJL1_9206085401046207930>, gemm::algo9::UnisramArgs<ArgsJL1_9206085401046207930>, gemm::algo9::L1inArgs<ArgsJL1_9206085401046207930>)": {
+   "calls": 816,
+   "ms": 17.67024300000258
+  },
+  "void xpukernel_xpu3::host2device_async<384>(signed char*, KernelParams<384>, int)": {
+   "calls": 2,
+   "ms": 0.00404100000008475
+  },
+  "void xpukernel_xpu3::host2device_async<1024>(signed char*, KernelParams<1024>, int)": {
+   "calls": 4,
+   "ms": 0.010865000000223517
+  },
+  "void xblas_xpu3::fc_bf16_rn_km_nmk<ArgsJL1_1312101569118811963>(gemm::algo8::MMArgsBase<ArgsJL1_1312101569118811963>, gemm::algo8::GlobalBlockArgs<ArgsJL1_1312101569118811963>, gemm::algo8::FragmentArgs<ArgsJL1_1312101569118811963>, gemm::algo8::UnisramArgs<ArgsJL1_1312101569118811963>, gemm::algo8::L1inArgs<ArgsJL1_1312101569118811963>)": {
+   "calls": 25,
+   "ms": 1.2186180000004825
+  },
+  "void xblas_xpu3::fc_bf16_rn_km_nmk<ArgsJL1_5744101378125734252>(gemm::algo9::MMArgsBase<ArgsJL1_5744101378125734252>, gemm::algo9::GlobalBlockArgs<ArgsJL1_5744101378125734252>, gemm::algo9::FragmentArgs<ArgsJL1_5744101378125734252>, gemm::algo9::UnisramArgs<ArgsJL1_5744101378125734252>, gemm::algo9::L1inArgs<ArgsJL1_5744101378125734252>)": {
+   "calls": 24,
+   "ms": 1.169656000001356
+  },
+  "void xblas_xpu3::fc_bf16_rn_kn_mnk<ArgsJL1_7478687724941877419>(gemm::algo9::MMArgsBase<ArgsJL1_7478687724941877419>, gemm::algo9::GlobalBlockArgs<ArgsJL1_7478687724941877419>, gemm::algo9::FragmentArgs<ArgsJL1_7478687724941877419>, gemm::algo9::UnisramArgs<ArgsJL1_7478687724941877419>, gemm::algo9::L1inArgs<ArgsJL1_7478687724941877419>)": {
+   "calls": 2,
+   "ms": 0.17608799999998884
+  },
+  "void xblas_xpu3::fc_bf16_rn_kn_mnk<ArgsJL1_7688372687262396678>(gemm::algo9::MMArgsBase<ArgsJL1_7688372687262396678>, gemm::algo9::GlobalBlockArgs<ArgsJL1_7688372687262396678>, gemm::algo9::FragmentArgs<ArgsJL1_7688372687262396678>, gemm::algo9::UnisramArgs<ArgsJL1_7688372687262396678>, gemm::algo9::L1inArgs<ArgsJL1_7688372687262396678>)": {
+   "calls": 2,
+   "ms": 0.24469900000002234
+  },
+  "void xpukernel_xpu3::reduce_tn<5, float, float>(float const*, float*, long, long, long, ReduceParam)": {
+   "calls": 438,
+   "ms": 1.2515639999983832
+  },
+  "void xpukernel_xpu3::host2device_async<64>(signed char*, KernelParams<64>, int)": {
+   "calls": 3,
+   "ms": 0.0039010000000707806
+  },
+  "void xpukernel_xpu3::reduce_mt<5, bfloat16, bfloat16>(bfloat16 const*, bfloat16*, long, long, ReduceParam)": {
+   "calls": 3,
+   "ms": 0.008636999999638647
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<0, bfloat16, float, true, bfloat16>(bfloat16 const*, bfloat16*, float, float, long)": {
+   "calls": 3,
+   "ms": 0.0057119999993592505
+  },
+  "void xpukernel_xpu3::reciprocal_fwd<bfloat16>(bfloat16 const*, bfloat16*, long)": {
+   "calls": 3,
+   "ms": 0.005921000000555068
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<2, bfloat16, float, false, bfloat16>(bfloat16 const*, bfloat16*, float, float, long)": {
+   "calls": 3,
+   "ms": 0.005850999999791383
+  },
+  "void xpukernel_xpu3::clamp<bfloat16>(bfloat16 const*, bfloat16*, long, bfloat16, bfloat16)": {
+   "calls": 3,
+   "ms": 0.005642000000458211
+  },
+  "void xpukernel_xpu3::tensor_calc_1_k<2, false, bfloat16, float, bfloat16, bfloat16>(bfloat16 const*, bfloat16 const*, bfloat16*, float, long)": {
+   "calls": 1167,
+   "ms": 9.49684299999848
+  },
+  "void xpukernel_xpu3::tensor_calc_scalar<0, float, float, true, float>(float const*, float*, float, float, long)": {
+   "calls": 1167,
+   "ms": 2.2189939999934287
+  },
+  "void xpukernel_xpu3::fused_adamw<bfloat16, false, false>(bfloat16 const*, bfloat16 const*, bfloat16 const*, bfloat16 const*, bfloat16 const*, bfloat16*, bfloat16*, bfloat16*, bfloat16*, bfloat16*, float const*, float const*, float const*, long, float, float, float, float, float, float)": {
+   "calls": 1167,
+   "ms": 42.8412769999993
+  },
+  "void xpukernel_xpu3::host2device_async<256>(signed char*, KernelParams<256>, int)": {
+   "calls": 2,
+   "ms": 0.00341399999987334
+  }
+ },
+ "kernel_pct": 85.29018362258157
+}

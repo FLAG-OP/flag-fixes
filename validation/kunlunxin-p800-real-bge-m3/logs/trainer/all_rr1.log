@@ -1,0 +1,40 @@
+1794886494.183771736 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794886494.634252436 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794886494.637028797 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+1794886494.639613757   warn(RuntimeWarning(msg))
+1794886496.009766817 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794886496.463766386 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794886502.716679149 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+1794886502.719063228   Overriding a previously registered kernel for the same operator and the same dispatch key
+1794886502.721417411   operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate="none") -> Tensor
+1794886502.724792414     registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+1794886502.728239561   dispatch key: CUDA
+1794886502.732232724   previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:352
+1794886502.735117975        new kernel: registered at /workspace/FlagGems-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)
+1794886502.738644764   self.m.impl(
+1794886502.741188948 [flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/workspace/evidence/.flaggems, TRITON_CACHE_DIR=/workspace/evidence/.triton, TORCH_EXTENSIONS_DIR=/workspace/evidence/.torch_ext)
+1794886502.743938232 reproducibility: seed=42 per_rank=42 deterministic=False world_size=1 platform=cuda
+1794886504.422117160 `torch_dtype` is deprecated! Use `dtype` instead!
+1794886506.609377230 parallelism=ddp master_dtype=bf16 compute_dtype=bf16
+1794886506.612436674 lr schedule: cosine 2e-05 -> 2e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+1794886506.615768222 WANDB_API_KEY is not set; continuing without W&B logging
+1794886510.329928690 epoch=1 optimizer_step=1 running_loss=0.939221 window_loss=0.939221 lr=2.000e-07
+1794886513.165744362 epoch=1 optimizer_step=2 running_loss=0.874600 window_loss=0.809979 lr=3.000e-07
+1794886516.018491326 epoch=1 optimizer_step=3 running_loss=0.946405 window_loss=1.090015 lr=4.000e-07
+1794886518.981416394 epoch=1 optimizer_step=4 running_loss=0.872737 window_loss=0.651733 lr=5.000e-07
+1794886522.080066575 epoch=1 optimizer_step=5 running_loss=0.836060 window_loss=0.689349 lr=6.000e-07
+1794886525.169789229 epoch=1 optimizer_step=6 running_loss=0.809566 window_loss=0.677100 lr=7.000e-07
+1794886528.113767679 epoch=1 optimizer_step=7 running_loss=0.833130 window_loss=0.974510 lr=8.000e-07
+1794886530.933396957 epoch=1 optimizer_step=8 running_loss=0.853232 window_loss=0.993945 lr=9.000e-07
+1794886533.778211148 epoch=1 optimizer_step=9 running_loss=0.851194 window_loss=0.834894 lr=1.000e-06
+1794886536.666937683 epoch=1 optimizer_step=10 running_loss=0.844701 window_loss=0.786261 lr=1.100e-06
+1794886539.709232004 epoch=1 optimizer_step=11 running_loss=0.832415 window_loss=0.709552 lr=1.200e-06
+1794886542.790729394 epoch=1 optimizer_step=12 running_loss=0.822642 window_loss=0.715149 lr=1.300e-06
+1794886545.869526834 epoch=1 optimizer_step=13 running_loss=0.820239 window_loss=0.791403 lr=1.400e-06
+1794886548.688413753 epoch=1 optimizer_step=14 running_loss=0.813440 window_loss=0.725043 lr=1.500e-06
+1794886551.740703428 epoch=1 optimizer_step=15 running_loss=0.812705 window_loss=0.802414 lr=1.600e-06
+1794886551.755243302 lr schedule anchored at epoch 1: 15 steps so far -> total 15 for 1 epochs
+1794886559.108174371 epoch=1/1 train_loss=0.812705 validation_loss=0.870356 device=cuda:0
+1794886559.955386089 saved epoch 1 checkpoint to /workspace/evidence/results-clean/trainer/all/checkpoint-epoch-1
+1794886567.321517342 test_loss=0.878654 epochs=1 elapsed=60.7s
+1794886567.922250590 saved checkpoint to /workspace/evidence/results-clean/trainer/all

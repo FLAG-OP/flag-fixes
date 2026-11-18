@@ -1,0 +1,36 @@
+{
+ "M": 2990,
+ "dtype": "bf16",
+ "results": {
+  "proc": {
+   "env": {
+    "XMLIR_MATMUL_FAST_MODE": "1",
+    "XMLIR_MATMUL_FAST_TUNE": "1",
+    "KLX_USE_AUTOTUNE": "0",
+    "XMLIR_ENABLE_XBLAS_ADDMM": null,
+    "XMLIR_FC_AUTOTUNE_BOOL": null,
+    "XMLIR_BMM_DISPATCH_VALUE": null
+   },
+   "shapes": {
+    "qkv/attnout_1024x1024": {
+     "ms": 0.1451,
+     "tflops": 43.2,
+     "bitwise_vs_base": true,
+     "max_abs_diff": 0.0
+    },
+    "ffn_up_1024x4096": {
+     "ms": 0.1633,
+     "tflops": 153.6,
+     "bitwise_vs_base": true,
+     "max_abs_diff": 0.0
+    },
+    "ffn_down_4096x1024": {
+     "ms": 0.1767,
+     "tflops": 141.9,
+     "bitwise_vs_base": true,
+     "max_abs_diff": 0.0
+    }
+   }
+  }
+ }
+}

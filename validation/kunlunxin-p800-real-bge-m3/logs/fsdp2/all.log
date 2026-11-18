@@ -1,0 +1,111 @@
+1794888751.644183716 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794888752.099594334 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794888752.103357160 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+1794888752.105676986   warn(RuntimeWarning(msg))
+1794888753.302791144 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794888753.314073484 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794888753.784934809 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794888753.808605531 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794888760.033644390 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+1794888760.038111608   Overriding a previously registered kernel for the same operator and the same dispatch key
+1794888760.042055707   operator: aten::gelu(Tensor self, *, str approximate="none") -> Tensor
+1794888760.044942588     registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+1794888760.048852400   dispatch key: CUDA
+1794888760.052359721   previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesUnaryOps.cpp:64
+1794888760.056192101        new kernel: registered at /workspace/FlagGems-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)
+1794888760.059758606   self.m.impl(
+1794888760.064077269 [flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/workspace/evidence/.flaggems, TRITON_CACHE_DIR=/workspace/evidence/.triton, TORCH_EXTENSIONS_DIR=/workspace/evidence/.torch_ext)
+1794888760.067891600 reproducibility: seed=42 per_rank=42 deterministic=False world_size=2 platform=cuda
+1794888760.078885737 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/library.py:364: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+1794888760.082661033   Overriding a previously registered kernel for the same operator and the same dispatch key
+1794888760.085812378   operator: aten::gelu(Tensor self, *, str approximate="none") -> Tensor
+1794888760.089271524     registered at /pytorch/build/aten/src/ATen/RegisterSchema.cpp:6
+1794888760.092693593   dispatch key: CUDA
+1794888760.096073076   previous kernel: registered at /pytorch/aten/src/ATen/functorch/BatchRulesUnaryOps.cpp:64
+1794888760.098925131        new kernel: registered at /workspace/FlagGems-fixed/src/flag_gems/__init__.py:20 (Triggered internally at /pytorch/aten/src/ATen/core/dispatch/OperatorEntry.cpp:218.)
+1794888760.102266598   self.m.impl(
+1794888760.106070330 [flaggems] enabled vendor=kunlunxin version=5.0.0 mode=include ops=['gelu', 'gelu_backward'] (FLAGGEMS_CACHE_DIR=/workspace/evidence/.flaggems, TRITON_CACHE_DIR=/workspace/evidence/.triton, TORCH_EXTENSIONS_DIR=/workspace/evidence/.torch_ext)
+1794888761.760018049 `torch_dtype` is deprecated! Use `dtype` instead!
+1794888761.785027672 `torch_dtype` is deprecated! Use `dtype` instead!
+1794888764.243685892 coalesced all-gather shim installed on ProcessGroupXCCL, ProcessGroupGloo: per-tensor _allgather_base fallback
+1794888764.246560644 funcol.all_gather_tensor overridden (per-tensor fallback for this backend)
+1794888764.552320045 FSDP2 sharded 24 transformer blocks, 0 oversized leaf module(s) and the root over 2 rank(s); compute dtype torch.bfloat16, reduce dtype torch.bfloat16, max param group 1024 MiB
+1794888764.580391312 moved FSDP2 shards to cuda:0 in master dtype bf16
+1794888764.583851297 parallelism=fsdp2 master_dtype=bf16 compute_dtype=bf16
+1794888764.587199174 lr schedule: cosine 2e-05 -> 2e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+1794888764.590465838 WANDB_API_KEY is not set; continuing without W&B logging
+1794888764.839581803 [12:12:44][VM-20-4-ubuntu][61630:61630][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+1794888764.843375496 [12:12:44][VM-20-4-ubuntu][61631:61631][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+1794889425.953352397 [rank0]:[W1117 12:23:45.025685346 ProcessGroupXCCL.cpp:575] Warning: ProcessGroupXCCL.WorkXCCL.handleException (function operator())
+1794889425.957885408 terminate called after throwing an instance of 'c10::DistBackendError'
+1794889425.962028108   what():  [PG ID 0 PG GUID 0(default_pg) Rank 0] Process group watchdog thread terminated with exception: [Rank 0] Watchdog caught collective operation timeout: WorkXCCL(SeqNum=7, OpType=_ALLGATHER_BASE, NumelIn=6298112, NumelOut=12596224, Timeout(ms)=600000) ran for 600052 milliseconds before timing out.
+1794889425.965920802 Exception raised from checkTimeout at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:529 (most recent call first):
+1794889425.969871710 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x72ef2c17cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+1794889425.973564683 frame #1: torch_xmlir::kccl::ProcessGroupXCCL::WorkXCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2d4 (0x72edf9545ab4 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889425.977136338 frame #2: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::runLoop() + 0xa5a (0x72edf955a2ea in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889425.980988506 frame #3: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0x1db (0x72edf9558c0b in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889425.984424344 frame #4: <unknown function> + 0xdc253 (0x72ef2cdff253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+1794889425.987645612 frame #5: <unknown function> + 0x94ac3 (0x72ef31874ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889425.991469203 frame #6: <unknown function> + 0x1268c0 (0x72ef319068c0 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889425.994523788 
+1794889425.997779043 Exception raised from run at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:1612 (most recent call first):
+1794889426.000925469 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x72ef2c17cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+1794889426.004316871 frame #1: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0xc53 (0x72edf9559683 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889426.007623482 frame #2: <unknown function> + 0xdc253 (0x72ef2cdff253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+1794889426.010596744 frame #3: <unknown function> + 0x94ac3 (0x72ef31874ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889426.013552799 frame #4: <unknown function> + 0x1268c0 (0x72ef319068c0 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889426.017214075 
+1794889426.020452582 [rank1]:[W1117 12:23:45.044326004 ProcessGroupXCCL.cpp:575] Warning: ProcessGroupXCCL.WorkXCCL.handleException (function operator())
+1794889426.023777070 terminate called after throwing an instance of 'c10::DistBackendError'
+1794889426.027914631   what():  [PG ID 0 PG GUID 0(default_pg) Rank 1] Process group watchdog thread terminated with exception: [Rank 1] Watchdog caught collective operation timeout: WorkXCCL(SeqNum=7, OpType=_ALLGATHER_BASE, NumelIn=6298112, NumelOut=12596224, Timeout(ms)=600000) ran for 600043 milliseconds before timing out.
+1794889426.031503464 Exception raised from checkTimeout at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:529 (most recent call first):
+1794889426.035128043 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x7a356fd7cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+1794889426.038710357 frame #1: torch_xmlir::kccl::ProcessGroupXCCL::WorkXCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2d4 (0x7a343ef45ab4 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889426.041989090 frame #2: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::runLoop() + 0xa5a (0x7a343ef5a2ea in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889426.045555656 frame #3: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0x1db (0x7a343ef58c0b in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889426.048662126 frame #4: <unknown function> + 0xdc253 (0x7a35728e9253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+1794889426.051895803 frame #5: <unknown function> + 0x94ac3 (0x7a3577361ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889426.055649030 frame #6: <unknown function> + 0x1268c0 (0x7a35773f38c0 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889426.058778758 
+1794889426.062202197 Exception raised from run at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:1612 (most recent call first):
+1794889426.065177589 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x7a356fd7cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+1794889426.068492319 frame #1: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0xc53 (0x7a343ef59683 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+1794889426.071793400 frame #2: <unknown function> + 0xdc253 (0x7a35728e9253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+1794889426.074900970 frame #3: <unknown function> + 0x94ac3 (0x7a3577361ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889426.078555397 frame #4: <unknown function> + 0x1268c0 (0x7a35773f38c0 in /lib/x86_64-linux-gnu/libc.so.6)
+1794889426.082184926 
+1794889429.617171657 W1117 12:23:49.612000 61620 site-packages/torch/distributed/elastic/multiprocessing/api.py:908] Sending process 61631 closing signal SIGTERM
+1794889431.184415375 E1117 12:23:51.179000 61620 site-packages/torch/distributed/elastic/multiprocessing/api.py:882] failed (exitcode: 1) local_rank: 0 (pid: 61630) of binary: /root/miniconda/envs/python310_torch29_cuda/bin/python3
+1794889431.191083601 Traceback (most recent call last):
+1794889431.195178265   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+1794889431.199166589     return _run_code(code, main_globals, None,
+1794889431.202896249   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 86, in _run_code
+1794889431.206944148     exec(code, run_globals)
+1794889431.211125854   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 940, in <module>
+1794889431.215110139     main()
+1794889431.218876485   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+1794889431.222558509     return f(*args, **kwargs)
+1794889431.225913824   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 936, in main
+1794889431.229186998     run(args)
+1794889431.233336707   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 927, in run
+1794889431.237441930     elastic_launch(
+1794889431.240718734   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 156, in __call__
+1794889431.243754400     return launch_agent(self._config, self._entrypoint, list(args))
+1794889431.247206407   File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 293, in launch_agent
+1794889431.250172660     raise ChildFailedError(
+1794889431.254136887 torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+1794889431.258266538 ============================================================
+1794889431.262126185 flagscale.train.train_retrieval FAILED
+1794889431.266011419 ------------------------------------------------------------
+1794889431.269975506 Failures:
+1794889431.273118712   <NO_OTHER_FAILURES>
+1794889431.276329962 ------------------------------------------------------------
+1794889431.280120206 Root Cause (first observed failure):
+1794889431.283302948 [0]:
+1794889431.287287093   time      : 2026-11-17_12:23:49
+1794889431.290875007   host      : VM-20-4-ubuntu
+1794889431.294327383   rank      : 0 (local_rank: 0)
+1794889431.298393370   exitcode  : 1 (pid: 61630)
+1794889431.302544969   error_file: <N/A>
+1794889431.305774547   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+1794889431.309321314 ============================================================

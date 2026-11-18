@@ -1,0 +1,33 @@
+== segments (3 indep processes, median wall) ==
+native   wall_p50=   3572.4ms (      -) kernel=  3240.8 dev=  3375.3 tok= 107.2 thr=  56.0 texts/s reps=3
+gemm     wall_p50=   3488.8ms (  -2.3%) kernel=  3113.5 dev=  3293.2 tok= 106.1 thr=  57.3 texts/s reps=3
+gelu     wall_p50=   3070.2ms ( -14.1%) kernel=  2687.1 dev=  2880.0 tok= 106.1 thr=  65.1 texts/s reps=3
+glue     wall_p50=   3594.7ms (  +0.6%) kernel=  3348.1 dev=  3392.6 tok= 104.6 thr=  55.6 texts/s reps=3
+all      wall_p50=   2972.8ms ( -16.8%) kernel=  2535.3 dev=  2810.5 tok= 108.9 thr=  67.3 texts/s reps=3
+
+== kernel families (ms/step) ==
+config   gelu_vend  gelu_tri      gemm      attn   cast_te    transp     tcalc        ln
+native      1169.7       0.0     911.0     323.2      71.9     253.0     164.5      26.2
+gelu           0.0     616.0     911.1     323.1      71.8     252.9     164.5      26.2
+gemm        1169.6       0.0     772.0     322.6      71.7     264.4     165.1      26.2
+glue        1169.6       0.0    1165.6     322.5       0.0     227.0     178.0      26.2
+all            0.0     615.9     772.5     322.6      71.8     264.4     165.1      26.2
+
+== numerics ==
+all_fixes    final_loss=0.813812 relmax_vs_native_r1=0.006345 nonfinite=0 mem=26.714GB param=5e0ea7269baa570c
+all_fixes_v2 final_loss=0.810117 relmax_vs_native_r1=0.00719 nonfinite=0 mem=26.73GB param=845f5a7c9ae66996
+gelu_only    final_loss=0.803595 relmax_vs_native_r1=0.012421 nonfinite=0 mem=26.714GB param=5ec49cb4df18cff0
+gelu_only_v2 final_loss=0.803595 relmax_vs_native_r1=0.012421 nonfinite=0 mem=26.714GB param=5ec49cb4df18cff0
+gemm_env_v2  final_loss=0.810684 relmax_vs_native_r1=0.005345 nonfinite=0 mem=26.729GB param=ccbc99dd6afdc3a8
+native_r1    final_loss=0.813702 relmax_vs_native_r1=0.0 nonfinite=0 mem=26.714GB param=51d4c40083d81b8c
+native_r2    final_loss=0.813702 relmax_vs_native_r1=0.0 nonfinite=0 mem=26.714GB param=51d4c40083d81b8c
+native_r3    final_loss=0.813702 relmax_vs_native_r1=0.0 nonfinite=0 mem=26.714GB param=51d4c40083d81b8c
+
+== gemm sweep ==
+base                   qkv_attnout_1024x1024=0.1463ms/42.9TF ffn_up_1024x4096=0.163ms/153.8TF ffn_down_4096x1024=0.177ms/141.7TF
+bmm_dispatch_0         qkv_attnout_1024x1024=0.1561ms/40.2TF ffn_up_1024x4096=0.1631ms/153.8TF ffn_down_4096x1024=0.1771ms/141.7TF
+fc_autotune_bool       qkv_attnout_1024x1024=0.1446ms/43.4TF ffn_up_1024x4096=0.1631ms/153.8TF ffn_down_4096x1024=0.1767ms/142.0TF
+klx_autotune           qkv_attnout_1024x1024=0.1555ms/40.3TF ffn_up_1024x4096=0.1632ms/153.7TF ffn_down_4096x1024=0.1767ms/142.0TF
+matmul_fast            qkv_attnout_1024x1024=0.1451ms/43.2TF ffn_up_1024x4096=0.1633ms/153.6TF ffn_down_4096x1024=0.1767ms/141.9TF
+matmul_fast_mode_only  qkv_attnout_1024x1024=0.1444ms/43.4TF ffn_up_1024x4096=0.163ms/153.9TF ffn_down_4096x1024=0.1772ms/141.5TF
+xblas_addmm            qkv_attnout_1024x1024=0.1536ms/40.8TF ffn_up_1024x4096=0.1631ms/153.8TF ffn_down_4096x1024=0.1769ms/141.7TF

@@ -1,0 +1,31 @@
+1794886571.824182897 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794886572.275990049 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794886572.279763104 /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+1794886572.282991652   warn(RuntimeWarning(msg))
+1794886573.682346787 XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+1794886574.134147489 [35mSYMBOL_REWRITE [0m[32mtorch success[0m
+1794886580.311804660 reproducibility: seed=42 per_rank=42 deterministic=False world_size=1 platform=cuda
+1794886582.016955699 `torch_dtype` is deprecated! Use `dtype` instead!
+1794886584.195023188 parallelism=ddp master_dtype=bf16 compute_dtype=bf16
+1794886584.197961724 lr schedule: cosine 2e-05 -> 2e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+1794886584.200282039 WANDB_API_KEY is not set; continuing without W&B logging
+1794886587.682272653 epoch=1 optimizer_step=1 running_loss=0.939575 window_loss=0.939575 lr=2.000e-07
+1794886590.946367262 epoch=1 optimizer_step=2 running_loss=0.873410 window_loss=0.807245 lr=3.000e-07
+1794886594.275775634 epoch=1 optimizer_step=3 running_loss=0.945868 window_loss=1.090784 lr=4.000e-07
+1794886597.784390523 epoch=1 optimizer_step=4 running_loss=0.872437 window_loss=0.652142 lr=5.000e-07
+1794886601.476402774 epoch=1 optimizer_step=5 running_loss=0.835715 window_loss=0.688831 lr=6.000e-07
+1794886605.164028870 epoch=1 optimizer_step=6 running_loss=0.809218 window_loss=0.676733 lr=7.000e-07
+1794886608.617111090 epoch=1 optimizer_step=7 running_loss=0.833233 window_loss=0.977318 lr=8.000e-07
+1794886611.846248500 epoch=1 optimizer_step=8 running_loss=0.852732 window_loss=0.989227 lr=9.000e-07
+1794886615.151228364 epoch=1 optimizer_step=9 running_loss=0.850043 window_loss=0.828528 lr=1.000e-06
+1794886618.546526873 epoch=1 optimizer_step=10 running_loss=0.843490 window_loss=0.784512 lr=1.100e-06
+1794886622.165755074 epoch=1 optimizer_step=11 running_loss=0.831698 window_loss=0.713788 lr=1.200e-06
+1794886625.858689886 epoch=1 optimizer_step=12 running_loss=0.821728 window_loss=0.712054 lr=1.300e-06
+1794886629.544816516 epoch=1 optimizer_step=13 running_loss=0.819453 window_loss=0.792154 lr=1.400e-06
+1794886632.816728189 epoch=1 optimizer_step=14 running_loss=0.812963 window_loss=0.728595 lr=1.500e-06
+1794886636.437088410 epoch=1 optimizer_step=15 running_loss=0.812221 window_loss=0.801834 lr=1.600e-06
+1794886636.452029635 lr schedule anchored at epoch 1: 15 steps so far -> total 15 for 1 epochs
+1794886644.844131667 epoch=1/1 train_loss=0.812221 validation_loss=0.870359 device=cuda:0
+1794886645.425126203 saved epoch 1 checkpoint to /workspace/evidence/results-clean/trainer/gemm/checkpoint-epoch-1
+1794886653.854679233 test_loss=0.880545 epochs=1 elapsed=69.7s
+1794886654.209271367 saved checkpoint to /workspace/evidence/results-clean/trainer/gemm
