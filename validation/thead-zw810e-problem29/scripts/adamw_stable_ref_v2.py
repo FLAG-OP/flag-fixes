@@ -269,15 +269,23 @@ def selftest_verdict():
     if not f or r["verdict"] != "FAIL": bad.append("missing snapshot not FAIL")
     else: print("PASS selftest: missing intermediate snapshot -> aggregate FAIL")
 
-    dup = mkref(); dup[1] = dict(dup[0]); dup[1]["step"] = torch.tensor(float(SNAP_AT[0]))
+    # round-20 fix: 3-snapshot impls (match production count) so the TARGET
+    # gate is reached, and assert the SPECIFIC failure reason, not just FAIL
+    dup = [st(t) for t in SNAP_AT]
+    dup[1] = dict(dup[0]); dup[1]["step"] = torch.tensor(float(SNAP_AT[0]))  # duplicate step
     r, f = aggregate(dup, mkref(), "bfloat16")
     if not f or r["verdict"] != "FAIL": bad.append("duplicate steps not FAIL")
-    else: print("PASS selftest: duplicate steps -> aggregate FAIL")
+    elif not any(row.get("gates",{}).get("duplicate_steps") for row in r["snapshots"]):
+        bad.append("duplicate steps failed at WRONG gate (not duplicate_steps)")
+    else: print("PASS selftest: duplicate steps -> aggregate FAIL via duplicate_steps gate")
 
-    miss = mkref(); del miss[1]["m"]                      # snapshot missing 'm' key
+    miss = [st(t) for t in SNAP_AT]
+    del miss[1]["m"]                                      # middle snapshot missing 'm'
     r, f = aggregate(miss, mkref(), "bfloat16")
     if not f or r["verdict"] != "FAIL": bad.append("missing key not FAIL")
-    else: print("PASS selftest: snapshot missing 'm' key -> aggregate FAIL")
+    elif not any(row.get("gates",{}).get("missing_keys") for row in r["snapshots"]):
+        bad.append("missing key failed at WRONG gate (not missing_keys)")
+    else: print("PASS selftest: snapshot missing 'm' key -> aggregate FAIL via missing_keys gate")
 
     impl3 = [st(t) for t in SNAP_AT]   # impl side: 3 snapshots at SNAP_AT steps
     r, f = aggregate(impl3, mkref(), "bfloat16")

@@ -1,0 +1,21 @@
+/tmp/opencode/FlagScale-ppu/examples/retrieval/probe11_mask_vs_equal_length.py:35: UserWarning: Memory efficient kernel not used because: (Triggered internally at ../aten/src/ATen/native/transformers/cuda/sdp_utils.cpp:960.)
+  return timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=attn_mask)
+/tmp/opencode/FlagScale-ppu/examples/retrieval/probe11_mask_vs_equal_length.py:35: UserWarning: Memory Efficient attention has been runtime disabled. (Triggered internally at ../aten/src/ATen/native/transformers/sdp_utils_cpp.h:552.)
+  return timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=attn_mask)
+/tmp/opencode/FlagScale-ppu/examples/retrieval/probe11_mask_vs_equal_length.py:35: UserWarning: Flash attention kernel not used because: (Triggered internally at ../aten/src/ATen/native/transformers/cuda/sdp_utils.cpp:962.)
+  return timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=attn_mask)
+/tmp/opencode/FlagScale-ppu/examples/retrieval/probe11_mask_vs_equal_length.py:35: UserWarning: Flash Attention does not support non-null attn_mask. (Triggered internally at ../aten/src/ATen/native/transformers/sdp_utils_cpp.h:262.)
+  return timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=attn_mask)
+/tmp/opencode/FlagScale-ppu/examples/retrieval/probe11_mask_vs_equal_length.py:35: UserWarning: cuDNN attention kernel not used because: (Triggered internally at ../aten/src/ATen/native/transformers/cuda/sdp_utils.cpp:964.)
+  return timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=attn_mask)
+/tmp/opencode/FlagScale-ppu/examples/retrieval/probe11_mask_vs_equal_length.py:35: UserWarning: 8905 cuDNN version too old to use cuDNN Attention (< v9.0.0) (Triggered internally at ../aten/src/ATen/native/transformers/cuda/sdp_utils.cpp:711.)
+  return timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=attn_mask)
+masked_default: 0.5831 ms [OK]
+masked_efficient: 0.5839 ms [OK]
+masked_flash: No available kernel. Aborting execution. [UNSUPPORTED]
+masked_math: 1.2463 ms [OK]
+unmasked_default: 0.1316 ms [OK]
+unmasked_efficient: 0.2467 ms [OK]
+unmasked_flash: 0.1316 ms [OK]
+unmasked_math: 0.9889 ms [OK]
+program_error=False

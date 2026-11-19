@@ -17,7 +17,13 @@
 - reduced_reduction True/False：109.82/110.59 TFLOP/s（无差异，维持既有结论）
 - exit=0
 
-## 3. AdamW stable-ref（自测真实生产路径 + 容差单一来源）
+## 3. AdamW stable-ref（round-20 更新：自测 gate 断言 + JSON 实际再生成）
+- 自测 10/10 PASS（round-20：duplicate→duplicate_steps gate、missing-key→missing_keys gate 具体断言命中；其余经生产 aggregate/verdict）
+- 实验 9/9 FAIL 诚实维持（exit 1 来自实验判定，非自测失败）
+- **results/adamw_stable_ref_v4.json 为 round-20 实际运行再生成**（tolerances 字段=floor 0.01*max|ref| 新口径，非旧文件改字）
+- 脚本 SHA256：见 git blob 对账；运行命令 python3 scripts/adamw_stable_ref_v2.py --selftest
+
+## 3b.（round-19 原记录，已被 3. 取代）
 - 命令：`python3 scripts/adamw_stable_ref_v2.py --selftest`（同一命令跑自测+30 步实验）
 - 自测 10/10 PASS：5 个 verdict 级（control/param-over-tau/NaN/Inf/step-mismatch）+ 5 个 aggregate 级（empty-list/missing-snapshot/duplicate-steps/missing-key/all-pass-control）全部经生产 `aggregate()`+`verdict()` 真实判定（无手动 dict 改写）
 - 实验 verdict：9/9 FAIL（fp32/bf16/fp16 × stock/foreach/fused）——诚实结果维持，与归档 v4 结论一致

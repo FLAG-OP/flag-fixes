@@ -69,17 +69,20 @@ def main():
                 "math": SDPBackend.MATH}
 
     res = {"shape": f"B{B} H{Hh} S{S} D{D} bf16",
-           "mask": "bool inverted padding mask (True=participate); rows>=4 lose last 100 keys; all rows lose last 100 keys",
+           "mask": "bool mask True=participate. KEY side: all rows lose last 100 key columns. QUERY side: rows>=4 additionally lose their own last 100 query rows (self-attention rows masked out). mask passed explicitly to every timed call",
+           "dispatch_claim": "CONJECTURE: default-path timing close to forced-backend timing SUGGESTS same backend selection; no kernel/dispatch evidence captured (would need kernel-level trace or dispatch logs)",
            "iters": 30, "warmup": 5, "device": torch.cuda.get_device_name(0),
            "torch": torch.__version__,
            "note": "ALL warmup+timing inside sdpa_kernel(be); PROGRAM errors exit 1",
            "program_error": False, "entries": {}}
 
-    def record(key, fn):
+    def record(key, fn, requested_backend=None):
         try:
             ms = fn()
             res["entries"][key] = {"ok": True, "p50_ms": round(statistics.median(sorted(ms)), 4),
-                                   "samples_ms": ms, "backend_enforced": "backend" in key}
+                                   "samples_ms": ms,
+                                   "requested_backend": requested_backend,
+                                   "backend_enforced": requested_backend is not None}
         except PROGRAM_ERRORS as e:
             res["entries"][key] = {"ok": False, "program_error": True,
                                    "error": f"{type(e).__name__}: {e}"[:150]}
@@ -96,7 +99,7 @@ def main():
 
     for mask_desc, m in (("masked", attn_mask), ("unmasked", None)):
         for bn, be in BACKENDS.items():
-            record(f"{mask_desc}_{bn}", lambda mm=m, bb=be: timed_in_ctx(q, mm, bb))
+            record(f"{mask_desc}_{bn}", lambda mm=m, bb=be: timed_in_ctx(q, mm, bb), requested_backend=bn)
         # default backend (no pin) — now with raw samples, timed defined before use
         record(f"{mask_desc}_default",
                lambda mm=m: timed(lambda: (F.scaled_dot_product_attention(q, q, q, attn_mask=mm)

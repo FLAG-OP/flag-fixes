@@ -8,7 +8,7 @@
  ],
  "n": 4096,
  "p_scale_std": 0.02,
- "tolerances": "fp32: per-position |err|<=8*eps32*max(|ref|,1e-6); bf16/fp16: per-position |err|<=4*ulp_dtype(|ref|); states m/v same rule; step exact; non-finite -> FAIL",
+ "tolerances": "floor = 0.01 * max|ref| (single source: verdict() t_scale, tensor-relative); fp32: per-position |err|<=8*eps32*max(|ref|, floor); bf16/fp16: per-position |err|<=4*ulp_dtype(max(|ref|, floor)); states m/v same rule; step exact; non-finite -> FAIL",
  "results": {
   "float32": {
    "stock": {

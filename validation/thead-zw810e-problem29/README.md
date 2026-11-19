@@ -305,6 +305,19 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 - 四配置 loss 末步中位 0.7208-0.7263（数值路径差异所致，方向性一致）。**seed 42 的意图是控制数据流/模型初始化/dropout；现有 JSON 未记录逐步输入指纹，不能据其证明跨进程输入或 loss 序列实测一致**——实测一致性与固定 seed 意图分开表述，前者需输入指纹证据（列入后续批次）。
 
 
+#### 1b. AB r19/r20 批次（strict validator + manifest 溯源后全量重跑）
+
+| 配置 | wall 中位（r19） | 相对 | clip+optimizer |
+|---|---:|---:|---:|
+| native/stock | 2,130.629 ms | 基线 | 20.257 |
+| native/fused | 2,136.082 ms | **+0.2560%**（噪声内） | 13.896 |
+| selective(gelu)/stock | 2,169.832 ms | **+1.8400%**（回归） | 20.574 |
+| selective(gelu)/fused | 2,164.760 ms | +1.6020% | 13.967 |
+
+#### 1c. problem29 平头哥阶段结论（如实）
+
+**截至本轮，在已提交的真实 BGE-M3 端到端测试中，尚未取得可靠、可复现的整步性能提升。** fused AdamW 相对 native/stock 的整步变化跨批次为 -0.80% → -0.03% → +0.26%（方向不稳定且各批有已注明的测量/来源边界）；selective(gelu) 各批均回退约 +1.2%–1.8%。局部 optimizer 省时（~6.4 ms/步 ≈ 整步 0.30%）、Graph 组件微基准与瓶颈归因属有效探索，尚未转化为整步收益。基线为 native/stock；full-enable 受 F-1/F-2 阻断，不能宣称相对原始 full-enable FlagGems 的加速验收；无 trace/设备计数器依据，不认定硬件已到极限。下一优化选择以自然训练 trace 关键路径证据为准（见 round-20 计划）。
+
 #### 2. GEMM 消融（真实 shape M2990 K1024 N1024 bf16，probe10）
 
 | 消融项 | 结果 |
