@@ -51,10 +51,17 @@ def main(path):
         msgs.append(f"nonfinite_param_count must be 0, got {npc}")
 
     w = d.get("wall_ms")
-    if not isinstance(w, (int, float)) or not math.isfinite(w):
-        msgs.append(f"wall_ms must be finite number, got {w!r}")
-    if not (d.get("segments") or d.get("segments_ms_median")):
-        msgs.append("missing segments / segments_ms_median")
+    if isinstance(w, bool) or not isinstance(w, (int, float)) or not math.isfinite(w) or w <= 0:
+        msgs.append(f"wall_ms must be finite positive number (bool/none/negative rejected), got {w!r}")
+    seg = d.get("segments_ms_median")
+    segd = d.get("segments")
+    seg_ok = False
+    if isinstance(seg, dict) and seg and all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and v > 0 for v in seg.values()):
+        seg_ok = True
+    if isinstance(segd, dict) and segd:
+        seg_ok = True
+    if not seg_ok:
+        msgs.append(f"segments_ms_median must be dict of positive finite numbers (or non-empty segments), got {seg!r}")
 
     if msgs:
         fail(msgs)

@@ -33,8 +33,12 @@ case("only 4 losses -> FAIL", lambda d: d["correctness"].__setitem__("losses", [
 case("empty grads -> FAIL", lambda d: d["correctness"].__setitem__("grad_norms", []), 1, "grad_norms must be list len>=3")
 case("inf loss -> FAIL", lambda d: d["correctness"]["losses"].__setitem__(19, float("inf")), 1, "losses contain non-finite")
 case("wall missing -> FAIL", lambda d: d.pop("wall_ms"), 1, "wall_ms must be finite")
-case("no segments -> FAIL", lambda d: d.pop("segments_ms_median"), 1, "missing segments")
+case("no segments -> FAIL", lambda d: d.pop("segments_ms_median"), 1, "segments_ms_median must be dict")
 case("corrupt JSON -> FAIL", "{corrupt!", 1, "unparseable")
+case("wall_ms=true -> FAIL", lambda d: d.__setitem__("wall_ms", True), 1, "wall_ms must be finite positive")
+case("wall_ms=-1 -> FAIL", lambda d: d.__setitem__("wall_ms", -1), 1, "wall_ms must be finite positive")
+case("segments_ms_median='invalid' -> FAIL", lambda d: d.__setitem__("segments_ms_median", "invalid"), 1, "segments_ms_median must be dict")
+case("segments_ms_median with non-numeric -> FAIL", lambda d: d.__setitem__("segments_ms_median", {"forward": "x"}), 1, "segments_ms_median must be dict")
 
 bad = []
 for name, d, exp, reason in cases:

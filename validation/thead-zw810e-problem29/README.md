@@ -314,6 +314,17 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 | selective(gelu)/stock | 2,169.832 ms | **+1.8400%**（回归） | 20.574 |
 | selective(gelu)/fused | 2,164.760 ms | +1.6020% | 13.967 |
 
+**r20 批次**（strict validator + manifest 溯源，全量重跑，`results/orig_ab_reps_r20/`，manifest 绑定 script SHA + wall_ms + 显式 env）：
+
+| 配置 | wall 中位 | 相对 | clip+optimizer (clip_step) |
+|---|---:|---:|---:|
+| native/stock | 2,138.114 ms | 基线 | 20.273 |
+| native/fused | 2,159.890 ms | **+1.0184%** | 15.041 |
+| selective(gelu)/stock | 2,173.268 ms | **+1.6441%** | 20.370 |
+| selective(gelu)/fused | 2,173.903 ms | +1.6738% | 14.238 |
+
+本轮 fused 局部省 ~5.2 ms（20.3→15.0），整步中位反而 +21.8 ms——跨批次方向不稳定再次确认。
+
 #### 1c. problem29 平头哥阶段结论（如实）
 
 **截至本轮，在已提交的真实 BGE-M3 端到端测试中，尚未取得可靠、可复现的整步性能提升。** fused AdamW 相对 native/stock 的整步变化跨批次为 -0.80% → -0.03% → +0.26%（方向不稳定且各批有已注明的测量/来源边界）；selective(gelu) 各批均回退约 +1.2%–1.8%。局部 optimizer 省时（~6.4 ms/步 ≈ 整步 0.30%）、Graph 组件微基准与瓶颈归因属有效探索，尚未转化为整步收益。基线为 native/stock；full-enable 受 F-1/F-2 阻断，不能宣称相对原始 full-enable FlagGems 的加速验收；无 trace/设备计数器依据，不认定硬件已到极限。下一优化选择以自然训练 trace 关键路径证据为准（见 round-20 计划）。
@@ -334,7 +345,7 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 | 带 bool padding mask（现路径，efficient 后端） | **0.5866** |
 | 等长无 mask（flash 后端） | **0.1313**（4.46×）|
 
-按审阅公式：attention 占原对象 aten 归因 573.5/1,906.4 = 30.1%（占 wall 26.9%），局部 s≈4.46 → 预测整步 1/((1-0.269)+0.269/4.46) ≈ **-20% wall**。**前提**：等长分桶需训练侧改造（loader 已 length-sort 窗口 256，但 batch 内仍有 padding 到批内最长——等长化会改变每步 token 数与数据顺序，属训练侧决策）；mask 语义在等长批次下天然满足（无 padding 即无 mask），梯度正确性由构造保证。**未实施**，登记为候选方向（训练侧 + 运行时层）。
+**适用边界（round-21 撤回外推）**：4.46× 来自 B8/S512、无 dropout、**仅前向**的合成探针，不能外推到原 BGE 训练（B10、动态长度、带 mask、含反向——原对象 attention ~573.5 ms 中约 ~348 ms 在反向）。**撤回"预测整步 -20% wall"的表述**（前向倍率不覆盖反向路径）；**撤回"梯度正确性由构造保证"**（反向未测，需输出+dQ/dK/dV 对照）。等长分桶后只要 batch 内仍有 padding，**仍须保留 mask**；"无 mask 即等长"仅当分桶真正做到批内等长才成立，属训练侧改造决策。**未实施**，登记为候选方向（训练侧 + 运行时层），收益评估需含反向的整层对照。
 
 #### 4. F-2 最小 shape 隔离（单次触发）
 
@@ -363,6 +374,16 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 #### 5. 措辞修正（复审 A 项）
 
 - README 归因对照表措辞改为"**方向性复现**（GEMM/attention/GELU 排序一致；copy/cast 248.8 vs 72.5 待同口径核对——kernel 层 vs aten 层统计口径差异）"。
+**r20 重测（round-21 修复后：全分支同乘积 x@w.t()，CPU 非方阵核对；旧 layout 结论作废）**：
+
+| 分支 | p50 ms | 说明 |
+|---|---:|---|
+| weight transposed-view（基线） | 0.0615 | x @ w.t() |
+| weight precontig | 0.0721 | **更慢 ~17%**——旧"precontig ~1.6% 收益"系乘积错配（wc.t() 实算 x@w），撤回 |
+| input noncontig | 0.0832 | **~35% 罚**（真实 layout 效应） |
+| fp32 reference | 0.2011 | 同对象同运算 |
+| bf16 vs fp32 max reldiff | 0.27% | 实际 bf16 输出 vs fp32 参考（非自比较） |
+
 - 复现文档保留**原始命令 + 本机覆盖项**（model_path/data.path 两处覆盖已显式标注于 conf/run/bge_m3_ppu.yaml 与清单 §一）。
 
 ### 第十二轮（AdamW 稳定参考判定器重写，`adamw_stable_ref_v2.py` / `adamw_stable_ref_v4.json`）
