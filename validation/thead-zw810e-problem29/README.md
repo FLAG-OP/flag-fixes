@@ -349,6 +349,33 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 **适用边界（round-21 撤回外推）**：4.46× 来自 B8/S512、无 dropout、**仅前向**的合成探针，不能外推到原 BGE 训练（B10、动态长度、带 mask、含反向——原对象 attention ~573.5 ms 中约 ~348 ms 在反向）。**撤回"预测整步 -20% wall"的表述**（前向倍率不覆盖反向路径）；**撤回"梯度正确性由构造保证"**（反向未测，需输出+dQ/dK/dV 对照）。等长分桶后只要 batch 内仍有 padding，**仍须保留 mask**；"无 mask 即等长"仅当分桶真正做到批内等长才成立，属训练侧改造决策。**未实施**，登记为候选方向（训练侧 + 运行时层），收益评估需含反向的整层对照。
 
+#### 3b. 真实线性层试点（issue #7 探索方案 7011219007 第 1/2 项，round-23）
+
+**捕获**（`capture_linear_layers.py`，native/stock、seed 42、2 capture steps，`linear_capture_r23.json`）：
+
+| 类别 | 模块数 | 权重形状 | 输入形状 | 调用/步 | fwd ms/步 |
+|---|---:|---|---|---:|---:|
+| attention QKV+output | 96 | [1024,1024] | [10,S,1024] S=12–512 变长 | 各 20 | 71.93（每模块 ~0.75）|
+| FFN intermediate | 24 | [4096,1024] | 同上 | 20 | 56.23（每模块 2.34）|
+| FFN output | 24 | [1024,4096] | [10,S,4096] | 20 | 53.19 |
+| pooler | 1 | [1024,1024] | [10,1024] | 20 | 0.22 |
+
+每优化器步 4 micro × 5 组（query/pos/3×neg）→ 每线性层 20 次调用；bias 全 True。
+
+**注册命中计数**（1 profiled step）：`aten::mm` **5776**、`aten::addmm` **2900**、`aten::linear` 4840、`aten::matmul` **16**——训练热点是 mm/addmm；候选注册 `aten::matmul` 无法命中训练路径（复审判断证实）。
+
+**单层回放**（FFN intermediate 代表，`replay_linear_r23.json`；候选 = FlagOS-OP PR#35 matmul_triton + 显式 bias，vendor 判定经本地 API shim 返回真实值 thead）：
+
+| S | native fwd | native bwd | cand fwd | cand bwd | cand 合计/native |
+|---:|---:|---:|---:|---:|---:|
+| 512 | 0.358 | 1.217 | 5.428 | 4.664 | **6.4× 慢**（fwd 15.1×、bwd 3.8×）|
+| 256 | 0.196 | 0.612 | 2.708 | 2.444 | 6.7× 慢 |
+| 128 | 0.095 | 0.319 | 1.384 | 1.342 | 7.6× 慢 |
+
+**正确性**（声明容差：每位置 ≤4·ulp_bf16(max(|ref|,floor))，floor=0.01·max|ref|）：dX 0 违例 ✓；**y 违例 0.5%**（S512 105,393/20.97M）、**dW 违例 3.7%**——候选在 ZW810E 上不满足该层 bf16 容差（与候选文档"其他厂商须分别验证"一致）。bias 梯度 0.027ms、布局预转换 0.043ms——均非主要差异。
+
+**结论（保留负结果）**：候选在 PPU 上前向 15× 慢、反向 3.8× 慢且 y/dW 超容差；若替换 FFN intermediate 类将 +~790ms/步——不做整步 AB（单层结果已决定性）。差异主因：前向（32×32×32 tile 未对 PPU 调优）>反向；额外拷贝可忽略。后续方向：厂商 GEMM 库调优或更优 tile 形状，而非替换。SDPA 维持 native efficient 基线。
+
 #### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
