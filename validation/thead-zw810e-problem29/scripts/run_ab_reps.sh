@@ -19,16 +19,20 @@ recorded_wall() {  # name rep -> wall_ms recorded in manifest for successful run
 line=sys.stdin.read().strip()
 print(json.loads(line)[\"wall_ms\"] if line else \"\")" 2>/dev/null
 }
-reused_ok() {  # name rep -> 0 if manifest record (sha+exit0+wall) matches AND file validates AND wall matches
-  local name=$1 rep=$2 rw
-  rw=$(recorded_wall "$name" "$rep")
-  [ -n "$rw" ] || return 1
-  python3 "$VAL" "$MANDIR/${name}_r${rep}.json" > /dev/null 2>&1 || return 1
-  python3 - "$rw" "$MANDIR/${name}_r${rep}.json" <<'PYV' || return 1
-import json,sys
-rec=float(sys.argv[1]); cur=float(json.load(open(sys.argv[2]))["wall_ms"])
-sys.exit(0 if abs(rec-cur) < 0.5 else 1)
-PYV
+expected_env_json() {  # name -> expected env dict for that group
+  case $1 in
+    native_stock) echo '{"FL_ADAMW_FUSED":"0","FL_FLAGGEMS":""}' ;;
+    native_fused) echo '{"FL_ADAMW_FUSED":"1","FL_FLAGGEMS":""}' ;;
+    sel_stock)    echo '{"FL_ADAMW_FUSED":"0","FL_FLAGGEMS":"selective"}' ;;
+    sel_fused)    echo '{"FL_ADAMW_FUSED":"1","FL_FLAGGEMS":"selective"}' ;;
+  esac
+}
+reused_ok() {  # name rep -> 0 iff v2 record authorizes reuse (sha/exit/env/wall/result-hash all match)
+  local name=$1 rep=$2 line
+  line=$(grep "\"name\":\"$name\",\"rep\":$rep,\"script_sha\":\"$SCRIPT_SHA\"" "$MANIFEST" | tail -1)
+  [ -n "$line" ] || return 1
+  python3 "$W/scripts/check_reuse.py" "$line" "$MANDIR/${name}_r${rep}.json" "$SCRIPT_SHA" "$(expected_env_json "$name")" > /dev/null 2>&1 || return 1
+  python3 "$VAL" "$MANDIR/${name}_r${rep}.json" > /dev/null 2>&1
 }
 for rep in 1 2 3; do
   # round-21: explicit BOTH vars per group — no inheritance from parent shell
@@ -52,8 +56,10 @@ for rep in 1 2 3; do
       > $W/logs/ab_reps_${BATCH}_${name}_r${rep}.log 2>&1
     rc=$?
     if [ $rc -eq 0 ] && python3 "$VAL" "$OUT" > /dev/null 2>&1; then
-      printf '{"name":"%s","rep":%d,"script_sha":"%s","exit":0,"ts":"%s","env":{%s},"wall_ms":%s}\n' \
-        "$name" "$rep" "$SCRIPT_SHA" "$(date -u +%FT%TZ)" "$ENVJSON" "$(python3 -c "import json;print(json.load(open('$OUT'))['wall_ms'])")" >> "$MANIFEST"
+      RS=$(sha256sum "$OUT" | cut -d' ' -f1)
+      CONF_SHA=$(sha256sum "$REPO/examples/retrieval/conf/run/bge_m3_ppu.yaml" | cut -d' ' -f1)
+      printf '{"name":"%s","rep":%d,"script_sha":"%s","config_sha256":"%s","exit":0,"ts":"%s","env":{%s},"wall_ms":%s,"result_sha256":"%s"}\n' \
+        "$name" "$rep" "$SCRIPT_SHA" "$CONF_SHA" "$(date -u +%FT%TZ)" "$ENVJSON" "$(python3 -c "import json;print(json.load(open('$OUT'))['wall_ms'])")" "$RS" >> "$MANIFEST"
       echo "[$(date +%T)] $name r$rep OK" >> $LOG
     else
       echo "[$(date +%T)] $name r$rep FAILED rc=$rc" >> $LOG; FAILED=$((FAILED+1))

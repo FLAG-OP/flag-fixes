@@ -318,12 +318,14 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 | 配置 | wall 中位 | 相对 | clip+optimizer (clip_step) |
 |---|---:|---:|---:|
-| native/stock | 2,138.114 ms | 基线 | 20.273 |
+| native/stock | 2,138.114 ms | 基线 | **20.26** |
 | native/fused | 2,159.890 ms | **+1.0184%** | 15.041 |
 | selective(gelu)/stock | 2,173.268 ms | **+1.6441%** | 20.370 |
 | selective(gelu)/fused | 2,173.903 ms | +1.6738% | 14.238 |
 
-本轮 fused 局部省 ~5.2 ms（20.3→15.0），整步中位反而 +21.8 ms——跨批次方向不稳定再次确认。
+本轮 fused 局部省 ~5.2 ms（20.26→15.04），整步中位反而 +21.8 ms——跨批次方向不稳定再次确认。
+
+**样本与清单说明**（详见 `results/orig_ab_reps_r20/BATCH_NOTE.md`）：12 份 r20 JSON 中 11 份与 2bce556 字节相同；`native_stock_r1`（wall 2135.54→2133.62）系 21:27 一次未登记孤儿补跑替换（runner 干启动验证产生，driver 被终止后子进程存活完成，退出码未捕获、总日志无完成记录——如实注明）；组内 wall 中位 2138.11 不受影响。`manifest.jsonl` 属 r20 批次（v1 格式，无 env/wall/hash 字段）；r19 批次早于 manifest 机制无清单（溯源=round-19 blob）。v2 runner 记录 config_sha256/result_sha256/env，skip 经 `check_reuse.py` 全字段核验（CPU 反例 5/5：改任一 loss→拒、改配置→拒、wall 漂移→拒、exit≠0→拒）。
 
 #### 1c. problem29 平头哥阶段结论（如实）
 
