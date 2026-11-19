@@ -167,7 +167,6 @@ def verdict(snap_impl, snap_ref, dtype):
         worst[key] = float(err.max())
     gates["tau_violations_total"] = tau_viol
     gates["worst_abs_err"] = worst
-    step_ok = float(snap_impl["step"].item()) == float(snap_ref["step"] and STEPS) or float(snap_impl["step"].item()) == STEPS
     gates["step_exact"] = bool(float(snap_impl["step"].item()) == float(snap_ref["step"]))
     row = {"gates": gates, "worst_abs_err": worst,
            "verdict": "FAIL" if hard_fail(gates, grad_presence=True) else "PASS"}
@@ -186,6 +185,34 @@ def hard_fail(gates, grad_presence=True):
     if gates.get("missing"):
         return True
     return False
+
+
+def aggregate(snaps, ref, dtype):
+    """PRODUCTION aggregation for one impl's snapshots (round-19 fix:
+    selftest injects broken inputs through THIS function, not manual dicts).
+    Runs count/duplicate/step-set checks then per-snapshot verdict().
+    Returns (entry_dict, any_fail_bool)."""
+    expected_count = len(SNAP_AT)
+    if len(snaps) != expected_count:
+        return ({"snapshots": [{"verdict": "FAIL",
+                                 "gates": {"incomplete": True},
+                                 "error": f"expected {expected_count} snapshots, got {len(snaps)}"}],
+                  "verdict": "FAIL"}, True)
+    seen_steps = [float(s.get("step", -1).item() if torch.is_tensor(s.get("step")) else s.get("step", -1)) for s in snaps]
+    if len(set(seen_steps)) != len(seen_steps):
+        return ({"snapshots": [{"verdict": "FAIL", "gates": {"duplicate_steps": True}}],
+                 "verdict": "FAIL"}, True)
+    per_snap = []
+    any_fail = False
+    for si, snap in enumerate(snaps):
+        tlabel = ["first", "mid", "last"][si] if si < 3 else "extra"
+        ref_i = SNAP_AT[si] - 1
+        row = verdict(snap, ref[ref_i], dtype)
+        row["snapshot"] = tlabel
+        if row["verdict"] == "FAIL":
+            any_fail = True
+        per_snap.append(row)
+    return ({"snapshots": per_snap, "verdict": "FAIL" if any_fail else "PASS"}, any_fail)
 
 
 def selftest_verdict():
@@ -225,10 +252,37 @@ def selftest_verdict():
     if r["verdict"] != "FAIL": bad.append("step mismatch not FAIL")
     else: print("PASS selftest: step mismatch -> FAIL")
 
-    r = verdict(ref.copy(), ref, "bfloat16")
-    r2 = dict(r); r2["missing"] = ["m"]; r2["verdict"] = "FAIL"
-    if r2["verdict"] != "FAIL": bad.append("missing record not FAIL")
-    else: print("PASS selftest: missing record -> FAIL")
+    # round-19: all remaining cases go through PRODUCTION aggregate()
+    # (empty list / missing snapshot / duplicate steps / missing key)
+    def st(t):
+        return {"p": torch.tensor([1.0, 2.0], dtype=dt), "m": torch.tensor([0.1, 0.2], dtype=dt),
+                "v": torch.tensor([0.01, 0.02], dtype=dt), "step": torch.tensor(float(t))}
+    def mkref():
+        # mimic fp64_reference structure: per-step list, index t-1 = state after step t
+        return [st(t) for t in range(1, STEPS + 1)]
+
+    r, f = aggregate([], mkref(), "bfloat16")
+    if not f or r["verdict"] != "FAIL": bad.append("empty snapshot list not FAIL")
+    else: print("PASS selftest: empty snapshot list -> aggregate FAIL")
+
+    r, f = aggregate(mkref()[:2], mkref(), "bfloat16")   # missing intermediate step
+    if not f or r["verdict"] != "FAIL": bad.append("missing snapshot not FAIL")
+    else: print("PASS selftest: missing intermediate snapshot -> aggregate FAIL")
+
+    dup = mkref(); dup[1] = dict(dup[0]); dup[1]["step"] = torch.tensor(float(SNAP_AT[0]))
+    r, f = aggregate(dup, mkref(), "bfloat16")
+    if not f or r["verdict"] != "FAIL": bad.append("duplicate steps not FAIL")
+    else: print("PASS selftest: duplicate steps -> aggregate FAIL")
+
+    miss = mkref(); del miss[1]["m"]                      # snapshot missing 'm' key
+    r, f = aggregate(miss, mkref(), "bfloat16")
+    if not f or r["verdict"] != "FAIL": bad.append("missing key not FAIL")
+    else: print("PASS selftest: snapshot missing 'm' key -> aggregate FAIL")
+
+    impl3 = [st(t) for t in SNAP_AT]   # impl side: 3 snapshots at SNAP_AT steps
+    r, f = aggregate(impl3, mkref(), "bfloat16")
+    if f or r["verdict"] != "PASS": bad.append("aggregate all-pass control FAILed")
+    else: print("PASS selftest: aggregate all-pass control -> PASS")
     return bad
 
 
@@ -239,7 +293,7 @@ def main():
 
     out = {"batch": "v4 (round-11 rewrite): same p0_dt/grads_dt clones for all impls; fp64 ref upcast from same values; verdicts via shared function; exit 1 iff any impl FAIL",
            "steps": STEPS, "snapshots_at": SNAP_AT, "n": N, "p_scale_std": P_SCALE,
-           "tolerances": "fp32: per-position |err|<=8*eps32*max(|ref|,1e-6); bf16/fp16: per-position |err|<=4*ulp_dtype(|ref|); states m/v same rule; step exact; non-finite -> FAIL",
+           "tolerances": "floor = 0.01 * max|ref| (single source: verdict() t_scale, tensor-relative); fp32: per-position |err|<=8*eps32*max(|ref|, floor); bf16/fp16: per-position |err|<=4*ulp_dtype(max(|ref|, floor)); states m/v same rule; step exact; non-finite -> FAIL",
            "results": {}}
     hard = []
     g_base = torch.Generator(device="cpu").manual_seed(97)
@@ -253,34 +307,9 @@ def main():
         entry = {}
         for kind in ("stock", "foreach", "fused"):
             snaps = run_impl(kind, dtype, p0_dt, grads_dt)
-            # snapshot completeness check (round-12 P1): count, step set, no duplicates
-            expected_count = len(SNAP_AT)
-            snap_steps = [s.get("step", -1) for s in snaps]
-            if len(snaps) != expected_count:
-                per_snap = [{"verdict": "FAIL", "gates": {"incomplete": True},
-                             "error": f"expected {expected_count} snapshots, got {len(snaps)}"}]
-                entry[kind] = {"snapshots": per_snap, "verdict": "FAIL"}
-                hard.append(f"{dtype}/{kind}/incomplete_snapshots")
-                continue
-            seen_steps = [s.get("step") for s in snaps]
-            if len(set(seen_steps)) != len(seen_steps):
-                per_snap = [{"verdict": "FAIL", "gates": {"duplicate_steps": True}}]
-                entry[kind] = {"snapshots": per_snap, "verdict": "FAIL"}
-                hard.append(f"{dtype}/{kind}/duplicate_steps")
-                continue
-            per_snap = []
-            any_fail = False
-            for si, snap in enumerate(snaps):
-                tlabel = ["first", "mid", "last"][si] if si < 3 else "extra"
-                ref_i = SNAP_AT[si] - 1  # ref[i] = state after step i+1
-                row = verdict(snap, ref[ref_i], dtype)
-                row["snapshot"] = tlabel
-                # non-finite counted inside gates already; grad presence always True here
-                if row["verdict"] == "FAIL":
-                    any_fail = True
-                per_snap.append(row)
-            entry[kind] = {"snapshots": per_snap,
-                           "verdict": "FAIL" if any_fail else "PASS"}
+            # round-19: experiment uses the SAME production aggregate() as selftest
+            entry_k, any_fail = aggregate(snaps, ref, dtype)
+            entry[kind] = entry_k
             if any_fail:
                 hard.append(f"{dtype}/{kind}")
         out["results"][dtype] = entry
