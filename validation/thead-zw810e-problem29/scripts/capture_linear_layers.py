@@ -69,13 +69,12 @@ def main():
             wrap(mod, name)
 
     total_steps = a.skip + a.capture_steps
-    orig_forwards = {}
     per_capture_step = []   # independent per-step totals (round-24 fix: profiler step must not mix in)
     for i in range(total_steps):
         capture = i >= a.skip
         if capture:
             for st in stats.values():
-                st["calls"] = 0; st["events"] = []
+                st["calls"] = 0; st["events"] = []; st["shapes"] = set()
         optimizer.zero_grad(set_to_none=True)
         for micro in range(accum):
             batch = next(stream)
@@ -89,10 +88,12 @@ def main():
             step_tot = {}
             for k, st in stats.items():
                 ms = sum(s.elapsed_time(e) for s, e in st["events"])
-                st["fwd_ms"] = ms
-                step_tot[k] = ms
+                step_tot[k] = {"fwd_ms": ms, "calls": st["calls"],
+                               "shapes": sorted(list(s) for s in st["shapes"])}
             per_capture_step.append(step_tot)
             print(f"  capture step {i}: done", flush=True)
+    # round-25: snapshot wrapper counters before profiler; after profiler they must be unchanged
+    pre_prof_calls = {k: st["calls"] for k, st in stats.items()}
     # round-24 fix: RESTORE original forwards BEFORE the profiler step so the
     # profiler run cannot append events into capture stats
     for name, mod in model.named_modules():
@@ -110,6 +111,8 @@ def main():
         torch.nn.utils.clip_grad_norm_(trainable, 1.0)
         optimizer.step()
         torch.cuda.synchronize()
+    assert all(st["calls"] == pre_prof_calls[k] for k, st in stats.items()), \
+        "wrapper counts changed during profiler step (restore failed)"
     hits = {}
     for ev in prof.key_averages():
         if ev.key in ("aten::mm", "aten::addmm", "aten::matmul", "aten::linear",
@@ -123,19 +126,24 @@ def main():
            "aten_hits": hits, "modules": {},
            "note": "calls/timing from capture steps ONLY (wrappers restored before profiler step); fwd_ms_per_step = mean of per-capture-step totals"}
     for k, st in stats.items():
-        per_mod = [tot[k] for tot in per_capture_step]
-        out["modules"][k] = {"calls_per_capture_step": st["calls"] // a.capture_steps,
-                             "fwd_ms_per_step": round(sum(per_mod) / len(per_mod), 3),
-                             "fwd_ms_per_capture_step": [round(v, 3) for v in per_mod],
-                             "in_shapes": [list(s) for s in sorted(st["shapes"])],
+        per_calls = [tot[k]["calls"] for tot in per_capture_step]
+        per_ms = [tot[k]["fwd_ms"] for tot in per_capture_step]
+        per_shapes = [tot[k]["shapes"] for tot in per_capture_step]
+        all_shapes = sorted({tuple(sh) for lst in per_shapes for sh in lst})
+        out["modules"][k] = {"calls_per_capture_step": round(sum(per_calls) / len(per_calls), 2),
+                             "calls_per_capture_step_list": per_calls,
+                             "fwd_ms_per_step": round(sum(per_ms) / len(per_ms), 3),
+                             "fwd_ms_per_capture_step": [round(v, 3) for v in per_ms],
+                             "in_shapes": [list(sh) for sh in all_shapes],
                              "in_strides": [list(s) for s in sorted(st["strides"])[:2]],
                              "w_shape": list(st["w_shape"]),
                              "w_stride": list(st["w_stride"]),
                              "bias": st["bias"], "dtype": st["dtype"]}
+    out["wrapper_restore_verified"] = True
     json.dump(out, open(a.out, "w"), indent=1)
     print(f"aten hits: {json.dumps({k: v['count'] for k, v in hits.items()})}")
     for k, v in sorted(out["modules"].items(), key=lambda kv: -kv[1]["fwd_ms_per_step"])[:15]:
-        print(f"{v['fwd_ms_per_step']:8.2f} ms/step {v['calls_per_capture_step']:3d}x {k} w={v['w_shape']} in={v['in_shapes'][:1]} bias={v['bias']}")
+        print(f"{v['fwd_ms_per_step']:8.2f} ms/step {v["calls_per_capture_step"]:3g}x {k} w={v['w_shape']} in={v['in_shapes'][:1]} bias={v['bias']}")
 
 if __name__ == "__main__":
     main()

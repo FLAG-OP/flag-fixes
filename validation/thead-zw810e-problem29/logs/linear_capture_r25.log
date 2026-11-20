@@ -1,0 +1,20 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+  capture step 2: done
+  capture step 3: done
+  capture step 4: done
+/usr/local/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+aten hits: {"aten::linear": 4840, "aten::addmm": 2900, "aten::matmul": 16, "aten::mm": 5776}
+Traceback (most recent call last):
+  File "/tmp/opencode/FlagScale-ppu/examples/retrieval/capture_linear_layers.py", line 149, in <module>
+    main()
+  File "/tmp/opencode/FlagScale-ppu/examples/retrieval/capture_linear_layers.py", line 146, in main
+    print(f"{v['fwd_ms_per_step']:8.2f} ms/step {v['calls_per_capture_step']:3d}x {k} w={v['w_shape']} in={v['in_shapes'][:1]} bias={v['bias']}")
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Unknown format code 'd' for object of type 'float'

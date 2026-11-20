@@ -86,9 +86,10 @@ for S in [int(s) for s in a.seqs.split(",")]:
     xn=x.detach().requires_grad_(); wn=w.detach().requires_grad_(); bn=b.detach().requires_grad_()
     def native_fwd(): return F.linear(x, w, b)
     y_native= native_fwd()
+    y_graph=F.linear(xn,wn,bn)   # graph built OUTSIDE timing (round-25)
     def native_bwd():
-        g=torch.autograd.grad(F.linear(xn,wn,bn), (xn,wn), gy, retain_graph=True)
-        return g
+        # timed scope = autograd.grad ONLY (dX+dW+db); no forward inside
+        return torch.autograd.grad(y_graph, (xn,wn,bn), gy, retain_graph=True)
     g_native=native_bwd()
     entry["native_fwd_ms"]=statistics.median(timed_raw(native_fwd))
     entry["native_bwd_ms"]=statistics.median(timed_raw(native_bwd))
@@ -99,14 +100,14 @@ for S in [int(s) for s in a.seqs.split(",")]:
         return y
     y_cand=cand_fwd()
     def cand_bwd():
-        # dX = gy @ w  -> matmul_triton(gy, w.t().t()=w) ; dW = sum_b gy^T @ x handled by backward impl
+        # timed scope = backward impl (dX,dW) + bias grad gy.sum — matches native scope
         gxa, gwb = matmul_backward_triton(x, w.t(), gy, True, True)
-        return gxa, gwb
-    gxa_c, gwb_c = cand_bwd()   # gwb_c is grad wrt w.t() i.e. [K,N] -> dW = gwb_c.t()
+        gb = gy.sum(dim=(0,1),dtype=gy.dtype)
+        return gxa, gwb, gb
+    gxa_c, gwb_c, gb_c = cand_bwd()   # gwb_c is grad wrt w.t() [K,N] -> dW = gwb_c.t()
     entry["cand_fwd_ms"]=statistics.median(timed_raw(cand_fwd))
     entry["cand_bwd_ms"]=statistics.median(timed_raw(cand_bwd))
-    def cand_bias(): return gy.sum(dim=(0,1),dtype=torch.bfloat16)
-    entry["cand_bias_grad_ms"]=statistics.median(timed_raw(cand_bias))
+    entry["cand_bias_grad_note"]="bias grad included inside cand_bwd_ms (scope matches native autograd dX+dW+db)"
     # layout conversion cost (w.t().contiguous) — amortized but counted
     entry["cand_layout_precontig_ms"]=statistics.median(timed_raw(lambda: w.t().contiguous()))
     # ---- correctness vs fp32 ----
@@ -119,10 +120,12 @@ for S in [int(s) for s in a.seqs.split(",")]:
     entry["dx_native_vs_ref"]=tol_check(g_native[0], dx_ref)
     entry["dw_cand_vs_ref"]=tol_check(gwb_c.t(), dw_ref)
     entry["dw_native_vs_ref"]=tol_check(g_native[1], dw_ref)
-    entry["fwd_total_cand"]=round(entry["cand_fwd_ms"]+entry["cand_bias_grad_ms"]*0,4)
+    entry["native_layer_total_ms"]=round(entry["native_fwd_ms"]+entry["native_bwd_ms"],4)
+    entry["cand_layer_total_ms"]=round(entry["cand_fwd_ms"]+entry["cand_bwd_ms"],4)
+    entry["layer_total_ratio_cand_over_native"]=round(entry["cand_layer_total_ms"]/entry["native_layer_total_ms"],2)
     RES["seq_shapes"][f"B{B}_S{S}"]=entry
     print(f"B{B} S{S}: native fwd {entry['native_fwd_ms']} bwd {entry['native_bwd_ms']} | "
-          f"cand fwd {entry['cand_fwd_ms']} bwd {entry['cand_bwd_ms']} bias-g {entry['cand_bias_grad_ms']} "
+          f"cand fwd {entry['cand_fwd_ms']} bwd(incl db) {entry['cand_bwd_ms']} "
           f"layout {entry['cand_layout_precontig_ms']} | viol y/dx/dw: "
           f"{entry['y_vs_ref']['violations']}/{entry['dx_cand_vs_ref']['violations']}/{entry['dw_cand_vs_ref']['violations']}")
 
