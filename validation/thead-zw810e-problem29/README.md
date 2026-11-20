@@ -362,19 +362,30 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 | FFN output | 24 | [1024,4096] | [10,S,4096] | 20 | 98.7/108.2/119.5（均 108.8）|
 | pooler | 1 | [1024,1024] | [10,1024] | 20 | 0.4 |
 
-线性层前向合计 ≈ **369 ms/步**（逐步 335/366/406）。r23（有缺陷口径）与 r24（两步）均被本表取代。每优化器步 4 micro × 5 组 → 每层 20 次；bias 全 True。
+线性层前向合计 ≈ **369 ms/步**（逐步 335/366/406）。r23（有缺陷口径）与 r24（两步）均被本表取代。每优化器步 4 micro × 5 组 → 每层 20 次；bias 全 True。**均值口径澄清（复审 06:12）**：表中逐步类均值为该类模块的均值；跨 145 模块的步均值为 **2.55ms**（r26 日志中 4.856ms 为最慢模块的步均值）。
 
-**逐步波动与有效 token 统计**（`token_stats_cpu.py`，CPU 确定性重放同 seed/同 loader 捕获窗口）：
+**有效 token 统计（round-28 修正口径：attention_mask 二值掩码统计。撤回 round-26"组内零 padding"结论——系方法伪影：先 padding=True 再 sum(len) 使分子恒等于补齐后总位置数，任何批次都会得到 0%）**：
 
-| 捕获步 | 有效 token | padded 位置 | padding 比 | 线性 fwd ms |
+| 捕获步 | 有效 token（mask.sum） | padded 位置（mask.numel） | padding 比 | 线性 fwd ms |
 |---|---:|---:|---:|---:|
-| step 0 | 54,160 | 54,160 | **0.0%** | 335 |
-| step 1 | 61,430 | 61,430 | **0.0%** | 366 |
-| step 2 | 69,810 | 69,810 | **0.0%** | 406 |
+| step 0 | 27,052 | 54,160 | **50.0%** | 335 |
+| step 1 | 31,454 | 61,430 | 48.8% | 366 |
+| step 2 | 35,506 | 69,810 | 49.1% | 406 |
 
-步间耗时与 token 总量正相关（366/335=1.09 vs 61,430/54,160=1.13；406/366=1.11 vs 69,810/61,430=1.14）✓。**关键发现：实际训练管线的每个编码组（anchor/positive/各负例组各 10 序列）在 loader 长度排序分桶后已是组内等长——组内 padding 为零**；不同组在同一 micro 内各自编码、互不 padding。含义：(a) "等长分桶"的主要收益前提（批内 padding 浪费）在当前管线组内已不存在，剩余空间只在跨组合并的相似长度选择；(b) 组内等长且无 padding 时 attention mask 的实际必要性需按 `prepare_embedding_inputs` 的 mask 传入核实（列入设备待办）。
+**padding 集中在负例组**（capture_step_0 micro1 示例：negative_1 49.6%、negative_3 50.9%、negative_2 36.6%、anchor 30.6%、positive 仅 7.1%；部分 micro 的 negative 组达 57–68%）。**含义（修正）**：负例组内长度方差大、padding 浪费显著（整步约一半计算位置是 padding），按相似长度分桶/合并负例组的候选**仍有实际空间**（探索方案第 4 项维持）；attention mask 必要性需按 `prepare_embedding_inputs` 的 mask 传入单独核实（设备待办）。步间耗时与 padded 位置总量正相关（1.09/1.11 vs 1.13/1.14）✓。
 
 **注册命中计数**（1 profiled step）：`aten::mm` **5776**、`aten::addmm` **2900**、`aten::linear` 4840、`aten::matmul` **16**——训练热点是 mm/addmm；候选注册 `aten::matmul` 无法命中训练路径（复审判断证实）。
+
+**高频 GEMM 形状表（round-28 修正，`linear_shape_freq_r28.json`）**：wrapper 事件按形状/stride/dtype 精确累计次数与耗时（弃用集合存储），全局对账：**per-shape 次数和 8700 == 模块 calls 和（2900/步 × 3 步）✓；per-shape ms 和 368.3 == 模块 ms 和 368.3 ✓**。**M 维修正：展平 batch 后 M=B×S**（旧 r26 表漏 batch 维少算 ~90% 计算量，作废）。Top 形状（按 fwd ms/步，跨模块聚合）：
+
+| input shape | M=B×S | calls/步 | fwd ms/步 | 模块类 |
+|---|---:|---:|---:|---|
+| [10,512,1024] | 5120 | 480 | 82.8 | QKV/output ×96 |
+| [10,512,4096] | 5120 | 120 | 41.0 | FFN output ×24 |
+| [10,512,1024]（FFN inter 入口）| 5120 | 120 | 11.6 | FFN inter ×24 |
+| [10,14,1024] | 140 | 96 | 5.5 | QKV ×96 |
+
+S=512 为负例组截断上限（max_length=512 truncation），主导线性前向耗时。**dX/dW 形状为从 Linear 输入推导的派生值**（fwd mm=(M,K)×(K,N)；dX=(M,N)×(N,K)；dW=(N,M)×(M,K)），JSON 已标 derived；实际 `mm/addmm` 操作数形状/转置/stride/dtype 直接 dump 列入设备待办。
 
 **单层回放**（`replay_linear_r25.json`；**边界：代表性形状合成回放**（随机 x/w/gy、固定 S），非自然训练张量 replay；bf16 固定非 autocast；溯源：FlagOS-OP pr35 commit `4df994d`、triton_level/_shape sha256、dtype/stride/layout 入 JSON；vendor 判定经本地 API shim 返回真实值 thead）。
 

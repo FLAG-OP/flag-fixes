@@ -22,16 +22,19 @@ for step in range(SKIP + CAPTURE):
         batch = next(stream)
         groups = {}
         for key in sorted(batch.keys()):
-            ids = tok(batch[key], padding=True, truncation=True,
+            enc = tok(batch[key], padding=True, truncation=True,
                       max_length=int(cfg.model.get("max_length", 8192)),
-                      return_tensors=None)["input_ids"]
-            n_tok = sum(len(x) for x in ids)
-            max_len = max(len(x) for x in ids)
-            n_seq = len(ids)
-            padded = n_seq * max_len
+                      return_tensors=None)
+            # round-28 fix: valid tokens from BINARY attention_mask (previous
+            # sum(len(ids)) counted post-padding positions -> always 0% padding)
+            mask = enc["attention_mask"]
+            total = sum(len(m) for m in mask)
+            valid = sum(sum(1 for x in m if x == 1) for m in mask)
+            max_len = max(len(m) for m in mask)
+            n_seq = len(mask)
             groups[key] = {"sequences": n_seq, "max_len": max_len,
-                           "valid_tokens": n_tok, "padded_positions": padded,
-                           "padding_ratio": round(1 - n_tok / padded, 4)}
+                           "valid_tokens": valid, "padded_positions": total,
+                           "padding_ratio": round(1 - valid / total, 4)}
         micros.append(groups)
     if step >= SKIP:
         out["steps"][f"capture_step_{step - SKIP}"] = micros

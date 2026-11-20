@@ -1,0 +1,28 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+  capture step 2: done
+  capture step 3: done
+  capture step 4: done
+/usr/local/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+aten hits: {"aten::linear": 4840, "aten::addmm": 2900, "aten::matmul": 16, "aten::mm": 5776}
+    4.82 ms/step  20x backbone.encoder.layer.0.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.79 ms/step  20x backbone.encoder.layer.7.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.74 ms/step  20x backbone.encoder.layer.3.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.74 ms/step  20x backbone.encoder.layer.2.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.73 ms/step  20x backbone.encoder.layer.14.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.72 ms/step  20x backbone.encoder.layer.17.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.72 ms/step  20x backbone.encoder.layer.10.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.72 ms/step  20x backbone.encoder.layer.22.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.5.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.6.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.8.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.4.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.12.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.1.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
+    4.71 ms/step  20x backbone.encoder.layer.21.intermediate.dense w=[4096, 1024] in=[10, 512, 1024] bias=True
