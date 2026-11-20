@@ -376,16 +376,20 @@ PR #8 的 AdamW/Graph/小模型内容按第六轮口径维持"候选观测/组�
 
 **注册命中计数**（1 profiled step）：`aten::mm` **5776**、`aten::addmm` **2900**、`aten::linear` 4840、`aten::matmul` **16**——训练热点是 mm/addmm；候选注册 `aten::matmul` 无法命中训练路径（复审判断证实）。
 
-**高频 GEMM 形状表（round-28 修正，`linear_shape_freq_r28.json`）**：wrapper 事件按形状/stride/dtype 精确累计次数与耗时（弃用集合存储），全局对账：**per-shape 次数和 8700 == 模块 calls 和（2900/步 × 3 步）✓；per-shape ms 和 368.3 == 模块 ms 和 368.3 ✓**。**M 维修正：展平 batch 后 M=B×S**（旧 r26 表漏 batch 维少算 ~90% 计算量，作废）。Top 形状（按 fwd ms/步，跨模块聚合）：
+**GEMM 热点表（round-29 按模块类修正，`linear_hotspots_r29.json`；`build_hotspot_table.py` CPU 重建）**
 
-| input shape | M=B×S | calls/步 | fwd ms/步 | 模块类 |
-|---|---:|---:|---:|---|
-| [10,512,1024] | 5120 | 480 | 82.8 | QKV/output ×96 |
-| [10,512,4096] | 5120 | 120 | 41.0 | FFN output ×24 |
-| [10,512,1024]（FFN inter 入口）| 5120 | 120 | 11.6 | FFN inter ×24 |
-| [10,14,1024] | 140 | 96 | 5.5 | QKV ×96 |
+round-28 表以 input shape 单键聚合，把 QKV 与 FFN 升维（同输入 [10,512,1024]、不同权重）合并错归——**作废**。修正后按模块类 × 形状 × stride × dtype 分组（权重形状入键），对账断言通过：per-class calls 和 8700 == 模块 calls 和（2900/步 × 3 步）✓；ms 和 368.26 ≈ 模块 368.34（逐项舍入差 <0.1%）✓。维度按 Linear 语义推导（M=B×S 展平）；时间为 Linear 前向 event 累计。
 
-S=512 为负例组截断上限（max_length=512 truncation），主导线性前向耗时。**dX/dW 形状为从 Linear 输入推导的派生值**（fwd mm=(M,K)×(K,N)；dX=(M,N)×(N,K)；dW=(N,M)×(M,K)），JSON 已标 derived；实际 `mm/addmm` 操作数形状/转置/stride/dtype 直接 dump 列入设备待办。
+Top 类（S=512 主导行，按 fwd ms/步）：
+
+| 模块类 | 前向 (M,K,N) | 调用/步 | ms/步 | 模块数 |
+|---|---|---:|---:|---:|
+| FFN 升维（intermediate）| (5120,1024,4096) | 120 | 43.875 | 24 |
+| FFN 降维（output）| (5120,4096,1024) | 120 | 41.007 | 24 |
+| Attention QKV | (5120,1024,1024) | 360 | 38.934 | 72 |
+| Attention 输出投影 | (5120,1024,1024) | 120 | 11.593 | 24 |
+
+S=512 为负例组截断上限（max_length=512 truncation），主导线性前向。**dtype 区分**：wrapper 记录的输入 dtype 为 autocast 前的 fp32；GEMM 操作数 dtype 为 autocast 后 bf16（权重原生 bf16）。**dX/dW 为派生形状**（dX=(M,N)×(N,K)；dW=(N,M)×(M,K)）；实际 `mm/addmm` 操作数形状/转置/stride/dtype 直接 dump 列入设备待办。此表用于选择厂商 GEMM 对照形状（issue #7 路线 1）。
 
 **单层回放**（`replay_linear_r25.json`；**边界：代表性形状合成回放**（随机 x/w/gy、固定 S），非自然训练张量 replay；bf16 固定非 autocast；溯源：FlagOS-OP pr35 commit `4df994d`、triton_level/_shape sha256、dtype/stride/layout 入 JSON；vendor 判定经本地 API shim 返回真实值 thead）。
 
