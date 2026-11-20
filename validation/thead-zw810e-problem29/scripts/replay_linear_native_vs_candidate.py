@@ -33,9 +33,26 @@ a=ap.parse_args()
 
 torch.manual_seed(0)
 DEV="cuda"; DT=torch.bfloat16
+import subprocess, hashlib
+def _sha(p):
+    return hashlib.sha256(open(p,"rb").read()).hexdigest()[:16]
+def _git(*args):
+    try:
+        return subprocess.run(["git","-C","/tmp/opencode/FlagOS-OP",*args],
+                              capture_output=True,text=True,timeout=30).stdout.strip()
+    except Exception: return ""
 RES={"device":torch.cuda.get_device_name(0),"dtype":"bf16",
      "layer":"encoder.intermediate.dense","w":[4096,1024],
      "calls_per_step":20,"note":"candidate has no fused bias; bias add counted separately",
+     "boundary":"REPRESENTATIVE-SHAPE replay with synthetic random x/w/gy at fixed S; NOT natural-training-tensor replay (round-24)",
+     "provenance":{
+        "flagos_op_commit":_git("log","pr35","--oneline","-1").split()[0] if _git("log","pr35","--oneline","-1") else "",
+        "triton_level_sha256_16":_sha("/tmp/opencode/FlagOS-OP/ops/matmul/kernel/triton_level.py"),
+        "_shape_sha256_16":_sha("/tmp/opencode/FlagOS-OP/ops/matmul/kernel/_shape.py"),
+        "x_w_gy_dtype":"bfloat16 (fixed; autocast NOT used in replay)",
+        "effective_kernel_dtype":"bfloat16 inputs -> tl.dot fp32 accumulate -> bf16 store",
+        "x_stride":"contiguous [B,S,K]","w_stride_arg":"w.t() view (non-contiguous), layout precontig variant timed separately",
+        "bias_dtype":"bfloat16"},
      "seq_shapes":{}}
 TOL={"rule":"per-position |err| <= 4*ulp_bf16(max(|ref|, floor)); floor=0.01*max|ref|",
      "floor_factor":0.01,"ulp_factor":4}

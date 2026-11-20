@@ -41,8 +41,10 @@ def main():
 
     # ---- wrap every nn.Linear with event-bracketed forward ----
     stats = {}
+    orig_forwards = {}
     def wrap(module, key):
         orig = module.forward
+        orig_forwards[key] = orig
         st = stats[key]
         def forward(*args, **kw):
             s = torch.cuda.Event(enable_timing=True); e = torch.cuda.Event(enable_timing=True)
@@ -67,11 +69,13 @@ def main():
             wrap(mod, name)
 
     total_steps = a.skip + a.capture_steps
+    orig_forwards = {}
+    per_capture_step = []   # independent per-step totals (round-24 fix: profiler step must not mix in)
     for i in range(total_steps):
         capture = i >= a.skip
         if capture:
             for st in stats.values():
-                st["calls"] = 0; st["events"] = []; st["fwd_ms"] = 0.0
+                st["calls"] = 0; st["events"] = []
         optimizer.zero_grad(set_to_none=True)
         for micro in range(accum):
             batch = next(stream)
@@ -82,13 +86,18 @@ def main():
         optimizer.step()
         torch.cuda.synchronize()
         if capture:
-            for st in stats.values():
-                st["fwd_ms"] += sum(s.elapsed_time(e) for s, e in st["events"])
+            step_tot = {}
+            for k, st in stats.items():
+                ms = sum(s.elapsed_time(e) for s, e in st["events"])
+                st["fwd_ms"] = ms
+                step_tot[k] = ms
+            per_capture_step.append(step_tot)
             print(f"  capture step {i}: done", flush=True)
-    # reset wrapped forwards before profiler run
+    # round-24 fix: RESTORE original forwards BEFORE the profiler step so the
+    # profiler run cannot append events into capture stats
     for name, mod in model.named_modules():
-        if isinstance(mod, nn.Linear) and name in stats:
-            pass  # keep wraps; profiler run is separate process concern
+        if name in orig_forwards:
+            mod.forward = orig_forwards[name]
     # ---- aten op hit counts from a profiled step (counts only) ----
     from torch.profiler import profile, ProfilerActivity
     with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA]) as prof:
@@ -111,10 +120,13 @@ def main():
                             "cpu_time_us": round(getattr(ev, "cpu_time_total", 0), 1)}
     out = {"device": torch.cuda.get_device_name(0), "torch": torch.__version__,
            "batch_rows": batch_rows, "accum": accum, "capture_steps": a.capture_steps,
-           "aten_hits": hits, "modules": {}}
+           "aten_hits": hits, "modules": {},
+           "note": "calls/timing from capture steps ONLY (wrappers restored before profiler step); fwd_ms_per_step = mean of per-capture-step totals"}
     for k, st in stats.items():
+        per_mod = [tot[k] for tot in per_capture_step]
         out["modules"][k] = {"calls_per_capture_step": st["calls"] // a.capture_steps,
-                             "fwd_ms_per_step": round(st["fwd_ms"] / a.capture_steps, 3),
+                             "fwd_ms_per_step": round(sum(per_mod) / len(per_mod), 3),
+                             "fwd_ms_per_capture_step": [round(v, 3) for v in per_mod],
                              "in_shapes": [list(s) for s in sorted(st["shapes"])],
                              "in_strides": [list(s) for s in sorted(st["strides"])[:2]],
                              "w_shape": list(st["w_shape"]),
