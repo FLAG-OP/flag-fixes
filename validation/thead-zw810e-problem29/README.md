@@ -391,7 +391,12 @@ Top 类（S=512 主导行，按 fwd ms/步）：
 
 S=512 为负例组截断上限（max_length=512 truncation），主导线性前向。**dtype 区分**：wrapper 记录的输入 dtype 为 autocast 前的 fp32；GEMM 操作数 dtype 为 autocast 后 bf16（权重原生 bf16）。**dX/dW 为派生形状**（dX=(M,N)×(N,K)；dW=(N,M)×(M,K)）；实际 `mm/addmm` 操作数形状/转置/stride/dtype 直接 dump 列入设备待办。此表用于选择厂商 GEMM 对照形状（issue #7 路线 1）。
 
-**操作数阶段证据（round-30，`gemm_operands_r30.json`，`dump_gemm_operands.py`）**：真实训练窗口实测——前向窗口 **addmm 725/微批**（×4 = **2900/步**，精确等于 Linear 前向数 145×20；bias 融合于 addmm）；反向窗口 **mm 1442/微批**（×4 = **5768/步** ≈ dX+dW 各 2900，差 32 为池化层等口径细节）——即**前向=addmm（bias 融合）、反向=纯 mm（dX/dW 各一次）**。操作数 dtype=bf16（autocast；权重原生 bf16）；weight operand 按 F.linear 语义为转置视图（列主序）。**两项限制已在设备上验证并如实记录**：TorchDispatchMode 在 PPU 上捕获 0 次 mm/addmm（XMLIR 于自有 dispatch key 拦截、未落底层 mode）；profiler record_shapes 的 input_shapes=None。**直接操作数 stride/dtype dump 需厂商/运行时支持（已列入移交项）**。另：capture 脚本已加未分类 Linear 失败断言（复审项 2，避免新增模型结构静默漏项）。
+**操作数阶段证据（round-31 修正，`gemm_operands_r31.json`，`dump_gemm_operands.py`；round-30 的三项采集问题已修复并设备复测）**：
+
+1. **匹配修复 + known-input 校验**（复审 P1-1）：TorchDispatchMode 匹配改用 `torch.ops.aten.mm.default`/`aten.addmm.default`（旧 `'aten::mm'` 字符串从未匹配点号格式——**round-30 的零计数系匹配伪影，撤回"XMLIR dispatch-key 拦截"结论**）。已知输入探针在 PPU 实测：mode 收到 `aten.mm.default`×1、`aten.addmm.default`×1 及张量 shape/stride/dtype 元数据 ✓
+2. **真实路径操作数直接测量**（60 条采样，`real_path_operand_sample`）：**全部 bf16**；每条 addmm 模式 = bias[N]（1 维）+ input [M,K] 行主序连续（stride [K,1]）+ **weight.t() 列主序 stride [1,K]（转置视图，实测）** ✓——不再依赖语义推导
+3. **连续完整步窗口**（复审 P2-3）：单一 profiler 窗口采完 4 个 micro，`record_function` 标记分段；全程实测 **mm 5776 + addmm 2900**（round-30 的 ×4 外推标签移除）；分段一致：每 micro 前向 addmm 725 + mm 2（loss 计算）、反向 mm 1442；**每 micro 间反复启停导致丢事件的旧实现作废**；反向与 2×2900=5800 差 32 的逐模块归因仍待查（诚实保留）
+4. raw events 的 input_shapes 已存（`raw_shape_samples`：如 FFN 升维 addmm [4096],[190,1024],[1024,4096]）
 
 **单层回放**（`replay_linear_r25.json`；**边界：代表性形状合成回放**（随机 x/w/gy、固定 S），非自然训练张量 replay；bf16 固定非 autocast；溯源：FlagOS-OP pr35 commit `4df994d`、triton_level/_shape sha256、dtype/stride/layout 入 JSON；vendor 判定经本地 API shim 返回真实值 thead）。
 

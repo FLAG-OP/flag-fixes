@@ -1,12 +1,13 @@
-"""Issue #7 review (bd79ae9) item 1: GEMM operand evidence per phase.
-DELIVERED: per-phase aten::mm/addmm COUNTS from real BGE-M3 training windows
-(forward-only vs backward-only) + M/K/N/dtype/transpose DERIVED per F.linear
-semantics, tied to the r29 hotspot classes.
-LIMITATION (documented, verified by two probes): on this PPU stack
-(a) TorchDispatchMode captures 0 mm/addmm (XMLIR intercepts at its own
-dispatch key - ops never reach bottom-of-stack mode), and
-(b) profiler record_shapes leaves input_shapes=None.
-Direct operand stride/dtype dump requires vendor/runtime support (queued)."""
+"""Issue #7 review (a7686e2) three fixes:
+1. TorchDispatchMode matching uses torch.ops.aten.mm.default/.addmm.default
+   (previous 'aten::mm' string NEVER matched 'aten.mm.default' -> the zero
+   count was a matching artifact, NOT XMLIR interception). Known-input
+   validation (one mm + one addmm) runs FIRST and its received op names +
+   tensor metadata are recorded.
+2. GEMM raw events saved from prof.events() with op name + raw input_shapes.
+3. ONE continuous profiler window over all 4 micro-batches; record_function
+   markers per micro/phase; mm events attributed to enclosing markers.
+   x4 numbers labelled as extrapolation."""
 import argparse, json, collections
 import torch
 
@@ -29,7 +30,7 @@ def main():
     from flagscale.train.losses.retrieval import loss_for_batch
     from flagscale.train.train_retrieval import build_optimizer, autocast_context, init_distributed
     from flagscale.models.retrieval import build_retrieval_model
-    from torch.profiler import profile, ProfilerActivity
+    from torch.profiler import profile, ProfilerActivity, record_function
 
     cfg = OmegaConf.load(a.conf)
     accum = int(cfg.gradient_accumulation_steps)
@@ -42,84 +43,132 @@ def main():
     loaders = build_split_loaders(str(cfg.task), cfg.data, int(cfg.batch_size), pin_memory=True, seed=42)
     stream = iter(loaders[0])
 
-    # verify the limitation claims on-device (recorded into output)
-    probe = {"torchdispatch_mm_calls": None, "profiler_shapes": None}
+    MM = torch.ops.aten.mm.default
+    ADDMM = torch.ops.aten.addmm.default
+    GEMM_SET = {MM, ADDMM}
 
-    class M(torch.utils._python_dispatch.TorchDispatchMode):
-        def __init__(self): self.n = 0
+    # ---------- 1. known-input dispatch validation ----------
+    known = {"received": [], "mm_tensor_meta": [], "addmm_tensor_meta": [],
+             "mm_calls": 0, "addmm_calls": 0}
+    class KnownProbe(torch.utils._python_dispatch.TorchDispatchMode):
         def __torch_dispatch__(self, func, types, args=(), kwargs=None):
-            if str(func) in ("aten::mm", "aten::addmm"): self.n += 1
+            known["received"].append(str(func))
+            if func in GEMM_SET:
+                if func is MM: known["mm_calls"] += 1
+                else: known["addmm_calls"] += 1
+                for t in args:
+                    if isinstance(t, torch.Tensor):
+                        meta = {"shape": list(t.shape), "stride": list(t.stride()), "dtype": str(t.dtype)}
+                        (known["mm_tensor_meta"] if func is MM else known["addmm_tensor_meta"]).append(meta)
             return func(*args, **(kwargs or {}))
-    batch = next(stream)
+    ta = torch.randn(4, 8, device=dev, dtype=torch.bfloat16)
+    tb = torch.randn(8, 16, device=dev, dtype=torch.bfloat16)
+    tbias = torch.randn(16, device=dev, dtype=torch.bfloat16)
+    with KnownProbe() as kp:
+        torch.mm(ta, tb)
+        torch.addmm(tbias, ta, tb)
+    known_validation = {"mode_saw_any_op": len(known["received"]) > 0,
+                         "ops_received": sorted(set(known["received"])),
+                         "mm_calls": known["mm_calls"],
+                         "addmm_calls": known["addmm_calls"],
+                         "mm_operand_meta": known["mm_tensor_meta"][:4],
+                         "addmm_operand_meta": known["addmm_tensor_meta"][:6]}
+
+    # ---------- 1b. real-path operand stride/dtype sample via FIXED matching ----------
+    real_meta = []
+    class RealProbe(torch.utils._python_dispatch.TorchDispatchMode):
+        LIMIT = 60
+        def __torch_dispatch__(self, func, types, args=(), kwargs=None):
+            if func in GEMM_SET and len(real_meta) < self.LIMIT:
+                for t in args:
+                    if isinstance(t, torch.Tensor):
+                        # column-major [R,C]: stride(0)==1, stride(1)==R (w.t() view)
+                        transposed = (t.dim() == 2 and t.shape[0] > 1
+                                       and t.stride(0) == 1 and t.stride(1) == t.shape[0])
+                        real_meta.append({"op": str(func), "shape": list(t.shape),
+                                           "stride": list(t.stride()), "dtype": str(t.dtype),
+                                           "col_major_transposed": bool(transposed)})
+            return func(*args, **(kwargs or {}))
+    batch_r = next(stream)
+    optimizer.zero_grad(set_to_none=True)
     with autocast_context(dev, dtype_name):
-        with M() as m:
-            loss = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
-    probe["torchdispatch_mm_calls"] = m.n
-    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as p2:
-        loss2 = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
-    probe["profiler_shapes"] = [ev.input_shapes is not None for ev in p2.key_averages()][:5]
-    del loss, loss2
+        with RealProbe():
+            loss_r = loss_for_batch(model, processor, str(cfg.task), batch_r, dev, float(cfg.temperature))
+    real_path_sample = {"n_records": len(real_meta),
+                         "dtypes": sorted({m["dtype"] for m in real_meta}),
+                         "transposed_operand_count": sum(1 for m in real_meta if m["col_major_transposed"]),
+                         "samples": real_meta[:24]}
+    del loss_r
 
-    def window(with_fwd, with_bwd):
-        optimizer.zero_grad(set_to_none=True)
-        prof = profile(activities=[ProfilerActivity.CPU]) if (with_fwd or with_bwd) else None
-        for micro in range(accum):
-            batch = next(stream)
-            if prof and with_fwd: prof.start()
-            with autocast_context(dev, dtype_name):
-                loss = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
-            if prof and with_fwd: prof.stop()
-            if prof and with_bwd: prof.start()
-            (loss / accum).backward()
-            if prof and with_bwd: prof.stop()
-        torch.cuda.synchronize()
-        if prof is None: return {}
-        c = collections.Counter()
-        for ev in prof.key_averages():
-            if ev.key in ("aten::mm", "aten::addmm"):
-                c[ev.key] += ev.count
-        return dict(c)
-
+    # ---------- 2+3. continuous window over a full training step ----------
     for i in range(a.skip):
         batch = next(stream)
+        optimizer.zero_grad(set_to_none=True)
         with autocast_context(dev, dtype_name):
             loss = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
         (loss / accum).backward()
         optimizer.zero_grad(set_to_none=True)
 
-    fwd_counts = window(True, False)     # forward-only window
-    bwd_counts = window(False, True)     # backward-only window
-    both = window(True, True)
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        optimizer.zero_grad(set_to_none=True)
+        for micro in range(accum):
+            batch = next(stream)
+            with record_function(f"rf_micro{micro}_forward"):
+                with autocast_context(dev, dtype_name):
+                    loss = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
+            with record_function(f"rf_micro{micro}_backward"):
+                (loss / accum).backward()
+        with record_function("rf_clip_optimizer"):
+            torch.nn.utils.clip_grad_norm_(trainable, 1.0)
+            optimizer.step()
+        torch.cuda.synchronize()
 
-    # derivation tied to r29 hotspot classes (per ONE micro; step = 4 micros)
-    # S=512 dominant row: M=5120
-    deriv = [
-        {"class": "ffn_up", "fwd": "addmm(bias[5120,4096], x[5120,1024], w.t()[1024,4096] col-major=TRANSPOSED operand)",
-         "dX": "mm(gy[5120,4096], w[4096,1024])", "dW": "mm(gy.t()[4096,5120], x[5120,1024]) -> reduce to [4096,1024]",
-         "dtype": "bf16 operands (autocast; weights native bf16)", "calls_per_micro": 24},
-        {"class": "ffn_down", "fwd": "addmm(bias[5120,1024], x[5120,4096], w.t()[4096,1024] TRANSPOSED)",
-         "dX": "mm(gy[5120,1024], w[1024,4096])", "dW": "mm(gy.t()[1024,5120], x[5120,4096]) -> [1024,4096]",
-         "dtype": "bf16", "calls_per_micro": 24},
-        {"class": "attn_qkv", "fwd": "addmm(bias[5120,1024], x[5120,1024], w.t()[1024,1024] TRANSPOSED)",
-         "dX": "mm(gy[5120,1024], w[1024,1024])", "dW": "mm(gy.t()[1024,5120], x[5120,1024])",
-         "dtype": "bf16", "calls_per_micro": 72},
-        {"class": "attn_out", "fwd": "addmm(bias[5120,1024], x[5120,1024], w.t()[1024,1024] TRANSPOSED)",
-         "dX": "mm(gy[5120,1024], w[1024,1024])", "dW": "mm(gy.t()[1024,5120], x[5120,1024])",
-         "dtype": "bf16", "calls_per_micro": 24},
-    ]
+    # collect raw events
+    raw_events = []
+    for ev in prof.events():
+        if ev.name in ("aten::mm", "aten::addmm", "aten.mm.default", "aten.addmm.default"):
+            raw_events.append({"name": ev.name,
+                                "input_shapes": [list(s) for s in ev.input_shapes] if ev.input_shapes else None,
+                                "t_start": ev.time_range.start, "t_end": ev.time_range.end})
+    # marker ranges
+    markers = []
+    for ev in prof.events():
+        if ev.name.startswith("rf_"):
+            markers.append({"name": ev.name, "t_start": ev.time_range.start, "t_end": ev.time_range.end})
+    def bucket(ev):
+        for m in markers:
+            if m["t_start"] <= ev["t_start"] and ev["t_end"] <= m["t_end"]:
+                return m["name"]
+        return "unattributed"
+    seg = collections.defaultdict(lambda: collections.Counter())
+    shapes_by_seg = collections.defaultdict(lambda: collections.Counter())
+    for ev in raw_events:
+        seg[bucket(ev)][ev["name"]] += 1
+        if ev["input_shapes"]:
+            shapes_by_seg[bucket(ev)][f"{ev['name']}|{ev['input_shapes']}"] += 1
+    summary = {seg_name: dict(c) for seg_name, c in sorted(seg.items())}
+    shape_samples = {seg_name: dict(list(c.items())[:10]) for seg_name, c in shapes_by_seg.items()}
+    total_mm = sum(1 for e in raw_events if e["name"] in ("aten::mm", "aten.mm.default"))
+    total_addmm = sum(1 for e in raw_events if e["name"] in ("aten::addmm", "aten.addmm.default"))
+
     out = {"device": torch.cuda.get_device_name(0), "torch": torch.__version__,
-           "limitation_verified_on_device": probe,
-           "limitation_note": "TorchDispatchMode sees 0 mm/addmm (XMLIR dispatch-key interception); profiler record_shapes leaves input_shapes=None on this build. Operand stride/transpose/dtype below are DERIVED from F.linear semantics + native dtypes; direct dump requires vendor/runtime support (queued).",
-           "measured_counts_per_micro": {"forward_window": fwd_counts, "backward_window": bwd_counts,
-                                          "both_window": both},
-           "measured_counts_per_step_x4": {"forward_addmm": fwd_counts.get("aten::addmm", 0) * 4,
-                                            "backward_mm": bwd_counts.get("aten::mm", 0) * 4},
-           "derived_operands_s512": deriv}
+           "known_input_validation": known_validation,
+           "real_path_operand_sample": real_path_sample,
+           "continuous_window": {"profiler_op": "single profile window, record_function markers per micro/phase",
+                                   "segment_counts": summary,
+                                   "totals": {"mm": total_mm, "addmm": total_addmm},
+                                   "extrapolation_note": "x4 numbers in round-30 were per-micro x4 EXTRAPOLATION; this window measures the FULL step directly",
+                                   "raw_shape_samples": shape_samples},
+           "derived_operands_note": "dtype/stride/transpose are DERIVED from F.linear semantics where raw shapes unavailable; marked derived"}
     json.dump(out, open(a.out, "w"), indent=1)
-    print("torchdispatch calls (fwd, 1 micro):", probe["torchdispatch_mm_calls"])
-    print("fwd window:", fwd_counts, "| bwd window:", bwd_counts)
-    print("per step (x4 micro): fwd addmm", out["measured_counts_per_step_x4"]["forward_addmm"],
-          "| bwd mm", out["measured_counts_per_step_x4"]["backward_mm"])
+    print("known-input validation:", {k: known_validation[k] for k in ("mode_saw_any_op", "mm_calls", "addmm_calls")})
+    print("ops received:", known_validation["ops_received"][:6])
+    print("continuous window totals: mm", total_mm, "addmm", total_addmm)
+    for seg_name, c in sorted(summary.items()):
+        print(f"  {seg_name}: {dict(c)}")
+    for seg_name, c in list(shape_samples.items())[:4]:
+        for s, n in list(c.items())[:3]:
+            print(f"  shape sample {seg_name}: {n}x {s}")
 
 if __name__ == "__main__":
     main()
