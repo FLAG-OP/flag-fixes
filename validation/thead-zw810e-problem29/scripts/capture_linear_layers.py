@@ -143,7 +143,7 @@ def main():
     json.dump(out, open(a.out, "w"), indent=1)
     print(f"aten hits: {json.dumps({k: v['count'] for k, v in hits.items()})}")
     for k, v in sorted(out["modules"].items(), key=lambda kv: -kv[1]["fwd_ms_per_step"])[:15]:
-        print(f"{v['fwd_ms_per_step']:8.2f} ms/step {v["calls_per_capture_step"]:3g}x {k} w={v['w_shape']} in={v['in_shapes'][:1]} bias={v['bias']}")
+        print(f"{v['fwd_ms_per_step']:8.2f} ms/step {v['calls_per_capture_step']:3g}x {k} w={v['w_shape']} in={v['in_shapes'][:1]} bias={v['bias']}")
 
 if __name__ == "__main__":
     main()
