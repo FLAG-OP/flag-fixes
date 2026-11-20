@@ -42,6 +42,29 @@ def main():
     # ---- wrap every nn.Linear with event-bracketed forward ----
     stats = {}
     orig_forwards = {}
+    UNCLASSIFIED = []
+    def classify(name):
+        # module-class classifier (round-30: fail loudly on unknown Linear
+        # names instead of silently dropping them from hotspot attribution)
+        if "attention.self" in name and any(t in name for t in ("query", "key", "value")):
+            return "attn_qkv"
+        if "attention.output.dense" in name:
+            return "attn_out"
+        if "intermediate.dense" in name:
+            return "ffn_up"
+        if ".output.dense" in name and "encoder.layer" in name:
+            return "ffn_down"
+        if "pooler" in name:
+            return "pooler"
+        return None
+    for _n, _m in model.named_modules():
+        if isinstance(_m, nn.Linear) and classify(_n) is None:
+            UNCLASSIFIED.append(_n)
+    if UNCLASSIFIED:
+        raise AssertionError(
+            f"unclassified nn.Linear modules (hotspot attribution would silently "
+            f"miss them): {UNCLASSIFIED[:8]}{'...' if len(UNCLASSIFIED) > 8 else ''} "
+            f"(- total {len(UNCLASSIFIED)}); extend classify() before capture")
     def wrap(module, key):
         orig = module.forward
         orig_forwards[key] = orig

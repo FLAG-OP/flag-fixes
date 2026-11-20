@@ -391,6 +391,8 @@ Top 类（S=512 主导行，按 fwd ms/步）：
 
 S=512 为负例组截断上限（max_length=512 truncation），主导线性前向。**dtype 区分**：wrapper 记录的输入 dtype 为 autocast 前的 fp32；GEMM 操作数 dtype 为 autocast 后 bf16（权重原生 bf16）。**dX/dW 为派生形状**（dX=(M,N)×(N,K)；dW=(N,M)×(M,K)）；实际 `mm/addmm` 操作数形状/转置/stride/dtype 直接 dump 列入设备待办。此表用于选择厂商 GEMM 对照形状（issue #7 路线 1）。
 
+**操作数阶段证据（round-30，`gemm_operands_r30.json`，`dump_gemm_operands.py`）**：真实训练窗口实测——前向窗口 **addmm 725/微批**（×4 = **2900/步**，精确等于 Linear 前向数 145×20；bias 融合于 addmm）；反向窗口 **mm 1442/微批**（×4 = **5768/步** ≈ dX+dW 各 2900，差 32 为池化层等口径细节）——即**前向=addmm（bias 融合）、反向=纯 mm（dX/dW 各一次）**。操作数 dtype=bf16（autocast；权重原生 bf16）；weight operand 按 F.linear 语义为转置视图（列主序）。**两项限制已在设备上验证并如实记录**：TorchDispatchMode 在 PPU 上捕获 0 次 mm/addmm（XMLIR 于自有 dispatch key 拦截、未落底层 mode）；profiler record_shapes 的 input_shapes=None。**直接操作数 stride/dtype dump 需厂商/运行时支持（已列入移交项）**。另：capture 脚本已加未分类 Linear 失败断言（复审项 2，避免新增模型结构静默漏项）。
+
 **单层回放**（`replay_linear_r25.json`；**边界：代表性形状合成回放**（随机 x/w/gy、固定 S），非自然训练张量 replay；bf16 固定非 autocast；溯源：FlagOS-OP pr35 commit `4df994d`、triton_level/_shape sha256、dtype/stride/layout 入 JSON；vendor 判定经本地 API shim 返回真实值 thead）。
 
 **统一计时口径（round-25 修正）**：native = 前向单独计时 + `autograd.grad(dX,dW,db)` 单独计时（图在计时外预建，**计时内无重复前向**）；candidate = (matmul + bias add) + (backward impl + gy.sum db)——两侧合计均含 bias 梯度：
