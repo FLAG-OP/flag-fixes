@@ -13,43 +13,31 @@
  "trace": "training_trace_r36_trace.json.gz",
  "rows": [
   {
-   "stage": "GEMM ffn_down dW bwd",
-   "MKN": [
-    1024,
-    4096,
-    4096
-   ],
+   "stage": "GEMM ffn_up  bwd",
+   "MKN": null,
    "calls": 96,
-   "ms": 46.69,
-   "flops_tflop": 4.123,
+   "ms": 46.77,
+   "flops_tflop": null,
+   "tflops": 88.2,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down  bwd",
+   "MKN": null,
+   "calls": 96,
+   "ms": 46.72,
+   "flops_tflop": null,
    "tflops": 88.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up dW bwd",
-   "MKN": [
-    4096,
-    1024,
-    1024
-   ],
+   "stage": "GEMM ffn_up  bwd",
+   "MKN": null,
    "calls": 96,
-   "ms": 46.67,
-   "flops_tflop": 4.121,
-   "tflops": 88.3,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up dX bwd",
-   "MKN": [
-    5120,
-    1024,
-    4096
-   ],
-   "calls": 96,
-   "ms": 34.56,
-   "flops_tflop": 4.123,
+   "ms": 34.58,
+   "flops_tflop": null,
    "tflops": 119.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
@@ -62,9 +50,9 @@
     4096
    ],
    "calls": 96,
-   "ms": 34.3,
+   "ms": 34.34,
    "flops_tflop": 4.123,
-   "tflops": 120.2,
+   "tflops": 120.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -76,51 +64,38 @@
     1024
    ],
    "calls": 96,
-   "ms": 32.86,
+   "ms": 32.77,
    "flops_tflop": 4.123,
-   "tflops": 125.5,
+   "tflops": 125.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down dX bwd",
-   "MKN": [
-    5120,
-    4096,
-    1024
-   ],
+   "stage": "GEMM ffn_down  bwd",
+   "MKN": null,
    "calls": 96,
-   "ms": 31.87,
-   "flops_tflop": 4.124,
-   "tflops": 129.4,
+   "ms": 31.9,
+   "flops_tflop": null,
+   "tflops": 129.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv dW bwd",
+   "stage": "GEMM attn_qkv  bwd",
    "MKN": [
-    1024,
-    1024,
-    1024
+    [
+     1024,
+     5120
+    ],
+    [
+     5120,
+     1024
+    ]
    ],
    "calls": 288,
-   "ms": 31.72,
-   "flops_tflop": 3.093,
-   "tflops": 97.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
-  },
-  {
-   "stage": "GEMM attn_qkv dX bwd",
-   "MKN": [
-    5120,
-    1024,
-    1024
-   ],
-   "calls": 288,
-   "ms": 28.32,
-   "flops_tflop": 3.093,
-   "tflops": 109.2,
+   "ms": 31.74,
+   "flops_tflop": null,
+   "tflops": 97.4,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
@@ -132,65 +107,77 @@
     1024
    ],
    "calls": 288,
-   "ms": 28.23,
+   "ms": 29.68,
    "flops_tflop": 3.092,
-   "tflops": 109.6,
+   "tflops": 104.2,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out dW bwd",
+   "stage": "GEMM attn_qkv  bwd",
    "MKN": [
-    1024,
-    1024,
-    1024
+    [
+     5120,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
    ],
-   "calls": 96,
-   "ms": 10.58,
-   "flops_tflop": 1.03,
-   "tflops": 97.4,
+   "calls": 288,
+   "ms": 28.4,
+   "flops_tflop": null,
+   "tflops": 108.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
   {
-   "stage": "GEMM ffn_up dW bwd",
+   "stage": "GEMM attn_out  bwd",
    "MKN": [
-    4096,
-    1024,
-    1024
+    [
+     1024,
+     5120
+    ],
+    [
+     5120,
+     1024
+    ]
    ],
-   "calls": 24,
-   "ms": 10.29,
-   "flops_tflop": 0.892,
-   "tflops": 86.7,
+   "calls": 96,
+   "ms": 10.57,
+   "flops_tflop": null,
+   "tflops": 97.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
+   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
   {
-   "stage": "GEMM ffn_down dW bwd",
-   "MKN": [
-    1024,
-    4096,
-    4096
-   ],
+   "stage": "GEMM ffn_down  bwd",
+   "MKN": null,
    "calls": 24,
    "ms": 10.25,
-   "flops_tflop": 0.892,
+   "flops_tflop": null,
    "tflops": 87.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up dW bwd",
-   "MKN": [
-    4096,
-    1024,
-    1024
-   ],
+   "stage": "GEMM ffn_up  bwd",
+   "MKN": null,
+   "calls": 24,
+   "ms": 10.23,
+   "flops_tflop": null,
+   "tflops": 87.2,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up  bwd",
+   "MKN": null,
    "calls": 96,
    "ms": 10.16,
-   "flops_tflop": 0.892,
-   "tflops": 87.8,
+   "flops_tflop": null,
+   "tflops": 87.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -202,9 +189,23 @@
     1024
    ],
    "calls": 96,
-   "ms": 9.25,
+   "ms": 9.26,
    "flops_tflop": 1.031,
-   "tflops": 111.4,
+   "tflops": 111.3,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    4430,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 7.26,
+   "flops_tflop": 0.892,
+   "tflops": 122.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -216,23 +217,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 7.24,
+   "ms": 7.25,
    "flops_tflop": 0.892,
-   "tflops": 123.2,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    4430,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 7.23,
-   "flops_tflop": 0.892,
-   "tflops": 123.3,
+   "tflops": 123.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -244,23 +231,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 7.17,
+   "ms": 7.23,
    "flops_tflop": 0.868,
-   "tflops": 121.1,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    160,
-    1024,
-    1024
-   ],
-   "calls": 144,
-   "ms": 6.92,
-   "flops_tflop": 0.048,
-   "tflops": 7.0,
+   "tflops": 120.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -274,7 +247,21 @@
    "calls": 24,
    "ms": 6.85,
    "flops_tflop": 0.868,
-   "tflops": 126.7,
+   "tflops": 126.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "calls": 144,
+   "ms": 6.81,
+   "flops_tflop": 0.048,
+   "tflops": 7.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -286,9 +273,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 6.47,
+   "ms": 6.45,
    "flops_tflop": 0.753,
-   "tflops": 116.4,
+   "tflops": 116.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -300,9 +287,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 6.29,
+   "ms": 6.19,
    "flops_tflop": 0.753,
-   "tflops": 119.7,
+   "tflops": 121.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -314,37 +301,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 6.28,
+   "ms": 6.15,
    "flops_tflop": 0.669,
-   "tflops": 106.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    4310,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.87,
-   "flops_tflop": 0.651,
-   "tflops": 110.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    1670,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.79,
-   "flops_tflop": 0.252,
-   "tflops": 43.5,
+   "tflops": 108.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -356,9 +315,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.76,
+   "ms": 6.02,
    "flops_tflop": 0.263,
-   "tflops": 45.6,
+   "tflops": 43.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -370,23 +329,51 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.63,
+   "ms": 5.88,
    "flops_tflop": 0.288,
-   "tflops": 51.2,
+   "tflops": 49.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
-    3290,
+    4310,
     1024,
-    4096
+    1024
    ],
-   "calls": 24,
-   "ms": 5.62,
-   "flops_tflop": 0.662,
-   "tflops": 118.0,
+   "calls": 72,
+   "ms": 5.88,
+   "flops_tflop": 0.651,
+   "tflops": 110.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.85,
+   "flops_tflop": 0.252,
+   "tflops": 43.1,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.81,
+   "flops_tflop": 0.323,
+   "tflops": 55.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -398,9 +385,37 @@
     1024
    ],
    "calls": 24,
-   "ms": 5.56,
+   "ms": 5.63,
    "flops_tflop": 0.662,
-   "tflops": 119.1,
+   "tflops": 117.7,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    3290,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 5.61,
+   "flops_tflop": 0.662,
+   "tflops": 118.1,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.61,
+   "flops_tflop": 0.317,
+   "tflops": 56.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -412,23 +427,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.53,
+   "ms": 5.52,
    "flops_tflop": 0.565,
-   "tflops": 102.1,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    2140,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.48,
-   "flops_tflop": 0.323,
-   "tflops": 59.0,
+   "tflops": 102.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -440,9 +441,23 @@
     4096
    ],
    "calls": 24,
-   "ms": 5.33,
+   "ms": 5.37,
    "flops_tflop": 0.501,
-   "tflops": 94.0,
+   "tflops": 93.3,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2490,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.33,
+   "flops_tflop": 0.376,
+   "tflops": 70.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -454,9 +469,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 5.26,
+   "ms": 5.27,
    "flops_tflop": 0.602,
-   "tflops": 114.5,
+   "tflops": 114.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -468,37 +483,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.25,
+   "ms": 5.27,
    "flops_tflop": 0.337,
-   "tflops": 64.1,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    2100,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.21,
-   "flops_tflop": 0.317,
-   "tflops": 60.8,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    2490,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.19,
-   "flops_tflop": 0.376,
-   "tflops": 72.4,
+   "tflops": 63.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -510,9 +497,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 5.04,
+   "ms": 5.07,
    "flops_tflop": 0.602,
-   "tflops": 119.4,
+   "tflops": 118.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -524,51 +511,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 4.9,
+   "ms": 5.04,
    "flops_tflop": 0.497,
-   "tflops": 101.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    2230,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 4.9,
-   "flops_tflop": 0.449,
-   "tflops": 91.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    2100,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 4.69,
-   "flops_tflop": 0.423,
-   "tflops": 90.2,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    2140,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 4.64,
-   "flops_tflop": 0.431,
-   "tflops": 92.8,
+   "tflops": 98.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -580,9 +525,65 @@
     1024
    ],
    "calls": 72,
-   "ms": 4.52,
+   "ms": 4.96,
    "flops_tflop": 0.451,
-   "tflops": 99.9,
+   "tflops": 91.1,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2230,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 4.92,
+   "flops_tflop": 0.449,
+   "tflops": 91.2,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2140,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 4.76,
+   "flops_tflop": 0.431,
+   "tflops": 90.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2100,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 4.74,
+   "flops_tflop": 0.423,
+   "tflops": 89.1,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    140,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 4.44,
+   "flops_tflop": 0.028,
+   "tflops": 6.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -596,7 +597,7 @@
    "calls": 24,
    "ms": 4.35,
    "flops_tflop": 0.385,
-   "tflops": 88.5,
+   "tflops": 88.4,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -608,9 +609,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 4.15,
+   "ms": 4.21,
    "flops_tflop": 0.35,
-   "tflops": 84.3,
+   "tflops": 83.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -622,23 +623,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 4.08,
+   "ms": 4.17,
    "flops_tflop": 0.336,
-   "tflops": 82.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_down fwd",
-   "MKN": [
-    1670,
-    4096,
-    1024
-   ],
-   "calls": 24,
-   "ms": 4.0,
-   "flops_tflop": 0.336,
-   "tflops": 84.0,
+   "tflops": 80.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -650,9 +637,51 @@
     1024
    ],
    "calls": 24,
-   "ms": 4.0,
+   "ms": 4.02,
    "flops_tflop": 0.385,
-   "tflops": 96.1,
+   "tflops": 95.8,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    1670,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 4.01,
+   "flops_tflop": 0.336,
+   "tflops": 83.9,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    1740,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 3.99,
+   "flops_tflop": 0.35,
+   "tflops": 87.8,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    2140,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 3.98,
+   "flops_tflop": 0.431,
+   "tflops": 108.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -673,6 +702,20 @@
   {
    "stage": "GEMM ffn_down fwd",
    "MKN": [
+    2100,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 3.98,
+   "flops_tflop": 0.423,
+   "tflops": 106.2,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
     2230,
     4096,
     1024
@@ -680,63 +723,7 @@
    "calls": 24,
    "ms": 3.98,
    "flops_tflop": 0.449,
-   "tflops": 112.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_down fwd",
-   "MKN": [
-    2140,
-    4096,
-    1024
-   ],
-   "calls": 24,
-   "ms": 3.97,
-   "flops_tflop": 0.431,
-   "tflops": 108.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_down fwd",
-   "MKN": [
-    2100,
-    4096,
-    1024
-   ],
-   "calls": 24,
-   "ms": 3.97,
-   "flops_tflop": 0.423,
-   "tflops": 106.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_down fwd",
-   "MKN": [
-    1740,
-    4096,
-    1024
-   ],
-   "calls": 24,
-   "ms": 3.96,
-   "flops_tflop": 0.35,
-   "tflops": 88.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_down fwd",
-   "MKN": [
-    160,
-    4096,
-    1024
-   ],
-   "calls": 48,
-   "ms": 3.44,
-   "flops_tflop": 0.064,
-   "tflops": 18.7,
+   "tflops": 112.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -748,9 +735,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 3.41,
+   "ms": 3.79,
    "flops_tflop": 0.021,
-   "tflops": 6.2,
+   "tflops": 5.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -762,9 +749,23 @@
     1024
    ],
    "calls": 72,
-   "ms": 3.31,
+   "ms": 3.51,
    "flops_tflop": 0.027,
-   "tflops": 8.2,
+   "tflops": 7.7,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    160,
+    4096,
+    1024
+   ],
+   "calls": 48,
+   "ms": 3.46,
+   "flops_tflop": 0.064,
+   "tflops": 18.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -776,9 +777,9 @@
     4096
    ],
    "calls": 48,
-   "ms": 2.93,
+   "ms": 2.82,
    "flops_tflop": 0.064,
-   "tflops": 22.0,
+   "tflops": 22.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -790,9 +791,9 @@
     1024
    ],
    "calls": 48,
-   "ms": 2.63,
+   "ms": 2.4,
    "flops_tflop": 0.016,
-   "tflops": 6.1,
+   "tflops": 6.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -804,9 +805,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 2.0,
+   "ms": 2.01,
    "flops_tflop": 0.223,
-   "tflops": 111.2,
+   "tflops": 110.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -818,9 +819,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.92,
+   "ms": 1.94,
    "flops_tflop": 0.217,
-   "tflops": 113.1,
+   "tflops": 112.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -832,9 +833,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.79,
+   "ms": 1.81,
    "flops_tflop": 0.036,
-   "tflops": 20.2,
+   "tflops": 20.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -848,21 +849,35 @@
    "calls": 24,
    "ms": 1.78,
    "flops_tflop": 0.188,
-   "tflops": 106.0,
+   "tflops": 105.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     140,
-    4096,
+    1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.74,
+   "ms": 1.69,
+   "flops_tflop": 0.007,
+   "tflops": 4.2,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 1.68,
    "flops_tflop": 0.028,
-   "tflops": 16.2,
+   "tflops": 16.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -874,37 +889,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.58,
+   "ms": 1.61,
    "flops_tflop": 0.166,
-   "tflops": 104.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    140,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 1.53,
-   "flops_tflop": 0.028,
-   "tflops": 18.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_out fwd",
-   "MKN": [
-    140,
-    1024,
-    1024
-   ],
-   "calls": 24,
-   "ms": 1.52,
-   "flops_tflop": 0.007,
-   "tflops": 4.6,
+   "tflops": 103.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -916,9 +903,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 1.42,
+   "ms": 1.46,
    "flops_tflop": 0.036,
-   "tflops": 25.5,
+   "tflops": 24.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -930,9 +917,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.4,
+   "ms": 1.41,
    "flops_tflop": 0.15,
-   "tflops": 107.8,
+   "tflops": 106.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -944,23 +931,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.3,
+   "ms": 1.37,
    "flops_tflop": 0.009,
-   "tflops": 6.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_out fwd",
-   "MKN": [
-    1670,
-    1024,
-    1024
-   ],
-   "calls": 24,
-   "ms": 1.22,
-   "flops_tflop": 0.084,
-   "tflops": 69.1,
+   "tflops": 6.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -972,9 +945,23 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.21,
+   "ms": 1.28,
    "flops_tflop": 0.088,
-   "tflops": 72.1,
+   "tflops": 68.4,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_out fwd",
+   "MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "calls": 24,
+   "ms": 1.27,
+   "flops_tflop": 0.084,
+   "tflops": 66.4,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -986,9 +973,23 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.19,
+   "ms": 1.2,
    "flops_tflop": 0.125,
-   "tflops": 104.9,
+   "tflops": 104.5,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_out fwd",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "calls": 24,
+   "ms": 1.19,
+   "flops_tflop": 0.108,
+   "tflops": 90.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -1002,7 +1003,7 @@
    "calls": 24,
    "ms": 1.19,
    "flops_tflop": 0.106,
-   "tflops": 88.9,
+   "tflops": 88.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -1016,21 +1017,7 @@
    "calls": 24,
    "ms": 1.19,
    "flops_tflop": 0.112,
-   "tflops": 94.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_out fwd",
-   "MKN": [
-    2140,
-    1024,
-    1024
-   ],
-   "calls": 24,
-   "ms": 1.18,
-   "flops_tflop": 0.108,
-   "tflops": 91.0,
+   "tflops": 94.4,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -1042,9 +1029,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.17,
+   "ms": 1.18,
    "flops_tflop": 0.096,
-   "tflops": 82.1,
+   "tflops": 81.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
