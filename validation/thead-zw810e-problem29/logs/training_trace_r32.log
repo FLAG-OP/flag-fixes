@@ -1,0 +1,17 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+/usr/local/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+  step 2: 2101 ms (profiled)
+  step 3: 2265 ms (profiled)
+  step 4: 2500 ms (profiled)
+  noprofiler re-run 0: 2549 ms
+  noprofiler re-run 1: 2264 ms
+  noprofiler re-run 2: 1916 ms
+median noprofiler: 2264.5 ms | profiled: 2265.1 ms | overhead: 0.0 %
+trace saved: /tmp/opencode/zw810e-problem29/results/training_trace_r32_trace.json.gz 25587478 bytes

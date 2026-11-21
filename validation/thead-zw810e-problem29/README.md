@@ -418,6 +418,38 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 - **归因边界**：差异主要在前向（~15×）次在反向（~5×）；额外拷贝可忽略。"32×32×32 tile 未对 PPU 调优"为**待厂商/设备计数器确认的假设**——当前证据只支持"候选更慢且精度不满足"
 - 方向：厂商 GEMM 库调优或 PPU 专属 kernel 重调（需设备计数器/编译报告支持）；SDPA 维持 native efficient 基线
 
+#### 3c. 自然训练设备 trace（issue #7 复审 2026-11-21 任务，round-32）
+
+**采集**（`capture_training_trace.py`：原入口 native/stock、bf16、batch 10、accum 4、mask/dropout 保留；seed 42；预热 2 步 → 单一连续 profiler 窗口 3 步（`record_function` 标记 rf_s{step}_{phase}_m{micro}）→ `export_chrome_trace` gzip；无 profiler 复跑同窗口对照）：
+
+- trace：`training_trace_r32_trace.json.gz`（25.6MB，131,493 kernel 事件）；meta `training_trace_r32_meta.json`（命令/开销/计时）
+- **采集开销 ≈ 0%**（profiled 中位 2265.1ms vs 无 profiler 2264.5ms；步间波动 1916–2549ms，与 loader 长度窗口 token 总量一致——见 §3b 有效 token 表）
+- **归因 100%**：ac2g flow id==kernel correlation；flow 时间戳为设备执行时刻，反向 kernel 异步排空在 marker 窗口外——按最近前置 marker（提交相位）归因，跨步排空单列
+
+**相位清单（device ms/步，3 步均值）**：
+
+| 类别 | calls/步 | device ms/步 | 相位分布 |
+|---|---:|---:|---|
+| GEMM（gemm_ktype bf16 tile 128x128 等）| 8,676 | **1,102.4** | 前/反向均摊（fwd=addmm 725、bwd=mm 1442 每微批）|
+| SDPA/attention kernel | 1,920 | **580.2** | 前+反向（历史归因 ~574ms 吻合）|
+| elementwise | 18,175 | 553.2 | 主要反向逐元素 |
+| reduction | ~3,350 | 156.7 | bias 梯度/裁剪等 |
+| gelu | 960 | 105.2 | 前向 |
+| layernorm | 1,960 | 93.0 | 前+反向 |
+| optimizer | 256 | 52.9 | clip+AdamW |
+| copy | 极少 | — | 无显著拷贝流 |
+
+**关键路径（区间并集）**：设备 busy 占步窗 **86.0% / 89.8% / 90.9%**（busy 1806/2035/2262ms），暴露空闲仅 **227–295ms/步**；跨步排空 9.1ms（s4）。
+
+**效率分母**：GEMM 总 FLOPs **111.98 PFLOP/步**（2·MKN，fwd+dX+dW）→ **101.6 TFLOP/s = 73.0% 峰值（139.2）**；HBM 逻辑字节估算 200.4GB/步 → 181.8GB/s = **6.6% 峰值（2765）**（GEMM 受计算限制而非带宽；HBM 计数器不可读，逻辑字节为派生值已标注）。
+
+**最值得优化段（按复审要求列 1–2 项）**：
+1. **GEMM 73%→~86% 峰值**：主导形状 S=512 组（(5120,1024,4096)/(5120,4096,1024)/(5120,1024,1024)）若达 FlagBLAS 实测参照 135.7 TFLOP/s 可省 **~207ms/步**（当前 1102.4ms）——途径厂商库调优/tile 选择，非候选替换（r25 已淘汰 FlagOS-OP matmul）
+2. **逐元素 553ms/步、18k 次 kernel**：反向逐元素小 kernel 密集（平均 ~30µs/次），融合（GELU+残差加法、norm+cast）预计可省 100–200ms/步——需按泳道证据逐段验证
+3. 暴露空闲 227–295ms/步（提交间隙）——若泳道证实集中可优化提交批处理
+
+**缺失项（如实）**：HBM 计数器不可读（逻辑字节单列）；SDPA 反向 FLOPs 是否含重算未标注（kernel 名不含该信息，待厂商文档）；Asight 工具本栈不可用，以 torch.profiler chrome trace 等效采集。
+
 #### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
