@@ -1,0 +1,427 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "config": {
+  "batch_rows": 10,
+  "accum": 4,
+  "dtype": "bf16",
+  "env": {
+   "FL_FLAGGEMS": "",
+   "FL_ADAMW_FUSED": "0"
+  },
+  "seed": 42
+ },
+ "timings_ms": {
+  "warmup": [
+   4548.8,
+   1872.6
+  ],
+  "noprofiler": [],
+  "profiled": [
+   2114.9,
+   2296.0,
+   2550.4
+  ]
+ },
+ "capture_overhead_note": "overhead computed in samewindow_noprofiler.py with strict pairing (this capture pass records profiler-window steps only)",
+ "trace_path": "training_trace_r35_trace.json.gz",
+ "batch_fingerprints": {
+  "fingerprints": {
+   "step_2": [
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 16,
+      "valid_tokens": 111,
+      "padded_positions": 160
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 443,
+      "valid_tokens": 2233,
+      "padded_positions": 4430
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 214,
+      "valid_tokens": 1356,
+      "padded_positions": 2140
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 374,
+      "valid_tokens": 1838,
+      "padded_positions": 3740
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 167,
+      "valid_tokens": 1552,
+      "padded_positions": 1670
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 18,
+      "valid_tokens": 102,
+      "padded_positions": 180
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1647,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 299,
+      "valid_tokens": 1279,
+      "padded_positions": 2990
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2119,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 174,
+      "valid_tokens": 1629,
+      "padded_positions": 1740
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 16,
+      "valid_tokens": 107,
+      "padded_positions": 160
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1952,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 249,
+      "valid_tokens": 1297,
+      "padded_positions": 2490
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 329,
+      "valid_tokens": 1250,
+      "padded_positions": 3290
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 191,
+      "valid_tokens": 1760,
+      "padded_positions": 1910
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 14,
+      "valid_tokens": 103,
+      "padded_positions": 140
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1806,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 223,
+      "valid_tokens": 1216,
+      "padded_positions": 2230
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 431,
+      "valid_tokens": 1812,
+      "padded_positions": 4310
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 210,
+      "valid_tokens": 1883,
+      "padded_positions": 2100
+     }
+    }
+   ],
+   "step_3": [
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 15,
+      "valid_tokens": 101,
+      "padded_positions": 150
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1973,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 280,
+      "valid_tokens": 1284,
+      "padded_positions": 2800
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 485,
+      "valid_tokens": 2573,
+      "padded_positions": 4850
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 232,
+      "valid_tokens": 2041,
+      "padded_positions": 2320
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 14,
+      "valid_tokens": 100,
+      "padded_positions": 140
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2477,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 458,
+      "valid_tokens": 1944,
+      "padded_positions": 4580
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1351,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 226,
+      "valid_tokens": 2071,
+      "padded_positions": 2260
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 12,
+      "valid_tokens": 91,
+      "padded_positions": 120
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 344,
+      "valid_tokens": 1387,
+      "padded_positions": 3440
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2184,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 491,
+      "valid_tokens": 2210,
+      "padded_positions": 4910
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 284,
+      "valid_tokens": 2398,
+      "padded_positions": 2840
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 12,
+      "valid_tokens": 95,
+      "padded_positions": 120
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 394,
+      "valid_tokens": 1780,
+      "padded_positions": 3940
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 256,
+      "valid_tokens": 1359,
+      "padded_positions": 2560
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 297,
+      "valid_tokens": 1545,
+      "padded_positions": 2970
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 295,
+      "valid_tokens": 2490,
+      "padded_positions": 2950
+     }
+    }
+   ],
+   "step_4": [
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 13,
+      "valid_tokens": 92,
+      "padded_positions": 130
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1352,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2322,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1681,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 342,
+      "valid_tokens": 2753,
+      "padded_positions": 3420
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 20,
+      "valid_tokens": 112,
+      "padded_positions": 200
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 357,
+      "valid_tokens": 1197,
+      "padded_positions": 3570
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 493,
+      "valid_tokens": 2082,
+      "padded_positions": 4930
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 227,
+      "valid_tokens": 1115,
+      "padded_positions": 2270
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 348,
+      "valid_tokens": 3072,
+      "padded_positions": 3480
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 15,
+      "valid_tokens": 109,
+      "padded_positions": 150
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 251,
+      "valid_tokens": 1407,
+      "padded_positions": 2510
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1564,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 488,
+      "valid_tokens": 1888,
+      "padded_positions": 4880
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 377,
+      "valid_tokens": 3302,
+      "padded_positions": 3770
+     }
+    },
+    {
+     "anchor": {
+      "sequences": 10,
+      "max_len": 14,
+      "valid_tokens": 93,
+      "padded_positions": 140
+     },
+     "negative_1": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2535,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2711,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2318,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "sequences": 10,
+      "max_len": 452,
+      "valid_tokens": 3801,
+      "padded_positions": 4520
+     }
+    }
+   ]
+  },
+  "note": "tokenized AFTER profiler window; per micro/group attention-mask stats"
+ },
+ "commands": {
+  "capture": "python3 examples/retrieval/capture_training_trace.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --skip 2 --trace-steps 3 --out-prefix /tmp/opencode/zw810e-problem29/results/training_trace_r35",
+  "analysis": "python3 scripts/parse_training_trace.py --trace <trace.json.gz> --out results/training_trace_analysis_r32.json"
+ }
+}

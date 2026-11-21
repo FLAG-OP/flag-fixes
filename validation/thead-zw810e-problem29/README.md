@@ -461,39 +461,35 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 
 主热点（S=512 组）**88–129 TFLOP/s（63–93% 峰值 139.2；参照 135.7）**——**dW（转置 operand）明显慢于 fwd/dX（88 vs 119–129）**。短形状（S≈431–493 组）~86–88 TFLOP/s。
 
-#### 3c-2. 最终汇总表（round-34，复审 6ba3bfd 六项完成）
+#### 3c-2. 最终汇总表（round-35，由 `results/final_table_r35.json` 程序化生成——**全部基于 r35 同窗 trace 与同窗 kernel 效率测量**，round-32 trace 复解析口径作废）
 
-| 阶段 | 相位 | calls/步 | device ms/步 | FLOPs/步 (TFLOP) | TFLOP/s | HBM 字节 | 关键路径 ms | 证据来源 |
-|---|---|---:|---:|---:|---:|---:|---:|---|
-| FFN 升维 | fwd addmm | 120 | 34.3 | 2.75 | **120.3** | 估算* | 见下 | kernel_efficiency_r34（同窗事件对+模块标签）|
-| FFN 降维 | fwd addmm | 120 | 32.8 | 2.76 | **125.8** | 估算* | ″ | ″ |
-| QKV | fwd addmm | 360 | ~29 | 2.53 | **~122** | 估算* | ″ | ″ |
-| attn 输出投影 | fwd addmm | 120 | ~10 | 0.85 | **138.8** | 估算* | ″ | ″ |
-| FFN 升维 | dX mm | 96 | 34.6 | 2.75 | **119.3** | 估算* | ″ | ″ |
-| FFN 降维 | dX mm | 96 | 31.9 | 2.75 | **129.3** | 估算* | ″ | ″ |
-| FFN 升/降维 | dW mm | 96+96 | 46.8+46.7 | 2.76+2.76 | **88.0/88.3** | 估算* | ″ | ″ |
-| QKV | dX mm | 288 | 28.4 | 2.02 | **109.0** | 估算* | ″ | ″ |
-| QKV | dW mm | 288 | 31.8 | 2.02 | **97.4** | 估算* | ″ | ″ |
-| attn 输出投影 | dX/dW | 96+96 | 9.5/10.6 | 0.85 | **109.1/97.3** | 估算* | ″ | ″ |
-| SDPA/attention | fwd | 480 | 204.7 | 0.32（公式见下）| **1.6** | 估算* | ″ | trace 相位窗 + 公式 |
-| SDPA/attention | bwd | 1,440 | 375.5 | 0.47 | **1.3** | 估算* | ″ | ″ |
-| 全步（含 elementwise/reduction/gelu/ln/optimizer）| — | 43–44k kernels | — | — | — | — | busy 1806/2035/2262 | trace 区间并集 |
+窗口：seed 42、batch 10、accum 4、native/stock bf16、3 步连续（`training_trace_r35_trace.json.gz`）；脚本 commit 见各文件 blob。
 
-关键路径（真步窗边界 [首 marker 起, 末 marker 止]，最后一步含 sync 尾部）：**busy 86.5/90.3/90.5%**（1806/2035/2262ms），暴露空闲 **236–295ms/步**；窗口内 CPU 提交 72.1–72.8k 次、sync 60–61 次、**H2D kernel 事件 0 条**（该栈 H2D 不以 kernel 事件呈现——单列说明）。
+| 阶段 | 相位 | calls/步 | device ms/步 | FLOPs (TFLOP) | TFLOP/s | HBM | 来源 |
+|---|---|---:|---:|---:|---:|---|---|
+| FFN 升维 | fwd | 96 | 34.3 | 4.12 | **120.1** | 估算* | kernel_efficiency_r35 |
+| FFN 降维 | fwd | 96 | 32.8 | 4.12 | **125.9** | 估算* | 同上 |
+| QKV | fwd | 288 | 28.3 | 3.09 | **109.3** | 估算* | 同上 |
+| attn 输出投影 | fwd | 96 | 9.3 | 1.03 | **111.3** | 估算* | 同上 |
+| FFN 升维 | dX | 96 | 34.6 | 2.75 | **119.3** | 估算* | 同上 |
+| FFN 降维 | dX | 96 | 31.9 | 2.75 | **129.3** | 估算* | 同上 |
+| FFN 升/降维 | dW | 96+96 | 46.8/46.7 | 2.76 | **88.0/88.3** | 估算* | 同上 |
+| QKV | dX/dW | 288/288 | 28.4/31.8 | 2.02 | **109.0/97.4** | 估算* | 同上（拓扑推断 1:3，计数断言）|
+| attn 输出投影 | dX/dW | 96+96 | 9.5/10.6 | 0.85 | **109.1/97.3** | 估算* | 同上 |
+| SDPA/attention | fwd | 480 | 204.7 | 0.32 | **1.55** | 估算* | sdpa_efficiency_r35（公式 4BH S²D，60 组逐行）|
+| SDPA/attention | bwd | 1,440 | 375.5 | 0.47 | **1.26** | 估算* | 同上（6BH S²D；重算未知）|
 
-**SDPA 口径（公式与限制）**：fwd=4·B·H·S²·D（QK^T+PV，含 padding 的 S）、bwd=6·B·H·S²·D（dQ/dK/dV）；dropout 配置存在（hidden_dropout_prob=0.1）但训练路径实际 dropout 标志未在 kernel 名中可见；**是否重算未知**。实测 TFLOP/s（1.6/1.3）远低于 roofline——小 S 组（12–512）下 attention 受提交/带宽/延迟限制而非算力。
+小 S 形状（140–180）TFLOP/s 6–24（latency 主导）；中 S 随 M 上升。前向 FFN 全部低于 139.2 峰值（round-34 的 >峰值数字系单 M 聚合 bug，已修）。
 
-**HBM 计数器失败证据（item 5）**：Asight 工具存在（asight v2.1.0_20260416-3bb05b6，asys+acu）；探测命令 `acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count 3 ...` 与 `ENV_SYS_PROFILE_FULL=1 prof.sh ...`；失败输出 `Device is not ready for profiling` / `No report generated: no data to collect`；根因 dmesg `[alixpu] PPU0000 PCM is in used by app[pg-exporter]!`（平台守护进程占用 PCM）。**可用指标名已记录**（kvd__bytes_load/store_pipe_l2.sum 可提供 L2 侧字节）——需平台侧释放 PCM 后复测；此前逻辑字节全部保持为估算。
+**关键路径（r35 trace，含 memcpy/memset 的 busy union）**：busy 85.9/89.0/88.8%；窗口内 **HtoD 120 条 0.27ms、DtoD 60 条、DtoH 60 条、memset 7,842 条 1.99ms**——此前"H2D=0"系只查 kernel 类别所致，已更正。
 
-**严格配对（item 1）**：trace 窗口与 no-profiler 各自独立模型+loader（同 seed 42）；逐 micro 有效/padding token 摘要断言 **12/12 一致、0 mismatch**（samewindow_noprofiler_r34.json）；同窗 no-profiler 中位 **2144.4ms**、p95 2375.5、有效 tokens/s 14191–14947；采集开销 = 2265.1/2144.4−1 ≈ **5.6%（严格配对口径）**。
+**严格配对（round-35）**：trace 与 no-profiler 独立模型+loader（seed 42），**逐 micro 指纹断言 12/12 一致**（r35 meta `batch_fingerprints`）；no-profiler 中位 **2106.6ms**、p95=样本最大 **2337.2ms**（3 样本，非稳定 p95）、有效 tokens/s **14388–15192**；**严格配对采集开销 = 2296.0/2106.6−1 ≈ 8.4%**。
 
-**估算与实测标注**：表中 TFLOP/s 与 device ms 均为**同窗实测**；HBM 字节/GB/s 为**估算**（计数器被阻断）；"dW 提升可省 ~35ms/步、S512 达 135.7 可省 ~150–200ms/步"为**估算**（基于同窗实测差值），非实测结论。round-32 的"采集开销 ≈0%"与"flow 时间戳=设备执行时间"两处旧口径已删除更正（ac2g=主机提交时刻）。
+**HBM 状态：BLOCKED**——Asight v2.1.0 在位；探测命令/失败输出/dmesg 根因（PCM 被 pg-exporter 占用）见 `logs/hbm_probe_r34.log`；复测命令已记录；计数器读回前 HBM 字节/带宽/利用率全部为估算，不列入已完成测量。
 
+**估算标注**："dW 提升 ~35ms/步"、"S512 达 135.7 ~150–200ms/步"、"逐元素融合 100–200ms/步"均为估算（依据同窗实测差值），非实测结论。ac2g 时间戳统一口径为主机提交时刻。
 
-
-**缺失项（如实）**：HBM 计数器不可读（逻辑字节派生单列）；SDPA 反向重算口径未知；Asight 不可用（torch.profiler 等效）；dW 慢的根因（tile/布局/bank 冲突）待厂商计数器。
-
-#### 4. F-2 最小 shape 隔离（单次触发）
+#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
 

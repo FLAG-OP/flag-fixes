@@ -35,32 +35,39 @@ def main():
     loaders = build_split_loaders(str(cfg.task), cfg.data, int(cfg.batch_size), pin_memory=True, seed=42)
     stream = iter(loaders[0])
 
+    # review 5ec9e6c item 1: tokenizer timing REMOVED from the measured step
+    # (batches saved; tokenized AFTER timing) and fingerprints are compared
+    # against the TRACE-pass fingerprint file
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
     def run_step(i):
         t0 = time.perf_counter()
         optimizer.zero_grad(set_to_none=True)
-        lens = []
+        step_batches = []
         for micro in range(accum):
             batch = next(stream)
-            sl = {}
-            valid = 0; padded = 0
-            for k in sorted(batch.keys()):
-                enc = tok(batch[k], padding=True, truncation=True,
-                          max_length=int(cfg.model.get("max_length", 8192)), return_tensors=None)
-                mask = enc["attention_mask"]
-                v = sum(sum(1 for x in m if x == 1) for m in mask)
-                t = sum(len(m) for m in mask)
-                valid += v; padded += t
-                sl[k] = {"max_len": max(len(m) for m in mask), "valid": v, "padded": t}
-            lens.append({"groups": sl, "valid_tokens": valid, "padded_positions": padded})
+            step_batches.append(batch)
             with autocast_context(dev, dtype_name):
                 loss = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
             (loss / accum).backward()
         gn = torch.nn.utils.clip_grad_norm_(trainable, 1.0)
         optimizer.step()
         torch.cuda.synchronize()
-        return (time.perf_counter() - t0) * 1000, lens
+        wall_ms = (time.perf_counter() - t0) * 1000
+        lens = []
+        for batch in step_batches:   # tokenization OUTSIDE timing
+            g = {}
+            for k in sorted(batch.keys()):
+                enc = tok(batch[k], padding=True, truncation=True,
+                          max_length=int(cfg.model.get("max_length", 8192)), return_tensors=None)
+                mask = enc["attention_mask"]
+                g[k] = {"max_len": max(len(m) for m in mask),
+                         "valid_tokens": sum(sum(1 for x in m if x == 1) for m in mask),
+                         "padded_positions": sum(len(m) for m in mask)}
+            lens.append({"groups": g,
+                          "valid_tokens": sum(x["valid_tokens"] for x in g.values()),
+                          "padded_positions": sum(x["padded_positions"] for x in g.values())})
+        return wall_ms, lens
 
     timings = []
     summaries = []
@@ -71,19 +78,20 @@ def main():
     # strict pairing assertions vs the trace-pass summary (token_stats_r25.json,
     # same seed window): per-micro valid/padded tokens must match exactly
     import os
-    ref_path = "/tmp/opencode/zw810e-problem29/results/token_stats_r25.json"
+    ref_path = "/tmp/opencode/zw810e-problem29/results/training_trace_r35_meta.json"
     pairing = {"reference": ref_path, "asserted": False}
     try:
         ref = json.load(open(ref_path))
-        ref_steps = ref["steps"]
+        ref_steps = ref["batch_fingerprints"]["fingerprints"]
         n_cmp = min(len(summaries), len(ref_steps))
         mismatches = []
         for j in range(n_cmp):
             micros = summaries[j]["batch_lens"]   # list of per-micro dicts
-            ref_micros = ref_steps[f"capture_step_{j}"]
+            ref_micros = ref_steps[f"step_{a.skip + j}"]
             for mi, (mm, rm) in enumerate(zip(micros, ref_micros)):
                 for g in sorted(rm.keys()):
-                    if mm["groups"][g]["padded"] != rm[g]["padded_positions"] or                        mm["groups"][g]["valid"] != rm[g]["valid_tokens"]:
+                    if mm["groups"][g]["padded_positions"] != rm[g]["padded_positions"] or \
+                       mm["groups"][g]["valid_tokens"] != rm[g]["valid_tokens"]:
                         mismatches.append(f"step{j} micro{mi} {g}: mine={mm['groups'][g]} ref={rm[g]}")
         pairing = {"reference": ref_path, "micros_compared": n_cmp * accum,
                     "mismatches": mismatches[:8], "asserted": len(mismatches) == 0}
@@ -91,12 +99,13 @@ def main():
         pairing = {"reference": ref_path, "error": "reference summary missing"}
     tokens_per_step = [sum(m["valid_tokens"] for m in s["batch_lens"]) for s in summaries]
     tsorted = sorted(timings)
-    p95 = tsorted[min(len(tsorted) - 1, int(round(0.95 * len(tsorted))) - 1)] if tsorted else None
+    p95 = max(timings) if timings else None   # 3 samples: p95 == sample max, NOT stable p95
     out = {"device": torch.cuda.get_device_name(0),
            "window": f"steps {a.skip}..{a.skip + a.steps - 1} (same seed/loader window as trace)",
            "fresh_model_loader": True,
            "step_ms": [round(x, 1) for x in timings],
            "median_ms": round(statistics.median(timings), 1),
+           "p95_ms_label": "sample max (only 3 runs)",
            "p95_ms": round(p95, 1) if p95 else None,
            "valid_tokens_per_step": tokens_per_step,
            "valid_tokens_per_s": [round(t / (ms / 1000), 0) for t, ms in zip(tokens_per_step, timings)],

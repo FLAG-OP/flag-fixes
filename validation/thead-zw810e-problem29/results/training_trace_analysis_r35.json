@@ -1,0 +1,312 @@
+{
+ "trace": "results/training_trace_r35_trace.json.gz",
+ "kernels_total": 131493,
+ "attributed_to_phase_pct": 100.0,
+ "inventory_3steps": {
+  "gemm/backward": {
+   "count": 17304,
+   "device_ms_3steps": 2315.46,
+   "streams": [
+    1
+   ]
+  },
+  "sdpa_attention/backward": {
+   "count": 4320,
+   "device_ms_3steps": 1126.31,
+   "streams": [
+    1
+   ]
+  },
+  "gemm/forward": {
+   "count": 8724,
+   "device_ms_3steps": 989.98,
+   "streams": [
+    1
+   ]
+  },
+  "sdpa_attention/forward": {
+   "count": 1440,
+   "device_ms_3steps": 614.07,
+   "streams": [
+    1
+   ]
+  },
+  "elementwise/backward": {
+   "count": 52542,
+   "device_ms_3steps": 377.44,
+   "streams": [
+    1
+   ]
+  },
+  "elementwise/forward": {
+   "count": 19152,
+   "device_ms_3steps": 174.74,
+   "streams": [
+    1
+   ]
+  },
+  "reduction/backward": {
+   "count": 10152,
+   "device_ms_3steps": 154.88,
+   "streams": [
+    1
+   ]
+  },
+  "gelu/backward": {
+   "count": 1440,
+   "device_ms_3steps": 63.85,
+   "streams": [
+    1
+   ]
+  },
+  "other/backward": {
+   "count": 4806,
+   "device_ms_3steps": 61.92,
+   "streams": [
+    1
+   ]
+  },
+  "other/clip": {
+   "count": 768,
+   "device_ms_3steps": 53.09,
+   "streams": [
+    1
+   ]
+  },
+  "layernorm/backward": {
+   "count": 2940,
+   "device_ms_3steps": 48.26,
+   "streams": [
+    1
+   ]
+  },
+  "layernorm/forward": {
+   "count": 2940,
+   "device_ms_3steps": 44.91,
+   "streams": [
+    1
+   ]
+  },
+  "gelu/forward": {
+   "count": 1440,
+   "device_ms_3steps": 41.32,
+   "streams": [
+    1
+   ]
+  },
+  "other/forward": {
+   "count": 3216,
+   "device_ms_3steps": 29.1,
+   "streams": [
+    1
+   ]
+  },
+  "norm/clip": {
+   "count": 87,
+   "device_ms_3steps": 3.24,
+   "streams": [
+    1
+   ]
+  },
+  "reduction/forward": {
+   "count": 204,
+   "device_ms_3steps": 1.04,
+   "streams": [
+    1
+   ]
+  },
+  "elementwise/clip": {
+   "count": 15,
+   "device_ms_3steps": 0.04,
+   "streams": [
+    1
+   ]
+  },
+  "reduction/clip": {
+   "count": 3,
+   "device_ms_3steps": 0.02,
+   "streams": [
+    1
+   ]
+  }
+ },
+ "inventory_per_step": {
+  "gemm/backward": {
+   "count_per_step": 5768.0,
+   "device_ms_per_step": 771.82
+  },
+  "sdpa_attention/backward": {
+   "count_per_step": 1440.0,
+   "device_ms_per_step": 375.44
+  },
+  "gemm/forward": {
+   "count_per_step": 2908.0,
+   "device_ms_per_step": 329.99
+  },
+  "sdpa_attention/forward": {
+   "count_per_step": 480.0,
+   "device_ms_per_step": 204.69
+  },
+  "elementwise/backward": {
+   "count_per_step": 17514.0,
+   "device_ms_per_step": 125.81
+  },
+  "elementwise/forward": {
+   "count_per_step": 6384.0,
+   "device_ms_per_step": 58.25
+  },
+  "reduction/backward": {
+   "count_per_step": 3384.0,
+   "device_ms_per_step": 51.63
+  },
+  "gelu/backward": {
+   "count_per_step": 480.0,
+   "device_ms_per_step": 21.28
+  },
+  "other/backward": {
+   "count_per_step": 1602.0,
+   "device_ms_per_step": 20.64
+  },
+  "other/clip": {
+   "count_per_step": 256.0,
+   "device_ms_per_step": 17.7
+  },
+  "layernorm/backward": {
+   "count_per_step": 980.0,
+   "device_ms_per_step": 16.09
+  },
+  "layernorm/forward": {
+   "count_per_step": 980.0,
+   "device_ms_per_step": 14.97
+  },
+  "gelu/forward": {
+   "count_per_step": 480.0,
+   "device_ms_per_step": 13.77
+  },
+  "other/forward": {
+   "count_per_step": 1072.0,
+   "device_ms_per_step": 9.7
+  },
+  "norm/clip": {
+   "count_per_step": 29.0,
+   "device_ms_per_step": 1.08
+  },
+  "reduction/forward": {
+   "count_per_step": 68.0,
+   "device_ms_per_step": 0.35
+  },
+  "elementwise/clip": {
+   "count_per_step": 5.0,
+   "device_ms_per_step": 0.01
+  },
+  "reduction/clip": {
+   "count_per_step": 1.0,
+   "device_ms_per_step": 0.01
+  }
+ },
+ "critical_path_per_step": {
+  "s2": {
+   "window_ms": 2103.0,
+   "device_busy_union_ms": 1806.2,
+   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
+   "exposed_idle_ms": 296.8,
+   "busy_pct": 85.9,
+   "cpu_launches_in_window": 72127,
+   "sync_calls_in_window": 60,
+   "memcpy_events_in_window": {
+    "DtoD": {
+     "count": 60,
+     "ms": 0.226
+    },
+    "memset": {
+     "count": 7842,
+     "ms": 1.9185289999999546
+    },
+    "HtoD": {
+     "count": 120,
+     "ms": 0.2652409999999999
+    },
+    "DtoH": {
+     "count": 60,
+     "ms": 0.034920999999999994
+    }
+   },
+   "kernels": 46370,
+   "drain_into_next_step_ms": 9.1
+  },
+  "s3": {
+   "window_ms": 2284.2,
+   "device_busy_union_ms": 2033.6,
+   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
+   "exposed_idle_ms": 250.6,
+   "busy_pct": 89.0,
+   "cpu_launches_in_window": 72391,
+   "sync_calls_in_window": 60,
+   "memcpy_events_in_window": {
+    "DtoD": {
+     "count": 60,
+     "ms": 0.226
+    },
+    "memset": {
+     "count": 7842,
+     "ms": 1.9185289999999546
+    },
+    "HtoD": {
+     "count": 120,
+     "ms": 0.2652409999999999
+    },
+    "DtoH": {
+     "count": 60,
+     "ms": 0.034920999999999994
+    }
+   },
+   "kernels": 46409,
+   "drain_into_next_step_ms": 9.0
+  },
+  "s4": {
+   "window_ms": 2546.7,
+   "device_busy_union_ms": 2262.3,
+   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
+   "exposed_idle_ms": 284.4,
+   "busy_pct": 88.8,
+   "cpu_launches_in_window": 72824,
+   "sync_calls_in_window": 61,
+   "memcpy_events_in_window": {
+    "DtoD": {
+     "count": 60,
+     "ms": 0.226
+    },
+    "memset": {
+     "count": 7842,
+     "ms": 1.9185289999999546
+    },
+    "HtoD": {
+     "count": 120,
+     "ms": 0.2652409999999999
+    },
+    "DtoH": {
+     "count": 60,
+     "ms": 0.034920999999999994
+    }
+   },
+   "kernels": 46796,
+   "drain_into_next_step_ms": 0.0
+  }
+ },
+ "gemm_efficiency": {
+  "units_correction": "previous 111.98 was TFLOP/step (not PFLOP); flops from r28 shapes x3, kernel ms from r32 trace - CROSS-WINDOW ESTIMATE, superseded by same-window measurement in results/gemm_efficiency_r33.json (see measure_gemm_efficiency.py)",
+  "estimate_tflops_cross_window": 101.6,
+  "estimate_utilization_pct_of_1392": 73.0,
+  "flops_per_step_tflop": 111.98,
+  "gemm_device_ms_per_step": 1101.8,
+  "peak_tflops": 139.2,
+  "vendor_measured_reference_tflops": 135.7
+ },
+ "hbm_logical_estimate": {
+  "logical_bytes_per_step_1e9": 200.4,
+  "est_bandwidth_GBs": 181.9,
+  "hbm_peak_GBs": 2765,
+  "utilization_pct": 6.6,
+  "note": "DERIVED logical operand bytes (fwd+dX+dW); HBM counters not available on this stack - missing item documented"
+ }
+}

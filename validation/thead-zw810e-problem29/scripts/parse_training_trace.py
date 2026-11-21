@@ -124,6 +124,30 @@ def main():
         if k["step"] in step_windows and k["ts"] >= step_windows[k["step"]]["t1"]:
             drain_overlap[k["step"]] += k["dur_us"]
     rt = [e for e in evs if e.get("cat") in ("cuda_runtime", "cuda_driver")]
+    # review 5ec9e6c item 4: include gpu_memcpy/gpu_memset in busy union;
+    # report HtoD/DtoD/DtoH/memset counts+durations separately
+    memops = [e for e in evs if e.get("cat") in ("gpu_memcpy", "gpu_memset")]
+    def mem_kind(e):
+        n = e.get("name", "")
+        if "memset" in n.lower(): return "memset"
+        if "HtoD" in n or "htod" in n.lower(): return "HtoD"
+        if "DtoH" in n or "dtoh" in n.lower(): return "DtoH"
+        if "DtoD" in n or "dtod" in n.lower(): return "DtoD"
+        return "other_memcpy"
+    mem_by = collections.defaultdict(lambda: {"count": 0, "ms": 0.0})
+    for e in memops:
+        w0, w1 = None, None
+        for st, w in step_windows.items():
+            if w["t0"] <= e["ts"] <= w["t1"]: w0, w1 = st, w; break
+        if w0 is None: continue
+        k = mem_kind(e)
+        if k == "memset":
+            mem_by[f"memset"][ "count"] += 1; mem_by["memset"]["ms"] += e.get("dur", 0) / 1000
+        else:
+            mem_by[k]["count"] += 1; mem_by[k]["ms"] += e.get("dur", 0) / 1000
+        by_step[w0].append({"name": e["name"], "dur_us": e.get("dur", 0), "ts": e["ts"],
+                             "stream": (e.get("args") or {}).get("stream"),
+                             "phase": "memcpy", "micro": "", "step": w0, "marker": "rf_memcpy", "corr": None})
     crit = {}
     for s, w in step_windows.items():
         ivs = sorted((k["ts"], k["ts"] + k["dur_us"]) for k in by_step.get(s, []))
@@ -138,15 +162,13 @@ def main():
         wall = (w["t1"] - w["t0"]) / 1000
         launches = sum(1 for e in rt if w["t0"] <= e["ts"] <= w["t1"])
         syncs = sum(1 for e in rt if w["t0"] <= e["ts"] <= w["t1"] and "Synchronize" in e.get("name", ""))
-        h2d_ms = sum(e.get("dur", 0) for e in evs
-                      if e.get("cat") == "kernel" and "memcpy" in e.get("name", "").lower()
-                      and w["t0"] <= e["ts"] <= w["t1"]) / 1000
         crit[s] = {"window_ms": round(wall, 1), "device_busy_union_ms": round(union / 1000, 1),
+                    "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
                     "exposed_idle_ms": round(wall - union / 1000, 1),
                     "busy_pct": round(union / 1000 / wall * 100, 1),
                     "cpu_launches_in_window": launches,
                     "sync_calls_in_window": syncs,
-                    "h2d_ms_in_window": round(h2d_ms, 2),
+                    "memcpy_events_in_window": {k: v for k, v in mem_by.items()},
                     "kernels": len(by_step.get(s, [])),
                     "drain_into_next_step_ms": round(drain_overlap.get(s, 0) / 1000, 1)}
     # GEMM FLOPs from measured per-shape calls (same seed window as r28)

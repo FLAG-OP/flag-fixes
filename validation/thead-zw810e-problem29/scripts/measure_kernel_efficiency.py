@@ -120,14 +120,15 @@ def main():
     for name, mod in model.named_modules():
         if name in orig_fw: mod.forward = orig_fw[name]
 
-    # aggregate forward per module_class
+    # aggregate forward per (module_class, operand sig) — review 5ec9e6c item 2:
+    # per-shape FLOPs (previous single-M-per-class produced >peak numbers - wrong)
     fwd = collections.defaultdict(lambda: {"count": 0, "ms": 0.0, "sig": None})
     fwd_err = []
     for r in recs:
         if r["phase"].startswith("forward") and r["module_class"]:
             sig = "|".join(f"{o['shape']}:{'T' if o['col_major_T'] else ''}" for o in r["operands"])
-            f = fwd[r["module_class"]]; f["count"] += 1; f["ms"] += r["device_ms"]; f["sig"] = sig
-    out_debug_fwd = {k: v["count"] for k, v in fwd.items()}
+            f = fwd[(r["module_class"], sig)]; f["count"] += 1; f["ms"] += r["device_ms"]; f["sig"] = sig
+    out_debug_fwd = {f"{k[0]}|{k[1]}": v["count"] for k, v in fwd.items()}
     # backward same-shape groups -> ordered reverse-layer attribution
     # per micro per layer reverse order: [attn_out, q, k, v] for shape (5120,1024,1024) dX/dW
     bwd_groups = collections.defaultdict(list)   # sig -> list of device_ms (in submission order)
@@ -141,8 +142,8 @@ def main():
     }
     rows_out = []
     # forward rows with derived MKN
-    for cls, f in fwd.items():
-        opsigs = f["sig"].split("|")
+    for (cls, sig), f in fwd.items():
+        opsigs = sig.split("|")
         # sig holds ONLY 2D operands: [x[M,K], w.t()[K,N]] (bias 1-D excluded)
         shp0 = json.loads(opsigs[0].split(":")[0]) if len(opsigs) > 0 else None
         shp1 = json.loads(opsigs[1].split(":")[0]) if len(opsigs) > 1 else None
@@ -152,8 +153,9 @@ def main():
             ms = f["ms"]
             tf = round((flops / (ms * 1e-3)) / 1e12, 1)
             rows_out.append({"module_class": cls, "phase": "forward", "op": "addmm",
-                              "MKN": [M, K, N], "operand_sig": f["sig"],
+                              "MKN": [M, K, N], "operand_sig": sig,
                               "calls_per_step": f["count"], "device_ms": round(ms, 2),
+                              "flops_tflop": round(flops / 1e12, 3),
                               "tflops": tf})
     # backward rows: split same-shape groups into attn_out/qkv by ordered pattern 1:3
     for sig, lst in bwd_groups.items():
@@ -185,7 +187,7 @@ def main():
                                                     "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"},
                                   "calls_per_step": counts[cls], "device_ms": round(ms[cls], 2),
                                   "tflops": tf,
-                                  "attribution": "ordered reverse-layer pattern 1 attn_out : 3 qkv (count-asserted)"})
+                                  "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"})
         else:
             all_ms = sum(r["device_ms"] for r in lst)
             # FFN classes recoverable from operand dims:
