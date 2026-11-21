@@ -426,29 +426,44 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 - **采集开销 ≈ 0%**（profiled 中位 2265.1ms vs 无 profiler 2264.5ms；步间波动 1916–2549ms，与 loader 长度窗口 token 总量一致——见 §3b 有效 token 表）
 - **归因 100%**：ac2g flow id==kernel correlation；flow 时间戳为设备执行时刻，反向 kernel 异步排空在 marker 窗口外——按最近前置 marker（提交相位）归因，跨步排空单列
 
-**相位清单（device ms/步，3 步均值）**：
+**相位清单（round-33 修正：每步归一 + fwd/bwd 分列，`training_trace_analysis_r33.json`；round-32 表的"每步"实际是 3 步累计且相位被 m0-m3 合并——作废）**：
 
-| 类别 | calls/步 | device ms/步 | 相位分布 |
-|---|---:|---:|---|
-| GEMM（gemm_ktype bf16 tile 128x128 等）| 8,676 | **1,102.4** | 前/反向均摊（fwd=addmm 725、bwd=mm 1442 每微批）|
-| SDPA/attention kernel | 1,920 | **580.2** | 前+反向（历史归因 ~574ms 吻合）|
-| elementwise | 18,175 | 553.2 | 主要反向逐元素 |
-| reduction | ~3,350 | 156.7 | bias 梯度/裁剪等 |
-| gelu | 960 | 105.2 | 前向 |
-| layernorm | 1,960 | 93.0 | 前+反向 |
-| optimizer | 256 | 52.9 | clip+AdamW |
-| copy | 极少 | — | 无显著拷贝流 |
+| 类别/相位 | calls/步 | device ms/步 |
+|---|---:|---:|
+| GEMM backward | 5,768 | **772.1** |
+| SDPA/attention backward | 1,440 | **375.5** |
+| GEMM forward | 2,908 | **330.3** |
+| SDPA/attention forward | 480 | **204.7** |
+| elementwise backward | 17,514 | 125.9 |
+| elementwise forward | 6,384 | 58.3 |
+| reduction backward | 3,384 | 51.9 |
+| gelu backward/forward | 480/480 | 21.3/13.8 |
+| other clip（裁剪+优化器）| 256 | 17.6 |
+| layernorm backward/forward | 980/980 | 16.1/15.0 |
 
-**关键路径（区间并集）**：设备 busy 占步窗 **86.0% / 89.8% / 90.9%**（busy 1806/2035/2262ms），暴露空闲仅 **227–295ms/步**；跨步排空 9.1ms（s4）。
+（与复审复算一致：GEMM fwd 330.3 / bwd 772.1；attention fwd 204.7 / bwd 375.5 ✓）
 
-**效率分母**：GEMM 总 FLOPs **111.98 PFLOP/步**（2·MKN，fwd+dX+dW）→ **101.6 TFLOP/s = 73.0% 峰值（139.2）**；HBM 逻辑字节估算 200.4GB/步 → 181.8GB/s = **6.6% 峰值（2765）**（GEMM 受计算限制而非带宽；HBM 计数器不可读，逻辑字节为派生值已标注）。
+**采集开销修正（round-33，`samewindow_noprofiler_r33.json`）**：round-32 的"无 profiler 复跑"在同一迭代器上继续读 loader（非同窗口）——作废。修正后用**独立模型 + 独立 loader（同 seed 42 同样本窗口）**复测步 2–4：**1895.6 / 2128.6 / 2364.3ms，中位 2128.6ms**；同窗口采集开销 = 2265.1/2128.6 − 1 ≈ **6.4%**（批长度摘要已存 JSON 供断言一致）。
 
-**最值得优化段（按复审要求列 1–2 项）**：
-1. **GEMM 73%→~86% 峰值**：主导形状 S=512 组（(5120,1024,4096)/(5120,4096,1024)/(5120,1024,1024)）若达 FlagBLAS 实测参照 135.7 TFLOP/s 可省 **~207ms/步**（当前 1102.4ms）——途径厂商库调优/tile 选择，非候选替换（r25 已淘汰 FlagOS-OP matmul）
-2. **逐元素 553ms/步、18k 次 kernel**：反向逐元素小 kernel 密集（平均 ~30µs/次），融合（GELU+残差加法、norm+cast）预计可省 100–200ms/步——需按泳道证据逐段验证
-3. 暴露空闲 227–295ms/步（提交间隙）——若泳道证实集中可优化提交批处理
+**GEMM 同窗口分形状效率（round-33，`gemm_efficiency_r33.json`，`measure_gemm_efficiency.py`——同一步窗内每 mm/addmm 事件对实测；round-32 的 73% 为跨窗口估算（r28 形状 × r32 时间，单位为 TFLOP/步非 PFLOP），降级为估算值）**：
 
-**缺失项（如实）**：HBM 计数器不可读（逻辑字节单列）；SDPA 反向 FLOPs 是否含重算未标注（kernel 名不含该信息，待厂商文档）；Asight 工具本栈不可用，以 torch.profiler chrome trace 等效采集。
+| 相位/类 | (M,K,N) | calls/步 | device ms/步 | TFLOP/s（同窗实测）|
+|---|---|---:|---:|---:|
+| fwd FFN 升维 addmm | (5120,1024,4096) | 120 | 34.28 | **120.3** |
+| fwd FFN 降维 addmm | (5120,4096,1024) | 120 | 32.77 | **125.8** |
+| fwd QKV/attn-out addmm | (5120,1024,1024) | 384 | 37.73 | **109.3** |
+| bwd FFN-up dX | (5120,1024,4096) | 96 | 34.57 | **119.3** |
+| bwd FFN-down dX | (5120,4096,1024) | 96 | 31.90 | **129.3** |
+| bwd FFN-up dW | (4096,5120,1024) | 96 | 46.69 | **88.3** |
+| bwd FFN-down dW | (1024,5120,4096) | 96 | 46.67 | **88.3** |
+| bwd QKV dX | (5120,1024,1024) | 384 | 37.78 | **109.1** |
+| bwd QKV/attn-out dW | (1024,5120,1024) | 384 | 42.36 | **97.3** |
+
+主热点（S=512 组）**88–129 TFLOP/s（63–93% 峰值 139.2；参照 135.7）**——**dW（转置 operand）明显慢于 fwd/dX（88 vs 119–129）**。短形状（S≈431–493 组）~86–88 TFLOP/s。
+
+**关键路径与优化目标（修正口径）**：设备 busy 86.0/89.8/90.9% 步窗、暴露空闲 227–295ms。**估算（非实测结论，复审要求标注）**：若 dW 类从 88 提至 fwd 水平 ~125 可省 ~35ms/步；若 S512 组全体达 135.7 参照可省 ~150–200ms/步；逐元素融合收益待逐段验证（round-32 数字作废，不作实测结论）。
+
+**缺失项（如实）**：HBM 计数器不可读（逻辑字节派生单列）；SDPA 反向重算口径未知；Asight 不可用（torch.profiler 等效）；dW 慢的根因（tile/布局/bank 冲突）待厂商计数器。
 
 #### 4. F-2 最小 shape 隔离（单次触发）
 

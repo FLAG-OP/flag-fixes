@@ -65,10 +65,18 @@ def main():
             phase = "unattributed"
             unattributed += 1
         step = phase.split("_")[1] if phase.startswith("rf_s") else "?"
-        kind = phase.rsplit("_", 1)[-1] if phase.startswith("rf_s") else phase
+        # review 6d1a05b item 1: keep forward/backward/clip_optimizer separate
+        # (previous rsplit only yielded m0..m3, merging fwd/bwd of same micro)
+        if phase.startswith("rf_s"):
+            parts = phase.split("_")
+            kind = parts[2]          # forward | backward | clip_optimizer
+            micro = parts[3] if len(parts) > 3 else ""
+        else:
+            kind = phase
+            micro = ""
         kern_rows.append({"name": e["name"], "dur_us": e.get("dur", 0), "ts": e["ts"],
                            "stream": (e.get("args") or {}).get("stream"),
-                           "phase": kind, "step": step, "marker": phase,
+                           "phase": kind, "micro": micro, "step": step, "marker": phase,
                            "corr": c})
     attributed = sum(1 for k in kern_rows if not k["marker"].startswith(("outside", "unattributed", "before_first")))
     # inventory per class+phase
@@ -79,9 +87,13 @@ def main():
         inv[key]["count"] += 1
         inv[key]["ms"] += k["dur_us"] / 1000
         inv[key]["streams"].add(k["stream"])
-    inventory = {f"{cls}/{ph}": {"count": v["count"], "device_ms": round(v["ms"], 2),
+    inventory = {f"{cls}/{ph}": {"count": v["count"], "device_ms_3steps": round(v["ms"], 2),
                                   "streams": sorted(v["streams"])}
                   for (cls, ph), v in sorted(inv.items(), key=lambda kv: -kv[1]["ms"])}
+    n_steps = 3
+    inventory_per_step = {f"{cls}/{ph}": {"count_per_step": round(v["count"] / n_steps, 1),
+                                           "device_ms_per_step": round(v["ms"] / n_steps, 2)}
+                           for (cls, ph), v in sorted(inv.items(), key=lambda kv: -kv[1]["ms"])}
     # per-step totals + critical path (busy union) per step window
     step_windows = {}
     first_start = {}
@@ -137,13 +149,13 @@ def main():
         gemm_flops_per_step = 3 * flops_fwd  # fwd + dX + dW
         gemm_ms = sum(v["ms"] for (cls, ph), v in inv.items() if cls == "gemm") / len(step_windows)
         tflops = gemm_flops_per_step / (gemm_ms * 1e-3) / 1e12
-        gemm_eff = {"flops_per_step_1e12": round(gemm_flops_per_step / 1e12, 2),
-                     "fwd_calls_per_step": round(calls_fwd, 1),
+        gemm_eff = {"units_correction": "previous 111.98 was TFLOP/step (not PFLOP); flops from r28 shapes x3, kernel ms from r32 trace - CROSS-WINDOW ESTIMATE, superseded by same-window measurement in results/gemm_efficiency_r33.json (see measure_gemm_efficiency.py)",
+                     "estimate_tflops_cross_window": round(tflops, 1),
+                     "estimate_utilization_pct_of_1392": round(tflops / 139.2 * 100, 1),
+                     "flops_per_step_tflop": round(gemm_flops_per_step / 1e12, 2),
                      "gemm_device_ms_per_step": round(gemm_ms, 1),
-                     "measured_tflops": round(tflops, 1),
                      "peak_tflops": 139.2,
-                     "utilization_pct": round(tflops / 139.2 * 100, 1),
-                     "note": "FLOPs = 2*M*K*N per GEMM (FMA=2); x3 for fwd+dX+dW; shapes/calls from linear_capture_r28 (same seed window)"}
+                     "vendor_measured_reference_tflops": 135.7}
         # HBM logical bytes (derived)
         bytes_per_step = 0.0
         for k, v in shapes["modules"].items():
@@ -162,12 +174,13 @@ def main():
         gemm_eff = {"error": "shapes file missing"}; hbm = {}
     out = {"trace": a.trace, "kernels_total": len(kern_rows),
             "attributed_to_phase_pct": round(attributed / max(1, len(kern_rows)) * 100, 1),
-            "inventory": inventory, "critical_path_per_step": crit,
+            "inventory_3steps": inventory, "inventory_per_step": inventory_per_step,
+            "critical_path_per_step": crit,
             "gemm_efficiency": gemm_eff, "hbm_logical_estimate": hbm}
     json.dump(out, open(a.out, "w"), indent=1)
     print(f"kernels {len(kern_rows)}, attributed {out['attributed_to_phase_pct']}%")
-    for key, v in list(inventory.items())[:14]:
-        print(f"  {key:<28} {v['count']:>6} calls {v['device_ms']:>9.1f} ms")
+    for key, v in list(inventory_per_step.items())[:14]:
+        print(f"  {key:<28} {v['count_per_step']:>8} calls/step {v['device_ms_per_step']:>9.1f} ms/step")
     print("critical path per step:", json.dumps(crit))
     print("GEMM:", json.dumps(gemm_eff))
     if hbm: print("HBM:", json.dumps(hbm))
