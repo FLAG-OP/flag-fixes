@@ -1,0 +1,22 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+class       phase     calls       ms  tflops
+ffn_up      backward     96    46.71    88.3
+ffn_down    backward     96    46.68    88.3
+ffn_up      backward     96    34.56   119.3
+ffn_up      forward      96    34.33   120.1
+ffn_down    forward      96    32.76   125.9
+ffn_down    backward     96    31.88   129.3
+attn_qkv    backward    288    31.80    97.2
+attn_qkv    backward    288    28.31   109.2
+attn_qkv    forward     288    28.29   109.3
+attn_out    backward     96    10.59    97.4
+ffn_up      backward     24    10.29    86.7
+ffn_down    backward     24    10.27    86.8
+ffn_up      backward     96    10.12    88.1
+ffn_down    backward     24     9.95    87.2

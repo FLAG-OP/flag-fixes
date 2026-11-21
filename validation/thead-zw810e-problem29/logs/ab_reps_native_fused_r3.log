@@ -1,0 +1,27 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+`torch_dtype` is deprecated! Use `dtype` instead!
+optimizer: fused AdamW
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+device=cuda:0 platform=cuda
+params=567754752
+  step 2: 1896 ms
+  step 3: 2136 ms
+  step 4: 2358 ms
+
+=== batch 10 rows x accum 4 = 200 texts/step ===
+wall/step             2136.2 ms
+segment                              per step   % wall
+data (next(stream))                      0.79      0.0
+forward (incl tokenize+h2d)            688.93     32.3
+  . tokenize alone                      56.05      2.6
+  . H2D alone                            1.05      0.0
+  . residual = device compute          631.82     29.6
+backward                              1392.43     65.2
+clip + optimizer.step                   14.21      0.7
+sum                                   2096.36     98.1
+unaccounted                             39.80      1.9
+device compute (fwd+bwd)              2024.26     94.8

@@ -1,0 +1,50 @@
+PASS selftest: all-pass control -> PASS
+PASS selftest: param over tau -> FAIL
+PASS selftest: state NaN -> FAIL
+PASS selftest: state Inf -> FAIL
+PASS selftest: step mismatch -> FAIL
+PASS selftest: empty snapshot list -> aggregate FAIL
+PASS selftest: missing intermediate snapshot -> aggregate FAIL
+PASS selftest: duplicate steps -> aggregate FAIL
+PASS selftest: snapshot missing 'm' key -> aggregate FAIL
+PASS selftest: aggregate all-pass control -> PASS
+  [debug] snapshot t=1 step=1.0 m[0]=1.026962e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.875643e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.810903e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.026962e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.875643e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.810903e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.026962e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.875643e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.810903e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.022339e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.867676e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.806641e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.022339e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.867676e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.806641e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.022339e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.867676e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.806641e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.027107e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.876831e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.811218e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.027107e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.876831e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.811218e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.027107e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.876831e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.811218e-02
+  [debug] snapshot t=1 step=1.0 m[0]=1.027107e-03
+  [debug] snapshot t=15 step=15.0 m[0]=-1.876831e-02
+  [debug] snapshot t=30 step=30.0 m[0]=1.811218e-02
+float32/stock: FAIL
+float32/foreach: FAIL
+float32/fused: FAIL
+bfloat16/stock: FAIL
+bfloat16/foreach: FAIL
+bfloat16/fused: FAIL
+float16/stock: FAIL
+float16/foreach: FAIL
+float16/fused: FAIL
+impl verdicts: 9/9 FAIL

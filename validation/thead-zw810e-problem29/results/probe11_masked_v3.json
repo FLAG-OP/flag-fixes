@@ -1,0 +1,35 @@
+{
+ "shape": "B8 H16 S512 D64 bf16",
+ "mask_desc": "bool padding mask (B,1,S,S); ~100 padded cols; ~half rows with extra padding",
+ "iters": 30,
+ "warmup": 5,
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "note": "ALL warmup + timing inside the correct backend context (round-13 fix)",
+ "masked_flash": {
+  "ok": false,
+  "error": "RuntimeError: No available kernel. Aborting execution."
+ },
+ "masked_efficient": {
+  "ok": true,
+  "p50_ms": 0.586
+ },
+ "masked_math": {
+  "ok": true,
+  "p50_ms": 1.2449
+ },
+ "unmasked_flash": {
+  "ok": true,
+  "p50_ms": 0.1315
+ },
+ "unmasked_efficient": {
+  "ok": true,
+  "p50_ms": 0.2474
+ },
+ "unmasked_math": {
+  "ok": true,
+  "p50_ms": 0.9879
+ },
+ "masked_default_ms": 0.5865,
+ "unmasked_default_ms": 0.1316
+}

@@ -1,0 +1,538 @@
+{
+ "device": "PPU-ZW810E",
+ "window": "steps 2..4 (same seed/loader window as trace)",
+ "fresh_model_loader": true,
+ "step_ms": [
+  1876.7,
+  2112.0,
+  2335.6
+ ],
+ "median_ms": 2112.0,
+ "p95_ms_label": "sample max (only 3 runs)",
+ "p95_ms": 2335.6,
+ "valid_tokens_per_step": [
+  27052,
+  31454,
+  35506
+ ],
+ "valid_tokens_per_s": [
+  14415.0,
+  14893.0,
+  15202.0
+ ],
+ "pairing_assertions": {
+  "reference": "/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json",
+  "micros_compared": 12,
+  "mismatches": [],
+  "asserted": true
+ },
+ "batch_summaries": [
+  {
+   "step": 2,
+   "batch_lens": [
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 40,
+       "text_hash16": "95ee7835efbb2639",
+       "max_len": 16,
+       "valid_tokens": 111,
+       "padded_positions": 160
+      },
+      "negative_1": {
+       "loader_index": 41,
+       "text_hash16": "b32373b8d04e6f13",
+       "max_len": 443,
+       "valid_tokens": 2233,
+       "padded_positions": 4430
+      },
+      "negative_2": {
+       "loader_index": 42,
+       "text_hash16": "4d84ea53dba8924d",
+       "max_len": 214,
+       "valid_tokens": 1356,
+       "padded_positions": 2140
+      },
+      "negative_3": {
+       "loader_index": 43,
+       "text_hash16": "942a383a9b6c8ba7",
+       "max_len": 374,
+       "valid_tokens": 1838,
+       "padded_positions": 3740
+      },
+      "positive": {
+       "loader_index": 44,
+       "text_hash16": "8414c6b1780a274c",
+       "max_len": 167,
+       "valid_tokens": 1552,
+       "padded_positions": 1670
+      }
+     },
+     "valid_tokens": 7090,
+     "padded_positions": 12140
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 45,
+       "text_hash16": "1cc7f8abf126f0dd",
+       "max_len": 18,
+       "valid_tokens": 102,
+       "padded_positions": 180
+      },
+      "negative_1": {
+       "loader_index": 46,
+       "text_hash16": "9017f6816507d95f",
+       "max_len": 512,
+       "valid_tokens": 1647,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 47,
+       "text_hash16": "1ef9085897b396d7",
+       "max_len": 299,
+       "valid_tokens": 1279,
+       "padded_positions": 2990
+      },
+      "negative_3": {
+       "loader_index": 48,
+       "text_hash16": "339d36552aa6167d",
+       "max_len": 512,
+       "valid_tokens": 2119,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "loader_index": 49,
+       "text_hash16": "c2b0c784be41b326",
+       "max_len": 174,
+       "valid_tokens": 1629,
+       "padded_positions": 1740
+      }
+     },
+     "valid_tokens": 6776,
+     "padded_positions": 15150
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 50,
+       "text_hash16": "7c11153dc61a3e28",
+       "max_len": 16,
+       "valid_tokens": 107,
+       "padded_positions": 160
+      },
+      "negative_1": {
+       "loader_index": 51,
+       "text_hash16": "6d5833de023d1aaf",
+       "max_len": 512,
+       "valid_tokens": 1952,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 52,
+       "text_hash16": "b29899f1e70f7dcf",
+       "max_len": 249,
+       "valid_tokens": 1297,
+       "padded_positions": 2490
+      },
+      "negative_3": {
+       "loader_index": 53,
+       "text_hash16": "9baa7e5d1952e9a1",
+       "max_len": 329,
+       "valid_tokens": 1250,
+       "padded_positions": 3290
+      },
+      "positive": {
+       "loader_index": 54,
+       "text_hash16": "354e47babc1f6116",
+       "max_len": 191,
+       "valid_tokens": 1760,
+       "padded_positions": 1910
+      }
+     },
+     "valid_tokens": 6366,
+     "padded_positions": 12970
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 55,
+       "text_hash16": "96e11d751b078db0",
+       "max_len": 14,
+       "valid_tokens": 103,
+       "padded_positions": 140
+      },
+      "negative_1": {
+       "loader_index": 56,
+       "text_hash16": "54618799856784d5",
+       "max_len": 512,
+       "valid_tokens": 1806,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 57,
+       "text_hash16": "bf7492d03c908723",
+       "max_len": 223,
+       "valid_tokens": 1216,
+       "padded_positions": 2230
+      },
+      "negative_3": {
+       "loader_index": 58,
+       "text_hash16": "24f4cb3f26913ae8",
+       "max_len": 431,
+       "valid_tokens": 1812,
+       "padded_positions": 4310
+      },
+      "positive": {
+       "loader_index": 59,
+       "text_hash16": "2aaef5bc66bbcf36",
+       "max_len": 210,
+       "valid_tokens": 1883,
+       "padded_positions": 2100
+      }
+     },
+     "valid_tokens": 6820,
+     "padded_positions": 13900
+    }
+   ]
+  },
+  {
+   "step": 3,
+   "batch_lens": [
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 60,
+       "text_hash16": "8e019cc2e1fc78f2",
+       "max_len": 15,
+       "valid_tokens": 101,
+       "padded_positions": 150
+      },
+      "negative_1": {
+       "loader_index": 61,
+       "text_hash16": "8a838cc7ee939f0b",
+       "max_len": 512,
+       "valid_tokens": 1973,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 62,
+       "text_hash16": "5b23613b7b6cb6ec",
+       "max_len": 280,
+       "valid_tokens": 1284,
+       "padded_positions": 2800
+      },
+      "negative_3": {
+       "loader_index": 63,
+       "text_hash16": "2c741a943f90e94a",
+       "max_len": 485,
+       "valid_tokens": 2573,
+       "padded_positions": 4850
+      },
+      "positive": {
+       "loader_index": 64,
+       "text_hash16": "15e19cd6a0b77a6f",
+       "max_len": 232,
+       "valid_tokens": 2041,
+       "padded_positions": 2320
+      }
+     },
+     "valid_tokens": 7972,
+     "padded_positions": 15240
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 65,
+       "text_hash16": "59d05ab048c71fd5",
+       "max_len": 14,
+       "valid_tokens": 100,
+       "padded_positions": 140
+      },
+      "negative_1": {
+       "loader_index": 66,
+       "text_hash16": "558347b358498988",
+       "max_len": 512,
+       "valid_tokens": 2477,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 67,
+       "text_hash16": "3633ca1a2475ab02",
+       "max_len": 458,
+       "valid_tokens": 1944,
+       "padded_positions": 4580
+      },
+      "negative_3": {
+       "loader_index": 68,
+       "text_hash16": "cd62992163fbc78a",
+       "max_len": 512,
+       "valid_tokens": 1351,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "loader_index": 69,
+       "text_hash16": "6b8927237fa51ca1",
+       "max_len": 226,
+       "valid_tokens": 2071,
+       "padded_positions": 2260
+      }
+     },
+     "valid_tokens": 7943,
+     "padded_positions": 17220
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 70,
+       "text_hash16": "a2f168b1ce01ab5c",
+       "max_len": 12,
+       "valid_tokens": 91,
+       "padded_positions": 120
+      },
+      "negative_1": {
+       "loader_index": 71,
+       "text_hash16": "2c982790403d236a",
+       "max_len": 344,
+       "valid_tokens": 1387,
+       "padded_positions": 3440
+      },
+      "negative_2": {
+       "loader_index": 72,
+       "text_hash16": "17cccecf6937a872",
+       "max_len": 512,
+       "valid_tokens": 2184,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "loader_index": 73,
+       "text_hash16": "4d1ff84cfeb8f7a1",
+       "max_len": 491,
+       "valid_tokens": 2210,
+       "padded_positions": 4910
+      },
+      "positive": {
+       "loader_index": 74,
+       "text_hash16": "8cd4d37932897d6f",
+       "max_len": 284,
+       "valid_tokens": 2398,
+       "padded_positions": 2840
+      }
+     },
+     "valid_tokens": 8270,
+     "padded_positions": 16430
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 75,
+       "text_hash16": "0de7cc9867acd0bf",
+       "max_len": 12,
+       "valid_tokens": 95,
+       "padded_positions": 120
+      },
+      "negative_1": {
+       "loader_index": 76,
+       "text_hash16": "7dc59d1833933392",
+       "max_len": 394,
+       "valid_tokens": 1780,
+       "padded_positions": 3940
+      },
+      "negative_2": {
+       "loader_index": 77,
+       "text_hash16": "dbc277b6d3bb0c98",
+       "max_len": 256,
+       "valid_tokens": 1359,
+       "padded_positions": 2560
+      },
+      "negative_3": {
+       "loader_index": 78,
+       "text_hash16": "9a836d4ce702d89c",
+       "max_len": 297,
+       "valid_tokens": 1545,
+       "padded_positions": 2970
+      },
+      "positive": {
+       "loader_index": 79,
+       "text_hash16": "be39530b4da24388",
+       "max_len": 295,
+       "valid_tokens": 2490,
+       "padded_positions": 2950
+      }
+     },
+     "valid_tokens": 7269,
+     "padded_positions": 12540
+    }
+   ]
+  },
+  {
+   "step": 4,
+   "batch_lens": [
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 80,
+       "text_hash16": "a1300ac07d32a8da",
+       "max_len": 13,
+       "valid_tokens": 92,
+       "padded_positions": 130
+      },
+      "negative_1": {
+       "loader_index": 81,
+       "text_hash16": "ddf03376e78ad663",
+       "max_len": 512,
+       "valid_tokens": 1352,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 82,
+       "text_hash16": "9f1cf06ca92f3190",
+       "max_len": 512,
+       "valid_tokens": 2322,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "loader_index": 83,
+       "text_hash16": "23a554470e1bfee6",
+       "max_len": 512,
+       "valid_tokens": 1681,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "loader_index": 84,
+       "text_hash16": "d8448f2be2808142",
+       "max_len": 342,
+       "valid_tokens": 2753,
+       "padded_positions": 3420
+      }
+     },
+     "valid_tokens": 8200,
+     "padded_positions": 18910
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 85,
+       "text_hash16": "38dd4a96c65b9b6f",
+       "max_len": 20,
+       "valid_tokens": 112,
+       "padded_positions": 200
+      },
+      "negative_1": {
+       "loader_index": 86,
+       "text_hash16": "67dda0d4bc4ea495",
+       "max_len": 357,
+       "valid_tokens": 1197,
+       "padded_positions": 3570
+      },
+      "negative_2": {
+       "loader_index": 87,
+       "text_hash16": "2d7960b90502dc06",
+       "max_len": 493,
+       "valid_tokens": 2082,
+       "padded_positions": 4930
+      },
+      "negative_3": {
+       "loader_index": 88,
+       "text_hash16": "2be8cf1bd857138e",
+       "max_len": 227,
+       "valid_tokens": 1115,
+       "padded_positions": 2270
+      },
+      "positive": {
+       "loader_index": 89,
+       "text_hash16": "e91e3aeb586a50b7",
+       "max_len": 348,
+       "valid_tokens": 3072,
+       "padded_positions": 3480
+      }
+     },
+     "valid_tokens": 7578,
+     "padded_positions": 14450
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 90,
+       "text_hash16": "2a37a98bdbfe58e6",
+       "max_len": 15,
+       "valid_tokens": 109,
+       "padded_positions": 150
+      },
+      "negative_1": {
+       "loader_index": 91,
+       "text_hash16": "46b6c18ee99eaab9",
+       "max_len": 251,
+       "valid_tokens": 1407,
+       "padded_positions": 2510
+      },
+      "negative_2": {
+       "loader_index": 92,
+       "text_hash16": "eaf906dbdc6747b7",
+       "max_len": 512,
+       "valid_tokens": 1564,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "loader_index": 93,
+       "text_hash16": "4a989ed501207d61",
+       "max_len": 488,
+       "valid_tokens": 1888,
+       "padded_positions": 4880
+      },
+      "positive": {
+       "loader_index": 94,
+       "text_hash16": "c78a47d934020222",
+       "max_len": 377,
+       "valid_tokens": 3302,
+       "padded_positions": 3770
+      }
+     },
+     "valid_tokens": 8270,
+     "padded_positions": 16430
+    },
+    {
+     "groups": {
+      "anchor": {
+       "loader_index": 95,
+       "text_hash16": "947c5468c5077fa0",
+       "max_len": 14,
+       "valid_tokens": 93,
+       "padded_positions": 140
+      },
+      "negative_1": {
+       "loader_index": 96,
+       "text_hash16": "ad36dc9e0975c4fa",
+       "max_len": 512,
+       "valid_tokens": 2535,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "loader_index": 97,
+       "text_hash16": "d9547d2e6d59074b",
+       "max_len": 512,
+       "valid_tokens": 2711,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "loader_index": 98,
+       "text_hash16": "5c332f2a7c9e56a1",
+       "max_len": 512,
+       "valid_tokens": 2318,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "loader_index": 99,
+       "text_hash16": "ad33298c0d2df144",
+       "max_len": 452,
+       "valid_tokens": 3801,
+       "padded_positions": 4520
+      }
+     },
+     "valid_tokens": 11458,
+     "padded_positions": 20020
+    }
+   ]
+  }
+ ]
+}

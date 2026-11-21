@@ -1,0 +1,5881 @@
+{
+ "note": "hotspot table rebuilt per module CLASS (input-shape-only key merged QKV with FFN-up - fixed); M=B*S flattened; (M,K,N) derived from Linear semantics; in_dtype = pre-autocast input dtype recorded by wrapper; gemm operand dtype = bf16 via autocast",
+ "capture_source": "results/linear_capture_r28.json",
+ "capture_steps": 3,
+ "reconcile": {
+  "calls": {
+   "per_class_sum_all_steps": 8700,
+   "module_total_all_steps": 8700.0
+  },
+  "ms_all_steps": {
+   "per_class_sum": 1104.786,
+   "module_total": 1105.032
+  },
+  "asserted": true
+ },
+ "rows": [
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    512,
+    1024
+   ],
+   "in_stride": [
+    524288,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 5120,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 120.0,
+   "fwd_ms_per_step": 43.875,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    512,
+    4096
+   ],
+   "in_stride": [
+    2097152,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 5120,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 120.0,
+   "fwd_ms_per_step": 41.007,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    512,
+    1024
+   ],
+   "in_stride": [
+    524288,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 5120,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 360.0,
+   "fwd_ms_per_step": 38.934,
+   "modules": 72
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    512,
+    1024
+   ],
+   "in_stride": [
+    524288,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 5120,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 120.0,
+   "fwd_ms_per_step": 11.593,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    14,
+    1024
+   ],
+   "in_stride": [
+    14336,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 140,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 72.0,
+   "fwd_ms_per_step": 3.949,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    493,
+    1024
+   ],
+   "in_stride": [
+    504832,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4930,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.907,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    491,
+    1024
+   ],
+   "in_stride": [
+    502784,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4910,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.884,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    488,
+    1024
+   ],
+   "in_stride": [
+    499712,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4880,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.883,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    485,
+    1024
+   ],
+   "in_stride": [
+    496640,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4850,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.757,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    15,
+    1024
+   ],
+   "in_stride": [
+    15360,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 150,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 48.0,
+   "fwd_ms_per_step": 2.653,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    16,
+    1024
+   ],
+   "in_stride": [
+    16384,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 160,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 48.0,
+   "fwd_ms_per_step": 2.651,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    493,
+    4096
+   ],
+   "in_stride": [
+    2019328,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4930,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.628,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    458,
+    1024
+   ],
+   "in_stride": [
+    468992,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4580,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.622,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    491,
+    4096
+   ],
+   "in_stride": [
+    2011136,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4910,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.62,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    452,
+    1024
+   ],
+   "in_stride": [
+    462848,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4520,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.619,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    488,
+    4096
+   ],
+   "in_stride": [
+    1998848,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4880,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.617,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    485,
+    4096
+   ],
+   "in_stride": [
+    1986560,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4850,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.613,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    12,
+    1024
+   ],
+   "in_stride": [
+    12288,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 120,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 48.0,
+   "fwd_ms_per_step": 2.571,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    493,
+    1024
+   ],
+   "in_stride": [
+    504832,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4930,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.531,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    491,
+    1024
+   ],
+   "in_stride": [
+    502784,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4910,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.493,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    488,
+    1024
+   ],
+   "in_stride": [
+    499712,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4880,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.488,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    443,
+    1024
+   ],
+   "in_stride": [
+    453632,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4430,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.478,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    452,
+    4096
+   ],
+   "in_stride": [
+    1851392,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4520,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.472,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    458,
+    4096
+   ],
+   "in_stride": [
+    1875968,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4580,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.462,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    431,
+    1024
+   ],
+   "in_stride": [
+    441344,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4310,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.45,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    485,
+    1024
+   ],
+   "in_stride": [
+    496640,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4850,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.435,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    443,
+    4096
+   ],
+   "in_stride": [
+    1814528,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4430,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.416,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    458,
+    1024
+   ],
+   "in_stride": [
+    468992,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4580,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.277,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    452,
+    1024
+   ],
+   "in_stride": [
+    462848,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4520,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.277,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    394,
+    1024
+   ],
+   "in_stride": [
+    403456,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3940,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.276,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    431,
+    4096
+   ],
+   "in_stride": [
+    1765376,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4310,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.268,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    443,
+    1024
+   ],
+   "in_stride": [
+    453632,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4430,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.217,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    377,
+    1024
+   ],
+   "in_stride": [
+    386048,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3770,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.2,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    374,
+    1024
+   ],
+   "in_stride": [
+    382976,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3740,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.193,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    431,
+    1024
+   ],
+   "in_stride": [
+    441344,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4310,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 2.118,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    394,
+    4096
+   ],
+   "in_stride": [
+    1613824,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3940,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.116,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    374,
+    4096
+   ],
+   "in_stride": [
+    1531904,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3740,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.099,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    377,
+    4096
+   ],
+   "in_stride": [
+    1544192,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3770,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.089,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    357,
+    1024
+   ],
+   "in_stride": [
+    365568,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3570,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.055,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    348,
+    1024
+   ],
+   "in_stride": [
+    356352,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3480,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.03,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    394,
+    1024
+   ],
+   "in_stride": [
+    403456,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3940,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.99,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    348,
+    4096
+   ],
+   "in_stride": [
+    1425408,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3480,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.982,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    357,
+    4096
+   ],
+   "in_stride": [
+    1462272,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3570,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.981,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    342,
+    1024
+   ],
+   "in_stride": [
+    350208,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3420,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.973,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    344,
+    1024
+   ],
+   "in_stride": [
+    352256,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3440,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.972,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    342,
+    4096
+   ],
+   "in_stride": [
+    1400832,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3420,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.948,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    374,
+    1024
+   ],
+   "in_stride": [
+    382976,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3740,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.947,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    377,
+    1024
+   ],
+   "in_stride": [
+    386048,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3770,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.947,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    344,
+    4096
+   ],
+   "in_stride": [
+    1409024,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3440,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.937,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    329,
+    1024
+   ],
+   "in_stride": [
+    336896,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3290,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.925,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    357,
+    1024
+   ],
+   "in_stride": [
+    365568,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3570,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.876,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    348,
+    1024
+   ],
+   "in_stride": [
+    356352,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3480,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.874,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    329,
+    4096
+   ],
+   "in_stride": [
+    1347584,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3290,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.872,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    299,
+    1024
+   ],
+   "in_stride": [
+    306176,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2990,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.791,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    344,
+    1024
+   ],
+   "in_stride": [
+    352256,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3440,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.787,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    297,
+    1024
+   ],
+   "in_stride": [
+    304128,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2970,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.786,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    295,
+    1024
+   ],
+   "in_stride": [
+    302080,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2950,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.786,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    342,
+    1024
+   ],
+   "in_stride": [
+    350208,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3420,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.779,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    14,
+    4096
+   ],
+   "in_stride": [
+    57344,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 140,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.765,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    329,
+    1024
+   ],
+   "in_stride": [
+    336896,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3290,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.743,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    284,
+    1024
+   ],
+   "in_stride": [
+    290816,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2840,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.697,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    297,
+    4096
+   ],
+   "in_stride": [
+    1216512,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2970,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.689,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    295,
+    4096
+   ],
+   "in_stride": [
+    1208320,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2950,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.683,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    299,
+    4096
+   ],
+   "in_stride": [
+    1224704,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2990,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.683,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    284,
+    4096
+   ],
+   "in_stride": [
+    1163264,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2840,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.639,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    295,
+    1024
+   ],
+   "in_stride": [
+    302080,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2950,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.618,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    280,
+    1024
+   ],
+   "in_stride": [
+    286720,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2800,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.615,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    280,
+    4096
+   ],
+   "in_stride": [
+    1146880,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2800,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.615,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    280,
+    1024
+   ],
+   "in_stride": [
+    286720,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2800,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.597,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    297,
+    1024
+   ],
+   "in_stride": [
+    304128,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2970,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.592,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    299,
+    1024
+   ],
+   "in_stride": [
+    306176,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2990,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.584,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    14,
+    1024
+   ],
+   "in_stride": [
+    14336,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 140,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.567,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    284,
+    1024
+   ],
+   "in_stride": [
+    290816,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2840,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.564,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    251,
+    1024
+   ],
+   "in_stride": [
+    257024,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2510,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.518,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    256,
+    1024
+   ],
+   "in_stride": [
+    262144,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2560,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.518,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    249,
+    1024
+   ],
+   "in_stride": [
+    254976,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2490,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.515,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    232,
+    1024
+   ],
+   "in_stride": [
+    237568,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2320,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.44,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    227,
+    1024
+   ],
+   "in_stride": [
+    232448,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2270,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.394,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    223,
+    1024
+   ],
+   "in_stride": [
+    228352,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2230,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.376,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    226,
+    1024
+   ],
+   "in_stride": [
+    231424,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2260,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.366,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    249,
+    1024
+   ],
+   "in_stride": [
+    254976,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2490,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.361,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    256,
+    1024
+   ],
+   "in_stride": [
+    262144,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2560,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.358,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    223,
+    1024
+   ],
+   "in_stride": [
+    228352,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2230,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.355,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    251,
+    1024
+   ],
+   "in_stride": [
+    257024,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2510,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.355,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    214,
+    1024
+   ],
+   "in_stride": [
+    219136,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2140,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.354,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    227,
+    1024
+   ],
+   "in_stride": [
+    232448,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2270,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.352,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    18,
+    1024
+   ],
+   "in_stride": [
+    18432,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 180,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.351,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    232,
+    1024
+   ],
+   "in_stride": [
+    237568,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2320,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.347,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    226,
+    1024
+   ],
+   "in_stride": [
+    231424,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2260,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.344,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    210,
+    1024
+   ],
+   "in_stride": [
+    215040,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2100,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.342,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    191,
+    1024
+   ],
+   "in_stride": [
+    195584,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1910,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.338,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    174,
+    1024
+   ],
+   "in_stride": [
+    178176,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1740,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.326,
+   "modules": 72
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    249,
+    4096
+   ],
+   "in_stride": [
+    1019904,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2490,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.323,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    251,
+    4096
+   ],
+   "in_stride": [
+    1028096,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2510,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.321,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    256,
+    4096
+   ],
+   "in_stride": [
+    1048576,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2560,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.321,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    232,
+    4096
+   ],
+   "in_stride": [
+    950272,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2320,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.321,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    227,
+    4096
+   ],
+   "in_stride": [
+    929792,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2270,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    223,
+    4096
+   ],
+   "in_stride": [
+    913408,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2230,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    214,
+    4096
+   ],
+   "in_stride": [
+    876544,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2140,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    226,
+    4096
+   ],
+   "in_stride": [
+    925696,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2260,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    210,
+    4096
+   ],
+   "in_stride": [
+    860160,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2100,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    167,
+    4096
+   ],
+   "in_stride": [
+    684032,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1670,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    174,
+    4096
+   ],
+   "in_stride": [
+    712704,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1740,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    191,
+    4096
+   ],
+   "in_stride": [
+    782336,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1910,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    167,
+    1024
+   ],
+   "in_stride": [
+    171008,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1670,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.313,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    20,
+    1024
+   ],
+   "in_stride": [
+    20480,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 200,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.309,
+   "modules": 72
+  },
+  {
+   "class": "attn_qkv",
+   "in_shape": [
+    10,
+    13,
+    1024
+   ],
+   "in_stride": [
+    13312,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 130,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.307,
+   "modules": 72
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    214,
+    1024
+   ],
+   "in_stride": [
+    219136,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2140,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.288,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    210,
+    1024
+   ],
+   "in_stride": [
+    215040,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2100,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.28,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    14,
+    1024
+   ],
+   "in_stride": [
+    14336,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 140,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.202,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    191,
+    1024
+   ],
+   "in_stride": [
+    195584,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1910,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.198,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    15,
+    4096
+   ],
+   "in_stride": [
+    61440,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 150,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.168,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    16,
+    4096
+   ],
+   "in_stride": [
+    65536,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 160,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.165,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    174,
+    1024
+   ],
+   "in_stride": [
+    178176,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1740,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.125,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    167,
+    1024
+   ],
+   "in_stride": [
+    171008,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1670,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.124,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    16,
+    1024
+   ],
+   "in_stride": [
+    16384,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 160,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.119,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    12,
+    4096
+   ],
+   "in_stride": [
+    49152,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 120,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.045,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    15,
+    1024
+   ],
+   "in_stride": [
+    15360,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 150,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.04,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    12,
+    1024
+   ],
+   "in_stride": [
+    12288,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 120,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.981,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    15,
+    1024
+   ],
+   "in_stride": [
+    15360,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 150,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.804,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    12,
+    1024
+   ],
+   "in_stride": [
+    12288,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 120,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.78,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    16,
+    1024
+   ],
+   "in_stride": [
+    16384,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 160,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.777,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    488,
+    1024
+   ],
+   "in_stride": [
+    499712,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4880,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.756,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    493,
+    1024
+   ],
+   "in_stride": [
+    504832,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4930,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.754,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    491,
+    1024
+   ],
+   "in_stride": [
+    502784,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4910,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.75,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    485,
+    1024
+   ],
+   "in_stride": [
+    496640,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4850,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.739,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    452,
+    1024
+   ],
+   "in_stride": [
+    462848,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4520,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.686,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    458,
+    1024
+   ],
+   "in_stride": [
+    468992,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4580,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.684,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    443,
+    1024
+   ],
+   "in_stride": [
+    453632,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4430,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.679,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    431,
+    1024
+   ],
+   "in_stride": [
+    441344,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 4310,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.638,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    18,
+    4096
+   ],
+   "in_stride": [
+    73728,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 180,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.619,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    394,
+    1024
+   ],
+   "in_stride": [
+    403456,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3940,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.605,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    374,
+    1024
+   ],
+   "in_stride": [
+    382976,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3740,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.593,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    377,
+    1024
+   ],
+   "in_stride": [
+    386048,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3770,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.59,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    13,
+    4096
+   ],
+   "in_stride": [
+    53248,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 130,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.585,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    20,
+    1024
+   ],
+   "in_stride": [
+    20480,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 200,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.581,
+   "modules": 24
+  },
+  {
+   "class": "ffn_down",
+   "in_shape": [
+    10,
+    20,
+    4096
+   ],
+   "in_stride": [
+    81920,
+    4096,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    4096
+   ],
+   "w_stride": [
+    4096,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 200,
+   "K": 4096,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.581,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    348,
+    1024
+   ],
+   "in_stride": [
+    356352,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3480,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.57,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    357,
+    1024
+   ],
+   "in_stride": [
+    365568,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3570,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.568,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    342,
+    1024
+   ],
+   "in_stride": [
+    350208,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3420,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.544,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    344,
+    1024
+   ],
+   "in_stride": [
+    352256,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3440,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.541,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    18,
+    1024
+   ],
+   "in_stride": [
+    18432,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 180,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.536,
+   "modules": 24
+  },
+  {
+   "class": "ffn_up",
+   "in_shape": [
+    10,
+    13,
+    1024
+   ],
+   "in_stride": [
+    13312,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    4096,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 130,
+   "K": 1024,
+   "N": 4096,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.527,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    329,
+    1024
+   ],
+   "in_stride": [
+    336896,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 3290,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.522,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    280,
+    1024
+   ],
+   "in_stride": [
+    286720,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2800,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.479,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    295,
+    1024
+   ],
+   "in_stride": [
+    302080,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2950,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.475,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    297,
+    1024
+   ],
+   "in_stride": [
+    304128,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2970,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.471,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    299,
+    1024
+   ],
+   "in_stride": [
+    306176,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2990,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.47,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    284,
+    1024
+   ],
+   "in_stride": [
+    290816,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2840,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.458,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    256,
+    1024
+   ],
+   "in_stride": [
+    262144,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2560,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.408,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    251,
+    1024
+   ],
+   "in_stride": [
+    257024,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2510,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.407,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    18,
+    1024
+   ],
+   "in_stride": [
+    18432,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 180,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.405,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    223,
+    1024
+   ],
+   "in_stride": [
+    228352,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2230,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.405,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    249,
+    1024
+   ],
+   "in_stride": [
+    254976,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2490,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.403,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    232,
+    1024
+   ],
+   "in_stride": [
+    237568,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2320,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.403,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    13,
+    1024
+   ],
+   "in_stride": [
+    13312,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 130,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.401,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    227,
+    1024
+   ],
+   "in_stride": [
+    232448,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2270,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.401,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    226,
+    1024
+   ],
+   "in_stride": [
+    231424,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2260,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.401,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    210,
+    1024
+   ],
+   "in_stride": [
+    215040,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2100,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.4,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    214,
+    1024
+   ],
+   "in_stride": [
+    219136,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 2140,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.397,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    20,
+    1024
+   ],
+   "in_stride": [
+    20480,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 200,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.394,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    191,
+    1024
+   ],
+   "in_stride": [
+    195584,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1910,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.393,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    174,
+    1024
+   ],
+   "in_stride": [
+    178176,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1740,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.388,
+   "modules": 24
+  },
+  {
+   "class": "attn_out",
+   "in_shape": [
+    10,
+    167,
+    1024
+   ],
+   "in_stride": [
+    171008,
+    1024,
+    1
+   ],
+   "in_dtype": "torch.bfloat16",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 1670,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.386,
+   "modules": 24
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    14336,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 1.0,
+   "fwd_ms_per_step": 0.065,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    524288,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 5.0,
+   "fwd_ms_per_step": 0.057,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    12288,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.67,
+   "fwd_ms_per_step": 0.051,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    15360,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.67,
+   "fwd_ms_per_step": 0.044,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    16384,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.67,
+   "fwd_ms_per_step": 0.043,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    18432,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.025,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    13312,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.023,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    20480,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.021,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    453632,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    219136,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    237568,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    352256,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    302080,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    356352,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    215040,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    262144,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    468992,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    350208,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    499712,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    171008,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    178176,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    304128,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    504832,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    228352,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    231424,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    462848,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    195584,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    496640,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    365568,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    441344,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    286720,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    502784,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    232448,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    386048,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    382976,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    306176,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    254976,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    336896,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    403456,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    257024,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  },
+  {
+   "class": "pooler",
+   "in_shape": [
+    10,
+    1024
+   ],
+   "in_stride": [
+    290816,
+    1
+   ],
+   "in_dtype": "torch.float32",
+   "w_shape": [
+    1024,
+    1024
+   ],
+   "w_stride": [
+    1024,
+    1
+   ],
+   "gemm_dtype": "bf16 (autocast operand; Linear input pre-autocast)",
+   "M": 10,
+   "K": 1024,
+   "N": 1024,
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1
+  }
+ ]
+}

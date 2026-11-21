@@ -1,0 +1,22 @@
+{
+ "device": "PPU-ZW810E",
+ "shape": "M2990 K1024 N1024 bf16 (attn_out class, 2880 calls/step class)",
+ "note": "fp32 ref uses same operand (w.float()) and op (x@w.t()) as bf16 baseline",
+ "results": {
+  "reduced_reduction=True": {
+   "ms": 0.0571,
+   "tflops": 109.82
+  },
+  "reduced_reduction=False": {
+   "ms": 0.0567,
+   "tflops": 110.59
+  },
+  "weight_transposed_view_ms": 0.0575,
+  "weight_precontig_ms": 0.0566,
+  "noncontig_input_ms": 0.0613,
+  "contig_input_ms": 0.0566,
+  "fp32_matmul_ms": 0.2012,
+  "fp32_vs_bf16_max_absdiff": 0.0,
+  "bf16_vs_fp32_relerr": 0.00292228
+ }
+}

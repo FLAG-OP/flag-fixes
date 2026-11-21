@@ -1,0 +1,35 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::gelu_backward(Tensor grad_output, Tensor self, *, str approximate="none") -> Tensor
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at ../aten/src/ATen/functorch/BatchRulesBinaryOps.cpp:353
+       new kernel: registered at /tmp/opencode/FlagGems-base/src/flag_gems/__init__.py:62 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+FlagGems selective enabled (gelu family)
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+device=cuda:0 platform=cuda
+params=567754752
+  step 2: 2006 ms
+  step 3: 2222 ms
+  step 4: 2424 ms
+
+=== batch 10 rows x accum 4 = 200 texts/step ===
+wall/step             2221.9 ms
+segment                              per step   % wall
+data (next(stream))                      1.99      0.1
+forward (incl tokenize+h2d)            764.31     34.4
+  . tokenize alone                      57.33      2.6
+  . H2D alone                            1.01      0.0
+  . residual = device compute          705.98     31.8
+backward                              1419.68     63.9
+clip + optimizer.step                   22.14      1.0
+sum                                   2208.12     99.4
+unaccounted                             13.78      0.6
+device compute (fwd+bwd)              2125.65     95.7

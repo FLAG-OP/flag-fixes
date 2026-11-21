@@ -1,0 +1,19 @@
+single/float32: done, param tol_violations total=984978
+single/bfloat16: done, param tol_violations total=0
+single/float16: done, param tol_violations total=0
+single/mixed: done, param tol_violations total=984978
+multi/float32: done, param tol_violations total=985950
+multi/bfloat16: done, param tol_violations total=0
+multi/float16: done, param tol_violations total=0
+multi/mixed: done, param tol_violations total=984976
+bge336/float32: done, param tol_violations total=551918770
+bge336/bfloat16: done, param tol_violations total=0
+bge336/float16: done, param tol_violations total=0
+bge336/mixed: done, param tol_violations total=551649540
+Traceback (most recent call last):
+  File "/tmp/opencode/zw810e-problem29/scripts/adamw_deep.py", line 251, in <module>
+    main()
+  File "/tmp/opencode/zw810e-problem29/scripts/adamw_deep.py", line 234, in main
+    hard_bad.append(f"{key}/{ok_}/step1_identity_fail({[(c['param'], c['step1_max_abs'], c['allowed_abs']) for c in s1fail]})")
+                                                                     ~^^^^^^^^^^^^^^^^^
+KeyError: 'step1_max_abs'

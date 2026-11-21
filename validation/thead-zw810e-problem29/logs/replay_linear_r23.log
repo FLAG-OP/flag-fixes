@@ -1,0 +1,8 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py:865: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at ../aten/src/ATen/cuda/CublasHandlePool.cpp:330.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+B10 S512: native fwd 0.3584 bwd 1.2172 | cand fwd 5.428100000000001 bwd 4.6639 bias-g 0.0274 layout 0.04325 | viol y/dx/dw: 105393/0/154183
+B10 S256: native fwd 0.1956 bwd 0.6122000000000001 | cand fwd 2.7081 bwd 2.4442 bias-g 0.02725 layout 0.04315 | viol y/dx/dw: 52784/0/123161
+B10 S128: native fwd 0.09545000000000001 bwd 0.31875 | cand fwd 1.38375 bwd 1.3417 bias-g 0.024849999999999997 layout 0.04315 | viol y/dx/dw: 25040/0/153521
+saved /tmp/opencode/zw810e-problem29/results/replay_linear_r23.json

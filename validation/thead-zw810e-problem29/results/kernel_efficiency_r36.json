@@ -1,0 +1,2144 @@
+{
+ "debug": {
+  "recs_total": 8676,
+  "forward_recs": 2908,
+  "forward_recs_labeled": 2900,
+  "fwd_agg": {
+   "attn_qkv|[160, 1024]:|[1024, 1024]:T": 144,
+   "attn_out|[160, 1024]:|[1024, 1024]:T": 48,
+   "ffn_up|[160, 1024]:|[1024, 4096]:T": 48,
+   "ffn_down|[160, 4096]:|[4096, 1024]:T": 48,
+   "pooler|[10, 1024]:|[1024, 1024]:T": 20,
+   "attn_qkv|[1670, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[1670, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[1670, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[1670, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[4430, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[4430, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[4430, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[4430, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[2140, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[2140, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[2140, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[2140, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[3740, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[3740, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[3740, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[3740, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[180, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[180, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[180, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[180, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[1740, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[1740, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[1740, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[1740, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[5120, 1024]:|[1024, 1024]:T": 288,
+   "attn_out|[5120, 1024]:|[1024, 1024]:T": 96,
+   "ffn_up|[5120, 1024]:|[1024, 4096]:T": 96,
+   "ffn_down|[5120, 4096]:|[4096, 1024]:T": 96,
+   "attn_qkv|[2990, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[2990, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[2990, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[2990, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[1910, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[1910, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[1910, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[1910, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[2490, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[2490, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[2490, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[2490, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[3290, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[3290, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[3290, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[3290, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[140, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[140, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[140, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[140, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[2100, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[2100, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[2100, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[2100, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[2230, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[2230, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[2230, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[2230, 4096]:|[4096, 1024]:T": 24,
+   "attn_qkv|[4310, 1024]:|[1024, 1024]:T": 72,
+   "attn_out|[4310, 1024]:|[1024, 1024]:T": 24,
+   "ffn_up|[4310, 1024]:|[1024, 4096]:T": 24,
+   "ffn_down|[4310, 4096]:|[4096, 1024]:T": 24
+  },
+  "sample_forward_rec": {
+   "phase": "forward_m0",
+   "module_class": "attn_qkv",
+   "operands": [
+    {
+     "shape": [
+      160,
+      1024
+     ],
+     "stride": [
+      1024,
+      1
+     ],
+     "dtype": "bfloat16",
+     "col_major_T": false
+    },
+    {
+     "shape": [
+      1024,
+      1024
+     ],
+     "stride": [
+      1,
+      1024
+     ],
+     "dtype": "bfloat16",
+     "col_major_T": true
+    }
+   ],
+   "device_ms": 0.163
+  }
+ },
+ "fingerprint_verification": {
+  "ref_step": "step_2",
+  "micros": 4,
+  "hash_matches": 20,
+  "mismatches": [],
+  "asserted": true
+ },
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "window": "ONE full step (4 micros), same seed; module-label forward + ordered-pattern backward",
+ "dropout_config": {
+  "hidden_dropout_prob": 0.1
+ },
+ "rows": [
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 5120]:T|[5120, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 46.77,
+   "tflops": 88.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 5120]:T|[5120, 4096]:",
+   "calls_per_step": 96,
+   "device_ms": 46.72,
+   "tflops": 88.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[5120, 1024]:|[1024, 4096]:",
+   "calls_per_step": 96,
+   "device_ms": 34.58,
+   "tflops": 119.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    5120,
+    1024,
+    4096
+   ],
+   "operand_sig": "[5120, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 96,
+   "device_ms": 34.34,
+   "flops_tflop": 4.123,
+   "tflops": 120.1
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    5120,
+    4096,
+    1024
+   ],
+   "operand_sig": "[5120, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 96,
+   "device_ms": 32.77,
+   "flops_tflop": 4.123,
+   "tflops": 125.8
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[5120, 4096]:|[4096, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 31.9,
+   "tflops": 129.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "backward",
+   "op": "mm",
+   "operand_dims": {
+    "actual": [
+     [
+      1024,
+      5120
+     ],
+     [
+      5120,
+      1024
+     ]
+    ],
+    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
+   },
+   "calls_per_step": 288,
+   "device_ms": 31.74,
+   "tflops": 97.4,
+   "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    5120,
+    1024,
+    1024
+   ],
+   "operand_sig": "[5120, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 288,
+   "device_ms": 29.68,
+   "flops_tflop": 3.092,
+   "tflops": 104.2
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "backward",
+   "op": "mm",
+   "operand_dims": {
+    "actual": [
+     [
+      5120,
+      1024
+     ],
+     [
+      1024,
+      1024
+     ]
+    ],
+    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
+   },
+   "calls_per_step": 288,
+   "device_ms": 28.4,
+   "tflops": 108.9,
+   "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "backward",
+   "op": "mm",
+   "operand_dims": {
+    "actual": [
+     [
+      1024,
+      5120
+     ],
+     [
+      5120,
+      1024
+     ]
+    ],
+    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
+   },
+   "calls_per_step": 96,
+   "device_ms": 10.57,
+   "tflops": 97.5,
+   "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4430]:T|[4430, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 10.25,
+   "tflops": 87.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 4430]:T|[4430, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 10.23,
+   "tflops": 87.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4430, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 10.16,
+   "tflops": 87.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 4310]:T|[4310, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 9.98,
+   "tflops": 87.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4310]:T|[4310, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 9.96,
+   "tflops": 87.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 9.68,
+   "tflops": 89.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "backward",
+   "op": "mm",
+   "operand_dims": {
+    "actual": [
+     [
+      5120,
+      1024
+     ],
+     [
+      1024,
+      1024
+     ]
+    ],
+    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
+   },
+   "calls_per_step": 96,
+   "device_ms": 9.45,
+   "tflops": 109.1,
+   "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4430]:T|[4430, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 9.42,
+   "tflops": 94.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4430, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 9.33,
+   "tflops": 95.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    5120,
+    1024,
+    1024
+   ],
+   "operand_sig": "[5120, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 96,
+   "device_ms": 9.26,
+   "flops_tflop": 1.031,
+   "tflops": 111.3
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4310]:T|[4310, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 9.09,
+   "tflops": 95.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4430, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 9.07,
+   "tflops": 98.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 3740]:T|[3740, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 8.72,
+   "tflops": 86.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3740]:T|[3740, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 8.69,
+   "tflops": 86.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 8.65,
+   "tflops": 100.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3740]:T|[3740, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 7.96,
+   "tflops": 94.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 3290]:T|[3290, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 7.85,
+   "tflops": 84.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3290]:T|[3290, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 7.7,
+   "tflops": 86.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 7.37,
+   "tflops": 117.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4430,
+    1024,
+    4096
+   ],
+   "operand_sig": "[4430, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 7.26,
+   "flops_tflop": 0.892,
+   "tflops": 122.8
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4430,
+    4096,
+    1024
+   ],
+   "operand_sig": "[4430, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 7.25,
+   "flops_tflop": 0.892,
+   "tflops": 123.0
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4310,
+    1024,
+    4096
+   ],
+   "operand_sig": "[4310, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 7.23,
+   "flops_tflop": 0.868,
+   "tflops": 120.0
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 7.19,
+   "tflops": 83.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3740, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 7.17,
+   "tflops": 104.9,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3290]:T|[3290, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 7.1,
+   "tflops": 93.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2990]:T|[2990, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 7.06,
+   "tflops": 85.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2990]:T|[2990, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 6.98,
+   "tflops": 86.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 1024]:|[1024, 1024]:",
+   "calls_per_step": 192,
+   "device_ms": 6.89,
+   "tflops": 9.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3290, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 6.89,
+   "tflops": 96.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4310,
+    4096,
+    1024
+   ],
+   "operand_sig": "[4310, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 6.85,
+   "flops_tflop": 0.868,
+   "tflops": 126.6
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "operand_sig": "[160, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 144,
+   "device_ms": 6.81,
+   "flops_tflop": 0.048,
+   "tflops": 7.1
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3740, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 6.63,
+   "tflops": 113.5,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2990]:T|[2990, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 6.48,
+   "tflops": 92.9,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3740,
+    1024,
+    4096
+   ],
+   "operand_sig": "[3740, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 6.45,
+   "flops_tflop": 0.753,
+   "tflops": 116.8
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 6.29,
+   "tflops": 95.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3740,
+    4096,
+    1024
+   ],
+   "operand_sig": "[3740, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 6.19,
+   "flops_tflop": 0.753,
+   "tflops": 121.7
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4430,
+    1024,
+    1024
+   ],
+   "operand_sig": "[4430, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 6.15,
+   "flops_tflop": 0.669,
+   "tflops": 108.8
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1740, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 6.02,
+   "flops_tflop": 0.263,
+   "tflops": 43.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3740, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 6.01,
+   "tflops": 125.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3290, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 5.99,
+   "tflops": 110.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2490]:T|[2490, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 5.89,
+   "tflops": 85.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1910, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.88,
+   "flops_tflop": 0.288,
+   "tflops": 49.1
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4310,
+    1024,
+    1024
+   ],
+   "operand_sig": "[4310, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.88,
+   "flops_tflop": 0.651,
+   "tflops": 110.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2490]:T|[2490, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 5.87,
+   "tflops": 85.5,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1670, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.85,
+   "flops_tflop": 0.252,
+   "tflops": 43.1
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2140, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.81,
+   "flops_tflop": 0.323,
+   "tflops": 55.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 5.76,
+   "tflops": 58.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3290, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 5.76,
+   "tflops": 115.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2140, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 5.7,
+   "tflops": 75.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 5.7,
+   "tflops": 74.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 5.65,
+   "tflops": 68.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3290,
+    4096,
+    1024
+   ],
+   "operand_sig": "[3290, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.63,
+   "flops_tflop": 0.662,
+   "tflops": 117.7
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 5.62,
+   "tflops": 62.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3290,
+    1024,
+    4096
+   ],
+   "operand_sig": "[3290, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.61,
+   "flops_tflop": 0.662,
+   "tflops": 118.1
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2100, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.61,
+   "flops_tflop": 0.317,
+   "tflops": 56.6
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3740,
+    1024,
+    1024
+   ],
+   "operand_sig": "[3740, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.52,
+   "flops_tflop": 0.565,
+   "tflops": 102.3
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2490]:T|[2490, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 5.47,
+   "tflops": 91.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2490,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2490, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.37,
+   "flops_tflop": 0.501,
+   "tflops": 93.3
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2230]:T|[2230, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 5.36,
+   "tflops": 83.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2490,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2490, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.33,
+   "flops_tflop": 0.376,
+   "tflops": 70.5
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 5.31,
+   "tflops": 113.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2230]:T|[2230, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 5.28,
+   "tflops": 85.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2990,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2990, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.27,
+   "flops_tflop": 0.602,
+   "tflops": 114.3
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2230,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2230, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.27,
+   "flops_tflop": 0.337,
+   "tflops": 63.9
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 160]:T|[160, 1024]:",
+   "calls_per_step": 192,
+   "device_ms": 5.21,
+   "tflops": 12.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2140]:T|[2140, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 5.17,
+   "tflops": 83.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2140]:T|[2140, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 5.14,
+   "tflops": 83.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2990,
+    4096,
+    1024
+   ],
+   "operand_sig": "[2990, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.07,
+   "flops_tflop": 0.602,
+   "tflops": 118.8
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3290,
+    1024,
+    1024
+   ],
+   "operand_sig": "[3290, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.04,
+   "flops_tflop": 0.497,
+   "tflops": 98.5
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2100]:T|[2100, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 5.02,
+   "tflops": 84.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2100]:T|[2100, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 5.0,
+   "tflops": 84.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2230]:T|[2230, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.98,
+   "tflops": 90.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2140, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.97,
+   "tflops": 86.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.97,
+   "tflops": 85.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2990,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2990, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 4.96,
+   "flops_tflop": 0.451,
+   "tflops": 91.1
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2230,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2230, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.92,
+   "flops_tflop": 0.449,
+   "tflops": 91.2
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.89,
+   "tflops": 68.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.89,
+   "tflops": 71.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.89,
+   "tflops": 102.5,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.89,
+   "tflops": 78.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2140]:T|[2140, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.87,
+   "tflops": 88.5,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.87,
+   "tflops": 92.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2140,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2140, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.76,
+   "flops_tflop": 0.431,
+   "tflops": 90.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2100]:T|[2100, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.75,
+   "tflops": 89.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2100,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2100, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.74,
+   "flops_tflop": 0.423,
+   "tflops": 89.1
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1910]:T|[1910, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.58,
+   "tflops": 84.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1910]:T|[1910, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 4.57,
+   "tflops": 84.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 4.53,
+   "tflops": 110.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    140,
+    4096,
+    1024
+   ],
+   "operand_sig": "[140, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.44,
+   "flops_tflop": 0.028,
+   "tflops": 6.3
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1910]:T|[1910, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.37,
+   "tflops": 88.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1910,
+    1024,
+    4096
+   ],
+   "operand_sig": "[1910, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.35,
+   "flops_tflop": 0.385,
+   "tflops": 88.4
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1740]:T|[1740, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.34,
+   "tflops": 80.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1740]:T|[1740, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 4.29,
+   "tflops": 81.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1670]:T|[1670, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.22,
+   "tflops": 79.7,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    1024,
+    4096
+   ],
+   "operand_sig": "[1740, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.21,
+   "flops_tflop": 0.35,
+   "tflops": 83.3
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1670]:T|[1670, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 4.18,
+   "tflops": 80.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1670,
+    1024,
+    4096
+   ],
+   "operand_sig": "[1670, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.17,
+   "flops_tflop": 0.336,
+   "tflops": 80.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1740]:T|[1740, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 4.12,
+   "tflops": 85.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 4.07,
+   "tflops": 110.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1910,
+    4096,
+    1024
+   ],
+   "operand_sig": "[1910, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.02,
+   "flops_tflop": 0.385,
+   "tflops": 95.8
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.02,
+   "tflops": 124.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1670,
+    4096,
+    1024
+   ],
+   "operand_sig": "[1670, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 4.01,
+   "flops_tflop": 0.336,
+   "tflops": 83.9
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 4.01,
+   "tflops": 111.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    4096,
+    1024
+   ],
+   "operand_sig": "[1740, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 3.99,
+   "flops_tflop": 0.35,
+   "tflops": 87.8
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2140,
+    4096,
+    1024
+   ],
+   "operand_sig": "[2140, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 3.98,
+   "flops_tflop": 0.431,
+   "tflops": 108.3
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2490,
+    4096,
+    1024
+   ],
+   "operand_sig": "[2490, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 3.98,
+   "flops_tflop": 0.501,
+   "tflops": 125.9
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2100,
+    4096,
+    1024
+   ],
+   "operand_sig": "[2100, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 3.98,
+   "flops_tflop": 0.423,
+   "tflops": 106.2
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2230,
+    4096,
+    1024
+   ],
+   "operand_sig": "[2230, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 3.98,
+   "flops_tflop": 0.449,
+   "tflops": 112.8
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1670]:T|[1670, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 3.98,
+   "tflops": 84.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 3.83,
+   "tflops": 110.3,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2140, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 3.8,
+   "tflops": 113.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    140,
+    1024,
+    1024
+   ],
+   "operand_sig": "[140, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 3.79,
+   "flops_tflop": 0.021,
+   "tflops": 5.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 3.58,
+   "tflops": 93.9,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 3.53,
+   "tflops": 108.9,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    180,
+    1024,
+    1024
+   ],
+   "operand_sig": "[180, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 3.51,
+   "flops_tflop": 0.027,
+   "tflops": 7.7
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    160,
+    4096,
+    1024
+   ],
+   "operand_sig": "[160, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 48,
+   "device_ms": 3.46,
+   "flops_tflop": 0.064,
+   "tflops": 18.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 3.44,
+   "tflops": 10.5,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 3.35,
+   "tflops": 8.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 3.25,
+   "tflops": 107.8,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    160,
+    1024,
+    4096
+   ],
+   "operand_sig": "[160, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 48,
+   "device_ms": 2.82,
+   "flops_tflop": 0.064,
+   "tflops": 22.9
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 180]:T|[180, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 2.56,
+   "tflops": 14.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 140]:T|[140, 1024]:",
+   "calls_per_step": 96,
+   "device_ms": 2.48,
+   "tflops": 11.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "operand_sig": "[160, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 48,
+   "device_ms": 2.4,
+   "flops_tflop": 0.016,
+   "tflops": 6.7
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 160]:T|[160, 4096]:",
+   "calls_per_step": 48,
+   "device_ms": 2.29,
+   "tflops": 28.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 160]:T|[160, 1024]:",
+   "calls_per_step": 48,
+   "device_ms": 2.21,
+   "tflops": 29.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 1024]:|[1024, 4096]:",
+   "calls_per_step": 48,
+   "device_ms": 2.13,
+   "tflops": 30.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4430,
+    1024,
+    1024
+   ],
+   "operand_sig": "[4430, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 2.01,
+   "flops_tflop": 0.223,
+   "tflops": 110.8
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 4096]:|[4096, 1024]:",
+   "calls_per_step": 48,
+   "device_ms": 2.01,
+   "tflops": 32.1,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    4310,
+    1024,
+    1024
+   ],
+   "operand_sig": "[4310, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.94,
+   "flops_tflop": 0.217,
+   "tflops": 112.0
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    180,
+    4096,
+    1024
+   ],
+   "operand_sig": "[180, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.81,
+   "flops_tflop": 0.036,
+   "tflops": 20.0
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3740,
+    1024,
+    1024
+   ],
+   "operand_sig": "[3740, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.78,
+   "flops_tflop": 0.188,
+   "tflops": 105.5
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    140,
+    1024,
+    1024
+   ],
+   "operand_sig": "[140, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.69,
+   "flops_tflop": 0.007,
+   "tflops": 4.2
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "operand_sig": "[140, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.68,
+   "flops_tflop": 0.028,
+   "tflops": 16.8
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    3290,
+    1024,
+    1024
+   ],
+   "operand_sig": "[3290, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.61,
+   "flops_tflop": 0.166,
+   "tflops": 103.1
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    180,
+    1024,
+    4096
+   ],
+   "operand_sig": "[180, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.46,
+   "flops_tflop": 0.036,
+   "tflops": 24.9
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2990,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2990, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.41,
+   "flops_tflop": 0.15,
+   "tflops": 106.5
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    180,
+    1024,
+    1024
+   ],
+   "operand_sig": "[180, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.37,
+   "flops_tflop": 0.009,
+   "tflops": 6.6
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1740, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.28,
+   "flops_tflop": 0.088,
+   "tflops": 68.4
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1670, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.27,
+   "flops_tflop": 0.084,
+   "tflops": 66.4
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2490,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2490, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.2,
+   "flops_tflop": 0.125,
+   "tflops": 104.5
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2140, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.19,
+   "flops_tflop": 0.108,
+   "tflops": 90.6
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2100, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.19,
+   "flops_tflop": 0.106,
+   "tflops": 88.6
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2230,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2230, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.19,
+   "flops_tflop": 0.112,
+   "tflops": 94.4
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1910, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.18,
+   "flops_tflop": 0.096,
+   "tflops": 81.3
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 180]:T|[180, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 1.12,
+   "tflops": 32.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 140]:T|[140, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 1.12,
+   "tflops": 25.2,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 180]:T|[180, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 1.1,
+   "tflops": 32.9,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 1.07,
+   "tflops": 33.9,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "device_ms": 1.06,
+   "tflops": 26.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 140]:T|[140, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 1.06,
+   "tflops": 26.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 0.99,
+   "tflops": 36.6,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "device_ms": 0.99,
+   "tflops": 28.4,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "pooler",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    10,
+    1024,
+    1024
+   ],
+   "operand_sig": "[10, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 20,
+   "device_ms": 0.65,
+   "flops_tflop": 0.0,
+   "tflops": 0.6
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[40, 10]:T|[10, 1024]:",
+   "calls_per_step": 4,
+   "device_ms": 0.14,
+   "tflops": 0.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  },
+  {
+   "module_class": "shape_group",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[10, 40]:|[40, 1024]:",
+   "calls_per_step": 4,
+   "device_ms": 0.07,
+   "tflops": 0.0,
+   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+  }
+ ],
+ "note": "dispatch-mode wrapping adds CPU submission overhead; kernel device times valid; backward QKV/attn_out split is topology-derived (1:3 pattern, count-asserted)"
+}

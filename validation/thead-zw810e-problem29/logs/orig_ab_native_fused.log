@@ -1,0 +1,24 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+optimizer: fused AdamW
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+device=cuda:0 platform=cuda
+  step 2: 1897 ms
+  step 3: 2133 ms
+  step 4: 2358 ms
+
+=== batch 10 rows x accum 4 = 200 texts/step ===
+wall/step             2132.7 ms
+segment                              per step   % wall
+data (next(stream))                      0.81      0.0
+forward (incl tokenize+h2d)            689.13     32.3
+  . tokenize alone                      56.54      2.7
+  . H2D alone                            1.03      0.0
+  . residual = device compute          631.57     29.6
+backward                              1385.70     65.0
+clip + optimizer.step                   13.85      0.6
+sum                                   2089.49     98.0
+unaccounted                             43.21      2.0
+device compute (fwd+bwd)              2017.27     94.6

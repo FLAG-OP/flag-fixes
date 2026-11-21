@@ -1,0 +1,3536 @@
+{
+ "note": "per-shape aggregation from linear_capture_r28.json (calls_sum exact, ms associated per shape); M flattened",
+ "global_reconcile": {
+  "calls_per_module_total": 2900,
+  "calls_per_shape_sum": 8700,
+  "note": "calls reconciled per module (sum over 3 capture steps); ms 368.3 vs 368.3"
+ },
+ "cross_module_rows": [
+  {
+   "input_shape": [
+    10,
+    512,
+    1024
+   ],
+   "stride": [
+    524288,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 480.0,
+   "fwd_ms_per_step": 82.809,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    5120,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    512,
+    4096
+   ],
+   "stride": [
+    2097152,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 120.0,
+   "fwd_ms_per_step": 41.007,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    5120,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    512,
+    1024
+   ],
+   "stride": [
+    524288,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 120.0,
+   "fwd_ms_per_step": 11.593,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    5120,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    14,
+    1024
+   ],
+   "stride": [
+    14336,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 96.0,
+   "fwd_ms_per_step": 5.516,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    140,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    493,
+    1024
+   ],
+   "stride": [
+    504832,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 5.438,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4930,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    491,
+    1024
+   ],
+   "stride": [
+    502784,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 5.377,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4910,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    488,
+    1024
+   ],
+   "stride": [
+    499712,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 5.371,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4880,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    485,
+    1024
+   ],
+   "stride": [
+    496640,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 5.192,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4850,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    458,
+    1024
+   ],
+   "stride": [
+    468992,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.899,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4580,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    452,
+    1024
+   ],
+   "stride": [
+    462848,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.896,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4520,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    443,
+    1024
+   ],
+   "stride": [
+    453632,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.695,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4430,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    431,
+    1024
+   ],
+   "stride": [
+    441344,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.568,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    4310,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    394,
+    1024
+   ],
+   "stride": [
+    403456,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.266,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3940,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    377,
+    1024
+   ],
+   "stride": [
+    386048,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.147,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3770,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    374,
+    1024
+   ],
+   "stride": [
+    382976,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 4.14,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3740,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    357,
+    1024
+   ],
+   "stride": [
+    365568,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.931,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3570,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    348,
+    1024
+   ],
+   "stride": [
+    356352,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.904,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3480,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    16,
+    1024
+   ],
+   "stride": [
+    16384,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 64.0,
+   "fwd_ms_per_step": 3.77,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    160,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    344,
+    1024
+   ],
+   "stride": [
+    352256,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.759,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3440,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    342,
+    1024
+   ],
+   "stride": [
+    350208,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.752,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3420,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    15,
+    1024
+   ],
+   "stride": [
+    15360,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 64.0,
+   "fwd_ms_per_step": 3.693,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    150,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    329,
+    1024
+   ],
+   "stride": [
+    336896,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.668,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    3290,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    12,
+    1024
+   ],
+   "stride": [
+    12288,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 64.0,
+   "fwd_ms_per_step": 3.552,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    120,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    295,
+    1024
+   ],
+   "stride": [
+    302080,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.404,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2950,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    297,
+    1024
+   ],
+   "stride": [
+    304128,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.378,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2970,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    299,
+    1024
+   ],
+   "stride": [
+    306176,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.375,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2990,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    284,
+    1024
+   ],
+   "stride": [
+    290816,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.261,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2840,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    280,
+    1024
+   ],
+   "stride": [
+    286720,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 3.212,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2800,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    256,
+    1024
+   ],
+   "stride": [
+    262144,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.876,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2560,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    249,
+    1024
+   ],
+   "stride": [
+    254976,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.876,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2490,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    251,
+    1024
+   ],
+   "stride": [
+    257024,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.873,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2510,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    232,
+    1024
+   ],
+   "stride": [
+    237568,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.787,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2320,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    227,
+    1024
+   ],
+   "stride": [
+    232448,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.746,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2270,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    223,
+    1024
+   ],
+   "stride": [
+    228352,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.731,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2230,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    226,
+    1024
+   ],
+   "stride": [
+    231424,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.71,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2260,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    214,
+    1024
+   ],
+   "stride": [
+    219136,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.642,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2140,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    493,
+    4096
+   ],
+   "stride": [
+    2019328,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.628,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4930,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    210,
+    1024
+   ],
+   "stride": [
+    215040,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.622,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    2100,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    491,
+    4096
+   ],
+   "stride": [
+    2011136,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.62,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4910,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    488,
+    4096
+   ],
+   "stride": [
+    1998848,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.617,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4880,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    485,
+    4096
+   ],
+   "stride": [
+    1986560,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.613,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4850,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    191,
+    1024
+   ],
+   "stride": [
+    195584,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.536,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    1910,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    452,
+    4096
+   ],
+   "stride": [
+    1851392,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.472,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4520,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    458,
+    4096
+   ],
+   "stride": [
+    1875968,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.462,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4580,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    174,
+    1024
+   ],
+   "stride": [
+    178176,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.451,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    1740,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    167,
+    1024
+   ],
+   "stride": [
+    171008,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 2.437,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    1670,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    443,
+    4096
+   ],
+   "stride": [
+    1814528,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.416,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4430,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    431,
+    4096
+   ],
+   "stride": [
+    1765376,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.268,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4310,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    394,
+    4096
+   ],
+   "stride": [
+    1613824,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.116,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3940,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    374,
+    4096
+   ],
+   "stride": [
+    1531904,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.099,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3740,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    377,
+    4096
+   ],
+   "stride": [
+    1544192,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 2.089,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3770,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    348,
+    4096
+   ],
+   "stride": [
+    1425408,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.982,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3480,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    357,
+    4096
+   ],
+   "stride": [
+    1462272,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.981,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3570,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    342,
+    4096
+   ],
+   "stride": [
+    1400832,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.948,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3420,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    344,
+    4096
+   ],
+   "stride": [
+    1409024,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.937,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3440,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    20,
+    1024
+   ],
+   "stride": [
+    20480,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 1.89,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    200,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    18,
+    1024
+   ],
+   "stride": [
+    18432,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 1.887,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    180,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    329,
+    4096
+   ],
+   "stride": [
+    1347584,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.872,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3290,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    13,
+    1024
+   ],
+   "stride": [
+    13312,
+    1024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 32.0,
+   "fwd_ms_per_step": 1.834,
+   "modules": 96,
+   "derived_fwd_mm_MKN": [
+    130,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    14,
+    4096
+   ],
+   "stride": [
+    57344,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.765,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    140,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    297,
+    4096
+   ],
+   "stride": [
+    1216512,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.689,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2970,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    295,
+    4096
+   ],
+   "stride": [
+    1208320,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.683,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2950,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    299,
+    4096
+   ],
+   "stride": [
+    1224704,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.683,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2990,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    284,
+    4096
+   ],
+   "stride": [
+    1163264,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.639,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2840,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    280,
+    4096
+   ],
+   "stride": [
+    1146880,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.615,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2800,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    249,
+    4096
+   ],
+   "stride": [
+    1019904,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.323,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2490,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    251,
+    4096
+   ],
+   "stride": [
+    1028096,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.321,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2510,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    256,
+    4096
+   ],
+   "stride": [
+    1048576,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.321,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2560,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    232,
+    4096
+   ],
+   "stride": [
+    950272,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.321,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2320,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    227,
+    4096
+   ],
+   "stride": [
+    929792,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2270,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    223,
+    4096
+   ],
+   "stride": [
+    913408,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2230,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    214,
+    4096
+   ],
+   "stride": [
+    876544,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2140,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    226,
+    4096
+   ],
+   "stride": [
+    925696,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2260,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    210,
+    4096
+   ],
+   "stride": [
+    860160,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2100,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    167,
+    4096
+   ],
+   "stride": [
+    684032,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    1670,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    174,
+    4096
+   ],
+   "stride": [
+    712704,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    1740,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    191,
+    4096
+   ],
+   "stride": [
+    782336,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 1.32,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    1910,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    14,
+    1024
+   ],
+   "stride": [
+    14336,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 24.0,
+   "fwd_ms_per_step": 1.202,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    140,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    15,
+    4096
+   ],
+   "stride": [
+    61440,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.168,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    150,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    16,
+    4096
+   ],
+   "stride": [
+    65536,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.165,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    160,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    12,
+    4096
+   ],
+   "stride": [
+    49152,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 1.045,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    120,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    15,
+    1024
+   ],
+   "stride": [
+    15360,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.804,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    150,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    12,
+    1024
+   ],
+   "stride": [
+    12288,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.78,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    120,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    16,
+    1024
+   ],
+   "stride": [
+    16384,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 16.0,
+   "fwd_ms_per_step": 0.777,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    160,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    488,
+    1024
+   ],
+   "stride": [
+    499712,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.756,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4880,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    493,
+    1024
+   ],
+   "stride": [
+    504832,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.754,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4930,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    491,
+    1024
+   ],
+   "stride": [
+    502784,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.75,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4910,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    485,
+    1024
+   ],
+   "stride": [
+    496640,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.739,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4850,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    452,
+    1024
+   ],
+   "stride": [
+    462848,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.686,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4520,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    458,
+    1024
+   ],
+   "stride": [
+    468992,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.684,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4580,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    443,
+    1024
+   ],
+   "stride": [
+    453632,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.679,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4430,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    431,
+    1024
+   ],
+   "stride": [
+    441344,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.638,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    4310,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    18,
+    4096
+   ],
+   "stride": [
+    73728,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.619,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    180,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    394,
+    1024
+   ],
+   "stride": [
+    403456,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.605,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3940,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    374,
+    1024
+   ],
+   "stride": [
+    382976,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.593,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3740,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    377,
+    1024
+   ],
+   "stride": [
+    386048,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.59,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3770,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    13,
+    4096
+   ],
+   "stride": [
+    53248,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.585,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    130,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    20,
+    4096
+   ],
+   "stride": [
+    81920,
+    4096,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.581,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    200,
+    4096,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    348,
+    1024
+   ],
+   "stride": [
+    356352,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.57,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3480,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    357,
+    1024
+   ],
+   "stride": [
+    365568,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.568,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3570,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    342,
+    1024
+   ],
+   "stride": [
+    350208,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.544,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3420,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    344,
+    1024
+   ],
+   "stride": [
+    352256,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.541,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3440,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    329,
+    1024
+   ],
+   "stride": [
+    336896,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.522,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    3290,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    280,
+    1024
+   ],
+   "stride": [
+    286720,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.479,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2800,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    295,
+    1024
+   ],
+   "stride": [
+    302080,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.475,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2950,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    297,
+    1024
+   ],
+   "stride": [
+    304128,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.471,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2970,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    299,
+    1024
+   ],
+   "stride": [
+    306176,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.47,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2990,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    284,
+    1024
+   ],
+   "stride": [
+    290816,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.458,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2840,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    256,
+    1024
+   ],
+   "stride": [
+    262144,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.408,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2560,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    251,
+    1024
+   ],
+   "stride": [
+    257024,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.407,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2510,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    223,
+    1024
+   ],
+   "stride": [
+    228352,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.405,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2230,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    18,
+    1024
+   ],
+   "stride": [
+    18432,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.405,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    180,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    249,
+    1024
+   ],
+   "stride": [
+    254976,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.403,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2490,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    232,
+    1024
+   ],
+   "stride": [
+    237568,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.403,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2320,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    13,
+    1024
+   ],
+   "stride": [
+    13312,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.401,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    130,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    227,
+    1024
+   ],
+   "stride": [
+    232448,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.401,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2270,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    226,
+    1024
+   ],
+   "stride": [
+    231424,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.401,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2260,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    210,
+    1024
+   ],
+   "stride": [
+    215040,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.4,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2100,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    214,
+    1024
+   ],
+   "stride": [
+    219136,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.397,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    2140,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    20,
+    1024
+   ],
+   "stride": [
+    20480,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.394,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    200,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    191,
+    1024
+   ],
+   "stride": [
+    195584,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.393,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    1910,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    174,
+    1024
+   ],
+   "stride": [
+    178176,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.388,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    1740,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    167,
+    1024
+   ],
+   "stride": [
+    171008,
+    1024,
+    1
+   ],
+   "dtype": "torch.bfloat16",
+   "calls_per_step": 8.0,
+   "fwd_ms_per_step": 0.386,
+   "modules": 24,
+   "derived_fwd_mm_MKN": [
+    1670,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    14336,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 1.0,
+   "fwd_ms_per_step": 0.065,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    524288,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 5.0,
+   "fwd_ms_per_step": 0.057,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    12288,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.67,
+   "fwd_ms_per_step": 0.051,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    15360,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.67,
+   "fwd_ms_per_step": 0.044,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    16384,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.67,
+   "fwd_ms_per_step": 0.043,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    18432,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.025,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    13312,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.023,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    20480,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.021,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    453632,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    219136,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    237568,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    352256,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    302080,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    356352,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    215040,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    262144,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    468992,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    350208,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    499712,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    171008,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    178176,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    304128,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    504832,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    228352,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    231424,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    462848,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    195584,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    496640,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    365568,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    441344,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    286720,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    502784,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    232448,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    386048,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    382976,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    306176,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    254976,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    336896,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    403456,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    257024,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  },
+  {
+   "input_shape": [
+    10,
+    1024
+   ],
+   "stride": [
+    290816,
+    1
+   ],
+   "dtype": "torch.float32",
+   "calls_per_step": 0.33,
+   "fwd_ms_per_step": 0.004,
+   "modules": 1,
+   "derived_fwd_mm_MKN": [
+    10,
+    1024,
+    null
+   ],
+   "derived_note": "M flattened B*S; N/K depend on weight per module class; dX=(M,Kx)x(Nx,K) and dW=(N,M)x(M,K) derived at module level; these are DERIVED from Linear inputs, not aten operand dumps"
+  }
+ ]
+}

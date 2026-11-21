@@ -1,0 +1,10 @@
+PASS aggregate: only-checkpoint-fail -> [checkpoint_restore_fail({'params_bitwise_equal': False, 'state_bitwise_equal': True})]
+PASS aggregate: only-state-missing -> k/float32/fused/param0.exp_avg/state_missing_or_mismatch
+PASS aggregate: only-state-tolerance -> k/float32/fused/param0.exp_avg/state_tol_violation
+PASS aggregate: only-step-mismatch -> k/float32/fused/step_count_mismatch
+PASS aggregate: only-state-NaN -> k/float32/fused/param0.exp_avg/state_nan_inf(nan_a=0,inf_a=0,nan_b=3,inf_b=0,nonfinite_total=None)
+PASS aggregate: only-state-Inf -> k/float32/fused/param0.exp_avg_sq/state_nan_inf(nan_a=0,inf_a=0,nan_b=0,inf_b=2,nonfinite_total=None)
+PASS full-chain compare_state(NaN/Inf)->aggregate -> k/float32/fused/param0.exp_avg/state_nan_inf(nan_a=1,inf_a=0,nan_b=0,inf_b=1,nonfinite_total=1)
+PASS aggregate: all-pass control -> empty (exit 0)
+PASS exit-code rule uses aggregate() result
+selftest failures: 0

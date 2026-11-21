@@ -1,0 +1,418 @@
+{
+ "device": "PPU-ZW810E",
+ "window": "steps 2..4 (same seed/loader window as trace)",
+ "fresh_model_loader": true,
+ "step_ms": [
+  1879.9,
+  2117.6,
+  2341.6
+ ],
+ "median_ms": 2117.6,
+ "p95_ms_label": "sample max (only 3 runs)",
+ "p95_ms": 2341.6,
+ "valid_tokens_per_step": [
+  27052,
+  31454,
+  35506
+ ],
+ "valid_tokens_per_s": [
+  14390.0,
+  14853.0,
+  15163.0
+ ],
+ "pairing_assertions": {
+  "reference": "/tmp/opencode/zw810e-problem29/results/training_trace_r35_meta.json",
+  "micros_compared": 12,
+  "mismatches": [],
+  "asserted": true
+ },
+ "batch_summaries": [
+  {
+   "step": 2,
+   "batch_lens": [
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 16,
+       "valid_tokens": 111,
+       "padded_positions": 160
+      },
+      "negative_1": {
+       "max_len": 443,
+       "valid_tokens": 2233,
+       "padded_positions": 4430
+      },
+      "negative_2": {
+       "max_len": 214,
+       "valid_tokens": 1356,
+       "padded_positions": 2140
+      },
+      "negative_3": {
+       "max_len": 374,
+       "valid_tokens": 1838,
+       "padded_positions": 3740
+      },
+      "positive": {
+       "max_len": 167,
+       "valid_tokens": 1552,
+       "padded_positions": 1670
+      }
+     },
+     "valid_tokens": 7090,
+     "padded_positions": 12140
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 18,
+       "valid_tokens": 102,
+       "padded_positions": 180
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 1647,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 299,
+       "valid_tokens": 1279,
+       "padded_positions": 2990
+      },
+      "negative_3": {
+       "max_len": 512,
+       "valid_tokens": 2119,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "max_len": 174,
+       "valid_tokens": 1629,
+       "padded_positions": 1740
+      }
+     },
+     "valid_tokens": 6776,
+     "padded_positions": 15150
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 16,
+       "valid_tokens": 107,
+       "padded_positions": 160
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 1952,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 249,
+       "valid_tokens": 1297,
+       "padded_positions": 2490
+      },
+      "negative_3": {
+       "max_len": 329,
+       "valid_tokens": 1250,
+       "padded_positions": 3290
+      },
+      "positive": {
+       "max_len": 191,
+       "valid_tokens": 1760,
+       "padded_positions": 1910
+      }
+     },
+     "valid_tokens": 6366,
+     "padded_positions": 12970
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 14,
+       "valid_tokens": 103,
+       "padded_positions": 140
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 1806,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 223,
+       "valid_tokens": 1216,
+       "padded_positions": 2230
+      },
+      "negative_3": {
+       "max_len": 431,
+       "valid_tokens": 1812,
+       "padded_positions": 4310
+      },
+      "positive": {
+       "max_len": 210,
+       "valid_tokens": 1883,
+       "padded_positions": 2100
+      }
+     },
+     "valid_tokens": 6820,
+     "padded_positions": 13900
+    }
+   ]
+  },
+  {
+   "step": 3,
+   "batch_lens": [
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 15,
+       "valid_tokens": 101,
+       "padded_positions": 150
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 1973,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 280,
+       "valid_tokens": 1284,
+       "padded_positions": 2800
+      },
+      "negative_3": {
+       "max_len": 485,
+       "valid_tokens": 2573,
+       "padded_positions": 4850
+      },
+      "positive": {
+       "max_len": 232,
+       "valid_tokens": 2041,
+       "padded_positions": 2320
+      }
+     },
+     "valid_tokens": 7972,
+     "padded_positions": 15240
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 14,
+       "valid_tokens": 100,
+       "padded_positions": 140
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 2477,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 458,
+       "valid_tokens": 1944,
+       "padded_positions": 4580
+      },
+      "negative_3": {
+       "max_len": 512,
+       "valid_tokens": 1351,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "max_len": 226,
+       "valid_tokens": 2071,
+       "padded_positions": 2260
+      }
+     },
+     "valid_tokens": 7943,
+     "padded_positions": 17220
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 12,
+       "valid_tokens": 91,
+       "padded_positions": 120
+      },
+      "negative_1": {
+       "max_len": 344,
+       "valid_tokens": 1387,
+       "padded_positions": 3440
+      },
+      "negative_2": {
+       "max_len": 512,
+       "valid_tokens": 2184,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "max_len": 491,
+       "valid_tokens": 2210,
+       "padded_positions": 4910
+      },
+      "positive": {
+       "max_len": 284,
+       "valid_tokens": 2398,
+       "padded_positions": 2840
+      }
+     },
+     "valid_tokens": 8270,
+     "padded_positions": 16430
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 12,
+       "valid_tokens": 95,
+       "padded_positions": 120
+      },
+      "negative_1": {
+       "max_len": 394,
+       "valid_tokens": 1780,
+       "padded_positions": 3940
+      },
+      "negative_2": {
+       "max_len": 256,
+       "valid_tokens": 1359,
+       "padded_positions": 2560
+      },
+      "negative_3": {
+       "max_len": 297,
+       "valid_tokens": 1545,
+       "padded_positions": 2970
+      },
+      "positive": {
+       "max_len": 295,
+       "valid_tokens": 2490,
+       "padded_positions": 2950
+      }
+     },
+     "valid_tokens": 7269,
+     "padded_positions": 12540
+    }
+   ]
+  },
+  {
+   "step": 4,
+   "batch_lens": [
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 13,
+       "valid_tokens": 92,
+       "padded_positions": 130
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 1352,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 512,
+       "valid_tokens": 2322,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "max_len": 512,
+       "valid_tokens": 1681,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "max_len": 342,
+       "valid_tokens": 2753,
+       "padded_positions": 3420
+      }
+     },
+     "valid_tokens": 8200,
+     "padded_positions": 18910
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 20,
+       "valid_tokens": 112,
+       "padded_positions": 200
+      },
+      "negative_1": {
+       "max_len": 357,
+       "valid_tokens": 1197,
+       "padded_positions": 3570
+      },
+      "negative_2": {
+       "max_len": 493,
+       "valid_tokens": 2082,
+       "padded_positions": 4930
+      },
+      "negative_3": {
+       "max_len": 227,
+       "valid_tokens": 1115,
+       "padded_positions": 2270
+      },
+      "positive": {
+       "max_len": 348,
+       "valid_tokens": 3072,
+       "padded_positions": 3480
+      }
+     },
+     "valid_tokens": 7578,
+     "padded_positions": 14450
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 15,
+       "valid_tokens": 109,
+       "padded_positions": 150
+      },
+      "negative_1": {
+       "max_len": 251,
+       "valid_tokens": 1407,
+       "padded_positions": 2510
+      },
+      "negative_2": {
+       "max_len": 512,
+       "valid_tokens": 1564,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "max_len": 488,
+       "valid_tokens": 1888,
+       "padded_positions": 4880
+      },
+      "positive": {
+       "max_len": 377,
+       "valid_tokens": 3302,
+       "padded_positions": 3770
+      }
+     },
+     "valid_tokens": 8270,
+     "padded_positions": 16430
+    },
+    {
+     "groups": {
+      "anchor": {
+       "max_len": 14,
+       "valid_tokens": 93,
+       "padded_positions": 140
+      },
+      "negative_1": {
+       "max_len": 512,
+       "valid_tokens": 2535,
+       "padded_positions": 5120
+      },
+      "negative_2": {
+       "max_len": 512,
+       "valid_tokens": 2711,
+       "padded_positions": 5120
+      },
+      "negative_3": {
+       "max_len": 512,
+       "valid_tokens": 2318,
+       "padded_positions": 5120
+      },
+      "positive": {
+       "max_len": 452,
+       "valid_tokens": 3801,
+       "padded_positions": 4520
+      }
+     },
+     "valid_tokens": 11458,
+     "padded_positions": 20020
+    }
+   ]
+  }
+ ]
+}
