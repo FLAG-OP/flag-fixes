@@ -4,7 +4,7 @@ import json
 
 ke = json.load(open("results/kernel_efficiency_r36.json"))
 sw = json.load(open("results/samewindow_noprofiler_r36.json"))
-sd = json.load(open("results/sdpa_efficiency_r35.json"))
+sd = json.load(open("results/sdpa_efficiency_r36.json"))
 an = json.load(open("results/training_trace_analysis_r36.json"))
 meta = json.load(open("results/training_trace_r36_meta.json"))
 
@@ -42,5 +42,5 @@ out = {"window": f"trace {meta['trace_path']}, seed 42, batch 10, accum 4, nativ
                       "profiled_median_ms": 2264.9,
                       "overhead_pct": round(2264.9 / sw["median_ms"] * 100 - 100, 1)},
         "hbm_status": "BLOCKED: PCM held by pg-exporter (dmesg); retest: acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count N <cmd>"}
-json.dump(out, open("results/final_table_r35.json", "w"), indent=1)
+json.dump(out, open("results/final_table_r36.json", "w"), indent=1)
 print("final table regenerated:", len(rows), "rows; overhead", out["overhead"]["overhead_pct"], "%")

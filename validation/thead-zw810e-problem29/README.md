@@ -461,33 +461,49 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 
 主热点（S=512 组）**88–129 TFLOP/s（63–93% 峰值 139.2；参照 135.7）**——**dW（转置 operand）明显慢于 fwd/dX（88 vs 119–129）**。短形状（S≈431–493 组）~86–88 TFLOP/s。
 
-#### 3c-2. 最终汇总表（round-35，由 `results/final_table_r35.json` 程序化生成——**全部基于 r35 同窗 trace 与同窗 kernel 效率测量**，round-32 trace 复解析口径作废）
+#### 3c-2. 最终汇总表（round-36，由 `final_table_r36.json` 经 `build_final_table.py` + `render_readme_3c2.py` 程序化生成）
 
-窗口：seed 42、batch 10、accum 4、native/stock bf16、3 步连续（`training_trace_r35_trace.json.gz`）；脚本 commit 见各文件 blob。
+窗口：`training_trace_r36_trace.json.gz`；{'batch_rows': 10, 'accum': 4, 'dtype': 'bf16', 'env': {'FL_FLAGGEMS': '', 'FL_ADAMW_FUSED': '0'}, 'seed': 42}；脚本/数据 commit 见各文件 blob。r32/r35 trace 及其分析**标记 superseded**（仅存档）。
 
-| 阶段 | 相位 | calls/步 | device ms/步 | FLOPs (TFLOP) | TFLOP/s | HBM | 来源 |
-|---|---|---:|---:|---:|---:|---|---|
-| FFN 升维 | fwd | 96 | 34.3 | 4.12 | **120.1** | 估算* | kernel_efficiency_r35 |
-| FFN 降维 | fwd | 96 | 32.8 | 4.12 | **125.9** | 估算* | 同上 |
-| QKV | fwd | 288 | 28.3 | 3.09 | **109.3** | 估算* | 同上 |
-| attn 输出投影 | fwd | 96 | 9.3 | 1.03 | **111.3** | 估算* | 同上 |
-| FFN 升维 | dX | 96 | 34.6 | 2.75 | **119.3** | 估算* | 同上 |
-| FFN 降维 | dX | 96 | 31.9 | 2.75 | **129.3** | 估算* | 同上 |
-| FFN 升/降维 | dW | 96+96 | 46.8/46.7 | 2.76 | **88.0/88.3** | 估算* | 同上 |
-| QKV | dX/dW | 288/288 | 28.4/31.8 | 2.02 | **109.0/97.4** | 估算* | 同上（拓扑推断 1:3，计数断言）|
-| attn 输出投影 | dX/dW | 96+96 | 9.5/10.6 | 0.85 | **109.1/97.3** | 估算* | 同上 |
-| SDPA/attention | fwd | 480 | 204.7 | **0.105**（单步均值；r35 指纹逐步 0.085/0.103/0.129）| **0.52** | 估算* | sdpa_efficiency_r35（公式 4BH S²D，60 组逐行；round-35 的 1.55 系 3 步 FLOPs 对单步 ms——已修正）|
-| SDPA/attention | bwd | 1,440 | 375.5 | **0.158**（0.127/0.154/0.193）| **0.42** | 估算* | 同上（6BH S²D；重算未知）|
+| 阶段 | 相位 | MKN | calls/步 | device ms/步 | FLOPs (TFLOP) | TFLOP/s | HBM | 来源 |
+|---|---|---|---:|---:|---:|---:|---|---|
+| GEMM ffn_down dW bwd | — | [1024, 4096, 4096] | 96 | 46.69 | 4.123 | **88.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up dW bwd | — | [4096, 1024, 1024] | 96 | 46.67 | 4.121 | **88.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up dX bwd | — | [5120, 1024, 4096] | 96 | 34.56 | 4.123 | **119.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [5120, 1024, 4096] | 96 | 34.3 | 4.123 | **120.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [5120, 4096, 1024] | 96 | 32.86 | 4.123 | **125.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down dX bwd | — | [5120, 4096, 1024] | 96 | 31.87 | 4.124 | **129.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv dW bwd | — | [1024, 1024, 1024] | 288 | 31.72 | 3.093 | **97.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
+| GEMM attn_qkv dX bwd | — | [5120, 1024, 1024] | 288 | 28.32 | 3.093 | **109.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
+| GEMM attn_qkv fwd | — | [5120, 1024, 1024] | 288 | 28.23 | 3.092 | **109.6** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_out dW bwd | — | [1024, 1024, 1024] | 96 | 10.58 | 1.03 | **97.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
+| GEMM ffn_up dW bwd | — | [4096, 1024, 1024] | 24 | 10.29 | 0.892 | **86.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down dW bwd | — | [1024, 4096, 4096] | 24 | 10.25 | 0.892 | **87.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up dW bwd | — | [4096, 1024, 1024] | 96 | 10.16 | 0.892 | **87.8** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_out fwd | — | [5120, 1024, 1024] | 96 | 9.25 | 1.031 | **111.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [4430, 4096, 1024] | 24 | 7.24 | 0.892 | **123.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [4430, 1024, 4096] | 24 | 7.23 | 0.892 | **123.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [4310, 1024, 4096] | 24 | 7.17 | 0.868 | **121.1** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [160, 1024, 1024] | 144 | 6.92 | 0.048 | **7.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [4310, 4096, 1024] | 24 | 6.85 | 0.868 | **126.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [3740, 1024, 4096] | 24 | 6.47 | 0.753 | **116.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [3740, 4096, 1024] | 24 | 6.29 | 0.753 | **119.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [4430, 1024, 1024] | 72 | 6.28 | 0.669 | **106.6** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [4310, 1024, 1024] | 72 | 5.87 | 0.651 | **110.9** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [1670, 1024, 1024] | 72 | 5.79 | 0.252 | **43.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| SDPA/attention | fwd | — | 480 | 204.64 | 0.105 | **0.52** | ESTIMATE | sdpa_efficiency_r36（4BH S²D，60 组逐行）|
+| SDPA/attention | bwd | — | 1,440 | 375.44 | 0.158 | **0.42** | ESTIMATE | 同上（6BH S²D；重算未知）|
 
-小 S 形状（140–180）TFLOP/s 6–24（latency 主导）；中 S 随 M 上升。前向 FFN 全部低于 139.2 峰值（round-34 的 >峰值数字系单 M 聚合 bug，已修）。
+小 S 形状（140–180）TFLOP/s 6–24（latency 主导）。**全部效率行 ≤139.2 峰值（离线校验通过）**。
 
-**关键路径（r35 trace，含 memcpy/memset 的 busy union）**：busy 85.9/89.0/88.8%；窗口内 **HtoD 120 条 0.27ms、DtoD 60 条、DtoH 60 条、memset 7,842 条 1.99ms**——此前"H2D=0"系只查 kernel 类别所致，已更正。
+**关键路径（r36 trace，busy union 含 kernels+gpu_memcpy+gpu_memset）**：busy **88.4/90.3/91.5%**、暴露空闲 **237.2/217.8/211.2ms/步**；
+per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 条 0.07ms; memset 2544 条 0.63ms（逐步拆分 + 守恒断言 8082==8082 通过；此前"H2D=0"系只查 kernel 类别——已更正）。
 
-**严格配对（round-36，text-hash 真实指纹）**：trace 与 no-profiler 独立模型+loader（seed 42），双侧保存 **loader_index + sha256 文本哈希（text_hash16）** 并强制比较（长度摘要仅辅助）：**逐 micro 断言 12/12 hash+token 一致、0 mismatch**；no-profiler 中位 **2112.0ms**、p95=样本最大 **2335.6ms**（3 样本，非稳定 p95）、有效 tokens/s **14415–15202**；**严格配对采集开销 = 2264.9/2112.0−1 ≈ 7.2%**。kernel-efficiency 测量窗亦通过指纹断言（step_2，20/20 hash 匹配——见 `kernel_efficiency_r36.json.fingerprint_verification`）。
+**严格配对（text-hash 真实指纹）**：双侧 loader_index + sha256 text_hash16；逐 micro 断言 **12/12 hash+token 一致、0 mismatch**；no-profiler 中位 **2112.0ms**、p95=样本最大 **2335.6ms**（3 样本，非稳定 p95）、有效 tokens/s **14415.0–15202.0**；**严格配对采集开销 ≈ 7.2%**（profiled 2264.9ms）。kernel-efficiency 窗指纹断言 step_2 20/20 匹配。
 
-**HBM 状态：BLOCKED**——Asight v2.1.0 在位；探测命令/失败输出/dmesg 根因（PCM 被 pg-exporter 占用）见 `logs/hbm_probe_r34.log`；复测命令已记录；计数器读回前 HBM 字节/带宽/利用率全部为估算，不列入已完成测量。
+**HBM：BLOCKED**——Asight v2.1.0 在位；PCM 被 pg-exporter 占用（dmesg 证据 `logs/hbm_probe_r34.log`）；复测命令已记录；**HBM 字节/带宽/利用率均为估算，不列入已完成测量**。SDPA dropout 配置 0.1（模块级激活）、SDPA 内部 dropout 标志未知、反向重算未知。
 
-**估算标注**："dW 提升 ~35ms/步"、"S512 达 135.7 ~150–200ms/步"、"逐元素融合 100–200ms/步"均为估算（依据同窗实测差值），非实测结论。ac2g 时间戳统一口径为主机提交时刻。
+**估算标注**：dW 提升/135.7 参照/逐元素融合等收益数字全部为估算（依据同窗实测差值），非实测结论。ac2g 时间戳=主机提交时刻（统一口径）。
 
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 

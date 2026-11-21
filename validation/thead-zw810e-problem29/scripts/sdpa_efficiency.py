@@ -6,7 +6,7 @@ import json
 
 meta = json.load(open("results/training_trace_r36_meta.json"))
 fp = meta["batch_fingerprints"]["fingerprints"]
-d35 = json.load(open("results/training_trace_analysis_r35.json"))
+d35 = json.load(open("results/training_trace_analysis_r36.json"))
 attn = {k: v for k, v in d35["inventory_per_step"].items() if k.startswith("sdpa_attention")}
 H, D = 16, 64
 
@@ -45,7 +45,7 @@ out = {"H": H, "D": D,
         "sdpa_device_ms_per_step": {"forward": ms_f, "backward": ms_b},
         "tflops": {"forward": round(mean_f / (ms_f * 1e-3), 2) if ms_f else None,
                     "backward": round(mean_b / (ms_b * 1e-3), 2) if ms_b else None}}
-json.dump(out, open("results/sdpa_efficiency_r35.json", "w"), indent=1)
+json.dump(out, open("results/sdpa_efficiency_r36.json", "w"), indent=1)
 print("per-step TFLOP:", per_step_tflop)
 print("mean TFLOP/step:", round(mean_f,3), round(mean_b,3), "-> TFLOP/s:",
       out["tflops"], "| kernels/step:", kern_f, kern_b)

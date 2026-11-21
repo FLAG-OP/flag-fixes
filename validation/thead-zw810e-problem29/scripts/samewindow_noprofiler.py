@@ -2,7 +2,7 @@
 Fresh model + fresh loader (same seed 42 => identical sample window as the
 trace), skip 2, measure steps 2-4; per-step batch length summaries recorded
 and asserted equal between passes."""
-import argparse, hashlib, json, statistics, time
+import argparse, hashlib, json, statistics, sys, time
 import torch
 
 def main():
@@ -12,6 +12,8 @@ def main():
     ap.add_argument("--steps", type=int, default=3)
     ap.add_argument("--out", required=True)
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--trace-meta", default="results/training_trace_r36_meta.json",
+                    help="trace-pass fingerprint file; default: in-repo r36 meta")
     a = ap.parse_args()
     import random, os
     random.seed(42); torch.manual_seed(42)
@@ -85,7 +87,11 @@ def main():
     # strict pairing assertions vs the trace-pass summary (token_stats_r25.json,
     # same seed window): per-micro valid/padded tokens must match exactly
     import os
-    ref_path = "/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json"
+    ref_path = a.trace_meta
+    import os as _os
+    if not _os.path.exists(ref_path):
+        print("FATAL: --trace-meta file not found:", ref_path, file=sys.stderr)
+        sys.exit(2)
     pairing = {"reference": ref_path, "asserted": False}
     try:
         ref = json.load(open(ref_path))
@@ -107,8 +113,13 @@ def main():
                         mismatches.append(f"step{j} micro{mi} {g}: hash/tokens differ mine={mine_g} ref={ref_g}")
         pairing = {"reference": ref_path, "micros_compared": n_cmp * accum,
                     "mismatches": mismatches[:8], "asserted": len(mismatches) == 0}
+        if not pairing["asserted"]:
+            print("FATAL: fingerprint pairing FAILED:", mismatches[:8], file=sys.stderr)
+            sys.exit(3)
     except FileNotFoundError:
         pairing = {"reference": ref_path, "error": "reference summary missing"}
+        print("FATAL: reference fingerprint file missing:", ref_path, file=sys.stderr)
+        sys.exit(2)
     tokens_per_step = [sum(m["valid_tokens"] for m in s["batch_lens"]) for s in summaries]
     tsorted = sorted(timings)
     p95 = max(timings) if timings else None   # 3 samples: p95 == sample max, NOT stable p95

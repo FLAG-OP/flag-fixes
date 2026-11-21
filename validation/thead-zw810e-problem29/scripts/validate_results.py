@@ -12,7 +12,7 @@ def check(name, ok, detail=""):
     if not ok: FAILS.append(name)
 
 # --- 1. SDPA units ---
-sd = json.load(open("results/sdpa_efficiency_r35.json"))
+sd = json.load(open("results/sdpa_efficiency_r36.json"))
 per_step = sd["per_step_tflop"]
 mean_f = sum(v["forward"] for v in per_step.values()) / len(per_step)
 mean_b = sum(v["backward"] for v in per_step.values()) / len(per_step)
@@ -27,7 +27,7 @@ steps_f = sum(v["forward"] for v in per_step.values())
 check("SDPA group rows sum == per-step sum", abs(rows_f - steps_f) < 0.01, f"{rows_f:.3f} vs {steps_f:.3f}")
 
 # --- 2. copy/memset conservation ---
-an = json.load(open("results/training_trace_analysis_r35.json"))
+an = json.load(open("results/training_trace_analysis_r36.json"))
 tot = an["memcpy_total_events"]
 per_step_sum = 0
 for s, c in an["critical_path_per_step"].items():
@@ -36,7 +36,7 @@ for s, c in an["critical_path_per_step"].items():
 check("memcpy per-step counts sum == total events", per_step_sum == tot, f"{per_step_sum} vs {tot}")
 
 # --- 3. final table vs sources ---
-ft = json.load(open("results/final_table_r35.json"))
+ft = json.load(open("results/final_table_r36.json"))
 ke = json.load(open("results/kernel_efficiency_r36.json"))
 import collections as _c
 ke_ms = _c.defaultdict(list)

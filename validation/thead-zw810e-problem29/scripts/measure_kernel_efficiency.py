@@ -6,7 +6,7 @@
   micro at 24 layers).
 - SDPA: recorded separately from profiler phase windows (kernels + FLOPs
   formula stated explicitly)."""
-import argparse, json, collections
+import argparse, json, collections, sys
 import torch
 import torch.nn as nn
 
@@ -16,6 +16,8 @@ def main():
     ap.add_argument("--skip", type=int, default=2)
     ap.add_argument("--out", required=True)
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--trace-meta", default="results/training_trace_r36_meta.json",
+                    help="trace-pass fingerprint file; default: in-repo r36 meta")
     a = ap.parse_args()
     import random, os
     random.seed(42); torch.manual_seed(42)
@@ -48,7 +50,11 @@ def main():
             texts = "|".join(batch[k])
             out[k] = hashlib.sha256(texts.encode()).hexdigest()[:16]
         return out
-    meta = json.load(open("/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json"))
+    import os as _os
+    if not _os.path.exists(a.trace_meta):
+        print("FATAL: --trace-meta file not found:", a.trace_meta, file=sys.stderr)
+        sys.exit(2)
+    meta = json.load(open(a.trace_meta))
     ref_fp = meta["batch_fingerprints"]["fingerprints"]
     _fp_seen = []
 
@@ -241,6 +247,9 @@ def main():
             else:
                 fp_check["mismatches"].append(f"micro{mi} {g}: {mine.get(g)} vs {ref[g]['text_hash16']}")
     fp_check["asserted"] = len(fp_check["mismatches"]) == 0 and fp_check["hash_matches"] > 0
+    if not fp_check["asserted"]:
+        print("FATAL: kernel-efficiency fingerprint verification FAILED:", fp_check["mismatches"][:8], file=sys.stderr)
+        sys.exit(3)
     out = {"debug": {"recs_total": len(recs), "forward_recs": fwd_rec,
                       "forward_recs_labeled": fwd_rec_labeled,
                       "fwd_agg": out_debug_fwd,
