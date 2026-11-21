@@ -1,0 +1,21 @@
+=== HBM counter probe 2026-11-21T09:21:56Z ===
+--- which asight ---
+not found
+--- pip asight ---
+no asight package
+--- ppu-smi/topsrider tools ---
+/usr/local/PPU_SDK/ppu-smi/bin/ppu-smi
+prof.sh
+prof_combined_compare_batch.sh
+prof_compare_op_mapping_batch.sh
+prof_compare_projection_summary.sh
+prof_compare_projection_summary_batch.sh
+--- torch profiler experimental config ---
+torch 2.10.0
+activities: ['CPU', 'CUDA', 'HPU', 'MTIA', 'PrivateUse1', 'XPU', '__class__', '__delattr__', '__dir__', '__doc__', '__entries', '__eq__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__index__', '__init__', '__init_subclass__', '__int__', '__le__', '__lt__', '__members__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', '_pybind11_conduit_v1_', 'name', 'value']
+--- attempt CUDA activity memory events ---
+/usr/local/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+<stdin>:8: FutureWarning: `export_memory_timeline` is deprecated and will be removed in a future version. Please use `torch.cuda.memory._record_memory_history` and `torch.cuda.memory._export_memory_snapshot` instead.
+memory timeline FAILED: ValueError record_shapes=True, profile_memory=True, with_stack=True required for memory profiling.
+hbm-tagged events: 0

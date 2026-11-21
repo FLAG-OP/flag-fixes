@@ -35,14 +35,25 @@ def main():
     loaders = build_split_loaders(str(cfg.task), cfg.data, int(cfg.batch_size), pin_memory=True, seed=42)
     stream = iter(loaders[0])
 
+    from transformers import AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
     def run_step(i):
         t0 = time.perf_counter()
         optimizer.zero_grad(set_to_none=True)
         lens = []
         for micro in range(accum):
             batch = next(stream)
-            sl = {k: sorted({len(s) for s in batch[k]}) for k in sorted(batch.keys())}
-            lens.append(sl)
+            sl = {}
+            valid = 0; padded = 0
+            for k in sorted(batch.keys()):
+                enc = tok(batch[k], padding=True, truncation=True,
+                          max_length=int(cfg.model.get("max_length", 8192)), return_tensors=None)
+                mask = enc["attention_mask"]
+                v = sum(sum(1 for x in m if x == 1) for m in mask)
+                t = sum(len(m) for m in mask)
+                valid += v; padded += t
+                sl[k] = {"max_len": max(len(m) for m in mask), "valid": v, "padded": t}
+            lens.append({"groups": sl, "valid_tokens": valid, "padded_positions": padded})
             with autocast_context(dev, dtype_name):
                 loss = loss_for_batch(model, processor, str(cfg.task), batch, dev, float(cfg.temperature))
             (loss / accum).backward()
@@ -57,12 +68,39 @@ def main():
         ms, lens = run_step(i)
         if i >= a.skip:
             timings.append(ms); summaries.append({"step": i, "batch_lens": lens})
-    # determinism assert vs the trace window (r32 steps 2..4 had durations; batch lens compared here)
+    # strict pairing assertions vs the trace-pass summary (token_stats_r25.json,
+    # same seed window): per-micro valid/padded tokens must match exactly
+    import os
+    ref_path = "/tmp/opencode/zw810e-problem29/results/token_stats_r25.json"
+    pairing = {"reference": ref_path, "asserted": False}
+    try:
+        ref = json.load(open(ref_path))
+        ref_steps = ref["steps"]
+        n_cmp = min(len(summaries), len(ref_steps))
+        mismatches = []
+        for j in range(n_cmp):
+            micros = summaries[j]["batch_lens"]   # list of per-micro dicts
+            ref_micros = ref_steps[f"capture_step_{j}"]
+            for mi, (mm, rm) in enumerate(zip(micros, ref_micros)):
+                for g in sorted(rm.keys()):
+                    if mm["groups"][g]["padded"] != rm[g]["padded_positions"] or                        mm["groups"][g]["valid"] != rm[g]["valid_tokens"]:
+                        mismatches.append(f"step{j} micro{mi} {g}: mine={mm['groups'][g]} ref={rm[g]}")
+        pairing = {"reference": ref_path, "micros_compared": n_cmp * accum,
+                    "mismatches": mismatches[:8], "asserted": len(mismatches) == 0}
+    except FileNotFoundError:
+        pairing = {"reference": ref_path, "error": "reference summary missing"}
+    tokens_per_step = [sum(m["valid_tokens"] for m in s["batch_lens"]) for s in summaries]
+    tsorted = sorted(timings)
+    p95 = tsorted[min(len(tsorted) - 1, int(round(0.95 * len(tsorted))) - 1)] if tsorted else None
     out = {"device": torch.cuda.get_device_name(0),
            "window": f"steps {a.skip}..{a.skip + a.steps - 1} (same seed/loader window as trace)",
            "fresh_model_loader": True,
            "step_ms": [round(x, 1) for x in timings],
            "median_ms": round(statistics.median(timings), 1),
+           "p95_ms": round(p95, 1) if p95 else None,
+           "valid_tokens_per_step": tokens_per_step,
+           "valid_tokens_per_s": [round(t / (ms / 1000), 0) for t, ms in zip(tokens_per_step, timings)],
+           "pairing_assertions": pairing,
            "batch_summaries": summaries}
     json.dump(out, open(a.out, "w"), indent=1)
     print("same-window no-profiler steps:", [round(x,1) for x in timings], "median:", round(statistics.median(timings),1))

@@ -43,7 +43,8 @@ def main():
         return m["name"] if ts <= m["ts"] + m.get("dur", 0) else "between"
 
     # attribution: ac2g 's' flow events carry flow id == kernel args.correlation.
-    # VERIFIED: flow ts tracks DEVICE-side enqueue/execution, so backward kernels
+    # REVIEW CORRECTION (6ba3bfd): ac2g timestamps are HOST SUBMISSION times
+    # (not device execution); backward kernels may execute after their marker
     # drain asynchronously AFTER their rf marker window closed (async queue).
     # Attribution therefore uses the NEAREST PRECEDING marker START (submission
     # phase), which covers every kernel; the device-vs-CPU lag is reported
@@ -95,18 +96,24 @@ def main():
                                            "device_ms_per_step": round(v["ms"] / n_steps, 2)}
                            for (cls, ph), v in sorted(inv.items(), key=lambda kv: -kv[1]["ms"])}
     # per-step totals + critical path (busy union) per step window
+# review 6ba3bfd item 2: TRUE step boundaries [first marker start, last
+    # marker end]; last step extends to its synchronize tail (last kernel end,
+    # bounded) so the busy union only counts kernels inside the real step.
     step_windows = {}
     first_start = {}
-    for e in markers:
-        s = e["name"].split("_")[1]
-        first_start.setdefault(s, e["ts"])
-    order = sorted(first_start.items(), key=lambda kv: kv[1])
     last_end = {}
     for e in markers:
         s = e["name"].split("_")[1]
+        first_start.setdefault(s, e["ts"])
         last_end[s] = max(last_end.get(s, 0), e["ts"] + e.get("dur", 0))
+    order = sorted(first_start.items(), key=lambda kv: kv[1])
+    all_kernel_end = max((e["ts"] + e.get("dur", 0) for e in kernels), default=0)
     for idx, (s, t0) in enumerate(order):
-        t1 = order[idx + 1][1] if idx + 1 < len(order) else last_end.get(s, t0)
+        t1 = last_end[s]
+        if idx + 1 < len(order):
+            t1 = min(t1, order[idx + 1][1])          # cap at next step start
+        else:
+            t1 = max(t1, min(all_kernel_end, t0 + 5_000_000))  # sync tail
         step_windows[s] = {"t0": t0, "t1": t1}
     # report cross-step drain overlap: kernels attributed to step N executing after step N+1 window started
     drain_overlap = collections.Counter()
@@ -116,6 +123,7 @@ def main():
         # drain: kernel of step N executing inside step N+1 window
         if k["step"] in step_windows and k["ts"] >= step_windows[k["step"]]["t1"]:
             drain_overlap[k["step"]] += k["dur_us"]
+    rt = [e for e in evs if e.get("cat") in ("cuda_runtime", "cuda_driver")]
     crit = {}
     for s, w in step_windows.items():
         ivs = sorted((k["ts"], k["ts"] + k["dur_us"]) for k in by_step.get(s, []))
@@ -128,9 +136,17 @@ def main():
                 cur_e = max(cur_e, b_)
         if cur_s is not None: union += cur_e - cur_s
         wall = (w["t1"] - w["t0"]) / 1000
-        crit[s] = {"window_ms": round(wall, 1), "busy_union_ms": round(union / 1000, 1),
+        launches = sum(1 for e in rt if w["t0"] <= e["ts"] <= w["t1"])
+        syncs = sum(1 for e in rt if w["t0"] <= e["ts"] <= w["t1"] and "Synchronize" in e.get("name", ""))
+        h2d_ms = sum(e.get("dur", 0) for e in evs
+                      if e.get("cat") == "kernel" and "memcpy" in e.get("name", "").lower()
+                      and w["t0"] <= e["ts"] <= w["t1"]) / 1000
+        crit[s] = {"window_ms": round(wall, 1), "device_busy_union_ms": round(union / 1000, 1),
                     "exposed_idle_ms": round(wall - union / 1000, 1),
                     "busy_pct": round(union / 1000 / wall * 100, 1),
+                    "cpu_launches_in_window": launches,
+                    "sync_calls_in_window": syncs,
+                    "h2d_ms_in_window": round(h2d_ms, 2),
                     "kernels": len(by_step.get(s, [])),
                     "drain_into_next_step_ms": round(drain_overlap.get(s, 0) / 1000, 1)}
     # GEMM FLOPs from measured per-shape calls (same seed window as r28)
