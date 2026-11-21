@@ -418,7 +418,7 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 - **归因边界**：差异主要在前向（~15×）次在反向（~5×）；额外拷贝可忽略。"32×32×32 tile 未对 PPU 调优"为**待厂商/设备计数器确认的假设**——当前证据只支持"候选更慢且精度不满足"
 - 方向：厂商 GEMM 库调优或 PPU 专属 kernel 重调（需设备计数器/编译报告支持）；SDPA 维持 native efficient 基线
 
-#### 3c. 自然训练设备 trace（issue #7 复审 2026-11-21 任务，round-32）
+#### 3c. 自然训练设备 trace（round-32 初采；**r32/r33 分析已被 r36 验收窗口取代，标记 superseded**，仅存档）
 
 **采集**（`capture_training_trace.py`：原入口 native/stock、bf16、batch 10、accum 4、mask/dropout 保留；seed 42；预热 2 步 → 单一连续 profiler 窗口 3 步（`record_function` 标记 rf_s{step}_{phase}_m{micro}）→ `export_chrome_trace` gzip；无 profiler 复跑同窗口对照）：
 
@@ -476,14 +476,14 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 | FFN 升/降维 | dW | 96+96 | 46.8/46.7 | 2.76 | **88.0/88.3** | 估算* | 同上 |
 | QKV | dX/dW | 288/288 | 28.4/31.8 | 2.02 | **109.0/97.4** | 估算* | 同上（拓扑推断 1:3，计数断言）|
 | attn 输出投影 | dX/dW | 96+96 | 9.5/10.6 | 0.85 | **109.1/97.3** | 估算* | 同上 |
-| SDPA/attention | fwd | 480 | 204.7 | 0.32 | **1.55** | 估算* | sdpa_efficiency_r35（公式 4BH S²D，60 组逐行）|
-| SDPA/attention | bwd | 1,440 | 375.5 | 0.47 | **1.26** | 估算* | 同上（6BH S²D；重算未知）|
+| SDPA/attention | fwd | 480 | 204.7 | **0.105**（单步均值；r35 指纹逐步 0.085/0.103/0.129）| **0.52** | 估算* | sdpa_efficiency_r35（公式 4BH S²D，60 组逐行；round-35 的 1.55 系 3 步 FLOPs 对单步 ms——已修正）|
+| SDPA/attention | bwd | 1,440 | 375.5 | **0.158**（0.127/0.154/0.193）| **0.42** | 估算* | 同上（6BH S²D；重算未知）|
 
 小 S 形状（140–180）TFLOP/s 6–24（latency 主导）；中 S 随 M 上升。前向 FFN 全部低于 139.2 峰值（round-34 的 >峰值数字系单 M 聚合 bug，已修）。
 
 **关键路径（r35 trace，含 memcpy/memset 的 busy union）**：busy 85.9/89.0/88.8%；窗口内 **HtoD 120 条 0.27ms、DtoD 60 条、DtoH 60 条、memset 7,842 条 1.99ms**——此前"H2D=0"系只查 kernel 类别所致，已更正。
 
-**严格配对（round-35）**：trace 与 no-profiler 独立模型+loader（seed 42），**逐 micro 指纹断言 12/12 一致**（r35 meta `batch_fingerprints`）；no-profiler 中位 **2106.6ms**、p95=样本最大 **2337.2ms**（3 样本，非稳定 p95）、有效 tokens/s **14388–15192**；**严格配对采集开销 = 2296.0/2106.6−1 ≈ 8.4%**。
+**严格配对（round-36，text-hash 真实指纹）**：trace 与 no-profiler 独立模型+loader（seed 42），双侧保存 **loader_index + sha256 文本哈希（text_hash16）** 并强制比较（长度摘要仅辅助）：**逐 micro 断言 12/12 hash+token 一致、0 mismatch**；no-profiler 中位 **2112.0ms**、p95=样本最大 **2335.6ms**（3 样本，非稳定 p95）、有效 tokens/s **14415–15202**；**严格配对采集开销 = 2264.9/2112.0−1 ≈ 7.2%**。kernel-efficiency 测量窗亦通过指纹断言（step_2，20/20 hash 匹配——见 `kernel_efficiency_r36.json.fingerprint_verification`）。
 
 **HBM 状态：BLOCKED**——Asight v2.1.0 在位；探测命令/失败输出/dmesg 根因（PCM 被 pg-exporter 占用）见 `logs/hbm_probe_r34.log`；复测命令已记录；计数器读回前 HBM 字节/带宽/利用率全部为估算，不列入已完成测量。
 

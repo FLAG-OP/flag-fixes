@@ -5,7 +5,7 @@ record_function markers per phase) -> export_chrome_trace.
 Analysis (in parse_training_trace.py): kernel inventory per phase via
 correlation ids, GEMM FLOPs vs 139.2 TFLOP/s peak, HBM logical-byte estimate,
 critical-path busy union."""
-import argparse, json, os, statistics, time
+import argparse, hashlib, json, os, statistics, time
 import torch
 
 def main():
@@ -105,19 +105,27 @@ def main():
     # post-window fingerprinting of saved batches (outside profiler window)
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
+    # review 8190910 item 3: REAL input fingerprints — loader index + sha256 of
+    # the raw texts per group (stable sample identity, not just length stats)
     fingerprints = {}
+    loader_idx = 0
     for bi, step_batches in saved_batches.items():
         micros = []
         for batch in step_batches:
             g = {}
             for k in sorted(batch.keys()):
+                texts = "|".join(batch[k])
+                text_hash = hashlib.sha256(texts.encode()).hexdigest()[:16]
                 enc = tok(batch[k], padding=True, truncation=True,
                           max_length=int(cfg.model.get("max_length", 8192)), return_tensors=None)
                 mask = enc["attention_mask"]
-                g[k] = {"sequences": len(mask),
+                g[k] = {"loader_index": loader_idx,
+                         "text_hash16": text_hash,
+                         "sequences": len(mask),
                          "max_len": max(len(m) for m in mask),
                          "valid_tokens": sum(sum(1 for x in m if x == 1) for m in mask),
                          "padded_positions": sum(len(m) for m in mask)}
+                loader_idx += 1
             micros.append(g)
         fingerprints[f"step_{bi}"] = micros
     saved = {"fingerprints": fingerprints,

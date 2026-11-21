@@ -38,6 +38,19 @@ def main():
     optimizer = build_optimizer(cfg.optimizer, trainable)
     loaders = build_split_loaders(str(cfg.task), cfg.data, int(cfg.batch_size), pin_memory=True, seed=42)
     stream = iter(loaders[0])
+    # fingerprint verification against the r35 trace pass (same window required)
+    import hashlib
+    from transformers import AutoTokenizer
+    _tok = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
+    def fingerprint_batch(batch):
+        out = {}
+        for k in sorted(batch.keys()):
+            texts = "|".join(batch[k])
+            out[k] = hashlib.sha256(texts.encode()).hexdigest()[:16]
+        return out
+    meta = json.load(open("/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json"))
+    ref_fp = meta["batch_fingerprints"]["fingerprints"]
+    _fp_seen = []
 
     # dropout config (recorded, not assumed)
     dropout_cfg = None
@@ -106,6 +119,7 @@ def main():
     optimizer.zero_grad(set_to_none=True)
     for micro in range(accum):
         batch = next(stream)
+        _fp_seen.append(fingerprint_batch(batch))
         with autocast_context(dev, dtype_name):
             phase["name"] = f"forward_m{micro}"
             with EffProbe():
@@ -216,10 +230,22 @@ def main():
     rows_out.sort(key=lambda r: -r["device_ms"])
     fwd_rec = sum(1 for r in recs if r["phase"].startswith("forward"))
     fwd_rec_labeled = sum(1 for r in recs if r["phase"].startswith("forward") and r["module_class"])
+    # fingerprint assertion: measured step must match a trace-pass step hash-for-hash
+    ref_key = f"step_{a.skip}"
+    ref_micros = ref_fp[ref_key]
+    fp_check = {"ref_step": ref_key, "micros": len(_fp_seen), "hash_matches": 0, "mismatches": []}
+    for mi, (mine, ref) in enumerate(zip(_fp_seen, ref_micros)):
+        for g in sorted(ref.keys()):
+            if mine.get(g) == ref[g]["text_hash16"]:
+                fp_check["hash_matches"] += 1
+            else:
+                fp_check["mismatches"].append(f"micro{mi} {g}: {mine.get(g)} vs {ref[g]['text_hash16']}")
+    fp_check["asserted"] = len(fp_check["mismatches"]) == 0 and fp_check["hash_matches"] > 0
     out = {"debug": {"recs_total": len(recs), "forward_recs": fwd_rec,
                       "forward_recs_labeled": fwd_rec_labeled,
                       "fwd_agg": out_debug_fwd,
                       "sample_forward_rec": next((r for r in recs if r["phase"].startswith("forward")), None)},
+           "fingerprint_verification": fp_check,
            "device": torch.cuda.get_device_name(0), "torch": torch.__version__,
            "window": "ONE full step (4 micros), same seed; module-label forward + ordered-pattern backward",
            "dropout_config": dropout_cfg,

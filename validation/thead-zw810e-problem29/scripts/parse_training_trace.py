@@ -134,17 +134,19 @@ def main():
         if "DtoH" in n or "dtoh" in n.lower(): return "DtoH"
         if "DtoD" in n or "dtod" in n.lower(): return "DtoD"
         return "other_memcpy"
-    mem_by = collections.defaultdict(lambda: {"count": 0, "ms": 0.0})
+    # review 8190910 item 2: PER-STEP memcpy/memset accounting (previous global
+    # mem_by duplicated the same 3-step totals into every step)
+    mem_by_step = collections.defaultdict(lambda: collections.defaultdict(lambda: {"count": 0, "ms": 0.0}))
+    mem_events_total = 0
     for e in memops:
-        w0, w1 = None, None
+        mem_events_total += 1
+        w0 = None
         for st, w in step_windows.items():
-            if w["t0"] <= e["ts"] <= w["t1"]: w0, w1 = st, w; break
+            if w["t0"] <= e["ts"] <= w["t1"]: w0 = st; break
         if w0 is None: continue
         k = mem_kind(e)
-        if k == "memset":
-            mem_by[f"memset"][ "count"] += 1; mem_by["memset"]["ms"] += e.get("dur", 0) / 1000
-        else:
-            mem_by[k]["count"] += 1; mem_by[k]["ms"] += e.get("dur", 0) / 1000
+        mem_by_step[w0][k]["count"] += 1
+        mem_by_step[w0][k]["ms"] += e.get("dur", 0) / 1000
         by_step[w0].append({"name": e["name"], "dur_us": e.get("dur", 0), "ts": e["ts"],
                              "stream": (e.get("args") or {}).get("stream"),
                              "phase": "memcpy", "micro": "", "step": w0, "marker": "rf_memcpy", "corr": None})
@@ -168,7 +170,7 @@ def main():
                     "busy_pct": round(union / 1000 / wall * 100, 1),
                     "cpu_launches_in_window": launches,
                     "sync_calls_in_window": syncs,
-                    "memcpy_events_in_window": {k: v for k, v in mem_by.items()},
+                    "memcpy_events_per_step": {k: dict(v) for k, v in mem_by_step[s].items()},
                     "kernels": len(by_step.get(s, [])),
                     "drain_into_next_step_ms": round(drain_overlap.get(s, 0) / 1000, 1)}
     # GEMM FLOPs from measured per-shape calls (same seed window as r28)
@@ -210,7 +212,12 @@ def main():
                 "note": "DERIVED logical operand bytes (fwd+dX+dW); HBM counters not available on this stack - missing item documented"}
     except FileNotFoundError:
         gemm_eff = {"error": "shapes file missing"}; hbm = {}
+    # conservation assertion: per-step memcpy counts sum == total memcpy events
+    mem_sum = sum(v["count"] for s in mem_by_step.values() for v in s.values())
+    assert mem_sum == mem_events_total, f"memcpy conservation broken: {mem_sum} vs {mem_events_total}"
     out = {"trace": a.trace, "kernels_total": len(kern_rows),
+            "memcpy_total_events": mem_events_total,
+            "memcpy_per_step_conservation_asserted": True,
             "attributed_to_phase_pct": round(attributed / max(1, len(kern_rows)) * 100, 1),
             "inventory_3steps": inventory, "inventory_per_step": inventory_per_step,
             "critical_path_per_step": crit,

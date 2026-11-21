@@ -2,7 +2,7 @@
 Fresh model + fresh loader (same seed 42 => identical sample window as the
 trace), skip 2, measure steps 2-4; per-step batch length summaries recorded
 and asserted equal between passes."""
-import argparse, json, statistics, time
+import argparse, hashlib, json, statistics, time
 import torch
 
 def main():
@@ -41,6 +41,7 @@ def main():
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
     def run_step(i):
+        nonlocal loader_idx
         t0 = time.perf_counter()
         optimizer.zero_grad(set_to_none=True)
         step_batches = []
@@ -58,12 +59,17 @@ def main():
         for batch in step_batches:   # tokenization OUTSIDE timing
             g = {}
             for k in sorted(batch.keys()):
+                texts = "|".join(batch[k])
+                text_hash = hashlib.sha256(texts.encode()).hexdigest()[:16]
                 enc = tok(batch[k], padding=True, truncation=True,
                           max_length=int(cfg.model.get("max_length", 8192)), return_tensors=None)
                 mask = enc["attention_mask"]
-                g[k] = {"max_len": max(len(m) for m in mask),
+                g[k] = {"loader_index": loader_idx,
+                         "text_hash16": text_hash,
+                         "max_len": max(len(m) for m in mask),
                          "valid_tokens": sum(sum(1 for x in m if x == 1) for m in mask),
                          "padded_positions": sum(len(m) for m in mask)}
+                loader_idx += 1
             lens.append({"groups": g,
                           "valid_tokens": sum(x["valid_tokens"] for x in g.values()),
                           "padded_positions": sum(x["padded_positions"] for x in g.values())})
@@ -71,6 +77,7 @@ def main():
 
     timings = []
     summaries = []
+    loader_idx = 0
     for i in range(a.skip + a.steps):
         ms, lens = run_step(i)
         if i >= a.skip:
@@ -78,7 +85,7 @@ def main():
     # strict pairing assertions vs the trace-pass summary (token_stats_r25.json,
     # same seed window): per-micro valid/padded tokens must match exactly
     import os
-    ref_path = "/tmp/opencode/zw810e-problem29/results/training_trace_r35_meta.json"
+    ref_path = "/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json"
     pairing = {"reference": ref_path, "asserted": False}
     try:
         ref = json.load(open(ref_path))
@@ -89,10 +96,15 @@ def main():
             micros = summaries[j]["batch_lens"]   # list of per-micro dicts
             ref_micros = ref_steps[f"step_{a.skip + j}"]
             for mi, (mm, rm) in enumerate(zip(micros, ref_micros)):
+                if set(mm["groups"].keys()) != set(rm.keys()):
+                    mismatches.append(f"step{j} micro{mi}: group KEY SET differs")
+                    continue
                 for g in sorted(rm.keys()):
-                    if mm["groups"][g]["padded_positions"] != rm[g]["padded_positions"] or \
-                       mm["groups"][g]["valid_tokens"] != rm[g]["valid_tokens"]:
-                        mismatches.append(f"step{j} micro{mi} {g}: mine={mm['groups'][g]} ref={rm[g]}")
+                    mine_g, ref_g = mm["groups"][g], rm[g]
+                    if mine_g.get("text_hash16") != ref_g.get("text_hash16") or \
+                       mine_g["padded_positions"] != ref_g["padded_positions"] or \
+                       mine_g["valid_tokens"] != ref_g["valid_tokens"]:
+                        mismatches.append(f"step{j} micro{mi} {g}: hash/tokens differ mine={mine_g} ref={ref_g}")
         pairing = {"reference": ref_path, "micros_compared": n_cmp * accum,
                     "mismatches": mismatches[:8], "asserted": len(mismatches) == 0}
     except FileNotFoundError:

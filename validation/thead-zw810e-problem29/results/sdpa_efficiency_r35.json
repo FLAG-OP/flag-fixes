@@ -1,16 +1,31 @@
 {
  "H": 16,
  "D": 64,
- "formula": "fwd TFLOP = 4*B*H*S^2*D / 1e12 (QK^T + PV); bwd = 6*B*H*S^2*D / 1e12 (dQ,dK,dV); S = padded max_len (mask positions included in computation)",
+ "formula": "fwd TFLOP = 4*B*H*S^2*D / 1e12 (QK^T + PV); bwd = 6*B*H*S^2*D / 1e12 (dQ,dK,dV); S = padded max_len",
+ "units": "FLOPs computed PER STEP from r35 fingerprints then averaged over steps; device ms are per-step-normalized trace analysis - SAME units (review 8190910 item 1 correction)",
  "dropout": {
   "config_hidden_dropout_prob": 0.1,
-  "sdpa_internal_dropout_flag": "UNKNOWN (not visible in kernel names)",
-  "module_level_dropout_active": true
+  "module_level_dropout_active": true,
+  "sdpa_internal_dropout_flag": "UNKNOWN (not visible in kernel names)"
  },
- "recompute_in_backward": "UNKNOWN (no counter; bwd flops formula covers dQ/dK/dV grad GEMMs only)",
+ "recompute_in_backward": "UNKNOWN (no counter; formula covers dQ/dK/dV grads only)",
+ "per_step_tflop": {
+  "step_2": {
+   "forward": 0.0846,
+   "backward": 0.1269
+  },
+  "step_3": {
+   "forward": 0.103,
+   "backward": 0.1544
+  },
+  "step_4": {
+   "forward": 0.1288,
+   "backward": 0.1931
+  }
+ },
  "per_group_rows": [
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 0,
    "group": "anchor",
    "B": 10,
@@ -22,7 +37,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 0,
    "group": "negative_1",
    "B": 10,
@@ -34,7 +49,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 0,
    "group": "negative_2",
    "B": 10,
@@ -46,7 +61,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 0,
    "group": "negative_3",
    "B": 10,
@@ -58,7 +73,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 0,
    "group": "positive",
    "B": 10,
@@ -70,7 +85,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 1,
    "group": "anchor",
    "B": 10,
@@ -82,7 +97,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 1,
    "group": "negative_1",
    "B": 10,
@@ -94,7 +109,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 1,
    "group": "negative_2",
    "B": 10,
@@ -106,7 +121,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 1,
    "group": "negative_3",
    "B": 10,
@@ -118,7 +133,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 1,
    "group": "positive",
    "B": 10,
@@ -130,7 +145,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 2,
    "group": "anchor",
    "B": 10,
@@ -142,7 +157,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 2,
    "group": "negative_1",
    "B": 10,
@@ -154,7 +169,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 2,
    "group": "negative_2",
    "B": 10,
@@ -166,7 +181,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 2,
    "group": "negative_3",
    "B": 10,
@@ -178,7 +193,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 2,
    "group": "positive",
    "B": 10,
@@ -190,7 +205,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 3,
    "group": "anchor",
    "B": 10,
@@ -202,7 +217,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 3,
    "group": "negative_1",
    "B": 10,
@@ -214,7 +229,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 3,
    "group": "negative_2",
    "B": 10,
@@ -226,7 +241,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 3,
    "group": "negative_3",
    "B": 10,
@@ -238,7 +253,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_0",
+   "step": "step_2",
    "micro": 3,
    "group": "positive",
    "B": 10,
@@ -250,7 +265,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 0,
    "group": "anchor",
    "B": 10,
@@ -262,7 +277,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 0,
    "group": "negative_1",
    "B": 10,
@@ -274,7 +289,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 0,
    "group": "negative_2",
    "B": 10,
@@ -286,7 +301,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 0,
    "group": "negative_3",
    "B": 10,
@@ -298,7 +313,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 0,
    "group": "positive",
    "B": 10,
@@ -310,7 +325,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 1,
    "group": "anchor",
    "B": 10,
@@ -322,7 +337,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 1,
    "group": "negative_1",
    "B": 10,
@@ -334,7 +349,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 1,
    "group": "negative_2",
    "B": 10,
@@ -346,7 +361,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 1,
    "group": "negative_3",
    "B": 10,
@@ -358,7 +373,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 1,
    "group": "positive",
    "B": 10,
@@ -370,7 +385,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 2,
    "group": "anchor",
    "B": 10,
@@ -382,7 +397,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 2,
    "group": "negative_1",
    "B": 10,
@@ -394,7 +409,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 2,
    "group": "negative_2",
    "B": 10,
@@ -406,7 +421,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 2,
    "group": "negative_3",
    "B": 10,
@@ -418,7 +433,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 2,
    "group": "positive",
    "B": 10,
@@ -430,7 +445,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 3,
    "group": "anchor",
    "B": 10,
@@ -442,7 +457,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 3,
    "group": "negative_1",
    "B": 10,
@@ -454,7 +469,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 3,
    "group": "negative_2",
    "B": 10,
@@ -466,7 +481,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 3,
    "group": "negative_3",
    "B": 10,
@@ -478,7 +493,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_1",
+   "step": "step_3",
    "micro": 3,
    "group": "positive",
    "B": 10,
@@ -490,7 +505,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 0,
    "group": "anchor",
    "B": 10,
@@ -502,7 +517,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 0,
    "group": "negative_1",
    "B": 10,
@@ -514,7 +529,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 0,
    "group": "negative_2",
    "B": 10,
@@ -526,7 +541,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 0,
    "group": "negative_3",
    "B": 10,
@@ -538,7 +553,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 0,
    "group": "positive",
    "B": 10,
@@ -550,7 +565,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 1,
    "group": "anchor",
    "B": 10,
@@ -562,7 +577,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 1,
    "group": "negative_1",
    "B": 10,
@@ -574,7 +589,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 1,
    "group": "negative_2",
    "B": 10,
@@ -586,7 +601,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 1,
    "group": "negative_3",
    "B": 10,
@@ -598,7 +613,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 1,
    "group": "positive",
    "B": 10,
@@ -610,7 +625,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 2,
    "group": "anchor",
    "B": 10,
@@ -622,7 +637,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 2,
    "group": "negative_1",
    "B": 10,
@@ -634,7 +649,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 2,
    "group": "negative_2",
    "B": 10,
@@ -646,7 +661,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 2,
    "group": "negative_3",
    "B": 10,
@@ -658,7 +673,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 2,
    "group": "positive",
    "B": 10,
@@ -670,7 +685,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 3,
    "group": "anchor",
    "B": 10,
@@ -682,7 +697,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 3,
    "group": "negative_1",
    "B": 10,
@@ -694,7 +709,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 3,
    "group": "negative_2",
    "B": 10,
@@ -706,7 +721,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 3,
    "group": "negative_3",
    "B": 10,
@@ -718,7 +733,7 @@
    "note": "padded S (mask positions computed)"
   },
   {
-   "step": "capture_step_2",
+   "step": "step_4",
    "micro": 3,
    "group": "positive",
    "B": 10,
@@ -730,17 +745,16 @@
    "note": "padded S (mask positions computed)"
   }
  ],
- "totals_tflop_per_step": {
-  "forward_tflop": 0.316,
-  "backward_tflop": 0.474
+ "sdpa_kernels_per_step": {
+  "forward": 480.0,
+  "backward": 1440.0
  },
  "sdpa_device_ms_per_step": {
-  "forward": 204.72,
-  "backward": 375.47
+  "forward": 204.69,
+  "backward": 375.44
  },
  "tflops": {
-  "forward": 1.55,
-  "backward": 1.26
- },
- "units_note": "tflops = totals_tflop_per_step / (ms/1000); previous 0.0 was double-scaling bug"
+  "forward": 0.52,
+  "backward": 0.42
+ }
 }

@@ -1,5 +1,5 @@
 {
- "window": "trace training_trace_r35_trace.json.gz, seed 42, batch 10, accum 4, native/stock bf16",
+ "window": "trace training_trace_r36_trace.json.gz, seed 42, batch 10, accum 4, native/stock bf16",
  "config": {
   "batch_rows": 10,
   "accum": 4,
@@ -10,235 +10,262 @@
   },
   "seed": 42
  },
- "trace": "training_trace_r35_trace.json.gz",
+ "trace": "training_trace_r36_trace.json.gz",
  "rows": [
   {
-   "stage": "GEMM ffn_up mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_down dW bwd",
+   "MKN": [
+    1024,
+    4096,
+    4096
+   ],
    "calls": 96,
-   "ms": 46.71,
-   "flops_tflop": null,
+   "ms": 46.69,
+   "flops_tflop": 4.123,
    "tflops": 88.3,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_up dW bwd",
+   "MKN": [
+    4096,
+    1024,
+    1024
+   ],
    "calls": 96,
-   "ms": 46.68,
-   "flops_tflop": null,
+   "ms": 46.67,
+   "flops_tflop": 4.121,
    "tflops": 88.3,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_up dX bwd",
+   "MKN": [
+    5120,
+    1024,
+    4096
+   ],
    "calls": 96,
    "ms": 34.56,
-   "flops_tflop": null,
+   "flops_tflop": 4.123,
    "tflops": 119.3,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     5120,
     1024,
     4096
    ],
    "calls": 96,
-   "ms": 34.33,
+   "ms": 34.3,
    "flops_tflop": 4.123,
-   "tflops": 120.1,
+   "tflops": 120.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     5120,
     4096,
     1024
    ],
    "calls": 96,
-   "ms": 32.76,
+   "ms": 32.86,
    "flops_tflop": 4.123,
-   "tflops": 125.9,
+   "tflops": 125.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_down dX bwd",
+   "MKN": [
+    5120,
+    4096,
+    1024
+   ],
    "calls": 96,
-   "ms": 31.88,
-   "flops_tflop": null,
-   "tflops": 129.3,
+   "ms": 31.87,
+   "flops_tflop": 4.124,
+   "tflops": 129.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv mm bwd",
+   "stage": "GEMM attn_qkv dW bwd",
    "MKN": [
-    [
-     1024,
-     5120
-    ],
-    [
-     5120,
-     1024
-    ]
+    1024,
+    1024,
+    1024
    ],
    "calls": 288,
-   "ms": 31.8,
-   "flops_tflop": null,
-   "tflops": 97.2,
+   "ms": 31.72,
+   "flops_tflop": 3.093,
+   "tflops": 97.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
   {
-   "stage": "GEMM attn_qkv mm bwd",
+   "stage": "GEMM attn_qkv dX bwd",
    "MKN": [
-    [
-     5120,
-     1024
-    ],
-    [
-     1024,
-     1024
-    ]
+    5120,
+    1024,
+    1024
    ],
    "calls": 288,
-   "ms": 28.31,
-   "flops_tflop": null,
+   "ms": 28.32,
+   "flops_tflop": 3.093,
    "tflops": 109.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     5120,
     1024,
     1024
    ],
    "calls": 288,
-   "ms": 28.29,
+   "ms": 28.23,
    "flops_tflop": 3.092,
-   "tflops": 109.3,
+   "tflops": 109.6,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out mm bwd",
+   "stage": "GEMM attn_out dW bwd",
    "MKN": [
-    [
-     1024,
-     5120
-    ],
-    [
-     5120,
-     1024
-    ]
+    1024,
+    1024,
+    1024
    ],
    "calls": 96,
-   "ms": 10.59,
-   "flops_tflop": null,
+   "ms": 10.58,
+   "flops_tflop": 1.03,
    "tflops": 97.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
   {
-   "stage": "GEMM ffn_up mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_up dW bwd",
+   "MKN": [
+    4096,
+    1024,
+    1024
+   ],
    "calls": 24,
    "ms": 10.29,
-   "flops_tflop": null,
+   "flops_tflop": 0.892,
    "tflops": 86.7,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_down dW bwd",
+   "MKN": [
+    1024,
+    4096,
+    4096
+   ],
    "calls": 24,
-   "ms": 10.27,
-   "flops_tflop": null,
-   "tflops": 86.8,
+   "ms": 10.25,
+   "flops_tflop": 0.892,
+   "tflops": 87.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up mm bwd",
-   "MKN": "",
+   "stage": "GEMM ffn_up dW bwd",
+   "MKN": [
+    4096,
+    1024,
+    1024
+   ],
    "calls": 96,
-   "ms": 10.12,
-   "flops_tflop": null,
-   "tflops": 88.1,
+   "ms": 10.16,
+   "flops_tflop": 0.892,
+   "tflops": 87.8,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     5120,
     1024,
     1024
    ],
    "calls": 96,
-   "ms": 9.26,
+   "ms": 9.25,
    "flops_tflop": 1.031,
-   "tflops": 111.3,
+   "tflops": 111.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
-   "MKN": [
-    4430,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 7.28,
-   "flops_tflop": 0.892,
-   "tflops": 122.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     4430,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 7.25,
+   "ms": 7.24,
    "flops_tflop": 0.892,
-   "tflops": 123.1,
+   "tflops": 123.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    4430,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 7.23,
+   "flops_tflop": 0.892,
+   "tflops": 123.3,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     4310,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 7.16,
+   "ms": 7.17,
    "flops_tflop": 0.868,
-   "tflops": 121.2,
+   "tflops": 121.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "calls": 144,
+   "ms": 6.92,
+   "flops_tflop": 0.048,
+   "tflops": 7.0,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     4310,
     4096,
@@ -247,180 +274,166 @@
    "calls": 24,
    "ms": 6.85,
    "flops_tflop": 0.868,
-   "tflops": 126.8,
+   "tflops": 126.7,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
-    160,
+    3740,
     1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 6.47,
+   "flops_tflop": 0.753,
+   "tflops": 116.4,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    3740,
+    4096,
     1024
    ],
-   "calls": 144,
-   "ms": 6.66,
-   "flops_tflop": 0.048,
-   "tflops": 7.3,
+   "calls": 24,
+   "ms": 6.29,
+   "flops_tflop": 0.753,
+   "tflops": 119.7,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     4430,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 6.46,
-   "flops_tflop": 0.669,
-   "tflops": 103.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_up addmm fwd",
-   "MKN": [
-    3740,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 6.44,
-   "flops_tflop": 0.753,
-   "tflops": 116.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_down addmm fwd",
-   "MKN": [
-    3740,
-    4096,
-    1024
-   ],
-   "calls": 24,
    "ms": 6.28,
-   "flops_tflop": 0.753,
-   "tflops": 120.0,
+   "flops_tflop": 0.669,
+   "tflops": 106.6,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
-   "MKN": [
-    1740,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.89,
-   "flops_tflop": 0.263,
-   "tflops": 44.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     4310,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 5.88,
+   "ms": 5.87,
    "flops_tflop": 0.651,
-   "tflops": 110.6,
+   "tflops": 110.9,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     1670,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 5.8,
+   "ms": 5.79,
    "flops_tflop": 0.252,
    "tflops": 43.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.76,
+   "flops_tflop": 0.263,
+   "tflops": 45.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     1910,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 5.79,
+   "ms": 5.63,
    "flops_tflop": 0.288,
-   "tflops": 49.8,
+   "tflops": 51.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
-   "MKN": [
-    2140,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.73,
-   "flops_tflop": 0.323,
-   "tflops": 56.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     3290,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 5.65,
+   "ms": 5.62,
    "flops_tflop": 0.662,
-   "tflops": 117.2,
+   "tflops": 118.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     3290,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 5.62,
+   "ms": 5.56,
    "flops_tflop": 0.662,
-   "tflops": 117.9,
+   "tflops": 119.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     3740,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 5.45,
+   "ms": 5.53,
    "flops_tflop": 0.565,
-   "tflops": 103.6,
+   "tflops": 102.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.48,
+   "flops_tflop": 0.323,
+   "tflops": 59.0,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     2490,
     1024,
@@ -431,136 +444,122 @@
    "flops_tflop": 0.501,
    "tflops": 94.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2990,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 5.26,
+   "flops_tflop": 0.602,
+   "tflops": 114.5,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     2230,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 5.31,
+   "ms": 5.25,
    "flops_tflop": 0.337,
-   "tflops": 63.4,
+   "tflops": 64.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.21,
+   "flops_tflop": 0.317,
+   "tflops": 60.8,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     2490,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 5.27,
+   "ms": 5.19,
    "flops_tflop": 0.376,
-   "tflops": 71.4,
+   "tflops": 72.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
-   "MKN": [
-    2100,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.25,
-   "flops_tflop": 0.317,
-   "tflops": 60.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_up addmm fwd",
-   "MKN": [
-    2990,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 5.24,
-   "flops_tflop": 0.602,
-   "tflops": 115.0,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     2990,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 5.01,
+   "ms": 5.04,
    "flops_tflop": 0.602,
-   "tflops": 120.2,
+   "tflops": 119.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
-   "MKN": [
-    2990,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 4.99,
-   "flops_tflop": 0.451,
-   "tflops": 90.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_up addmm fwd",
-   "MKN": [
-    2230,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 4.88,
-   "flops_tflop": 0.449,
-   "tflops": 91.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     3290,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 4.87,
+   "ms": 4.9,
    "flops_tflop": 0.497,
-   "tflops": 102.1,
+   "tflops": 101.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2230,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 4.9,
+   "flops_tflop": 0.449,
+   "tflops": 91.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     2100,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 4.72,
+   "ms": 4.69,
    "flops_tflop": 0.423,
-   "tflops": 89.5,
+   "tflops": 90.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     2140,
     1024,
@@ -569,96 +568,96 @@
    "calls": 24,
    "ms": 4.64,
    "flops_tflop": 0.431,
-   "tflops": 92.9,
+   "tflops": 92.8,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2990,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 4.52,
+   "flops_tflop": 0.451,
+   "tflops": 99.9,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     1910,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 4.34,
+   "ms": 4.35,
    "flops_tflop": 0.385,
-   "tflops": 88.7,
+   "tflops": 88.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     1740,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 4.19,
+   "ms": 4.15,
    "flops_tflop": 0.35,
-   "tflops": 83.6,
+   "tflops": 84.3,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     1670,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 4.11,
+   "ms": 4.08,
    "flops_tflop": 0.336,
-   "tflops": 81.9,
+   "tflops": 82.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
-   "MKN": [
-    1910,
-    4096,
-    1024
-   ],
-   "calls": 24,
-   "ms": 4.07,
-   "flops_tflop": 0.385,
-   "tflops": 94.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     1670,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 3.99,
+   "ms": 4.0,
    "flops_tflop": 0.336,
-   "tflops": 84.3,
+   "tflops": 84.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
-    2100,
+    1910,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 3.99,
-   "flops_tflop": 0.423,
-   "tflops": 106.0,
+   "ms": 4.0,
+   "flops_tflop": 0.385,
+   "tflops": 96.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     2490,
     4096,
@@ -669,10 +668,24 @@
    "flops_tflop": 0.501,
    "tflops": 125.9,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    2230,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 3.98,
+   "flops_tflop": 0.449,
+   "tflops": 112.9,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     2140,
     4096,
@@ -681,26 +694,26 @@
    "calls": 24,
    "ms": 3.97,
    "flops_tflop": 0.431,
-   "tflops": 108.5,
+   "tflops": 108.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
-    2230,
+    2100,
     4096,
     1024
    ],
    "calls": 24,
    "ms": 3.97,
-   "flops_tflop": 0.449,
-   "tflops": 113.0,
+   "flops_tflop": 0.423,
+   "tflops": 106.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     1740,
     4096,
@@ -709,152 +722,152 @@
    "calls": 24,
    "ms": 3.96,
    "flops_tflop": 0.35,
-   "tflops": 88.5,
+   "tflops": 88.4,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
-   "MKN": [
-    180,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 3.56,
-   "flops_tflop": 0.027,
-   "tflops": 7.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     160,
     4096,
     1024
    ],
    "calls": 48,
-   "ms": 3.45,
+   "ms": 3.44,
    "flops_tflop": 0.064,
    "tflops": 18.7,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
    "MKN": [
     140,
     1024,
     1024
    ],
    "calls": 72,
-   "ms": 3.23,
+   "ms": 3.41,
    "flops_tflop": 0.021,
-   "tflops": 6.5,
+   "tflops": 6.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    180,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 3.31,
+   "flops_tflop": 0.027,
+   "tflops": 8.2,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     160,
     1024,
     4096
    ],
    "calls": 48,
-   "ms": 2.78,
+   "ms": 2.93,
    "flops_tflop": 0.064,
-   "tflops": 23.1,
+   "tflops": 22.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     160,
     1024,
     1024
    ],
    "calls": 48,
-   "ms": 2.41,
+   "ms": 2.63,
    "flops_tflop": 0.016,
-   "tflops": 6.7,
+   "tflops": 6.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     4430,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 2.03,
+   "ms": 2.0,
    "flops_tflop": 0.223,
-   "tflops": 110.0,
+   "tflops": 111.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     4310,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.91,
+   "ms": 1.92,
    "flops_tflop": 0.217,
-   "tflops": 113.7,
+   "tflops": 113.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     180,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 1.86,
+   "ms": 1.79,
    "flops_tflop": 0.036,
-   "tflops": 19.5,
+   "tflops": 20.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     3740,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.76,
+   "ms": 1.78,
    "flops_tflop": 0.188,
-   "tflops": 106.9,
+   "tflops": 106.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down addmm fwd",
+   "stage": "GEMM ffn_down fwd",
    "MKN": [
     140,
     4096,
     1024
    ],
    "calls": 24,
-   "ms": 1.72,
+   "ms": 1.74,
    "flops_tflop": 0.028,
-   "tflops": 16.4,
+   "tflops": 16.2,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     3290,
     1024,
@@ -863,40 +876,54 @@
    "calls": 24,
    "ms": 1.58,
    "flops_tflop": 0.166,
-   "tflops": 105.1,
+   "tflops": 104.6,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 1.53,
+   "flops_tflop": 0.028,
+   "tflops": 18.4,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_out fwd",
+   "MKN": [
+    140,
+    1024,
+    1024
+   ],
+   "calls": 24,
+   "ms": 1.52,
+   "flops_tflop": 0.007,
+   "tflops": 4.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
    "MKN": [
     180,
     1024,
     4096
    ],
    "calls": 24,
-   "ms": 1.55,
+   "ms": 1.42,
    "flops_tflop": 0.036,
-   "tflops": 23.4,
+   "tflops": 25.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
-   "MKN": [
-    180,
-    1024,
-    1024
-   ],
-   "calls": 24,
-   "ms": 1.53,
-   "flops_tflop": 0.009,
-   "tflops": 5.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     2990,
     1024,
@@ -905,82 +932,82 @@
    "calls": 24,
    "ms": 1.4,
    "flops_tflop": 0.15,
-   "tflops": 107.4,
+   "tflops": 107.8,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
-    140,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 1.38,
-   "flops_tflop": 0.028,
-   "tflops": 20.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM attn_out addmm fwd",
-   "MKN": [
-    140,
+    180,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.27,
-   "flops_tflop": 0.007,
-   "tflops": 5.6,
+   "ms": 1.3,
+   "flops_tflop": 0.009,
+   "tflops": 6.9,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     1670,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.21,
+   "ms": 1.22,
    "flops_tflop": 0.084,
-   "tflops": 69.4,
+   "tflops": 69.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
-    1910,
+    1740,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.2,
-   "flops_tflop": 0.096,
-   "tflops": 79.9,
+   "ms": 1.21,
+   "flops_tflop": 0.088,
+   "tflops": 72.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     2490,
     1024,
     1024
    ],
    "calls": 24,
-   "ms": 1.2,
+   "ms": 1.19,
    "flops_tflop": 0.125,
-   "tflops": 104.8,
+   "tflops": 104.9,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "calls": 24,
+   "ms": 1.19,
+   "flops_tflop": 0.106,
+   "tflops": 88.9,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     2230,
     1024,
@@ -991,10 +1018,10 @@
    "flops_tflop": 0.112,
    "tflops": 94.5,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
     2140,
     1024,
@@ -1005,138 +1032,126 @@
    "flops_tflop": 0.108,
    "tflops": 91.0,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_out addmm fwd",
+   "stage": "GEMM attn_out fwd",
    "MKN": [
-    2100,
-    1024,
-    1024
-   ],
-   "calls": 24,
-   "ms": 1.18,
-   "flops_tflop": 0.106,
-   "tflops": 89.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
-  },
-  {
-   "stage": "GEMM attn_out addmm fwd",
-   "MKN": [
-    1740,
+    1910,
     1024,
     1024
    ],
    "calls": 24,
    "ms": 1.17,
-   "flops_tflop": 0.088,
-   "tflops": 74.6,
+   "flops_tflop": 0.096,
+   "tflops": 82.1,
    "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r35.json same-window"
+   "source": "kernel_efficiency_r36.json"
   },
   {
    "stage": "SDPA attention fwd",
+   "MKN": null,
    "calls": 480,
-   "ms": 204.72,
-   "flops_tflop": 0.316,
-   "tflops": 1.55,
+   "ms": 204.69,
+   "flops_tflop": 0.105,
+   "tflops": 0.52,
    "hbm": "ESTIMATE",
-   "source": "sdpa_efficiency_r35.json (fwd=4BH S^2 D)"
+   "source": "sdpa_efficiency_r35.json"
   },
   {
    "stage": "SDPA attention bwd",
+   "MKN": null,
    "calls": 1440,
-   "ms": 375.47,
-   "flops_tflop": 0.474,
-   "tflops": 1.26,
+   "ms": 375.44,
+   "flops_tflop": 0.158,
+   "tflops": 0.42,
    "hbm": "ESTIMATE",
-   "source": "sdpa_efficiency_r35.json (bwd=6BH S^2 D)"
+   "source": "sdpa_efficiency_r35.json"
   }
  ],
  "critical_path_per_step": {
   "s2": {
-   "window_ms": 2103.0,
-   "device_busy_union_ms": 1806.2,
+   "window_ms": 2044.1,
+   "device_busy_union_ms": 1806.9,
    "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
-   "exposed_idle_ms": 296.8,
-   "busy_pct": 85.9,
+   "exposed_idle_ms": 237.2,
+   "busy_pct": 88.4,
    "cpu_launches_in_window": 72127,
    "sync_calls_in_window": 60,
-   "memcpy_events_in_window": {
-    "DtoD": {
-     "count": 60,
-     "ms": 0.226
-    },
-    "memset": {
-     "count": 7842,
-     "ms": 1.9185289999999546
-    },
+   "memcpy_events_per_step": {
     "HtoD": {
-     "count": 120,
-     "ms": 0.2652409999999999
+     "count": 40,
+     "ms": 0.08388000000000001
     },
     "DtoH": {
-     "count": 60,
-     "ms": 0.034920999999999994
+     "count": 20,
+     "ms": 0.013401000000000001
+    },
+    "DtoD": {
+     "count": 20,
+     "ms": 0.06612000000000001
+    },
+    "memset": {
+     "count": 2544,
+     "ms": 0.6296040000000207
     }
    },
    "kernels": 46370,
-   "drain_into_next_step_ms": 9.1
+   "drain_into_next_step_ms": 9.6
   },
   "s3": {
-   "window_ms": 2284.2,
-   "device_busy_union_ms": 2033.6,
+   "window_ms": 2253.1,
+   "device_busy_union_ms": 2035.3,
    "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
-   "exposed_idle_ms": 250.6,
-   "busy_pct": 89.0,
+   "exposed_idle_ms": 217.8,
+   "busy_pct": 90.3,
    "cpu_launches_in_window": 72391,
    "sync_calls_in_window": 60,
-   "memcpy_events_in_window": {
-    "DtoD": {
-     "count": 60,
-     "ms": 0.226
+   "memcpy_events_per_step": {
+    "DtoH": {
+     "count": 20,
+     "ms": 0.01196
     },
-    "memset": {
-     "count": 7842,
-     "ms": 1.9185289999999546
+    "DtoD": {
+     "count": 20,
+     "ms": 0.074121
     },
     "HtoD": {
-     "count": 120,
-     "ms": 0.2652409999999999
+     "count": 40,
+     "ms": 0.08784
     },
-    "DtoH": {
-     "count": 60,
-     "ms": 0.034920999999999994
+    "memset": {
+     "count": 2574,
+     "ms": 0.6099660000000149
     }
    },
    "kernels": 46409,
-   "drain_into_next_step_ms": 9.0
+   "drain_into_next_step_ms": 9.2
   },
   "s4": {
-   "window_ms": 2546.7,
-   "device_busy_union_ms": 2262.3,
+   "window_ms": 2473.7,
+   "device_busy_union_ms": 2262.5,
    "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
-   "exposed_idle_ms": 284.4,
-   "busy_pct": 88.8,
+   "exposed_idle_ms": 211.2,
+   "busy_pct": 91.5,
    "cpu_launches_in_window": 72824,
    "sync_calls_in_window": 61,
-   "memcpy_events_in_window": {
+   "memcpy_events_per_step": {
     "DtoD": {
-     "count": 60,
-     "ms": 0.226
+     "count": 20,
+     "ms": 0.0862
     },
     "memset": {
-     "count": 7842,
-     "ms": 1.9185289999999546
+     "count": 2724,
+     "ms": 0.722324000000008
     },
     "HtoD": {
-     "count": 120,
-     "ms": 0.2652409999999999
+     "count": 40,
+     "ms": 0.09259999999999999
     },
     "DtoH": {
-     "count": 60,
-     "ms": 0.034920999999999994
+     "count": 20,
+     "ms": 0.012079999999999999
     }
    },
    "kernels": 46796,
@@ -1146,21 +1161,21 @@
  "overhead": {
   "strict_paired": true,
   "pairing_asserted": {
-   "reference": "/tmp/opencode/zw810e-problem29/results/training_trace_r35_meta.json",
+   "reference": "/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json",
    "micros_compared": 12,
    "mismatches": [],
    "asserted": true
   },
-  "noprofiler_median_ms": 2117.6,
+  "noprofiler_median_ms": 2112.0,
   "p95_label": "sample max (only 3 runs)",
-  "p95_ms": 2341.6,
+  "p95_ms": 2335.6,
   "valid_tokens_per_s": [
-   14390.0,
-   14853.0,
-   15163.0
+   14415.0,
+   14893.0,
+   15202.0
   ],
-  "profiled_median_ms": 2296.0,
-  "overhead_pct": 8.4
+  "profiled_median_ms": 2264.9,
+  "overhead_pct": 7.2
  },
- "hbm_status": "BLOCKED: PCM held by pg-exporter (dmesg); retest cmd: acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count N <cmd>"
+ "hbm_status": "BLOCKED: PCM held by pg-exporter (dmesg); retest: acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count N <cmd>"
 }
