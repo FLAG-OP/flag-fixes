@@ -19,8 +19,18 @@ mean_b = sum(v["backward"] for v in per_step.values()) / len(per_step)
 tf_f = sd["tflops"]["forward"]; tf_b = sd["tflops"]["backward"]
 check("SDPA tflops recomputed from per-step means", abs(tf_f - mean_f/(sd["sdpa_device_ms_per_step"]["forward"]*1e-3)) < 0.05
       and abs(tf_b - mean_b/(sd["sdpa_device_ms_per_step"]["backward"]*1e-3)) < 0.05)
-check("SDPA per-step FLOPs are per-step (not 3-step sums)",
-      max(v["forward"] for v in per_step.values()) < 0.3)
+# review cf0cc15 item 1: reconcile against FULL layer count (24 layers x
+# 4 micros x 5 groups = 480 fwd calls; fwd=4BH S^2 D, bwd=8BH S^2 D per layer)
+lay = sd.get("layers", 24)
+mgrps = sum(r["B"] * 0 + 1 for r in sd["per_group_rows"])  # group rows
+groups_per_step = len(sd["per_group_rows"]) / len(per_step)
+expect_f = sum(4 * r["B"] * r["H"] * r["S"] * r["S"] * r["D"] * lay for r in sd["per_group_rows"]) / len(per_step) / 1e12
+expect_b = sum(8 * r["B"] * r["H"] * r["S"] * r["S"] * r["D"] * lay for r in sd["per_group_rows"]) / len(per_step) / 1e12
+check("SDPA per-step FLOPs reconcile with 24-layer formula",
+      abs(mean_f - expect_f) < 0.01 and abs(mean_b - expect_b) < 0.01,
+      f"fwd {mean_f:.3f} vs {expect_f:.3f}; bwd {mean_b:.3f} vs {expect_b:.3f}")
+check("SDPA per-step FLOPs scale with groups (0.3-4 TFLOP range)",
+      0.3 < mean_f < 4.0 and 0.5 < mean_b < 8.0)
 # group-row totals == step totals
 rows_f = sum(r["fwd_tflop"] for r in sd["per_group_rows"])
 steps_f = sum(v["forward"] for v in per_step.values())
@@ -66,6 +76,13 @@ for r in ke["rows"]:
     if r.get("tflops") is not None and r["tflops"] > 139.2:
         over.append(f"ke:{r['module_class']}/{r['phase']}={r['tflops']}")
 check("kernel_efficiency rows <= 139.2 TFLOP/s", not (len(over) > 0 and any(o.startswith('ke:') for o in over)), "; ".join(o for o in over if o.startswith('ke:')))
+
+# --- backward GEMM flops non-null (cf0cc15 item 2) ---
+ke_bwd = [r for r in ke["rows"] if r["phase"] == "backward" and r["device_ms"] > 8]
+ke_bwd_missing = [f"{r['module_class']}/{r['calls_per_step']}" for r in ke_bwd if r.get("flops_tflop") is None]
+check("backward GEMM rows have flops_tflop", not ke_bwd_missing, f"missing: {ke_bwd_missing}")
+ft_bwd_empty = [r["stage"] for r in ft["rows"] if "bwd" in r.get("stage", "") and r.get("flops_tflop") is None]
+check("final_table backward rows have flops_tflop", not ft_bwd_empty, f"empty: {ft_bwd_empty}")
 
 # --- pairing asserted ---
 sw = json.load(open("results/samewindow_noprofiler_r36.json"))

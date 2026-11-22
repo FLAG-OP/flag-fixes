@@ -209,10 +209,10 @@
  "critical_path_per_step": {
   "s2": {
    "window_ms": 2044.1,
-   "device_busy_union_ms": 1806.9,
-   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
-   "exposed_idle_ms": 237.2,
-   "busy_pct": 88.4,
+   "device_busy_union_ms": 1797.3,
+   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals CLIPPED to step window; busy = >=1 device activity in window",
+   "exposed_idle_ms": 246.7,
+   "busy_pct": 87.9,
    "cpu_launches_in_window": 72127,
    "sync_calls_in_window": 60,
    "memcpy_events_per_step": {
@@ -234,14 +234,16 @@
     }
    },
    "kernels": 46370,
-   "drain_into_next_step_ms": 9.6
+   "drain_beyond_last_marker_ms": 0.0,
+   "drain_into_next_step_ms": 9.6,
+   "step_end_boundary": "last rf marker end (sync included via clip; idle reasons require host swimlane)"
   },
   "s3": {
    "window_ms": 2253.1,
-   "device_busy_union_ms": 2035.3,
-   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
-   "exposed_idle_ms": 217.8,
-   "busy_pct": 90.3,
+   "device_busy_union_ms": 2026.0,
+   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals CLIPPED to step window; busy = >=1 device activity in window",
+   "exposed_idle_ms": 227.1,
+   "busy_pct": 89.9,
    "cpu_launches_in_window": 72391,
    "sync_calls_in_window": 60,
    "memcpy_events_per_step": {
@@ -263,12 +265,14 @@
     }
    },
    "kernels": 46409,
-   "drain_into_next_step_ms": 9.2
+   "drain_beyond_last_marker_ms": 0.0,
+   "drain_into_next_step_ms": 9.2,
+   "step_end_boundary": "last rf marker end (sync included via clip; idle reasons require host swimlane)"
   },
   "s4": {
    "window_ms": 2473.7,
    "device_busy_union_ms": 2262.5,
-   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
+   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals CLIPPED to step window; busy = >=1 device activity in window",
    "exposed_idle_ms": 211.2,
    "busy_pct": 91.5,
    "cpu_launches_in_window": 72824,
@@ -292,7 +296,9 @@
     }
    },
    "kernels": 46796,
-   "drain_into_next_step_ms": 0.0
+   "drain_beyond_last_marker_ms": 396.9,
+   "drain_into_next_step_ms": 0.0,
+   "step_end_boundary": "last rf marker end (sync included via clip; idle reasons require host swimlane)"
   }
  },
  "gemm_efficiency": {

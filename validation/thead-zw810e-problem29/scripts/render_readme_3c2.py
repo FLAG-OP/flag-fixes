@@ -41,10 +41,15 @@ lines.append("**估算标注**：dW 提升/135.7 参照/逐元素融合等收益
 lines.append("")
 
 new_section = "\n".join(lines)
-s = open("/tmp/opencode/remote-files/README_r20.md").read()
+import argparse, os
+ap = argparse.ArgumentParser()
+ap.add_argument("--readme", default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "README.md"))
+ra = ap.parse_args()
+README = ra.readme
+s = open(README).read()
 start = s.index("#### 3c-2. 最终汇总表")
 end = s.index("#### 4. F-2 最小 shape 隔离（单次触发）")
 s = s[:start] + new_section + "\n" + s[end:]
-open("/tmp/opencode/remote-files/README_r20.md", "w").write(s)
-print("README 3c-2 regenerated programmatically")
+open(README, "w").write(s)
+print("README 3c-2 regenerated programmatically:", README)
 print(new_section[:800])

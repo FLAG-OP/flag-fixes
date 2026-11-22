@@ -93,26 +93,43 @@ def main():
         print("FATAL: --trace-meta file not found:", ref_path, file=sys.stderr)
         sys.exit(2)
     pairing = {"reference": ref_path, "asserted": False}
+    import sys as _sys
     try:
         ref = json.load(open(ref_path))
         ref_steps = ref["batch_fingerprints"]["fingerprints"]
-        n_cmp = min(len(summaries), len(ref_steps))
         mismatches = []
-        for j in range(n_cmp):
-            micros = summaries[j]["batch_lens"]   # list of per-micro dicts
-            ref_micros = ref_steps[f"step_{a.skip + j}"]
+        n_compared = 0
+        # review cf0cc15 item 4: verify COMPLETE step/micro/group SETS first
+        my_steps = {f"step_{a.skip + j}" for j in range(len(summaries))}
+        missing_steps = sorted(my_steps - set(ref_steps.keys()))
+        if missing_steps:
+            mismatches.append(f"STEP SET mismatch: missing_in_ref={missing_steps}")
+        for j in range(len(summaries)):
+            sk = f"step_{a.skip + j}"
+            if sk not in ref_steps:
+                continue
+            micros = summaries[j]["batch_lens"]
+            ref_micros = ref_steps[sk]
+            if len(micros) != len(ref_micros):
+                mismatches.append(f"{sk}: MICRO COUNT differs mine={len(micros)} ref={len(ref_micros)}")
+                continue
             for mi, (mm, rm) in enumerate(zip(micros, ref_micros)):
                 if set(mm["groups"].keys()) != set(rm.keys()):
-                    mismatches.append(f"step{j} micro{mi}: group KEY SET differs")
+                    mismatches.append(f"{sk} micro{mi}: group KEY SET differs mine={sorted(mm['groups'])} ref={sorted(rm)}")
                     continue
                 for g in sorted(rm.keys()):
                     mine_g, ref_g = mm["groups"][g], rm[g]
+                    n_compared += 1
                     if mine_g.get("text_hash16") != ref_g.get("text_hash16") or \
                        mine_g["padded_positions"] != ref_g["padded_positions"] or \
                        mine_g["valid_tokens"] != ref_g["valid_tokens"]:
-                        mismatches.append(f"step{j} micro{mi} {g}: hash/tokens differ mine={mine_g} ref={ref_g}")
-        pairing = {"reference": ref_path, "micros_compared": n_cmp * accum,
+                        mismatches.append(f"{sk} micro{mi} {g}: hash/tokens differ mine={mine_g} ref={ref_g}")
+        pairing = {"reference": ref_path, "groups_compared": n_compared,
+                    "step_set_verified": True, "micro_counts_verified": True,
                     "mismatches": mismatches[:8], "asserted": len(mismatches) == 0}
+        if not pairing["asserted"]:
+            print("FATAL: fingerprint pairing FAILED:", mismatches[:8], file=_sys.stderr)
+            _sys.exit(3)
         if not pairing["asserted"]:
             print("FATAL: fingerprint pairing FAILED:", mismatches[:8], file=sys.stderr)
             sys.exit(3)

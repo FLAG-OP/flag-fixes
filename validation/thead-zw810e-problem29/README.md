@@ -467,39 +467,39 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 
 | 阶段 | 相位 | MKN | calls/步 | device ms/步 | FLOPs (TFLOP) | TFLOP/s | HBM | 来源 |
 |---|---|---|---:|---:|---:|---:|---|---|
-| GEMM ffn_down dW bwd | — | [1024, 4096, 4096] | 96 | 46.69 | 4.123 | **88.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up dW bwd | — | [4096, 1024, 1024] | 96 | 46.67 | 4.121 | **88.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up dX bwd | — | [5120, 1024, 4096] | 96 | 34.56 | 4.123 | **119.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up fwd | — | [5120, 1024, 4096] | 96 | 34.3 | 4.123 | **120.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_down fwd | — | [5120, 4096, 1024] | 96 | 32.86 | 4.123 | **125.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_down dX bwd | — | [5120, 4096, 1024] | 96 | 31.87 | 4.124 | **129.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_qkv dW bwd | — | [1024, 1024, 1024] | 288 | 31.72 | 3.093 | **97.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
-| GEMM attn_qkv dX bwd | — | [5120, 1024, 1024] | 288 | 28.32 | 3.093 | **109.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
-| GEMM attn_qkv fwd | — | [5120, 1024, 1024] | 288 | 28.23 | 3.092 | **109.6** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_out dW bwd | — | [1024, 1024, 1024] | 96 | 10.58 | 1.03 | **97.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
-| GEMM ffn_up dW bwd | — | [4096, 1024, 1024] | 24 | 10.29 | 0.892 | **86.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_down dW bwd | — | [1024, 4096, 4096] | 24 | 10.25 | 0.892 | **87.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up dW bwd | — | [4096, 1024, 1024] | 96 | 10.16 | 0.892 | **87.8** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_out fwd | — | [5120, 1024, 1024] | 96 | 9.25 | 1.031 | **111.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_down fwd | — | [4430, 4096, 1024] | 24 | 7.24 | 0.892 | **123.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up fwd | — | [4430, 1024, 4096] | 24 | 7.23 | 0.892 | **123.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up fwd | — | [4310, 1024, 4096] | 24 | 7.17 | 0.868 | **121.1** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_qkv fwd | — | [160, 1024, 1024] | 144 | 6.92 | 0.048 | **7.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_down fwd | — | [4310, 4096, 1024] | 24 | 6.85 | 0.868 | **126.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_up fwd | — | [3740, 1024, 4096] | 24 | 6.47 | 0.753 | **116.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM ffn_down fwd | — | [3740, 4096, 1024] | 24 | 6.29 | 0.753 | **119.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_qkv fwd | — | [4430, 1024, 1024] | 72 | 6.28 | 0.669 | **106.6** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_qkv fwd | — | [4310, 1024, 1024] | 72 | 5.87 | 0.651 | **110.9** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_qkv fwd | — | [1670, 1024, 1024] | 72 | 5.79 | 0.252 | **43.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| SDPA/attention | fwd | — | 480 | 204.64 | 0.105 | **0.52** | ESTIMATE | sdpa_efficiency_r36（4BH S²D，60 组逐行）|
-| SDPA/attention | bwd | — | 1,440 | 375.44 | 0.158 | **0.42** | ESTIMATE | 同上（6BH S²D；重算未知）|
+| GEMM ffn_down  bwd | — | — | 96 | 46.75 | 4.123 | **88.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up  bwd | — | — | 96 | 46.69 | 4.123 | **88.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down  bwd | — | — | 96 | 34.57 | 4.123 | **119.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [5120, 1024, 4096] | 96 | 34.34 | 4.123 | **120.1** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [5120, 4096, 1024] | 96 | 32.82 | 4.123 | **125.6** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up  bwd | — | — | 96 | 31.9 | 4.123 | **129.2** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv  bwd | — | — | 288 | 31.75 | 3.092 | **97.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
+| GEMM attn_qkv fwd | — | [5120, 1024, 1024] | 288 | 28.34 | 3.092 | **109.1** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv  bwd | — | — | 288 | 28.34 | 3.092 | **109.1** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
+| GEMM attn_out  bwd | — | — | 96 | 10.6 | 1.031 | **97.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
+| GEMM ffn_up  bwd | — | — | 24 | 10.29 | 0.892 | **86.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down  bwd | — | — | 24 | 10.25 | 0.892 | **87.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_proj  bwd | — | — | 96 | 10.15 | 0.892 | **87.9** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_out fwd | — | [5120, 1024, 1024] | 96 | 9.26 | 1.031 | **111.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [4430, 1024, 4096] | 24 | 7.27 | 0.892 | **122.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [4430, 4096, 1024] | 24 | 7.25 | 0.892 | **123.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [4310, 1024, 4096] | 24 | 7.17 | 0.868 | **121.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [4310, 4096, 1024] | 24 | 6.84 | 0.868 | **126.8** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_up fwd | — | [3740, 1024, 4096] | 24 | 6.46 | 0.753 | **116.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [160, 1024, 1024] | 144 | 6.4 | 0.048 | **7.5** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM ffn_down fwd | — | [3740, 4096, 1024] | 24 | 6.23 | 0.753 | **120.8** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [4430, 1024, 1024] | 72 | 6.14 | 0.669 | **108.9** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [4310, 1024, 1024] | 72 | 5.9 | 0.651 | **110.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_qkv fwd | — | [1910, 1024, 1024] | 72 | 5.74 | 0.288 | **50.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| SDPA/attention | fwd | — | 480 | 204.64 | 2.531 | **12.37** | ESTIMATE | sdpa_efficiency_r36（4BH S²D，60 组逐行）|
+| SDPA/attention | bwd | — | 1,440 | 375.44 | 5.061 | **13.48** | ESTIMATE | 同上（6BH S²D；重算未知）|
 
 小 S 形状（140–180）TFLOP/s 6–24（latency 主导）。**全部效率行 ≤139.2 峰值（离线校验通过）**。
 
-**关键路径（r36 trace，busy union 含 kernels+gpu_memcpy+gpu_memset）**：busy **88.4/90.3/91.5%**、暴露空闲 **237.2/217.8/211.2ms/步**；
+**关键路径（r36 trace，busy union 含 kernels+gpu_memcpy+gpu_memset）**：busy **87.9/89.9/91.5%**、暴露空闲 **246.7/227.1/211.2ms/步**；
 per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 条 0.07ms; memset 2544 条 0.63ms（逐步拆分 + 守恒断言 8082==8082 通过；此前"H2D=0"系只查 kernel 类别——已更正）。
 
-**严格配对（text-hash 真实指纹）**：双侧 loader_index + sha256 text_hash16；逐 micro 断言 **12/12 hash+token 一致、0 mismatch**；no-profiler 中位 **2112.0ms**、p95=样本最大 **2335.6ms**（3 样本，非稳定 p95）、有效 tokens/s **14415.0–15202.0**；**严格配对采集开销 ≈ 7.2%**（profiled 2264.9ms）。kernel-efficiency 窗指纹断言 step_2 20/20 匹配。
+**严格配对（text-hash 真实指纹）**：双侧 loader_index + sha256 text_hash16；逐 micro 断言 **12/12 hash+token 一致、0 mismatch**；no-profiler 中位 **2123.3ms**、p95=样本最大 **2350.5ms**（3 样本，非稳定 p95）、有效 tokens/s **14283.0–15106.0**；**严格配对采集开销 ≈ 6.7%**（profiled 2264.9ms）。kernel-efficiency 窗指纹断言 step_2 20/20 匹配。
 
 **HBM：BLOCKED**——Asight v2.1.0 在位；PCM 被 pg-exporter 占用（dmesg 证据 `logs/hbm_probe_r34.log`）；复测命令已记录；**HBM 字节/带宽/利用率均为估算，不列入已完成测量**。SDPA dropout 配置 0.1（模块级激活）、SDPA 内部 dropout 标志未知、反向重算未知。
 

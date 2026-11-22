@@ -200,39 +200,51 @@ def main():
             m2 = [o["shape"] for o in lst[0]["operands"] if len(o["shape"]) == 2][:2]
             for cls in ("attn_out", "attn_qkv"):
                 shpA, shpB = (m2 + [[0, 0]] * 2)[:2]
-                flops = 2 * shpA[0] * shpA[1] * shpB[1] * counts[cls]
-                tf = round((flops / (ms[cls] * 1e-3)) / 1e12, 1)
+                flops_tf = round(2 * shpA[0] * shpA[1] * shpB[1] * counts[cls] / 1e12, 3)
+                tf = round((flops_tf * 1e12 / (ms[cls] * 1e-3)) / 1e12, 1)
                 rows_out.append({"module_class": cls, "phase": "backward", "op": "mm",
-                                  "operand_dims": {"actual": [shpA, shpB],
-                                                    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"},
+                                  "operand_dims_measured": [shpA, shpB],
+                                  "flops_tflop": flops_tf,
                                   "calls_per_step": counts[cls], "device_ms": round(ms[cls], 2),
                                   "tflops": tf,
                                   "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"})
         else:
+            # review cf0cc15 item 2: exact classification from BOTH operand dims.
+            # dX mm = gy[M,N] @ w[N,K]  -> A=[M,N], B=[N,K]
+            #   B[1]==4096 -> ffn_down dX ; A[1]==4096 -> ffn_up dX
+            #   A[1]==B[0]==1024 -> attention projections dX (QKV+out MERGED,
+            #     per-call indistinguishable -> topology-inferred note)
+            # dW mm = gy.t()[N,M] @ x[M,K] -> A=[N,M], B=[M,K]
+            #   A[0]==4096 -> ffn_up dW ; A[0]==1024 and B[1]==4096 -> ffn_down dW
+            #   A[0]==1024 and B[1]==1024 -> attention projections dW (merged)
             all_ms = sum(r["device_ms"] for r in lst)
-            # FFN classes recoverable from operand dims:
-            # dX (M,N)x(N,K): [5120,1024]x[1024,4096]->ffn_up ; [5120,4096]x[4096,1024]->ffn_down
-            # dW (N,M)x(M,K): [4096,5120]x[5120,1024]->ffn_up ; [1024,5120]x[5120,4096]->ffn_down
-            cls_map = None
-            m2 = [o["shape"] for r in lst[:1] for o in r["operands"] if len(o["shape"]) == 2][:2]
-            if m2 and len(m2[0]) == 2 and len(m2[0]) >= 2 and m2[0][1] in (1024, 4096) and m2[0][0] >= 4000:
-                cls_map = "ffn_up" if m2[0][1] == 1024 else "ffn_down"
-            elif m2 and len(m2[0]) >= 2 and m2[0][0] in (1024, 4096) and m2[0][0] >= 1000 and m2[0][0] == m2[0][1] * 4 if len(m2) > 1 else False:
-                cls_map = None
-            if cls_map is None and m2 and len(m2) >= 1:
-                a0 = m2[0]
-                if a0[0] == 4096 and a0[1] >= 4000: cls_map = "ffn_up"
-                elif a0[0] == 1024 and a0[1] >= 4000: cls_map = "ffn_down"
-                elif a0[1] == 4096 and a0[0] >= 4000: cls_map = "ffn_down"
-                elif a0[1] == 1024 and a0[0] >= 4000: cls_map = "ffn_up"
-            tflops = None
-            if m2 and len(m2) >= 2 and len(m2[0]) == 2 and len(m2[1]) == 2:
-                flops = 2 * m2[0][0] * m2[0][1] * m2[1][1] * n
-                tflops = round((flops / (all_ms * 1e-3)) / 1e12, 1)
-            rows_out.append({"module_class": cls_map or "shape_group", "phase": "backward", "op": "mm",
+            m2 = [o["shape"] for o in lst[0]["operands"] if len(o["shape"]) == 2][:2]
+            cls_map = None; sem_note = ""
+            if len(m2) == 2:
+                A, B = m2
+                if len(A) == 2 and len(B) == 2:
+                    if A[1] == 4096 and B[1] == 1024:
+                        cls_map = "ffn_up"       # dX: [M,4096]x[4096,1024]
+                    elif A[1] == 1024 and B[1] == 4096:
+                        cls_map = "ffn_down"     # dX: [M,1024]x[1024,4096]
+                    elif A[0] == 4096 and B[1] == 1024:
+                        cls_map = "ffn_up"       # dW: [4096,M]x[M,1024]
+                    elif A[0] == 1024 and B[1] == 4096:
+                        cls_map = "ffn_down"     # dW: [1024,M]x[M,4096]
+                    elif A[1] == 1024 and B[1] == 1024:
+                        cls_map = "attn_proj"
+                        sem_note = "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
+            flops_tflop = None; tflops = None
+            if len(m2) == 2 and all_ms > 0:
+                flops_tflop = round(2 * m2[0][0] * m2[0][1] * m2[1][1] * n / 1e12, 3)
+                tflops = round((flops_tflop * 1e12) / (all_ms * 1e-3) / 1e12, 1)
+            rows_out.append({"module_class": cls_map or "unclassified",
+                              "phase": "backward", "op": "mm",
                               "operand_sig": sig, "calls_per_step": n,
+                              "operand_dims_measured": m2,
+                              "flops_tflop": flops_tflop,
                               "device_ms": round(all_ms, 2), "tflops": tflops,
-                              "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"})
+                              "attribution": sem_note or "shape-keyed from both operand dims (cf0cc15 item 2)"})
     rows_out.sort(key=lambda r: -r["device_ms"])
     fwd_rec = sum(1 for r in recs if r["phase"].startswith("forward"))
     fwd_rec_labeled = sum(1 for r in recs if r["phase"].startswith("forward") and r["module_class"])

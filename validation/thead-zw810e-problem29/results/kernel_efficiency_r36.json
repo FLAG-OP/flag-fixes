@@ -99,7 +99,7 @@
      "col_major_T": true
     }
    ],
-   "device_ms": 0.163
+   "device_ms": 0.1357
   }
  },
  "fingerprint_verification": {
@@ -117,34 +117,67 @@
  },
  "rows": [
   {
-   "module_class": "ffn_up",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 5120]:T|[5120, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 46.77,
-   "tflops": 88.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
    "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 5120]:T|[5120, 4096]:",
    "calls_per_step": 96,
-   "device_ms": 46.72,
-   "tflops": 88.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     5120
+    ],
+    [
+     5120,
+     4096
+    ]
+   ],
+   "flops_tflop": 4.123,
+   "device_ms": 46.75,
+   "tflops": 88.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
+   "operand_sig": "[4096, 5120]:T|[5120, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     4096,
+     5120
+    ],
+    [
+     5120,
+     1024
+    ]
+   ],
+   "flops_tflop": 4.123,
+   "device_ms": 46.69,
+   "tflops": 88.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
    "operand_sig": "[5120, 1024]:|[1024, 4096]:",
    "calls_per_step": 96,
-   "device_ms": 34.58,
+   "operand_dims_measured": [
+    [
+     5120,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 4.123,
+   "device_ms": 34.57,
    "tflops": 119.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -172,39 +205,48 @@
    ],
    "operand_sig": "[5120, 4096]:|[4096, 1024]:T",
    "calls_per_step": 96,
-   "device_ms": 32.77,
+   "device_ms": 32.82,
    "flops_tflop": 4.123,
-   "tflops": 125.8
+   "tflops": 125.6
   },
   {
-   "module_class": "ffn_down",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[5120, 4096]:|[4096, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     5120,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 4.123,
    "device_ms": 31.9,
-   "tflops": 129.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 129.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_qkv",
    "phase": "backward",
    "op": "mm",
-   "operand_dims": {
-    "actual": [
-     [
-      1024,
-      5120
-     ],
-     [
-      5120,
-      1024
-     ]
+   "operand_dims_measured": [
+    [
+     1024,
+     5120
     ],
-    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
-   },
+    [
+     5120,
+     1024
+    ]
+   ],
+   "flops_tflop": 3.092,
    "calls_per_step": 288,
-   "device_ms": 31.74,
+   "device_ms": 31.75,
    "tflops": 97.4,
    "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
   },
@@ -219,63 +261,49 @@
    ],
    "operand_sig": "[5120, 1024]:|[1024, 1024]:T",
    "calls_per_step": 288,
-   "device_ms": 29.68,
+   "device_ms": 28.34,
    "flops_tflop": 3.092,
-   "tflops": 104.2
+   "tflops": 109.1
   },
   {
    "module_class": "attn_qkv",
    "phase": "backward",
    "op": "mm",
-   "operand_dims": {
-    "actual": [
-     [
-      5120,
-      1024
-     ],
-     [
-      1024,
-      1024
-     ]
+   "operand_dims_measured": [
+    [
+     5120,
+     1024
     ],
-    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
-   },
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 3.092,
    "calls_per_step": 288,
-   "device_ms": 28.4,
-   "tflops": 108.9,
+   "device_ms": 28.34,
+   "tflops": 109.1,
    "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
   },
   {
    "module_class": "attn_out",
    "phase": "backward",
    "op": "mm",
-   "operand_dims": {
-    "actual": [
-     [
-      1024,
-      5120
-     ],
-     [
-      5120,
-      1024
-     ]
+   "operand_dims_measured": [
+    [
+     1024,
+     5120
     ],
-    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
-   },
+    [
+     5120,
+     1024
+    ]
+   ],
+   "flops_tflop": 1.031,
    "calls_per_step": 96,
-   "device_ms": 10.57,
-   "tflops": 97.5,
+   "device_ms": 10.6,
+   "tflops": 97.3,
    "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
-  },
-  {
-   "module_class": "ffn_down",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 4430]:T|[4430, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 10.25,
-   "tflops": 87.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
   },
   {
    "module_class": "ffn_up",
@@ -283,29 +311,62 @@
    "op": "mm",
    "operand_sig": "[4096, 4430]:T|[4430, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 10.23,
-   "tflops": 87.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4096,
+     4430
+    ],
+    [
+     4430,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.892,
+   "device_ms": 10.29,
+   "tflops": 86.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "ffn_up",
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4430]:T|[4430, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     4430
+    ],
+    [
+     4430,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.892,
+   "device_ms": 10.25,
+   "tflops": 87.0,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4430, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 10.16,
-   "tflops": 87.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_up",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 4310]:T|[4310, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 9.98,
-   "tflops": 87.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4430,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.892,
+   "device_ms": 10.15,
+   "tflops": 87.9,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
    "module_class": "ffn_down",
@@ -313,61 +374,124 @@
    "op": "mm",
    "operand_sig": "[1024, 4310]:T|[4310, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     4310
+    ],
+    [
+     4310,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.868,
    "device_ms": 9.96,
-   "tflops": 87.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 87.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
+   "operand_sig": "[4096, 4310]:T|[4310, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     4310
+    ],
+    [
+     4310,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.868,
+   "device_ms": 9.94,
+   "tflops": 87.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
    "operand_sig": "[4310, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 9.68,
-   "tflops": 89.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4310,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.868,
+   "device_ms": 9.67,
+   "tflops": 89.8,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
    "module_class": "attn_out",
    "phase": "backward",
    "op": "mm",
-   "operand_dims": {
-    "actual": [
-     [
-      5120,
-      1024
-     ],
-     [
-      1024,
-      1024
-     ]
+   "operand_dims_measured": [
+    [
+     5120,
+     1024
     ],
-    "semantic_dW_note": "dW actual=(N,M)x(M,K); semantic out=(N,K); dX actual=(M,N)x(N,K); semantic out=(M,K)"
-   },
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 1.031,
    "calls_per_step": 96,
-   "device_ms": 9.45,
-   "tflops": 109.1,
+   "device_ms": 9.46,
+   "tflops": 109.0,
    "attribution": "TOPOLOGY-INFERRED: reverse-layer pattern 1 attn_out : 3 qkv; counts asserted (24/72 per micro) but per-call order NOT independently verified"
+  },
+  {
+   "module_class": "unclassified",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4430]:T|[4430, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     4430
+    ],
+    [
+     4430,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.892,
+   "device_ms": 9.37,
+   "tflops": 95.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
-   "operand_sig": "[1024, 4430]:T|[4430, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 9.42,
-   "tflops": 94.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_up",
-   "phase": "backward",
-   "op": "mm",
    "operand_sig": "[4430, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 9.33,
-   "tflops": 95.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4430,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.892,
+   "device_ms": 9.35,
+   "tflops": 95.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_out",
@@ -385,94 +509,193 @@
    "tflops": 111.3
   },
   {
-   "module_class": "ffn_down",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 4310]:T|[4310, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 9.09,
-   "tflops": 95.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_down",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4430, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 9.07,
-   "tflops": 98.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 3740]:T|[3740, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 8.72,
-   "tflops": 86.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 3740]:T|[3740, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 8.69,
-   "tflops": 86.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_down",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4310, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 8.65,
-   "tflops": 100.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 3740]:T|[3740, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 7.96,
-   "tflops": 94.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 3290]:T|[3290, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 7.85,
-   "tflops": 84.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 3290]:T|[3290, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 7.7,
-   "tflops": 86.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     4310
+    ],
+    [
+     4310,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.868,
+   "device_ms": 9.11,
+   "tflops": 95.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
+   "operand_sig": "[4430, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4430,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.892,
+   "device_ms": 9.07,
+   "tflops": 98.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 3740]:T|[3740, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     3740
+    ],
+    [
+     3740,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.753,
+   "device_ms": 8.7,
+   "tflops": 86.6,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3740]:T|[3740, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     3740
+    ],
+    [
+     3740,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.753,
+   "device_ms": 8.69,
+   "tflops": 86.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4310,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.868,
+   "device_ms": 8.64,
+   "tflops": 100.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "unclassified",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3740]:T|[3740, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     3740
+    ],
+    [
+     3740,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.753,
+   "device_ms": 7.93,
+   "tflops": 94.9,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 3290]:T|[3290, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     3290
+    ],
+    [
+     3290,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.662,
+   "device_ms": 7.91,
+   "tflops": 83.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3290]:T|[3290, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     3290
+    ],
+    [
+     3290,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.662,
+   "device_ms": 7.76,
+   "tflops": 85.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
    "operand_sig": "[4310, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4310,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.868,
    "device_ms": 7.37,
    "tflops": 117.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -485,9 +708,9 @@
    ],
    "operand_sig": "[4430, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 7.26,
+   "device_ms": 7.27,
    "flops_tflop": 0.892,
-   "tflops": 122.8
+   "tflops": 122.7
   },
   {
    "module_class": "ffn_down",
@@ -515,79 +738,135 @@
    ],
    "operand_sig": "[4310, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 7.23,
+   "device_ms": 7.17,
    "flops_tflop": 0.868,
-   "tflops": 120.0
+   "tflops": 121.0
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[2990, 1024]:|[1024, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 7.19,
-   "tflops": 83.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[3740, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     3740,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.753,
    "device_ms": 7.17,
-   "tflops": 104.9,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 105.1,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     2990,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.602,
+   "device_ms": 7.17,
+   "tflops": 84.0,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
+  },
+  {
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 3290]:T|[3290, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     3290
+    ],
+    [
+     3290,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.662,
    "device_ms": 7.1,
-   "tflops": 93.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 93.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4096, 2990]:T|[2990, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 7.06,
-   "tflops": 85.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4096,
+     2990
+    ],
+    [
+     2990,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.602,
+   "device_ms": 7.03,
+   "tflops": 85.6,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2990]:T|[2990, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     2990
+    ],
+    [
+     2990,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.602,
    "device_ms": 6.98,
    "tflops": 86.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[160, 1024]:|[1024, 1024]:",
-   "calls_per_step": 192,
-   "device_ms": 6.89,
-   "tflops": 9.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[3290, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 6.89,
-   "tflops": 96.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     3290,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.662,
+   "device_ms": 6.85,
+   "tflops": 96.7,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
    "module_class": "ffn_down",
@@ -600,44 +879,51 @@
    ],
    "operand_sig": "[4310, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 6.85,
+   "device_ms": 6.84,
    "flops_tflop": 0.868,
-   "tflops": 126.6
+   "tflops": 126.8
   },
   {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    160,
-    1024,
-    1024
-   ],
-   "operand_sig": "[160, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 144,
-   "device_ms": 6.81,
-   "flops_tflop": 0.048,
-   "tflops": 7.1
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[3740, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 6.63,
-   "tflops": 113.5,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     3740,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.753,
+   "device_ms": 6.62,
+   "tflops": 113.8,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2990]:T|[2990, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     2990
+    ],
+    [
+     2990,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.602,
    "device_ms": 6.48,
    "tflops": 92.9,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -650,19 +936,66 @@
    ],
    "operand_sig": "[3740, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 6.45,
+   "device_ms": 6.46,
    "flops_tflop": 0.753,
-   "tflops": 116.8
+   "tflops": 116.5
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 1024]:|[1024, 1024]:",
+   "calls_per_step": 192,
+   "operand_dims_measured": [
+    [
+     160,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.064,
+   "device_ms": 6.44,
+   "tflops": 9.9,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "operand_sig": "[160, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 144,
+   "device_ms": 6.4,
+   "flops_tflop": 0.048,
+   "tflops": 7.5
+  },
+  {
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2990, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 6.29,
-   "tflops": 95.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     2990,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.602,
+   "device_ms": 6.32,
+   "tflops": 95.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_down",
@@ -675,9 +1008,9 @@
    ],
    "operand_sig": "[3740, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 6.19,
+   "device_ms": 6.23,
    "flops_tflop": 0.753,
-   "tflops": 121.7
+   "tflops": 120.8
   },
   {
    "module_class": "attn_qkv",
@@ -690,69 +1023,51 @@
    ],
    "operand_sig": "[4430, 1024]:|[1024, 1024]:T",
    "calls_per_step": 72,
-   "device_ms": 6.15,
+   "device_ms": 6.14,
    "flops_tflop": 0.669,
-   "tflops": 108.8
+   "tflops": 108.9
   },
   {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    1740,
-    1024,
-    1024
-   ],
-   "operand_sig": "[1740, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 6.02,
-   "flops_tflop": 0.263,
-   "tflops": 43.6
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[3740, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 6.01,
+   "operand_dims_measured": [
+    [
+     3740,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.753,
+   "device_ms": 6.0,
    "tflops": 125.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[3290, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 5.99,
-   "tflops": 110.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 2490]:T|[2490, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 5.89,
-   "tflops": 85.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    1910,
-    1024,
-    1024
+   "operand_dims_measured": [
+    [
+     3290,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
    ],
-   "operand_sig": "[1910, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 5.88,
-   "flops_tflop": 0.288,
-   "tflops": 49.1
+   "flops_tflop": 0.662,
+   "device_ms": 5.98,
+   "tflops": 110.6,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_qkv",
@@ -765,124 +1080,186 @@
    ],
    "operand_sig": "[4310, 1024]:|[1024, 1024]:T",
    "calls_per_step": 72,
-   "device_ms": 5.88,
+   "device_ms": 5.9,
    "flops_tflop": 0.651,
-   "tflops": 110.6
+   "tflops": 110.3
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2490]:T|[2490, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     2490
+    ],
+    [
+     2490,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.501,
+   "device_ms": 5.87,
+   "tflops": 85.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2490]:T|[2490, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 5.87,
-   "tflops": 85.5,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    1670,
-    1024,
-    1024
+   "operand_dims_measured": [
+    [
+     1024,
+     2490
+    ],
+    [
+     2490,
+     4096
+    ]
    ],
-   "operand_sig": "[1670, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 5.85,
-   "flops_tflop": 0.252,
-   "tflops": 43.1
+   "flops_tflop": 0.501,
+   "device_ms": 5.86,
+   "tflops": 85.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    2140,
-    1024,
-    1024
-   ],
-   "operand_sig": "[2140, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 5.81,
-   "flops_tflop": 0.323,
-   "tflops": 55.6
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1670, 1024]:|[1024, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 5.76,
-   "tflops": 58.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[3290, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 5.76,
-   "tflops": 115.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     3290,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.662,
+   "device_ms": 5.79,
+   "tflops": 114.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1910, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.74,
+   "flops_tflop": 0.288,
+   "tflops": 50.3
+  },
+  {
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2140, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     2140,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.431,
    "device_ms": 5.7,
    "tflops": 75.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2100, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     2100,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.423,
    "device_ms": 5.7,
-   "tflops": 74.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 74.3,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1740, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.69,
+   "flops_tflop": 0.263,
+   "tflops": 46.2
+  },
+  {
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1670,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.336,
+   "device_ms": 5.67,
+   "tflops": 59.2,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
+  },
+  {
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1910, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 5.65,
-   "tflops": 68.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_down",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    3290,
-    4096,
-    1024
+   "operand_dims_measured": [
+    [
+     1910,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
    ],
-   "operand_sig": "[3290, 4096]:|[4096, 1024]:T",
-   "calls_per_step": 24,
-   "device_ms": 5.63,
-   "flops_tflop": 0.662,
-   "tflops": 117.7
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1740, 1024]:|[1024, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 5.62,
-   "tflops": 62.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "flops_tflop": 0.385,
+   "device_ms": 5.65,
+   "tflops": 68.2,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
    "module_class": "ffn_up",
@@ -900,19 +1277,40 @@
    "tflops": 118.1
   },
   {
-   "module_class": "attn_qkv",
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1740,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.35,
+   "device_ms": 5.6,
+   "tflops": 62.5,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
+  },
+  {
+   "module_class": "ffn_down",
    "phase": "forward",
    "op": "addmm",
    "MKN": [
-    2100,
-    1024,
+    3290,
+    4096,
     1024
    ],
-   "operand_sig": "[2100, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 5.61,
-   "flops_tflop": 0.317,
-   "tflops": 56.6
+   "operand_sig": "[3290, 4096]:|[4096, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.58,
+   "flops_tflop": 0.662,
+   "tflops": 118.6
   },
   {
    "module_class": "attn_qkv",
@@ -925,19 +1323,45 @@
    ],
    "operand_sig": "[3740, 1024]:|[1024, 1024]:T",
    "calls_per_step": 72,
-   "device_ms": 5.52,
+   "device_ms": 5.53,
    "flops_tflop": 0.565,
-   "tflops": 102.3
+   "tflops": 102.1
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1670, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.52,
+   "flops_tflop": 0.252,
+   "tflops": 45.7
+  },
+  {
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2490]:T|[2490, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 5.47,
-   "tflops": 91.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     2490
+    ],
+    [
+     2490,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.501,
+   "device_ms": 5.48,
+   "tflops": 91.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -950,69 +1374,9 @@
    ],
    "operand_sig": "[2490, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 5.37,
-   "flops_tflop": 0.501,
-   "tflops": 93.3
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 2230]:T|[2230, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 5.36,
-   "tflops": 83.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    2490,
-    1024,
-    1024
-   ],
-   "operand_sig": "[2490, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
    "device_ms": 5.33,
-   "flops_tflop": 0.376,
-   "tflops": 70.5
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[2990, 1024]:|[1024, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 5.31,
-   "tflops": 113.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 2230]:T|[2230, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 5.28,
-   "tflops": 85.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_up",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    2990,
-    1024,
-    4096
-   ],
-   "operand_sig": "[2990, 1024]:|[1024, 4096]:T",
-   "calls_per_step": 24,
-   "device_ms": 5.27,
-   "flops_tflop": 0.602,
-   "tflops": 114.3
+   "flops_tflop": 0.501,
+   "tflops": 94.0
   },
   {
    "module_class": "attn_qkv",
@@ -1025,39 +1389,174 @@
    ],
    "operand_sig": "[2230, 1024]:|[1024, 1024]:T",
    "calls_per_step": 72,
-   "device_ms": 5.27,
+   "device_ms": 5.33,
    "flops_tflop": 0.337,
-   "tflops": 63.9
+   "tflops": 63.2
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
-   "operand_sig": "[1024, 160]:T|[160, 1024]:",
-   "calls_per_step": 192,
-   "device_ms": 5.21,
-   "tflops": 12.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 2140]:T|[2140, 1024]:",
+   "operand_sig": "[2990, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 5.17,
-   "tflops": 83.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     2990,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.602,
+   "device_ms": 5.31,
+   "tflops": 113.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2230]:T|[2230, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     2230
+    ],
+    [
+     2230,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.449,
+   "device_ms": 5.31,
+   "tflops": 84.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2230]:T|[2230, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     2230
+    ],
+    [
+     2230,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.449,
+   "device_ms": 5.28,
+   "tflops": 85.1,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2490,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2490, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.27,
+   "flops_tflop": 0.376,
+   "tflops": 71.3
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2140, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.25,
+   "flops_tflop": 0.323,
+   "tflops": 61.6
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2990,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2990, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 5.24,
+   "flops_tflop": 0.602,
+   "tflops": 114.9
+  },
+  {
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2140]:T|[2140, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 5.14,
-   "tflops": 83.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     2140
+    ],
+    [
+     2140,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.431,
+   "device_ms": 5.17,
+   "tflops": 83.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2140]:T|[2140, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     2140
+    ],
+    [
+     2140,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.431,
+   "device_ms": 5.17,
+   "tflops": 83.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2100, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 5.13,
+   "flops_tflop": 0.317,
+   "tflops": 61.8
   },
   {
    "module_class": "ffn_down",
@@ -1070,9 +1569,72 @@
    ],
    "operand_sig": "[2990, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 5.07,
+   "device_ms": 5.03,
    "flops_tflop": 0.602,
-   "tflops": 118.8
+   "tflops": 119.8
+  },
+  {
+   "module_class": "unclassified",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 160]:T|[160, 1024]:",
+   "calls_per_step": 192,
+   "operand_dims_measured": [
+    [
+     1024,
+     160
+    ],
+    [
+     160,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.064,
+   "device_ms": 5.01,
+   "tflops": 12.8,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2100]:T|[2100, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     2100
+    ],
+    [
+     2100,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.423,
+   "device_ms": 5.01,
+   "tflops": 84.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2100]:T|[2100, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     2100
+    ],
+    [
+     2100,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.423,
+   "device_ms": 5.0,
+   "tflops": 84.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_qkv",
@@ -1085,74 +1647,156 @@
    ],
    "operand_sig": "[3290, 1024]:|[1024, 1024]:T",
    "calls_per_step": 72,
-   "device_ms": 5.04,
+   "device_ms": 4.99,
    "flops_tflop": 0.497,
-   "tflops": 98.5
+   "tflops": 99.6
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 2100]:T|[2100, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 5.02,
-   "tflops": 84.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 2100]:T|[2100, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 5.0,
-   "tflops": 84.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2230]:T|[2230, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 4.98,
-   "tflops": 90.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     2230
+    ],
+    [
+     2230,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.449,
+   "device_ms": 4.99,
+   "tflops": 90.0,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2140, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 4.97,
-   "tflops": 86.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     2140,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.431,
+   "device_ms": 4.96,
+   "tflops": 86.9,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2100, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 4.97,
-   "tflops": 85.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     2100,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.423,
+   "device_ms": 4.95,
+   "tflops": 85.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    2990,
-    1024,
-    1024
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1910,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
    ],
-   "operand_sig": "[2990, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 4.96,
-   "flops_tflop": 0.451,
-   "tflops": 91.1
+   "flops_tflop": 0.385,
+   "device_ms": 4.9,
+   "tflops": 78.6,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1670,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.336,
+   "device_ms": 4.89,
+   "tflops": 68.8,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1740,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.35,
+   "device_ms": 4.89,
+   "tflops": 71.6,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     2490,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.501,
+   "device_ms": 4.89,
+   "tflops": 102.4,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
    "module_class": "ffn_up",
@@ -1165,94 +1809,72 @@
    ],
    "operand_sig": "[2230, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 4.92,
+   "device_ms": 4.86,
    "flops_tflop": 0.449,
-   "tflops": 91.2
+   "tflops": 92.4
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1670, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 4.89,
-   "tflops": 68.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1740, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 4.89,
-   "tflops": 71.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[2490, 1024]:|[1024, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 4.89,
-   "tflops": 102.5,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1910, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 4.89,
-   "tflops": 78.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2140]:T|[2140, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 4.87,
-   "tflops": 88.5,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     2140
+    ],
+    [
+     2140,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.431,
+   "device_ms": 4.86,
+   "tflops": 88.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "attn_proj",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2230, 1024]:|[1024, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 4.87,
-   "tflops": 92.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_up",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    2140,
-    1024,
-    4096
+   "operand_dims_measured": [
+    [
+     2230,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
    ],
-   "operand_sig": "[2140, 1024]:|[1024, 4096]:T",
-   "calls_per_step": 24,
-   "device_ms": 4.76,
-   "flops_tflop": 0.431,
-   "tflops": 90.6
+   "flops_tflop": 0.449,
+   "device_ms": 4.86,
+   "tflops": 92.4,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 2100]:T|[2100, 1024]:",
    "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     2100
+    ],
+    [
+     2100,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.423,
    "device_ms": 4.75,
    "tflops": 89.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -1265,64 +1887,102 @@
    ],
    "operand_sig": "[2100, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 4.74,
+   "device_ms": 4.68,
    "flops_tflop": 0.423,
-   "tflops": 89.1
+   "tflops": 90.4
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[4096, 1910]:T|[1910, 1024]:",
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2140,
+    1024,
+    4096
+   ],
+   "operand_sig": "[2140, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 4.58,
-   "tflops": 84.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "device_ms": 4.62,
+   "flops_tflop": 0.431,
+   "tflops": 93.3
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 1910]:T|[1910, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 4.57,
-   "tflops": 84.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     1910
+    ],
+    [
+     1910,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.385,
+   "device_ms": 4.58,
+   "tflops": 84.0,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1910]:T|[1910, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     1910
+    ],
+    [
+     1910,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.385,
+   "device_ms": 4.58,
+   "tflops": 84.1,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2990,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2990, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 4.55,
+   "flops_tflop": 0.451,
+   "tflops": 99.3
+  },
+  {
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2490, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     2490,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.501,
    "device_ms": 4.53,
    "tflops": 110.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_down",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    140,
-    4096,
-    1024
-   ],
-   "operand_sig": "[140, 4096]:|[4096, 1024]:T",
-   "calls_per_step": 24,
-   "device_ms": 4.44,
-   "flops_tflop": 0.028,
-   "tflops": 6.3
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 1910]:T|[1910, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 4.37,
-   "tflops": 88.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -1335,39 +1995,93 @@
    ],
    "operand_sig": "[1910, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 4.35,
+   "device_ms": 4.37,
    "flops_tflop": 0.385,
-   "tflops": 88.4
+   "tflops": 88.0
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1910]:T|[1910, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     1910
+    ],
+    [
+     1910,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.385,
+   "device_ms": 4.36,
+   "tflops": 88.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4096, 1740]:T|[1740, 1024]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     4096,
+     1740
+    ],
+    [
+     1740,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.35,
    "device_ms": 4.34,
-   "tflops": 80.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 80.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 1740]:T|[1740, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 4.29,
-   "tflops": 81.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     1740
+    ],
+    [
+     1740,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.35,
+   "device_ms": 4.3,
+   "tflops": 81.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4096, 1670]:T|[1670, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 4.22,
-   "tflops": 79.7,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4096,
+     1670
+    ],
+    [
+     1670,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.336,
+   "device_ms": 4.18,
+   "tflops": 80.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -1380,19 +2094,72 @@
    ],
    "operand_sig": "[1740, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 4.21,
+   "device_ms": 4.17,
    "flops_tflop": 0.35,
-   "tflops": 83.3
+   "tflops": 84.0
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 1670]:T|[1670, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 4.18,
-   "tflops": 80.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     1670
+    ],
+    [
+     1670,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.336,
+   "device_ms": 4.15,
+   "tflops": 80.9,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "unclassified",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1740]:T|[1740, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     1740
+    ],
+    [
+     1740,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.35,
+   "device_ms": 4.12,
+   "tflops": 85.0,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     2230,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.449,
+   "device_ms": 4.08,
+   "tflops": 110.1,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_up",
@@ -1405,29 +2172,51 @@
    ],
    "operand_sig": "[1670, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 4.17,
-   "flops_tflop": 0.336,
-   "tflops": 80.6
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 1740]:T|[1740, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 4.12,
-   "tflops": 85.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[2230, 1024]:|[1024, 4096]:",
-   "calls_per_step": 24,
    "device_ms": 4.07,
-   "tflops": 110.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "flops_tflop": 0.336,
+   "tflops": 82.6
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     2490,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.501,
+   "device_ms": 4.02,
+   "tflops": 124.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 4096]:|[4096, 1024]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     2230,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.449,
+   "device_ms": 4.01,
+   "tflops": 111.9,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_down",
@@ -1440,19 +2229,9 @@
    ],
    "operand_sig": "[1910, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 4.02,
+   "device_ms": 4.0,
    "flops_tflop": 0.385,
-   "tflops": 95.8
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[2490, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 4.02,
-   "tflops": 124.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 96.1
   },
   {
    "module_class": "ffn_down",
@@ -1465,34 +2244,30 @@
    ],
    "operand_sig": "[1670, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 4.01,
+   "device_ms": 3.99,
    "flops_tflop": 0.336,
-   "tflops": 83.9
+   "tflops": 84.3
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
-   "operand_sig": "[2230, 4096]:|[4096, 1024]:",
-   "calls_per_step": 24,
-   "device_ms": 4.01,
-   "tflops": 111.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "ffn_down",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    1740,
-    4096,
-    1024
+   "operand_sig": "[1024, 1670]:T|[1670, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     1024,
+     1670
+    ],
+    [
+     1670,
+     1024
+    ]
    ],
-   "operand_sig": "[1740, 4096]:|[4096, 1024]:T",
-   "calls_per_step": 24,
+   "flops_tflop": 0.336,
    "device_ms": 3.99,
-   "flops_tflop": 0.35,
-   "tflops": 87.8
+   "tflops": 84.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "ffn_down",
@@ -1522,7 +2297,7 @@
    "calls_per_step": 24,
    "device_ms": 3.98,
    "flops_tflop": 0.501,
-   "tflops": 125.9
+   "tflops": 125.8
   },
   {
    "module_class": "ffn_down",
@@ -1555,69 +2330,103 @@
    "tflops": 112.8
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 1670]:T|[1670, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 3.98,
-   "tflops": 84.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[2100, 1024]:|[1024, 4096]:",
+   "module_class": "ffn_down",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    4096,
+    1024
+   ],
+   "operand_sig": "[1740, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 3.83,
-   "tflops": 110.3,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "device_ms": 3.97,
+   "flops_tflop": 0.35,
+   "tflops": 88.3
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[2140, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 3.8,
-   "tflops": 113.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "attn_qkv",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    140,
-    1024,
-    1024
+   "operand_dims_measured": [
+    [
+     2140,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
    ],
-   "operand_sig": "[140, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 72,
-   "device_ms": 3.79,
-   "flops_tflop": 0.021,
-   "tflops": 5.6
+   "flops_tflop": 0.431,
+   "device_ms": 3.81,
+   "tflops": 113.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     2100,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.423,
+   "device_ms": 3.78,
+   "tflops": 111.8,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1670, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 3.58,
-   "tflops": 93.9,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1670,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.336,
+   "device_ms": 3.53,
+   "tflops": 95.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1910, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1910,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.385,
    "device_ms": 3.53,
-   "tflops": 108.9,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 109.0,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_qkv",
@@ -1630,9 +2439,9 @@
    ],
    "operand_sig": "[180, 1024]:|[1024, 1024]:T",
    "calls_per_step": 72,
-   "device_ms": 3.51,
+   "device_ms": 3.45,
    "flops_tflop": 0.027,
-   "tflops": 7.7
+   "tflops": 7.9
   },
   {
    "module_class": "ffn_down",
@@ -1645,39 +2454,87 @@
    ],
    "operand_sig": "[160, 4096]:|[4096, 1024]:T",
    "calls_per_step": 48,
-   "device_ms": 3.46,
+   "device_ms": 3.41,
    "flops_tflop": 0.064,
-   "tflops": 18.6
+   "tflops": 18.9
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[180, 1024]:|[1024, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 3.44,
-   "tflops": 10.5,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[140, 1024]:|[1024, 1024]:",
-   "calls_per_step": 96,
-   "device_ms": 3.35,
-   "tflops": 8.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1740, 1024]:|[1024, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1740,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.35,
    "device_ms": 3.25,
-   "tflops": 107.8,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 107.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "attn_qkv",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    140,
+    1024,
+    1024
+   ],
+   "operand_sig": "[140, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 72,
+   "device_ms": 3.16,
+   "flops_tflop": 0.021,
+   "tflops": 6.7
+  },
+  {
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     180,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.036,
+   "device_ms": 3.14,
+   "tflops": 11.5,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
+  },
+  {
+   "module_class": "attn_proj",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 1024]:|[1024, 1024]:",
+   "calls_per_step": 96,
+   "operand_dims_measured": [
+    [
+     140,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.028,
+   "device_ms": 2.99,
+   "tflops": 9.4,
+   "attribution": "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
   },
   {
    "module_class": "ffn_up",
@@ -1690,29 +2547,51 @@
    ],
    "operand_sig": "[160, 1024]:|[1024, 4096]:T",
    "calls_per_step": 48,
-   "device_ms": 2.82,
+   "device_ms": 2.71,
    "flops_tflop": 0.064,
-   "tflops": 22.9
+   "tflops": 23.8
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 180]:T|[180, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 2.56,
-   "tflops": 14.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     180
+    ],
+    [
+     180,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.036,
+   "device_ms": 2.43,
+   "tflops": 14.8,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 140]:T|[140, 1024]:",
    "calls_per_step": 96,
-   "device_ms": 2.48,
-   "tflops": 11.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     140
+    ],
+    [
+     140,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.028,
+   "device_ms": 2.32,
+   "tflops": 12.1,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_out",
@@ -1725,39 +2604,72 @@
    ],
    "operand_sig": "[160, 1024]:|[1024, 1024]:T",
    "calls_per_step": 48,
-   "device_ms": 2.4,
+   "device_ms": 2.3,
    "flops_tflop": 0.016,
-   "tflops": 6.7
+   "tflops": 7.0
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 160]:T|[160, 4096]:",
    "calls_per_step": 48,
-   "device_ms": 2.29,
-   "tflops": 28.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     160
+    ],
+    [
+     160,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.064,
+   "device_ms": 2.25,
+   "tflops": 28.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4096, 160]:T|[160, 1024]:",
    "calls_per_step": 48,
-   "device_ms": 2.21,
-   "tflops": 29.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4096,
+     160
+    ],
+    [
+     160,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.064,
+   "device_ms": 2.18,
+   "tflops": 29.4,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[160, 1024]:|[1024, 4096]:",
    "calls_per_step": 48,
-   "device_ms": 2.13,
-   "tflops": 30.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     160,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.064,
+   "device_ms": 2.09,
+   "tflops": 30.6,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_out",
@@ -1770,19 +2682,30 @@
    ],
    "operand_sig": "[4430, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 2.01,
+   "device_ms": 2.0,
    "flops_tflop": 0.223,
-   "tflops": 110.8
+   "tflops": 111.2
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[160, 4096]:|[4096, 1024]:",
    "calls_per_step": 48,
-   "device_ms": 2.01,
-   "tflops": 32.1,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     160,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.064,
+   "device_ms": 1.96,
+   "tflops": 32.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "attn_out",
@@ -1795,9 +2718,9 @@
    ],
    "operand_sig": "[4310, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.94,
+   "device_ms": 1.92,
    "flops_tflop": 0.217,
-   "tflops": 112.0
+   "tflops": 112.9
   },
   {
    "module_class": "ffn_down",
@@ -1827,37 +2750,22 @@
    "calls_per_step": 24,
    "device_ms": 1.78,
    "flops_tflop": 0.188,
-   "tflops": 105.5
+   "tflops": 105.8
   },
   {
-   "module_class": "attn_out",
+   "module_class": "ffn_down",
    "phase": "forward",
    "op": "addmm",
    "MKN": [
     140,
-    1024,
+    4096,
     1024
    ],
-   "operand_sig": "[140, 1024]:|[1024, 1024]:T",
+   "operand_sig": "[140, 4096]:|[4096, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.69,
-   "flops_tflop": 0.007,
-   "tflops": 4.2
-  },
-  {
-   "module_class": "ffn_up",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    140,
-    1024,
-    4096
-   ],
-   "operand_sig": "[140, 1024]:|[1024, 4096]:T",
-   "calls_per_step": 24,
-   "device_ms": 1.68,
+   "device_ms": 1.71,
    "flops_tflop": 0.028,
-   "tflops": 16.8
+   "tflops": 16.5
   },
   {
    "module_class": "attn_out",
@@ -1870,9 +2778,9 @@
    ],
    "operand_sig": "[3290, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.61,
+   "device_ms": 1.57,
    "flops_tflop": 0.166,
-   "tflops": 103.1
+   "tflops": 105.6
   },
   {
    "module_class": "ffn_up",
@@ -1885,9 +2793,9 @@
    ],
    "operand_sig": "[180, 1024]:|[1024, 4096]:T",
    "calls_per_step": 24,
-   "device_ms": 1.46,
+   "device_ms": 1.47,
    "flops_tflop": 0.036,
-   "tflops": 24.9
+   "tflops": 24.6
   },
   {
    "module_class": "attn_out",
@@ -1900,9 +2808,24 @@
    ],
    "operand_sig": "[2990, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.41,
+   "device_ms": 1.4,
    "flops_tflop": 0.15,
-   "tflops": 106.5
+   "tflops": 107.8
+  },
+  {
+   "module_class": "ffn_up",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "operand_sig": "[140, 1024]:|[1024, 4096]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.39,
+   "flops_tflop": 0.028,
+   "tflops": 20.3
   },
   {
    "module_class": "attn_out",
@@ -1915,24 +2838,39 @@
    ],
    "operand_sig": "[180, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.37,
+   "device_ms": 1.35,
    "flops_tflop": 0.009,
-   "tflops": 6.6
+   "tflops": 6.7
   },
   {
    "module_class": "attn_out",
    "phase": "forward",
    "op": "addmm",
    "MKN": [
-    1740,
+    140,
     1024,
     1024
    ],
-   "operand_sig": "[1740, 1024]:|[1024, 1024]:T",
+   "operand_sig": "[140, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.28,
-   "flops_tflop": 0.088,
-   "tflops": 68.4
+   "device_ms": 1.27,
+   "flops_tflop": 0.007,
+   "tflops": 5.6
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1910, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.25,
+   "flops_tflop": 0.096,
+   "tflops": 76.8
   },
   {
    "module_class": "attn_out",
@@ -1945,9 +2883,24 @@
    ],
    "operand_sig": "[1670, 1024]:|[1024, 1024]:T",
    "calls_per_step": 24,
-   "device_ms": 1.27,
+   "device_ms": 1.21,
    "flops_tflop": 0.084,
-   "tflops": 66.4
+   "tflops": 69.7
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "operand_sig": "[1740, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.21,
+   "flops_tflop": 0.088,
+   "tflops": 72.2
   },
   {
    "module_class": "attn_out",
@@ -1962,7 +2915,22 @@
    "calls_per_step": 24,
    "device_ms": 1.2,
    "flops_tflop": 0.125,
-   "tflops": 104.5
+   "tflops": 104.8
+  },
+  {
+   "module_class": "attn_out",
+   "phase": "forward",
+   "op": "addmm",
+   "MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "operand_sig": "[2100, 1024]:|[1024, 1024]:T",
+   "calls_per_step": 24,
+   "device_ms": 1.2,
+   "flops_tflop": 0.106,
+   "tflops": 87.9
   },
   {
    "module_class": "attn_out",
@@ -1977,22 +2945,7 @@
    "calls_per_step": 24,
    "device_ms": 1.19,
    "flops_tflop": 0.108,
-   "tflops": 90.6
-  },
-  {
-   "module_class": "attn_out",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    2100,
-    1024,
-    1024
-   ],
-   "operand_sig": "[2100, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 24,
-   "device_ms": 1.19,
-   "flops_tflop": 0.106,
-   "tflops": 88.6
+   "tflops": 90.4
   },
   {
    "module_class": "attn_out",
@@ -2007,102 +2960,175 @@
    "calls_per_step": 24,
    "device_ms": 1.19,
    "flops_tflop": 0.112,
-   "tflops": 94.4
+   "tflops": 94.6
   },
   {
-   "module_class": "attn_out",
-   "phase": "forward",
-   "op": "addmm",
-   "MKN": [
-    1910,
-    1024,
-    1024
-   ],
-   "operand_sig": "[1910, 1024]:|[1024, 1024]:T",
-   "calls_per_step": 24,
-   "device_ms": 1.18,
-   "flops_tflop": 0.096,
-   "tflops": 81.3
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[1024, 180]:T|[180, 4096]:",
    "calls_per_step": 24,
-   "device_ms": 1.12,
-   "tflops": 32.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     1024,
+     180
+    ],
+    [
+     180,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.036,
+   "device_ms": 1.11,
+   "tflops": 32.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[1024, 140]:T|[140, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 1.12,
-   "tflops": 25.2,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4096, 180]:T|[180, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 1.1,
-   "tflops": 32.9,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4096,
+     180
+    ],
+    [
+     180,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.036,
+   "device_ms": 1.08,
+   "tflops": 33.3,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
    "phase": "backward",
    "op": "mm",
-   "operand_sig": "[180, 1024]:|[1024, 4096]:",
+   "operand_sig": "[1024, 140]:T|[140, 4096]:",
    "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     1024,
+     140
+    ],
+    [
+     140,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.028,
    "device_ms": 1.07,
-   "tflops": 33.9,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "tflops": 26.1,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
-   "phase": "backward",
-   "op": "mm",
-   "operand_sig": "[140, 1024]:|[1024, 4096]:",
-   "calls_per_step": 24,
-   "device_ms": 1.06,
-   "tflops": 26.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
-  },
-  {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[4096, 140]:T|[140, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 1.06,
-   "tflops": 26.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     4096,
+     140
+    ],
+    [
+     140,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.028,
+   "device_ms": 1.05,
+   "tflops": 26.7,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     180,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.036,
+   "device_ms": 1.03,
+   "tflops": 35.0,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_down",
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 1024]:|[1024, 4096]:",
+   "calls_per_step": 24,
+   "operand_dims_measured": [
+    [
+     140,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "flops_tflop": 0.028,
+   "device_ms": 0.99,
+   "tflops": 28.2,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
+  },
+  {
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[180, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 0.99,
-   "tflops": 36.6,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     180,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.036,
+   "device_ms": 0.96,
+   "tflops": 37.5,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "ffn_up",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[140, 4096]:|[4096, 1024]:",
    "calls_per_step": 24,
-   "device_ms": 0.99,
-   "tflops": 28.4,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "operand_dims_measured": [
+    [
+     140,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.028,
+   "device_ms": 0.93,
+   "tflops": 30.1,
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
    "module_class": "pooler",
@@ -2115,29 +3141,51 @@
    ],
    "operand_sig": "[10, 1024]:|[1024, 1024]:T",
    "calls_per_step": 20,
-   "device_ms": 0.65,
+   "device_ms": 0.57,
    "flops_tflop": 0.0,
-   "tflops": 0.6
+   "tflops": 0.7
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[40, 10]:T|[10, 1024]:",
    "calls_per_step": 4,
+   "operand_dims_measured": [
+    [
+     40,
+     10
+    ],
+    [
+     10,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.0,
    "device_ms": 0.14,
    "tflops": 0.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   },
   {
-   "module_class": "shape_group",
+   "module_class": "unclassified",
    "phase": "backward",
    "op": "mm",
    "operand_sig": "[10, 40]:|[40, 1024]:",
    "calls_per_step": 4,
-   "device_ms": 0.07,
+   "operand_dims_measured": [
+    [
+     10,
+     40
+    ],
+    [
+     40,
+     1024
+    ]
+   ],
+   "flops_tflop": 0.0,
+   "device_ms": 0.08,
    "tflops": 0.0,
-   "attribution": "shape-keyed (FFN dims recoverable; ffn dX/dW classes unique per shape)"
+   "attribution": "shape-keyed from both operand dims (cf0cc15 item 2)"
   }
  ],
  "note": "dispatch-mode wrapping adds CPU submission overhead; kernel device times valid; backward QKV/attn_out split is topology-derived (1:3 pattern, count-asserted)"
