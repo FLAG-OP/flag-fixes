@@ -10,6 +10,7 @@ ap=argparse.ArgumentParser(); ap.add_argument("--conf",required=True)
 ap.add_argument("--skip",type=int,default=2); ap.add_argument("--rounds",type=int,default=3)
 ap.add_argument("--out",required=True); ap.add_argument("--device",default="auto")
 a=ap.parse_args()
+PERF_MODE = os.environ.get("WSPERF","") == "1"   # perf run: routing only, no events/counts
 import random
 random.seed(42); torch.manual_seed(42)
 os.environ.setdefault("FLAGSCALE_DEVICE", a.device)
@@ -55,6 +56,11 @@ def route(self, other):
         return r
     if mode == "dw_only_routed":
         if key in STATE["dW_shapes"]:
+            ph = "warmup" if STATE.get("phase") == "warmup" else "timed"
+            STATE["dw_hits"] = STATE.get("dw_hits", {})
+            STATE["dw_hits"][(key, ph)] = STATE["dw_hits"].get((key, ph), 0) + 1
+            if STATE.get("perf_mode"):
+                return fg_mm(self, other)   # perf run: no events/counts
             s = torch.cuda.Event(enable_timing=True); e = torch.cuda.Event(enable_timing=True)
             s.record(); r = fg_mm(self, other); e.record()
             STATE["pending"].append(("dw_fg", key, s, e, False))
@@ -87,11 +93,13 @@ for gi, GROUP in enumerate(GROUPS):
             FG = _fgmod.mm
         if gi == 0 or not STATE["dW_shapes"]:
             # measured dW shapes (r36): ffn dW S512 + mid-seq top
-            STATE["dW_shapes"] = {
-                (4096,5120,1024),(1024,5120,4096),
-                (4096,4430,1024),(1024,4430,4096),(4096,4310,1024),(1024,4310,4096),
-                (4096,3740,1024),(1024,3740,4096),(4096,3290,1024),(1024,3290,4096),
-                (4096,2990,1024),(1024,2990,4096)}
+            # measured FFN dW shapes as (self.shape, other.shape) PAIRS —
+            # dW: self = gy.t()[N,M], other = x[M,K]  (from r36 operand_dims_measured)
+            N_MK = [(4096,5120,1024),(1024,5120,4096),
+                    (4096,4430,1024),(1024,4430,4096),(4096,4310,1024),(1024,4310,4096),
+                    (4096,3740,1024),(1024,3740,4096),(4096,3290,1024),(1024,3290,4096),
+                    (4096,2990,1024),(1024,2990,4096)]
+            STATE["dW_shapes"] = {((N,M),(M,K)) for (N,M,K) in N_MK}
         if GROUP == "wrapped_stock_mmout" and not STATE.get("stock_reg"):
             STATE["lib"] = torch.library.Library("aten","IMPL")
             STATE["lib"].impl("mm", route, "CUDA")
@@ -105,6 +113,7 @@ for gi, GROUP in enumerate(GROUPS):
             STATE["libdw"].impl("mm", route, "CUDA")
             STATE["dw_reg"] = True
     STATE["mode"] = GROUP
+    STATE["perf_mode"] = PERF_MODE
     STATE["stats"] = {}
     STATE["pending"] = []
     STATE["first_call"] = {}
@@ -118,7 +127,14 @@ for gi, GROUP in enumerate(GROUPS):
     optimizer=build_optimizer(cfg.optimizer,trainable)
     loaders=build_split_loaders(str(cfg.task),cfg.data,int(cfg.batch_size),pin_memory=True,seed=42)
     stream=iter(loaders[0])
+    # tokens/s: valid tokens per step from r36 fingerprint window (steps 2-4)
+    try:
+        meta_fp=json.load(open('/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json'))['batch_fingerprints']['fingerprints']
+        vt=[sum(g['valid_tokens'] for g in micros) for micros in meta_fp.values()][:a.rounds]
+    except Exception:
+        vt=[None]*a.rounds
     rounds_data=[]; micro_losses=[]; gns=[]
+    STATE["phase"] = "warmup"
     for i in range(a.skip):
         optimizer.zero_grad(set_to_none=True)
         for micro in range(accum):
@@ -128,6 +144,7 @@ for gi, GROUP in enumerate(GROUPS):
             (loss/accum).backward()
         gns.append(float(torch.nn.utils.clip_grad_norm_(trainable,1.0)))
         optimizer.step()
+    STATE["phase"] = "timed"
     for i in range(a.rounds):
         t0=time.perf_counter()
         optimizer.zero_grad(set_to_none=True)
@@ -143,7 +160,8 @@ for gi, GROUP in enumerate(GROUPS):
         torch.cuda.synchronize()
         if "flush" in STATE: STATE["flush"]()
         ms=(time.perf_counter()-t0)*1000
-        rounds_data.append({"round":i,"step_ms":round(ms,1),"micro_losses":ml,"grad_norm":round(gn,4)})
+        rounds_data.append({"round":i,"step_ms":round(ms,1),"micro_losses":ml,"grad_norm":round(gn,4),
+                             "valid_tokens_per_s":round(vt[i]/(ms/1000)) if vt[i] else None})
         micro_losses.extend(ml)
         gns.append(gn)
     # param snapshot (updated params) + grad snapshot from LAST warmup grad (pre-step grads overwritten; use final param hash)
@@ -163,6 +181,9 @@ for gi, GROUP in enumerate(GROUPS):
         ref_accuracy = {"micro_losses_last_round":rounds_data[-1]["micro_losses"],
                          "grad_norms_rounds":[r["grad_norm"] for r in rounds_data],
                          "param_hash16":param_hash}
+        # save target grads (FFN dW params = all encoder intermediate/output.dense weights)
+        # snapshot BEFORE optimizer.step of last round: capture at grad-ready state
+        # (captured post-hoc from a fresh identical run below in accuracy mode)
     else:
         # accuracy vs native
         dl = [round(x-y,6) for x,y in zip(rounds_data[-1]["micro_losses"], ref_accuracy["micro_losses_last_round"])]
@@ -173,6 +194,21 @@ for gi, GROUP in enumerate(GROUPS):
             "param_hash_equal":param_hash==ref_accuracy["param_hash16"],
             "param_absmax":round(pmax,4),"nonfinite_params":nonfinite,
             "criteria":"bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"}
+    if GROUP == "dw_only_routed":
+        hits = STATE.get("dw_hits", {})
+        timed_total = sum(c for (k, ph), c in hits.items() if ph == "timed")
+        warm_total = sum(c for (k, ph), c in hits.items() if ph == "warmup")
+        shapes_hit = {k for (k, ph) in hits}
+        missing = STATE["dW_shapes"] - shapes_hit
+        res["dw_hits_summary"] = {"timed_hits": timed_total, "warmup_hits": warm_total,
+                                    "shapes_hit": len(shapes_hit), "shapes_expected": len(STATE["dW_shapes"]),
+                                    "missing_shapes": [list(a_)+list(b_) for (a_,b_) in list(missing)[:6]],
+                                    "per_shape_timed": {f"{list(k[0])}x{list(k[1])}|{ph}": c for (k,ph),c in sorted(hits.items()) if ph=="timed"}}
+        if timed_total == 0 or missing:
+            print(f"FATAL: dw_only candidate hits ZERO or missing shapes (timed={timed_total}, missing={len(missing)})", file=sys.stderr)
+            json.dump({"group":GROUP,"fatal":"zero/missing dw hits","dw_hits_summary":res["dw_hits_summary"]},
+                      open(a.out + ".dw_fatal.json","w"), indent=1)
+            sys.exit(4)
     results[GROUP]=res
     print(f"[{GROUP}] median {res['median_ms']} ms | rounds {res['step_ms']} | param {param_hash} | cold_calls {res['cold_first_calls']}", flush=True)
     # teardown override libraries between groups (best effort)

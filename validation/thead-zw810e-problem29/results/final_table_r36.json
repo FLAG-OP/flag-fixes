@@ -244,7 +244,7 @@
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_proj dW bwd",
+   "stage": "GEMM attn_proj dX bwd",
    "MKN": [
     [
      4430,
@@ -255,7 +255,7 @@
      1024
     ]
    ],
-   "dW_or_dX": "dW",
+   "dW_or_dX": "dX",
    "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
    "ms": 10.17,
@@ -1141,13 +1141,13 @@
  ],
  "critical_path_per_step": {
   "s2": {
-   "window_ms": 2044.1,
+   "window_ms": 2056.5,
    "device_busy_union_ms": 1806.9,
-   "busy_union_scope": "full intervals of kernels+memcpy+memset STARTING in the host window (drain execution included in submitting step); busy = >=1 device activity",
-   "exposed_idle_ms": 237.2,
-   "busy_pct": 88.4,
-   "cpu_launches_in_window": 72127,
-   "sync_calls_in_window": 60,
+   "busy_union_scope": "all intersecting kernel/memcpy/memset intervals CLIPPED to host window; busy = >=1 device activity",
+   "exposed_idle_ms": 249.5,
+   "busy_pct": 87.9,
+   "cpu_launches_in_window": 72128,
+   "sync_calls_in_window": 61,
    "memcpy_events_per_step": {
     "HtoD": {
      "count": 40,
@@ -1167,20 +1167,20 @@
     }
    },
    "kernels": 46370,
-   "drain_beyond_last_marker_ms": 0.0,
-   "host_gap_after_window_ms": 12.4,
+   "drain_beyond_last_marker_ms": 541.1,
+   "host_gap_after_window_ms": 0.0,
    "sync_tail_drain_ms": 0.0,
    "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
-   "drain_into_next_step_ms": 9.6
+   "drain_into_next_step_ms": 0.0
   },
   "s3": {
-   "window_ms": 2253.1,
+   "window_ms": 2265.0,
    "device_busy_union_ms": 2035.3,
-   "busy_union_scope": "full intervals of kernels+memcpy+memset STARTING in the host window (drain execution included in submitting step); busy = >=1 device activity",
-   "exposed_idle_ms": 217.8,
-   "busy_pct": 90.3,
-   "cpu_launches_in_window": 72391,
-   "sync_calls_in_window": 60,
+   "busy_union_scope": "all intersecting kernel/memcpy/memset intervals CLIPPED to host window; busy = >=1 device activity",
+   "exposed_idle_ms": 229.7,
+   "busy_pct": 89.9,
+   "cpu_launches_in_window": 72392,
+   "sync_calls_in_window": 61,
    "memcpy_events_per_step": {
     "DtoH": {
      "count": 20,
@@ -1200,20 +1200,20 @@
     }
    },
    "kernels": 46409,
-   "drain_beyond_last_marker_ms": 0.0,
-   "host_gap_after_window_ms": 11.9,
+   "drain_beyond_last_marker_ms": 505.0,
+   "host_gap_after_window_ms": 0.0,
    "sync_tail_drain_ms": 0.0,
    "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
-   "drain_into_next_step_ms": 9.2
+   "drain_into_next_step_ms": 0.0
   },
   "s4": {
-   "window_ms": 2465.4,
-   "device_busy_union_ms": 2254.3,
-   "busy_union_scope": "full intervals of kernels+memcpy+memset STARTING in the host window (drain execution included in submitting step); busy = >=1 device activity",
+   "window_ms": 2473.7,
+   "device_busy_union_ms": 2262.5,
+   "busy_union_scope": "all intersecting kernel/memcpy/memset intervals CLIPPED to host window; busy = >=1 device activity",
    "exposed_idle_ms": 211.2,
-   "busy_pct": 91.4,
-   "cpu_launches_in_window": 72823,
-   "sync_calls_in_window": 60,
+   "busy_pct": 91.5,
+   "cpu_launches_in_window": 72824,
+   "sync_calls_in_window": 61,
    "memcpy_events_per_step": {
     "DtoD": {
      "count": 20,
@@ -1233,11 +1233,11 @@
     }
    },
    "kernels": 46796,
-   "drain_beyond_last_marker_ms": 0.0,
+   "drain_beyond_last_marker_ms": 396.9,
    "host_gap_after_window_ms": 0.0,
-   "sync_tail_drain_ms": 8.3,
+   "sync_tail_drain_ms": 0.0,
    "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
-   "drain_into_next_step_ms": 8.2
+   "drain_into_next_step_ms": 0.0
   }
  },
  "overhead": {
