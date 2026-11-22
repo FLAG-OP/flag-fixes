@@ -49,9 +49,9 @@ for i,s in enumerate(sel):
         e["fg_tflops"]=round(fl/(e["fg_mm_ms"]*1e-3),1)
         e["saving_per_step_ms"]=round((e["stock_ms"]-e["fg_mm_ms"])*calls,2)
     rows.append(e)
-    tot_stock+=e["stock_ms"]*calls/1000; tot_ms_coverage+=ms_arch
+    tot_stock+=e["stock_ms"]*calls; tot_ms_coverage+=ms_arch
     if e.get("fg_mm_ms") is not None:
-        tot_best+=min(e["stock_ms"],e["fg_mm_ms"])*calls/1000
+        tot_best+=min(e["stock_ms"],e["fg_mm_ms"])*calls
     print(f"{s['module_class']} M{M}: stock {e['stock_ms']} fg {e.get('fg_mm_ms','-')} saving/step {e.get('saving_per_step_ms','-')}ms")
 out={"shapes":rows,"coverage_note":"per-step ms from r36 archived calls for these shapes",
       "stock_total_ms_selected":round(tot_stock,2),

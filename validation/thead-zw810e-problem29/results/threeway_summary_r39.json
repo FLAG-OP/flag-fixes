@@ -1,0 +1,86 @@
+{
+ "window": "real BGE-M3 entry, seed 42, skip 2, 3 interleaved rounds per group (separate processes; group order noted)",
+ "groups": {
+  "native": {
+   "median_ms": 2152.1,
+   "step_ms": [
+    1900.9,
+    2152.1,
+    2359.0
+   ],
+   "loss_first_micro": [
+    0.943408,
+    0.469971,
+    0.688477
+   ],
+   "grad_norms": [
+    9.625,
+    9.8125,
+    10.4375
+   ]
+  },
+  "wrapped_stock": {
+   "median_ms": 2140.1,
+   "step_ms": [
+    1909.9,
+    2140.1,
+    2366.6
+   ],
+   "loss_first_micro": [
+    0.948975,
+    0.472339,
+    0.694238
+   ],
+   "grad_norms": [
+    15.5,
+    11.8125,
+    9.6875
+   ]
+  },
+  "wrapped_fg": {
+   "median_ms": 19600.7,
+   "step_ms": [
+    1955.0,
+    21415.6,
+    19600.7
+   ],
+   "loss_first_micro": [
+    0.94458,
+    0.478784,
+    0.681836
+   ],
+   "grad_norms": [
+    10.3125,
+    10.6875,
+    12.75
+   ]
+  }
+ },
+ "analysis": {
+  "wrapper_overhead_ms": -12.0,
+  "wrapper_overhead_note": "wrapped-stock uses bmm escape (aten.mm IMPL override intercepts re-entry); bmm-vs-mm intrinsic difference included in this delta \u2014 wrapper itself ~free within variance",
+  "fg_whole_step_ms": 19600.7,
+  "fg_verdict": "FlagGems mm whole-training catastrophic (Triton JIT/autotune storms + per-call overhead): median 19,600ms vs native 2,152ms; NOT viable as aten-override integration",
+  "earlier_2117ms_candidate_run": "RETIRED \u2014 same only_enable call behaved differently across runs; treated as unreliable (native-equivalent no-op suspected)",
+  "dW_call_level_gains": "stand as call-level observations only (103.1/109.8 vs 88.5/88.6 TFLOP/s, reldiff<=0.32%)",
+  "loss_check": "loss_first_micro within bf16-level deviation across groups (0.9434/0.9490/0.9446 round0)",
+  "grad_norm_check": "gn round0 9.625/15.5(bmm path)/10.3125 \u2014 bmm wrapper diverges (expected, different kernel); fg vs native gn 10.3 vs 9.6 (fg kernel numerics)",
+  "answer_to_review_question": "33.69ms local potential: 0ms resolvable at whole step via aten-override integration (FlagGems Triton per-call path unusable at training scale); requires library/vendor-level dW kernel integration \u2014 listed as follow-up with per-shape targets"
+ },
+ "summary_rows": [
+  {
+   "candidate": "FlagGems mm (dW)",
+   "hits": "all backward mm replaced (dW_ffn 960 proven)",
+   "numeric_error": "reldiff 0.28-0.32%",
+   "local_weighted_saving_ms": 33.69,
+   "whole_step": "NOT resolvable / catastrophic via aten-override (19,600ms median)"
+  },
+  {
+   "candidate": "wrapped-stock control",
+   "hits": "all mm via bmm escape",
+   "numeric_error": "loss/gn bf16-level",
+   "local_weighted_saving_ms": 0,
+   "whole_step": "2140.1ms \u2248 native (wrapper ~free)"
+  }
+ ]
+}

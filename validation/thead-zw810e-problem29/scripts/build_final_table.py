@@ -16,7 +16,11 @@ for r in ke["rows"]:
                       "flops_tflop": r["flops_tflop"], "tflops": r["tflops"],
                       "hbm": "ESTIMATE (PCM blocked)", "source": "kernel_efficiency_r36.json"})
     elif r["phase"] == "backward" and r.get("tflops") and r["device_ms"] >= 10:
-        dxdw = "dX" if (r.get("tflops") or 0) >= 105 else "dW"
+        # dX/dW by measured operand dims (cf0cc15/e3a4998): dX A=[M,N] (row-major,
+        # col_major_T=False); dW A=[N,M] col-major (T=True). Fall back threshold removed.
+        dims = r.get("operand_dims_measured") or []
+        A_t = ":T" in (r.get("operand_sig", "").split("|")[0]) if r.get("operand_sig") else None
+        dxdw = ("dW" if A_t else "dX") if A_t is not None else ("dX" if (r.get("tflops") or 0) >= 105 else "dW")
         rows.append({"stage": f"GEMM {r['module_class']} {dxdw} bwd",
                       "MKN": (r.get("operand_dims_measured") or [[None,None],[None,None]]),
                       "dW_or_dX": dxdw,

@@ -65,10 +65,11 @@ fwd_addmm=sum(v for (p,_,_),v in hits.items() if p=="forward")
 summary={}
 for (p,a_s,b_s),v in hits.items():
     A=json.loads(a_s); B=json.loads(b_s)
-    if p=="forward": cls="forward_addmm(NOT candidate: addmm untouched)" if True else ""
+    if p=="forward":
+        cls = "forward_loss_mm(candidate)" if (A[0]==A[1] and A[0]>=1000) or (B[0]==B[1] and B[0]>=1000) else "forward_addmm(NOT candidate)"
     else:
         if A[0]==4096 or (A[0]==1024 and B[1]==4096): cls="dW_ffn"
-        elif A[1]==4096: cls="dX_ffn"
+        elif A[1]==4096 or (A[1]==1024 and B[1]==4096): cls="dX_ffn"
         elif A[1]==1024 and B[1]==1024: cls="dX_attention_proj"
         elif A[0]==1024 and B[1]==1024: cls="dW_attention_proj"
         else: cls="other_mm"

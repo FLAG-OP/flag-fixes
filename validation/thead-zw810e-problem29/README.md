@@ -515,6 +515,22 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 
 **整步配对（方差如实）**：native 两 pass 中位 2112.0/2123.3（差 11.3ms）；mm 候选中位 2117.1 落在方差带内——dW 局部 15.6ms（+中序列 18.1ms）**未复现为可分辨的整步收益**（5,768 次 mm/步逐调用分发开销为疑似抵消项）；候选不采纳，库级接入列入后续。
 
+#### 3c-5. 三组交错对照定论（round-39，复审 e3a4998 实验 1）
+
+真实入口内三组（各自独立进程、同 seed 同窗、3 轮交错记录）：
+
+| 组 | 中位 ms | rounds ms | loss(首 micro) | 结论 |
+|---|---:|---|---|---|
+| native | 2,152.1 | 1900.9/2152.1/2359.0 | 0.9434/0.4700/0.6885 | 基线 |
+| wrapped-stock（bmm 逃逸）| 2,140.1 | 1909.9/2140.1/2366.6 | 0.9490/0.4723/0.6942 | **包装本身 ≈ 无开销**（−12ms 在方差内；bmm/mm 内在差含入）|
+| wrapped-FlagGems mm | **19,600.7** | 1955.0/21415.6/19600.7 | 0.9446/0.4788/0.6818 | **灾难性**：Triton JIT/autotune 风暴 + 逐调用开销 |
+
+**对复审问题的回答**：dW 局部 33.69ms 潜力经 aten-override 接入 **0ms 保留到整步**——FlagGems Triton mm 路径在训练规模不可用（新形状 autotune 风暴 + 逐调用开销）。**call 级增益（103–110 vs 88 TFLOP/s）仍成立**，但兑现需要库/厂商级 dW kernel 接入（无逐调用分发），已按形状目标（4096×5120×1024 类）列入后续移交。
+
+**先前 2117ms"候选"测量 RETIRED**：同 only_enable 调用跨运行行为不一致（一次近 native 空转、一次触发 Triton 路径），根因未定——该结果不可靠，不再引用。wrapped-stock 对照初次实现 RecursionError（override 内重入 aten.mm），改 bmm 逃逸（bmm/mm 内在差已计入并注明）。
+
+**命中分类修正**（`candidate_hit_counts_r38.json`）：前向 = addmm（未替换）+ loss mm（候选替换，8 次）；反向 FFN dX 两类合计 **960** ✓（此前 480 归入 other）；dW_ffn 960；attn_proj dX/dW 各 1,920。
+
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
