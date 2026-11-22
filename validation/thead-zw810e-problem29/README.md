@@ -505,6 +505,29 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 
 **估算标注**：dW 提升/135.7 参照/逐元素融合等收益数字全部为估算（依据同窗实测差值），非实测结论。ac2g 时间戳=主机提交时刻（统一口径）。
 
+#### 3c-3. 候选对照与整步验证（round-38，复审 2026-11-22 实验 1–3）
+
+**FFN dW 单形状对照**（`ffn_dw_compare_r38.json`，S=512 主导形状，bf16，转置视图 operand 如训练原样）：
+
+| 类 | stock TF/s | FlagGems mm TF/s | reldiff vs fp32 | 局部节省/步 |
+|---|---:|---:|---:|---:|
+| FFN 升维 dW (4096,5120)×(5120,1024) | 88.5 | **103.1** | 0.32% | 6.6ms |
+| FFN 降维 dW (1024,5120)×(5120,4096) | 88.6 | **109.8** | 0.28% | 9.0ms |
+
+dW 慢的根因方向：stock 对转置 operand 的 kernel 路径 ~88 TF/s，FlagGems mm 对同形状达 103–110。precontig 布局预转换无收益（转换耗时抵消）。
+
+**SDPA 训练态候选**（`sdpa_training_compare_r38.json`）：native SDPA（efficient+mask，trace 确认）fwd 0.70ms / fwd+bwd 1.93ms（p=0）；p=0.1 时 0.78/2.18ms。**FlagGems SDPA 候选在 PPU 编译失败**（Triton GROUP_HEAD 断言）——不可运行，如实记录；flash 接口签名不匹配（10 vs 11 参数）。重算状态 UNKNOWN 保持。
+
+**整步配对验证（mm 候选）**：同窗指纹断言配对（60 组 hash 一致），无 profiler 三步：
+
+| | native/stock | +FlagGems mm（仅 dW 路径）|
+|---|---|---|
+| step ms（native pass1 / pass2）| 1876.7-1893.9 / 2112.0-2123.3 / 2335.6-2350.5 | 1879.7/2117.1/2338.9（中位 2117.1）|
+| 整步差 | — | **落在 native 运行间方差带内（两 pass 中位差 11.3ms），不可分辨** |
+| tokens/s | 14340–15202（两 pass）| 14392–15181 |
+
+**结论（如实，含方差口径）**：dW 局部节省 **15.6ms/步**（FlagGems mm 103–110 vs stock 88 TF/s）**未在整步复现为收益**：native 两次独立 pass 中位 2112.0/2123.3（相差 11.3ms，运行间方差），候选中位 2117.1 **落在该方差带内**——3 次运行规模下整步变化不可分辨（候选相对两 pass 差 -14.2~-6.2 / +5.1）。可能原因：5,768 次 mm/步的逐调用分发开销抵消局部收益。候选**不采纳**；若要兑现 dW 收益需无逐调用分发的接入方式（厂商库级替换），列入后续。
+
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。

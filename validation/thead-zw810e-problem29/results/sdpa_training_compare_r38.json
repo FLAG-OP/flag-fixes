@@ -1,0 +1,14 @@
+{
+ "shape": "B10 H16 S512 D64 bf16",
+ "mask": "bool, last 32 keys padded",
+ "dropout": {
+  "config": 0.1,
+  "note": "module-level; SDPA-internal p tested 0.0 (exact numeric) and 0.1 (timing)"
+ },
+ "recompute": "UNKNOWN (no implementation evidence; flash-style backward typically recomputes - not confirmed on this stack)",
+ "native_fwd_ms_p0": 0.6994,
+ "native_fwd_bwd_ms_p0": 1.9257,
+ "native_fwd_ms_p01": 0.7815,
+ "native_fwd_bwd_ms_p01": 2.181,
+ "fg_sdpa_error": "CompileTimeAssertionFailure: at 43:4:\n    GROUP_HEAD: tl.constexpr,\n    Q_CTX,\n    KV_CTX,\n    HEAD_DIM: tl.constexpr,\n    HEAD_DIM_ACTUAL: tl.constexpr,\n    BLOCK_M: tl.constexpr"
+}

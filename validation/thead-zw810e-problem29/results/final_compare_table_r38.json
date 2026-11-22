@@ -1,0 +1,64 @@
+{
+ "window": "same seed 42 batch window, fingerprint-asserted pairing, no profiler, 3 steps",
+ "baseline_native_stock": {
+  "step_ms": [
+   1893.9,
+   2123.3,
+   2350.5
+  ],
+  "median_ms": 2123.3,
+  "p95_sample_max_ms": 2350.5,
+  "valid_tokens_per_s": [
+   14283.0,
+   14814.0,
+   15106.0
+  ],
+  "tokens_s_mean": 14734
+ },
+ "candidate_fg_mm_dW": {
+  "step_ms": [
+   1879.7,
+   2117.1,
+   2338.9
+  ],
+  "median_ms": 2117.1,
+  "valid_tokens_per_s": [
+   14392.0,
+   14857.0,
+   15181.0
+  ],
+  "paired_diff_ms": [
+   -14.2,
+   -6.2,
+   -11.6
+  ],
+  "median_delta_ms": null,
+  "numeric": "mm reldiff vs fp32: 0.0028-0.0032 (bf16 tolerance level)",
+  "pairing_asserted": true,
+  "delta_method": "candidate median 2117.1 lies WITHIN the native two-pass median band (2112.0-2123.3); no resolvable whole-step change",
+  "note": "native has TWO passes (1876.7/2112.0/2335.6 median 2112.0 AND 1893.9/2123.3/2350.5 median 2123.3); run-to-run native median difference 11.3ms EXCEEDS the candidate delta - whole-step effect not resolvable at 3-run scale"
+ },
+ "local_vs_whole_step": {
+  "local_dW_saving_ms": 15.6,
+  "dW_stock_tflops": [
+   88.5,
+   88.6
+  ],
+  "dW_fg_tflops": [
+   103.1,
+   109.8
+  ],
+  "whole_step_delta_ms": -6.2,
+  "conclusion": "local 15.6ms saving did NOT transfer to whole step (net +3~5ms); dispatch overhead on 5,768 mm calls/step likely offsets; candidate NOT adopted"
+ },
+ "sdpa_training_mode": {
+  "baseline": "native SDPA efficient backend (trace-confirmed) with mask",
+  "native_fwd_p0_ms": 0.6994,
+  "native_fwd_bwd_p0_ms": 1.9257,
+  "native_fwd_p01_ms": 0.7815,
+  "native_fwd_bwd_p01_ms": 2.181,
+  "candidate": "FlagGems scaled_dot_product_attention: FAILED (Triton CompileTimeAssertionFailure GROUP_HEAD on PPU) - not runnable",
+  "fg_flash_probe": null,
+  "recompute": "UNKNOWN (kept)"
+ }
+}
