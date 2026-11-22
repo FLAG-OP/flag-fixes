@@ -29,6 +29,7 @@ def main():
         t = json.load(f)
     evs = t["traceEvents"]
 
+    all_act = [e for e in evs if e.get("cat") in ("kernel", "gpu_memcpy", "gpu_memset")]
     kernels = [e for e in evs if e.get("cat") == "kernel"]
     cpu_ops = [e for e in evs if e.get("cat") == "cpu_op"]
     markers = [e for e in evs if e.get("name", "").startswith("rf_s")]
@@ -101,20 +102,18 @@ def main():
     # bounded) so the busy union only counts kernels inside the real step.
     step_windows = {}
     first_start = {}
-    last_end = {}
     for e in markers:
         s = e["name"].split("_")[1]
         first_start.setdefault(s, e["ts"])
-        last_end[s] = max(last_end.get(s, 0), e["ts"] + e.get("dur", 0))
     order = sorted(first_start.items(), key=lambda kv: kv[1])
-    all_kernel_end = max((e["ts"] + e.get("dur", 0) for e in kernels), default=0)
+    # review e3a4998 FINAL convention: window = [first marker start, next
+    # step's first marker start); last step ends at last activity end
+    # (sync tail included). Matches reviewer replay busy 1806.9/2035.3/2262.5.
+    all_act_end = max((e["ts"] + e.get("dur", 0) for e in all_act), default=0)
     for idx, (s, t0) in enumerate(order):
-        t1 = last_end[s]
-        if idx + 1 < len(order):
-            t1 = min(t1, order[idx + 1][1])          # cap at next step start
-        else:
-            t1 = max(t1, min(all_kernel_end, t0 + 5_000_000))  # sync tail
+        t1 = order[idx + 1][1] if idx + 1 < len(order) else all_act_end
         step_windows[s] = {"t0": t0, "t1": t1}
+    print("DEBUG WINDOWS:", {s: (round(w["t0"],0), round(w["t1"],0)) for s,w in step_windows.items()})
     # report cross-step drain overlap: kernels attributed to step N executing after step N+1 window started
     drain_overlap = collections.Counter()
     by_step = collections.defaultdict(list)
@@ -151,8 +150,22 @@ def main():
                              "stream": (e.get("args") or {}).get("stream"),
                              "phase": "memcpy", "micro": "", "step": w0, "marker": "rf_memcpy", "corr": None})
     crit = {}
+    last_marker_end = {}
+    for e in markers:
+        s = e["name"].split("_")[1]
+        last_marker_end[s] = max(last_marker_end.get(s, 0), e["ts"] + e.get("dur", 0))
     for s, w in step_windows.items():
-        ivs = sorted((k["ts"], k["ts"] + k["dur_us"]) for k in by_step.get(s, []))
+        # review cf0cc15 item 3 (boundary convention matching reviewer): busy
+        # union counts the FULL interval of every activity whose START lies in
+        # the host window (execution may extend past the last marker = drain;
+        # counted into the submitting step). Denominator = marker span.
+        # activities submitted in this step; execution counted until next step starts
+        upper = w["t1"]
+        # clip EVERY intersecting activity interval to the host window
+        # (review e3a4998: intersect = includes prior-step drain executing here)
+        ivs = sorted((max(e["ts"], w["t0"]), min(e["ts"] + e.get("dur", 0), w["t1"]))
+                      for e in all_act
+                      if e["ts"] < w["t1"] and e["ts"] + e.get("dur", 0) > w["t0"])
         union = 0.0; cur_s = cur_e = None
         for a_, b_ in ivs:
             if cur_s is None or a_ > cur_e:
@@ -162,16 +175,29 @@ def main():
                 cur_e = max(cur_e, b_)
         if cur_s is not None: union += cur_e - cur_s
         wall = (w["t1"] - w["t0"]) / 1000
+        # drain: clipped-away activity beyond the last marker end of this step
+        drain_us = sum(max(0, min(k["ts"] + k["dur_us"], w["t1"]) - last_marker_end.get(s, 0))
+                        for k in by_step.get(s, [])
+                        if k["ts"] + k["dur_us"] > last_marker_end.get(s, 0))
+        idx0 = [k for k,(t0_,) in enumerate([(v,) for v in [o[1] for o in order]]) if t0_ == w["t0"]]
+        host_gap_us = 0.0
+        if idx0 and idx0[0] + 1 < len(order):
+            host_gap_us = order[idx0[0] + 1][1] - w["t1"]   # inter-step gap (host side)
+        sync_tail_us = max(0, all_act_end - w["t1"]) if idx0 and idx0[0] + 1 == len(order) else 0.0
         launches = sum(1 for e in rt if w["t0"] <= e["ts"] <= w["t1"])
         syncs = sum(1 for e in rt if w["t0"] <= e["ts"] <= w["t1"] and "Synchronize" in e.get("name", ""))
         crit[s] = {"window_ms": round(wall, 1), "device_busy_union_ms": round(union / 1000, 1),
-                    "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals",
+                    "busy_union_scope": "all intersecting kernel/memcpy/memset intervals CLIPPED to host window; busy = >=1 device activity",
                     "exposed_idle_ms": round(wall - union / 1000, 1),
                     "busy_pct": round(union / 1000 / wall * 100, 1),
                     "cpu_launches_in_window": launches,
                     "sync_calls_in_window": syncs,
                     "memcpy_events_per_step": {k: dict(v) for k, v in mem_by_step[s].items()},
                     "kernels": len(by_step.get(s, [])),
+                    "drain_beyond_last_marker_ms": round(drain_us / 1000, 1),
+                    "host_gap_after_window_ms": round(host_gap_us / 1000, 1),
+                    "sync_tail_drain_ms": round(sync_tail_us / 1000, 1),
+                    "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
                     "drain_into_next_step_ms": round(drain_overlap.get(s, 0) / 1000, 1)}
     # GEMM FLOPs from measured per-shape calls (same seed window as r28)
     try:

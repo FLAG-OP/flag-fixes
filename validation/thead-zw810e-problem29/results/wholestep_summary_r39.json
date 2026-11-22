@@ -1,0 +1,143 @@
+{
+ "window": "real BGE-M3 entry, seed 42, skip 2, 3 rounds/group, same-init accuracy checks, no profiler",
+ "groups": {
+  "native": {
+   "median_ms": 2126.2,
+   "step_ms": [
+    1915.5,
+    2126.2,
+    2354.2
+   ],
+   "grad_norms_rounds": [
+    10.375,
+    10.25,
+    12.5625
+   ],
+   "accuracy": null,
+   "wrapper_calls": 0,
+   "wrapper_ms": 0,
+   "cold_compile_ms": 0,
+   "cold_shapes": 0,
+   "delta_vs_native_ms": 0.0
+  },
+  "wrapped_stock_mmout": {
+   "median_ms": 2193.0,
+   "step_ms": [
+    2004.2,
+    2193.0,
+    2420.1
+   ],
+   "grad_norms_rounds": [
+    11.5,
+    11.5,
+    11.5
+   ],
+   "accuracy": {
+    "last_round_micro_loss_diff": [
+     0.012304,
+     0.011719,
+     0.004102,
+     -0.00061
+    ],
+    "grad_norm_diff_rounds": [
+     1.125,
+     1.25,
+     -1.062
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   },
+   "wrapper_calls": 0,
+   "wrapper_ms": 0,
+   "cold_compile_ms": 0,
+   "cold_shapes": 0,
+   "delta_vs_native_ms": 66.8
+  },
+  "fg_all": {
+   "median_ms": 2257.4,
+   "step_ms": [
+    2067.1,
+    2257.4,
+    2702.0
+   ],
+   "grad_norms_rounds": [
+    9.4375,
+    10.6875,
+    9.875
+   ],
+   "accuracy": {
+    "last_round_micro_loss_diff": [
+     0.001562,
+     0.0125,
+     0.00791,
+     0.002148
+    ],
+    "grad_norm_diff_rounds": [
+     -0.938,
+     0.438,
+     -2.688
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   },
+   "wrapper_calls": 28880,
+   "wrapper_ms": 5011.4,
+   "cold_compile_ms": 990.8,
+   "cold_shapes": 435,
+   "delta_vs_native_ms": 131.2
+  },
+  "dw_only_routed": {
+   "median_ms": 2157.5,
+   "step_ms": [
+    1933.0,
+    2157.5,
+    2376.5
+   ],
+   "grad_norms_rounds": [
+    12.1875,
+    12.75,
+    10.125
+   ],
+   "accuracy": {
+    "last_round_micro_loss_diff": [
+     0.007617,
+     0.007788,
+     0.007324,
+     0.004126
+    ],
+    "grad_norm_diff_rounds": [
+     1.812,
+     2.5,
+     -2.438
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   },
+   "wrapper_calls": 0,
+   "wrapper_ms": 0,
+   "cold_compile_ms": 0,
+   "cold_shapes": 0,
+   "delta_vs_native_ms": 31.3
+  }
+ },
+ "answer": {
+  "dW_only_whole_step_delta_ms": 31.3,
+  "local_potential_ms": 33.69,
+  "verdict": "33.69ms local potential did NOT materialize at whole step (dW-only routed = +31.3ms vs native, within run-to-run variance band 11-30ms); per-call dispatch+routing overhead offsets local gains",
+  "fg_all_delta_ms": 131.2,
+  "fg_all_cold": {
+   "shapes": 435,
+   "cold_ms": 990.8
+  },
+  "mm_out_escape_cost_ms": 66.8,
+  "mm_out_note": "wrapped-stock via mm.out escape = TRUE stock kernel but per-call output allocation adds ~67ms \u2014 PURE wrapper cost NOT separated (reviewer anticipated)",
+  "accuracy": "all groups nonfinite_params=0; last-round loss diffs 0.004-0.012 (bf16-level); wrapped-stock gn divergence noted previously (bmm path) now mm.out path",
+  "adoption": "no candidate adopted; FlagGems mm whole-training and dW-only routing both rejected at whole-step; library/vendor-level integration remains the only path to realize dW gains"
+ }
+}
