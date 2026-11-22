@@ -1,0 +1,14 @@
+PASS SDPA tflops recomputed from per-step means
+PASS SDPA per-step FLOPs reconcile with 24-layer formula [fwd 2.531 vs 2.531; bwd 5.061 vs 5.061]
+PASS SDPA per-step FLOPs scale with groups (0.3-4 TFLOP range)
+PASS SDPA group rows sum == per-step sum [7.592 vs 7.592]
+PASS memcpy per-step counts sum == total events [8082 vs 8082]
+PASS final_table ms consistent with kernel_efficiency_r36 [74 rows matched]
+PASS all efficiency rows <= 139.2 TFLOP/s
+PASS kernel_efficiency rows <= 139.2 TFLOP/s
+PASS backward GEMM rows have flops_tflop [missing: []]
+PASS final_table backward rows have flops_tflop [empty: []]
+PASS no-profiler pairing asserted (text-hash)
+PASS kernel-efficiency fingerprint asserted
+
+ALL CHECKS PASS
