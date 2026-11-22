@@ -6,17 +6,17 @@
 /usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
   @custom_bwd
 class       phase     calls       ms  tflops
-ffn_down    backward     96    46.75    88.2
-ffn_up      backward     96    46.69    88.3
-ffn_down    backward     96    34.57   119.3
-ffn_up      forward      96    34.34   120.1
-ffn_down    forward      96    32.82   125.6
-ffn_up      backward     96    31.90   129.2
-attn_qkv    backward    288    31.75    97.4
-attn_qkv    forward     288    28.34   109.1
-attn_qkv    backward    288    28.34   109.1
+ffn_up      backward     96    46.80    88.1
+ffn_down    backward     96    46.71    88.3
+ffn_down    backward     96    34.56   119.3
+ffn_up      forward      96    34.28   120.3
+ffn_down    forward      96    32.75   125.9
+ffn_up      backward     96    31.90   129.3
+attn_qkv    backward    288    31.77    97.3
+attn_qkv    backward    288    28.37   109.0
+attn_qkv    forward     288    28.36   109.0
 attn_out    backward     96    10.60    97.3
-ffn_up      backward     24    10.29    86.7
+ffn_up      backward     24    10.32    86.4
 ffn_down    backward     24    10.25    87.0
-attn_proj   backward     96    10.15    87.9
-ffn_down    backward     24     9.96    87.2
+attn_proj   backward     96    10.17    87.7
+ffn_up      backward     24     9.98    87.0

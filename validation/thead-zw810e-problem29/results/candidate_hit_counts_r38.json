@@ -1,0 +1,15 @@
+{
+ "note": "dispatch probe counts aten.mm (candidate-replaced) vs aten.addmm (NOT replaced) per phase; mm candidate replaces ALL mm including dW/dX/loss",
+ "counts": {
+  "forward": {
+   "forward_addmm(NOT candidate: addmm untouched)": 2908
+  },
+  "backward": {
+   "other_mm": 488,
+   "dW_ffn": 960,
+   "dX_ffn": 480,
+   "dX_attention_proj": 1920,
+   "dW_attention_proj": 1920
+  }
+ }
+}

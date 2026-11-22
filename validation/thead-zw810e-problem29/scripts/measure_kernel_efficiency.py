@@ -231,8 +231,10 @@ def main():
                         cls_map = "ffn_up"       # dW: [4096,M]x[M,1024]
                     elif A[0] == 1024 and B[1] == 4096:
                         cls_map = "ffn_down"     # dW: [1024,M]x[M,4096]
+                    elif A[0] == 1024 and B[1] == 1024:
+                        cls_map = "attn_proj"   # dW: [1024,M]x[M,1024]
                     elif A[1] == 1024 and B[1] == 1024:
-                        cls_map = "attn_proj"
+                        cls_map = "attn_proj"   # dX: [M,1024]x[1024,1024]
                         sem_note = "QKV+output-projection MERGED (identical shapes; per-call split is topology-inferred)"
             flops_tflop = None; tflops = None
             if len(m2) == 2 and all_ms > 0:
@@ -251,14 +253,24 @@ def main():
     # fingerprint assertion: measured step must match a trace-pass step hash-for-hash
     ref_key = f"step_{a.skip}"
     ref_micros = ref_fp[ref_key]
-    fp_check = {"ref_step": ref_key, "micros": len(_fp_seen), "hash_matches": 0, "mismatches": []}
+    # review cf0cc15 item 3: SET verification FIRST (micro count + group keys),
+    # then hash compare; counts from actual comparisons
+    if len(_fp_seen) != len(ref_micros):
+        print(f"FATAL: MICRO COUNT differs mine={len(_fp_seen)} ref={len(ref_micros)}", file=sys.stderr)
+        sys.exit(3)
+    fp_check = {"ref_step": ref_key, "micros": len(_fp_seen),
+                 "groups_compared": 0, "hash_matches": 0, "mismatches": []}
     for mi, (mine, ref) in enumerate(zip(_fp_seen, ref_micros)):
+        if set(mine.keys()) != set(ref.keys()):
+            fp_check["mismatches"].append(f"micro{mi}: group KEY SET differs mine={sorted(mine)} ref={sorted(ref)}")
+            continue
         for g in sorted(ref.keys()):
+            fp_check["groups_compared"] += 1
             if mine.get(g) == ref[g]["text_hash16"]:
                 fp_check["hash_matches"] += 1
             else:
                 fp_check["mismatches"].append(f"micro{mi} {g}: {mine.get(g)} vs {ref[g]['text_hash16']}")
-    fp_check["asserted"] = len(fp_check["mismatches"]) == 0 and fp_check["hash_matches"] > 0
+    fp_check["asserted"] = len(fp_check["mismatches"]) == 0 and fp_check["hash_matches"] == fp_check["groups_compared"] > 0
     if not fp_check["asserted"]:
         print("FATAL: kernel-efficiency fingerprint verification FAILED:", fp_check["mismatches"][:8], file=sys.stderr)
         sys.exit(3)

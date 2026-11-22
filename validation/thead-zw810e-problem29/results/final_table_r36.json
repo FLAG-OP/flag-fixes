@@ -13,30 +13,63 @@
  "trace": "training_trace_r36_trace.json.gz",
  "rows": [
   {
-   "stage": "GEMM ffn_down  bwd",
-   "MKN": null,
+   "stage": "GEMM ffn_up dW bwd",
+   "MKN": [
+    [
+     4096,
+     5120
+    ],
+    [
+     5120,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
-   "ms": 46.75,
+   "ms": 46.8,
    "flops_tflop": 4.123,
-   "tflops": 88.2,
+   "tflops": 88.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up  bwd",
-   "MKN": null,
+   "stage": "GEMM ffn_down dW bwd",
+   "MKN": [
+    [
+     1024,
+     5120
+    ],
+    [
+     5120,
+     4096
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
-   "ms": 46.69,
+   "ms": 46.71,
    "flops_tflop": 4.123,
    "tflops": 88.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down  bwd",
-   "MKN": null,
+   "stage": "GEMM ffn_down dX bwd",
+   "MKN": [
+    [
+     5120,
+     1024
+    ],
+    [
+     1024,
+     4096
+    ]
+   ],
+   "dW_or_dX": "dX",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
-   "ms": 34.57,
+   "ms": 34.56,
    "flops_tflop": 4.123,
    "tflops": 119.3,
    "hbm": "ESTIMATE (PCM blocked)",
@@ -50,9 +83,9 @@
     4096
    ],
    "calls": 96,
-   "ms": 34.34,
+   "ms": 34.28,
    "flops_tflop": 4.123,
-   "tflops": 120.1,
+   "tflops": 120.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -64,29 +97,72 @@
     1024
    ],
    "calls": 96,
-   "ms": 32.82,
+   "ms": 32.75,
    "flops_tflop": 4.123,
-   "tflops": 125.6,
+   "tflops": 125.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_up  bwd",
-   "MKN": null,
+   "stage": "GEMM ffn_up dX bwd",
+   "MKN": [
+    [
+     5120,
+     4096
+    ],
+    [
+     4096,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dX",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
    "ms": 31.9,
    "flops_tflop": 4.123,
-   "tflops": 129.2,
+   "tflops": 129.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv  bwd",
-   "MKN": null,
+   "stage": "GEMM attn_qkv dW bwd",
+   "MKN": [
+    [
+     1024,
+     5120
+    ],
+    [
+     5120,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 288,
-   "ms": 31.75,
+   "ms": 31.77,
    "flops_tflop": 3.092,
-   "tflops": 97.4,
+   "tflops": 97.3,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
+  },
+  {
+   "stage": "GEMM attn_qkv dX bwd",
+   "MKN": [
+    [
+     5120,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dX",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
+   "calls": 288,
+   "ms": 28.37,
+   "flops_tflop": 3.092,
+   "tflops": 109.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
@@ -98,25 +174,26 @@
     1024
    ],
    "calls": 288,
-   "ms": 28.34,
+   "ms": 28.36,
    "flops_tflop": 3.092,
-   "tflops": 109.1,
+   "tflops": 109.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv  bwd",
-   "MKN": null,
-   "calls": 288,
-   "ms": 28.34,
-   "flops_tflop": 3.092,
-   "tflops": 109.1,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
-  },
-  {
-   "stage": "GEMM attn_out  bwd",
-   "MKN": null,
+   "stage": "GEMM attn_out dW bwd",
+   "MKN": [
+    [
+     1024,
+     5120
+    ],
+    [
+     5120,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
    "ms": 10.6,
    "flops_tflop": 1.031,
@@ -125,18 +202,40 @@
    "source": "kernel_efficiency_r36.json (topology-inferred 1:3)"
   },
   {
-   "stage": "GEMM ffn_up  bwd",
-   "MKN": null,
+   "stage": "GEMM ffn_up dW bwd",
+   "MKN": [
+    [
+     4096,
+     4430
+    ],
+    [
+     4430,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 24,
-   "ms": 10.29,
+   "ms": 10.32,
    "flops_tflop": 0.892,
-   "tflops": 86.7,
+   "tflops": 86.4,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM ffn_down  bwd",
-   "MKN": null,
+   "stage": "GEMM ffn_down dW bwd",
+   "MKN": [
+    [
+     1024,
+     4430
+    ],
+    [
+     4430,
+     4096
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 24,
    "ms": 10.25,
    "flops_tflop": 0.892,
@@ -145,12 +244,23 @@
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_proj  bwd",
-   "MKN": null,
+   "stage": "GEMM attn_proj dW bwd",
+   "MKN": [
+    [
+     4430,
+     1024
+    ],
+    [
+     1024,
+     1024
+    ]
+   ],
+   "dW_or_dX": "dW",
+   "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
    "calls": 96,
-   "ms": 10.15,
+   "ms": 10.17,
    "flops_tflop": 0.892,
-   "tflops": 87.9,
+   "tflops": 87.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -176,9 +286,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 7.27,
+   "ms": 7.25,
    "flops_tflop": 0.892,
-   "tflops": 122.7,
+   "tflops": 123.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -192,7 +302,7 @@
    "calls": 24,
    "ms": 7.25,
    "flops_tflop": 0.892,
-   "tflops": 123.0,
+   "tflops": 123.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -204,9 +314,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 7.17,
+   "ms": 7.18,
    "flops_tflop": 0.868,
-   "tflops": 121.0,
+   "tflops": 120.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -220,7 +330,21 @@
    "calls": 24,
    "ms": 6.84,
    "flops_tflop": 0.868,
-   "tflops": 126.8,
+   "tflops": 126.9,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "calls": 144,
+   "ms": 6.65,
+   "flops_tflop": 0.048,
+   "tflops": 7.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -234,21 +358,7 @@
    "calls": 24,
    "ms": 6.46,
    "flops_tflop": 0.753,
-   "tflops": 116.5,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    160,
-    1024,
-    1024
-   ],
-   "calls": 144,
-   "ms": 6.4,
-   "flops_tflop": 0.048,
-   "tflops": 7.5,
+   "tflops": 116.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -260,9 +370,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 6.23,
+   "ms": 6.25,
    "flops_tflop": 0.753,
-   "tflops": 120.8,
+   "tflops": 120.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -274,9 +384,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 6.14,
+   "ms": 6.16,
    "flops_tflop": 0.669,
-   "tflops": 108.9,
+   "tflops": 108.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -288,23 +398,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.9,
+   "ms": 5.89,
    "flops_tflop": 0.651,
-   "tflops": 110.3,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    1910,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.74,
-   "flops_tflop": 0.288,
-   "tflops": 50.3,
+   "tflops": 110.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -316,9 +412,51 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.69,
+   "ms": 5.87,
    "flops_tflop": 0.263,
-   "tflops": 46.2,
+   "tflops": 44.8,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.82,
+   "flops_tflop": 0.252,
+   "tflops": 43.3,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.78,
+   "flops_tflop": 0.288,
+   "tflops": 49.9,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2230,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.67,
+   "flops_tflop": 0.337,
+   "tflops": 59.4,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -330,9 +468,23 @@
     4096
    ],
    "calls": 24,
-   "ms": 5.61,
+   "ms": 5.63,
    "flops_tflop": 0.662,
-   "tflops": 118.1,
+   "tflops": 117.7,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 5.57,
+   "flops_tflop": 0.323,
+   "tflops": 58.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -344,9 +496,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 5.58,
+   "ms": 5.55,
    "flops_tflop": 0.662,
-   "tflops": 118.6,
+   "tflops": 119.2,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -358,23 +510,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.53,
-   "flops_tflop": 0.565,
-   "tflops": 102.1,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    1670,
-    1024,
-    1024
-   ],
-   "calls": 72,
    "ms": 5.52,
-   "flops_tflop": 0.252,
-   "tflops": 45.7,
+   "flops_tflop": 0.565,
+   "tflops": 102.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -386,23 +524,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 5.33,
+   "ms": 5.35,
    "flops_tflop": 0.501,
-   "tflops": 94.0,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    2230,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.33,
-   "flops_tflop": 0.337,
-   "tflops": 63.2,
+   "tflops": 93.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -414,23 +538,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.27,
+   "ms": 5.3,
    "flops_tflop": 0.376,
-   "tflops": 71.3,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    2140,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 5.25,
-   "flops_tflop": 0.323,
-   "tflops": 61.6,
+   "tflops": 70.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -442,9 +552,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 5.24,
+   "ms": 5.27,
    "flops_tflop": 0.602,
-   "tflops": 114.9,
+   "tflops": 114.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -456,9 +566,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 5.13,
+   "ms": 5.23,
    "flops_tflop": 0.317,
-   "tflops": 61.8,
+   "tflops": 60.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -470,9 +580,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 5.03,
+   "ms": 5.05,
    "flops_tflop": 0.602,
-   "tflops": 119.8,
+   "tflops": 119.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -484,9 +594,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 4.99,
+   "ms": 4.92,
    "flops_tflop": 0.497,
-   "tflops": 99.6,
+   "tflops": 101.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -498,37 +608,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 4.86,
+   "ms": 4.89,
    "flops_tflop": 0.449,
-   "tflops": 92.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    2100,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 4.68,
-   "flops_tflop": 0.423,
-   "tflops": 90.4,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    2140,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 4.62,
-   "flops_tflop": 0.431,
-   "tflops": 93.3,
+   "tflops": 91.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -540,9 +622,37 @@
     1024
    ],
    "calls": 72,
-   "ms": 4.55,
+   "ms": 4.82,
    "flops_tflop": 0.451,
-   "tflops": 99.3,
+   "tflops": 93.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2100,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 4.72,
+   "flops_tflop": 0.423,
+   "tflops": 89.5,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    2140,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 4.66,
+   "flops_tflop": 0.431,
+   "tflops": 92.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -554,9 +664,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 4.37,
+   "ms": 4.33,
    "flops_tflop": 0.385,
-   "tflops": 88.0,
+   "tflops": 88.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -568,9 +678,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 4.17,
+   "ms": 4.18,
    "flops_tflop": 0.35,
-   "tflops": 84.0,
+   "tflops": 83.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -582,9 +692,9 @@
     4096
    ],
    "calls": 24,
-   "ms": 4.07,
+   "ms": 4.11,
    "flops_tflop": 0.336,
-   "tflops": 82.6,
+   "tflops": 81.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -596,9 +706,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 4.0,
+   "ms": 4.01,
    "flops_tflop": 0.385,
-   "tflops": 96.1,
+   "tflops": 96.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -610,9 +720,23 @@
     1024
    ],
    "calls": 24,
-   "ms": 3.99,
+   "ms": 4.0,
    "flops_tflop": 0.336,
-   "tflops": 84.3,
+   "tflops": 84.0,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_down fwd",
+   "MKN": [
+    2490,
+    4096,
+    1024
+   ],
+   "calls": 24,
+   "ms": 3.99,
+   "flops_tflop": 0.501,
+   "tflops": 125.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -633,20 +757,6 @@
   {
    "stage": "GEMM ffn_down fwd",
    "MKN": [
-    2490,
-    4096,
-    1024
-   ],
-   "calls": 24,
-   "ms": 3.98,
-   "flops_tflop": 0.501,
-   "tflops": 125.8,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_down fwd",
-   "MKN": [
     2100,
     4096,
     1024
@@ -654,7 +764,7 @@
    "calls": 24,
    "ms": 3.98,
    "flops_tflop": 0.423,
-   "tflops": 106.2,
+   "tflops": 106.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -668,7 +778,7 @@
    "calls": 24,
    "ms": 3.98,
    "flops_tflop": 0.449,
-   "tflops": 112.8,
+   "tflops": 112.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -687,20 +797,6 @@
    "source": "kernel_efficiency_r36.json"
   },
   {
-   "stage": "GEMM attn_qkv fwd",
-   "MKN": [
-    180,
-    1024,
-    1024
-   ],
-   "calls": 72,
-   "ms": 3.45,
-   "flops_tflop": 0.027,
-   "tflops": 7.9,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
    "stage": "GEMM ffn_down fwd",
    "MKN": [
     160,
@@ -708,9 +804,23 @@
     1024
    ],
    "calls": 48,
-   "ms": 3.41,
+   "ms": 3.44,
    "flops_tflop": 0.064,
-   "tflops": 18.9,
+   "tflops": 18.7,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_qkv fwd",
+   "MKN": [
+    180,
+    1024,
+    1024
+   ],
+   "calls": 72,
+   "ms": 3.39,
+   "flops_tflop": 0.027,
+   "tflops": 8.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -722,9 +832,9 @@
     1024
    ],
    "calls": 72,
-   "ms": 3.16,
+   "ms": 3.21,
    "flops_tflop": 0.021,
-   "tflops": 6.7,
+   "tflops": 6.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -736,9 +846,9 @@
     4096
    ],
    "calls": 48,
-   "ms": 2.71,
+   "ms": 2.8,
    "flops_tflop": 0.064,
-   "tflops": 23.8,
+   "tflops": 23.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -750,9 +860,9 @@
     1024
    ],
    "calls": 48,
-   "ms": 2.3,
+   "ms": 2.43,
    "flops_tflop": 0.016,
-   "tflops": 7.0,
+   "tflops": 6.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -764,9 +874,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 2.0,
+   "ms": 2.02,
    "flops_tflop": 0.223,
-   "tflops": 111.2,
+   "tflops": 110.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -778,9 +888,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.92,
+   "ms": 1.93,
    "flops_tflop": 0.217,
-   "tflops": 112.9,
+   "tflops": 112.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -794,7 +904,7 @@
    "calls": 24,
    "ms": 1.81,
    "flops_tflop": 0.036,
-   "tflops": 20.0,
+   "tflops": 20.1,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -808,7 +918,7 @@
    "calls": 24,
    "ms": 1.78,
    "flops_tflop": 0.188,
-   "tflops": 105.8,
+   "tflops": 105.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -834,9 +944,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.57,
+   "ms": 1.58,
    "flops_tflop": 0.166,
-   "tflops": 105.6,
+   "tflops": 104.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -848,9 +958,23 @@
     4096
    ],
    "calls": 24,
-   "ms": 1.47,
+   "ms": 1.42,
    "flops_tflop": 0.036,
-   "tflops": 24.6,
+   "tflops": 25.6,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM ffn_up fwd",
+   "MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "calls": 24,
+   "ms": 1.42,
+   "flops_tflop": 0.028,
+   "tflops": 19.9,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -864,21 +988,7 @@
    "calls": 24,
    "ms": 1.4,
    "flops_tflop": 0.15,
-   "tflops": 107.8,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM ffn_up fwd",
-   "MKN": [
-    140,
-    1024,
-    4096
-   ],
-   "calls": 24,
-   "ms": 1.39,
-   "flops_tflop": 0.028,
-   "tflops": 20.3,
+   "tflops": 107.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -890,9 +1000,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.35,
+   "ms": 1.32,
    "flops_tflop": 0.009,
-   "tflops": 6.7,
+   "tflops": 6.8,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -904,23 +1014,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.27,
+   "ms": 1.28,
    "flops_tflop": 0.007,
-   "tflops": 5.6,
-   "hbm": "ESTIMATE (PCM blocked)",
-   "source": "kernel_efficiency_r36.json"
-  },
-  {
-   "stage": "GEMM attn_out fwd",
-   "MKN": [
-    1910,
-    1024,
-    1024
-   ],
-   "calls": 24,
-   "ms": 1.25,
-   "flops_tflop": 0.096,
-   "tflops": 76.8,
+   "tflops": 5.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -932,9 +1028,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.21,
+   "ms": 1.24,
    "flops_tflop": 0.084,
-   "tflops": 69.7,
+   "tflops": 68.0,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -946,9 +1042,9 @@
     1024
    ],
    "calls": 24,
-   "ms": 1.21,
+   "ms": 1.22,
    "flops_tflop": 0.088,
-   "tflops": 72.2,
+   "tflops": 71.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -962,7 +1058,7 @@
    "calls": 24,
    "ms": 1.2,
    "flops_tflop": 0.125,
-   "tflops": 104.8,
+   "tflops": 104.6,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -976,7 +1072,7 @@
    "calls": 24,
    "ms": 1.2,
    "flops_tflop": 0.106,
-   "tflops": 87.9,
+   "tflops": 88.3,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -990,7 +1086,7 @@
    "calls": 24,
    "ms": 1.19,
    "flops_tflop": 0.108,
-   "tflops": 90.4,
+   "tflops": 90.7,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -1004,7 +1100,21 @@
    "calls": 24,
    "ms": 1.19,
    "flops_tflop": 0.112,
-   "tflops": 94.6,
+   "tflops": 94.5,
+   "hbm": "ESTIMATE (PCM blocked)",
+   "source": "kernel_efficiency_r36.json"
+  },
+  {
+   "stage": "GEMM attn_out fwd",
+   "MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "calls": 24,
+   "ms": 1.18,
+   "flops_tflop": 0.096,
+   "tflops": 81.5,
    "hbm": "ESTIMATE (PCM blocked)",
    "source": "kernel_efficiency_r36.json"
   },
@@ -1032,10 +1142,10 @@
  "critical_path_per_step": {
   "s2": {
    "window_ms": 2044.1,
-   "device_busy_union_ms": 1797.3,
-   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals CLIPPED to step window; busy = >=1 device activity in window",
-   "exposed_idle_ms": 246.7,
-   "busy_pct": 87.9,
+   "device_busy_union_ms": 1806.9,
+   "busy_union_scope": "full intervals of kernels+memcpy+memset STARTING in the host window (drain execution included in submitting step); busy = >=1 device activity",
+   "exposed_idle_ms": 237.2,
+   "busy_pct": 88.4,
    "cpu_launches_in_window": 72127,
    "sync_calls_in_window": 60,
    "memcpy_events_per_step": {
@@ -1058,15 +1168,17 @@
    },
    "kernels": 46370,
    "drain_beyond_last_marker_ms": 0.0,
-   "drain_into_next_step_ms": 9.6,
-   "step_end_boundary": "last rf marker end (sync included via clip; idle reasons require host swimlane)"
+   "host_gap_after_window_ms": 12.4,
+   "sync_tail_drain_ms": 0.0,
+   "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
+   "drain_into_next_step_ms": 9.6
   },
   "s3": {
    "window_ms": 2253.1,
-   "device_busy_union_ms": 2026.0,
-   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals CLIPPED to step window; busy = >=1 device activity in window",
-   "exposed_idle_ms": 227.1,
-   "busy_pct": 89.9,
+   "device_busy_union_ms": 2035.3,
+   "busy_union_scope": "full intervals of kernels+memcpy+memset STARTING in the host window (drain execution included in submitting step); busy = >=1 device activity",
+   "exposed_idle_ms": 217.8,
+   "busy_pct": 90.3,
    "cpu_launches_in_window": 72391,
    "sync_calls_in_window": 60,
    "memcpy_events_per_step": {
@@ -1089,17 +1201,19 @@
    },
    "kernels": 46409,
    "drain_beyond_last_marker_ms": 0.0,
-   "drain_into_next_step_ms": 9.2,
-   "step_end_boundary": "last rf marker end (sync included via clip; idle reasons require host swimlane)"
+   "host_gap_after_window_ms": 11.9,
+   "sync_tail_drain_ms": 0.0,
+   "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
+   "drain_into_next_step_ms": 9.2
   },
   "s4": {
-   "window_ms": 2473.7,
-   "device_busy_union_ms": 2262.5,
-   "busy_union_scope": "kernels + gpu_memcpy + gpu_memset intervals CLIPPED to step window; busy = >=1 device activity in window",
+   "window_ms": 2465.4,
+   "device_busy_union_ms": 2254.3,
+   "busy_union_scope": "full intervals of kernels+memcpy+memset STARTING in the host window (drain execution included in submitting step); busy = >=1 device activity",
    "exposed_idle_ms": 211.2,
-   "busy_pct": 91.5,
-   "cpu_launches_in_window": 72824,
-   "sync_calls_in_window": 61,
+   "busy_pct": 91.4,
+   "cpu_launches_in_window": 72823,
+   "sync_calls_in_window": 60,
    "memcpy_events_per_step": {
     "DtoD": {
      "count": 20,
@@ -1119,9 +1233,11 @@
     }
    },
    "kernels": 46796,
-   "drain_beyond_last_marker_ms": 396.9,
-   "drain_into_next_step_ms": 0.0,
-   "step_end_boundary": "last rf marker end (sync included via clip; idle reasons require host swimlane)"
+   "drain_beyond_last_marker_ms": 0.0,
+   "host_gap_after_window_ms": 0.0,
+   "sync_tail_drain_ms": 8.3,
+   "boundary": "host window = [first marker start, last marker end]; busy union clipped to window; inter-step gap and sync-tail drain listed separately (not in denominator)",
+   "drain_into_next_step_ms": 8.2
   }
  },
  "overhead": {

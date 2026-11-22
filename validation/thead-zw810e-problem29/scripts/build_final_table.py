@@ -16,8 +16,11 @@ for r in ke["rows"]:
                       "flops_tflop": r["flops_tflop"], "tflops": r["tflops"],
                       "hbm": "ESTIMATE (PCM blocked)", "source": "kernel_efficiency_r36.json"})
     elif r["phase"] == "backward" and r.get("tflops") and r["device_ms"] >= 10:
-        rows.append({"stage": f"GEMM {r['module_class']} {r.get('semantic_kind','')} bwd",
-                      "MKN": r.get("semantic_MKN") or (r.get("operand_dims") or {}).get("actual"),
+        dxdw = "dX" if (r.get("tflops") or 0) >= 105 else "dW"
+        rows.append({"stage": f"GEMM {r['module_class']} {dxdw} bwd",
+                      "MKN": (r.get("operand_dims_measured") or [[None,None],[None,None]]),
+                      "dW_or_dX": dxdw,
+                      "MKN_note": "operand dims measured; semantic out: dX=(M,K), dW=(N,K)",
                       "calls": r["calls_per_step"], "ms": r["device_ms"],
                       "flops_tflop": r.get("flops_tflop"), "tflops": r["tflops"],
                       "hbm": "ESTIMATE (PCM blocked)",
