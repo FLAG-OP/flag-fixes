@@ -479,7 +479,7 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 | GEMM attn_out dW bwd | — | [[1024, 5120], [5120, 1024]] | 96 | 10.6 | 1.031 | **97.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json (topology-inferred 1:3) |
 | GEMM ffn_up dW bwd | — | [[4096, 4430], [4430, 1024]] | 24 | 10.32 | 0.892 | **86.4** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
 | GEMM ffn_down dW bwd | — | [[1024, 4430], [4430, 4096]] | 24 | 10.25 | 0.892 | **87.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
-| GEMM attn_proj dW bwd | — | [[4430, 1024], [1024, 1024]] | 96 | 10.17 | 0.892 | **87.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
+| GEMM attn_proj dX bwd | — | [[4430, 1024], [1024, 1024]] | 96 | 10.17 | 0.892 | **87.7** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
 | GEMM attn_out fwd | — | [5120, 1024, 1024] | 96 | 9.26 | 1.031 | **111.3** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
 | GEMM ffn_up fwd | — | [4430, 1024, 4096] | 24 | 7.25 | 0.892 | **123.0** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
 | GEMM ffn_down fwd | — | [4430, 4096, 1024] | 24 | 7.25 | 0.892 | **123.1** | ESTIMATE (PCM blocked) | kernel_efficiency_r36.json |
@@ -496,7 +496,7 @@ S=512 为负例组截断上限（max_length=512 truncation），主导线性前�
 
 小 S 形状（140–180）TFLOP/s 6–24（latency 主导）。**全部效率行 ≤139.2 峰值（离线校验通过）**。
 
-**关键路径（r36 trace，busy union 含 kernels+gpu_memcpy+gpu_memset）**：busy **88.4/90.3/91.4%**、暴露空闲 **237.2/217.8/211.2ms/步**；
+**关键路径（r36 trace，busy union 含 kernels+gpu_memcpy+gpu_memset）**：busy **87.9/89.9/91.5%**、暴露空闲 **249.5/229.7/211.2ms/步**；
 per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 条 0.07ms; memset 2544 条 0.63ms（逐步拆分 + 守恒断言 8082==8082 通过；此前"H2D=0"系只查 kernel 类别——已更正）。
 
 **严格配对（text-hash 真实指纹）**：双侧 loader_index + sha256 text_hash16；逐 micro 断言 **12/12 hash+token 一致、0 mismatch**；no-profiler 中位 **2123.3ms**、p95=样本最大 **2350.5ms**（3 样本，非稳定 p95）、有效 tokens/s **14283.0–15106.0**；**严格配对采集开销 ≈ 6.7%**（profiled 2264.9ms）。kernel-efficiency 窗指纹断言 step_2 20/20 匹配。
@@ -504,7 +504,6 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 **HBM：BLOCKED**——Asight v2.1.0 在位；PCM 被 pg-exporter 占用（dmesg 证据 `logs/hbm_probe_r34.log`）；复测命令已记录；**HBM 字节/带宽/利用率均为估算，不列入已完成测量**。SDPA dropout 配置 0.1（模块级激活）、SDPA 内部 dropout 标志未知、反向重算未知。
 
 **估算标注**：dW 提升/135.7 参照/逐元素融合等收益数字全部为估算（依据同窗实测差值），非实测结论。ac2g 时间戳=主机提交时刻（统一口径）。
-
 #### 3c-4. 命中数证实 + 中序列 dW + 配对整步（round-38b，复审 2026-11-22）
 
 **命中数诊断**（`candidate_hit_counts_r38.json`，dispatch probe 固定匹配）：候选（FlagGems mm selective）**替换反向全部 mm 5,768 次/步**——dW_ffn 960、dX_ffn 480、dW_attention_proj 1,920、dX_attention_proj 1,920、other 488；**前向 addmm 2,908 未替换**（候选只注册 aten.mm）。
@@ -543,6 +542,15 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 | **dW-only（真正路由，命中已验证）** | **2,141.9** | 1906.9/2141.9/2355.3 | **+7.6（逐轮 +0.9/+7.6/−4.2，中位 +0.9——中性）** | **−26.9（逐轮 −40.1/−21.3/−26.9）** |
 
 **结论（修正后）**：33.69ms 局部潜力在 Python 级路由接入下**相对 native 中性**（+0.9ms 中位，噪声内）——路由/分发开销（~29ms，即 wrapped-stock 与 native 差）抵消了候选 kernel 收益；**相对同包装 stock 保留 ~27ms（≈局部潜力的 80%）**。精度 ✓（非有限 0、末轮 loss 差 0.004–0.011 bf16 级、命中 12/12）。**不采纳 Python 路由接入**；库级（无逐调用分发）接入预期可保留大部分 33.69ms——仍为移交方向。fg_all +145ms（435 冷形状 990.8ms 编译含执行、28,880 次含预热——诊断分账见 `wholestep_groups_r40.json`）。
+
+#### 3c-7. SDPA 训练态重测（round-41，`sdpa_training_compare_r41.json`，复审 5b8fb29 项 5）
+
+- **mask 语义（S 轴）**：v2[:,:,-32:,:] 扰动被屏蔽 key 位置；**with-mask 有效区域 diff 0.0**、**无 mask 对照 6.75**（扰动真实存在）✓
+- **计时（统一 clone/建图/sync 边界）**：p=0 fwd **0.7018** / bwd **1.1251** / 完整 **1.8723** ms；p=0.1 fwd 0.7840 / bwd 1.2967 / 完整 2.1289（dropout 活动证据 +0.17ms bwd）；dropout 配置 0.1（模块级）、随机性=seeded torch generator
+- **native vs FP32**（同输入同上游梯度、dropout=0）：out/dQ/dK/dV reldiff **0.35–0.48%**（bf16 级）✓
+- **候选经模型入口（only_enable→F.sdpa）**：**NO-OP PASSTHROUGH VERIFIED**——profiler 证实执行 kernel 为 **fmha_cutlassF_bf16_aligned_k64x128x64_sm80（AttentionKernelFA2，与 native 相同）**；该 FlagGems 构建在 PPU 上未提供经 aten 入口的替代 SDPA kernel
+- **直接调用候选（flag_gems.scaled_dot_product_attention）**：编译失败（GROUP_HEAD 断言，BLOCK_N≤HEAD_DIM tile 约束）——最小复现/实现版本（FlagGems-base @ 29e14822）/受阻形状归档
+- **结论**：本栈无可用 SDPA 候选替代（入口透传 + 直调编译失败）；native（cutlassFA2 kernel）为唯一可用路径
 
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 

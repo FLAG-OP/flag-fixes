@@ -47,9 +47,11 @@ ap.add_argument("--readme", default=os.path.join(os.path.dirname(os.path.dirname
 ra = ap.parse_args()
 README = ra.readme
 s = open(README).read()
+# replace ONLY the 3c-2 section: end = next #### heading after it
+# (never eats the 3c-3..3c-6 sections added by later rounds - review 5b8fb29 item 4)
 start = s.index("#### 3c-2. 最终汇总表")
-end = s.index("#### 4. F-2 最小 shape 隔离（单次触发）")
-s = s[:start] + new_section + "\n" + s[end:]
+end = s.index("\n#### ", start + 10) + 1
+s = s[:start] + new_section + s[end:]
 open(README, "w").write(s)
 print("README 3c-2 regenerated programmatically:", README)
 print(new_section[:800])

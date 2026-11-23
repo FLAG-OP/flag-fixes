@@ -1,0 +1,42 @@
+{
+ "shape": "B10 H16 S512 D64 bf16",
+ "mask": "bool True=participate; last 32 KEYS masked (S-axis)",
+ "dropout": {
+  "model_config_hidden_dropout_prob": 0.1,
+  "sdpa_internal_p": "recorded below; module-level dropout active",
+  "randomness_control": "torch global generator seeded (torch.manual_seed(0)); dropout masks generated per call by backend"
+ },
+ "independence": {
+  "with_mask_valid_region_max_diff": 0.0,
+  "no_mask_control_max_diff": 6.75,
+  "interpretation": "with-mask diff ~0 => masked-position V does not affect valid outputs; no-mask diff >>0 => perturbation is real"
+ },
+ "native_fwd_p0_ms": 0.7018,
+ "native_bwd_p0_ms": 1.1251,
+ "native_full_p0_ms": 1.8723,
+ "native_fwd_p01_ms": 0.784,
+ "native_bwd_p01_ms": 1.2967,
+ "native_full_p01_ms": 2.1289,
+ "native_vs_fp32_reldiff": {
+  "out": 0.003505,
+  "dQ": 0.004829,
+  "dK": 0.004317,
+  "dV": 0.003805
+ },
+ "candidate": {
+  "status": "NO-OP PASSTHROUGH VERIFIED",
+  "detail": "only_enable(['scaled_dot_product_attention']) then F.scaled_dot_product_attention executes the NATIVE kernel (profiler-verified: fmha_cutlassF_bf16_aligned_k64x128x64_sm80 AttentionKernelFA2) \u2014 this FlagGems build provides no alternative SDPA kernel via the aten entry on PPU; the earlier 'ran' + fwd_ms 0.7014\u2248native 0.7018 was the native path",
+  "kernel_evidence": "fmha_cutlassF_bf16_aligned_k64x128x64_sm80 (AttentionKernelFA2) \u2014 same as native",
+  "fwd_ms_measured": 0.7011,
+  "direct_call_candidate": {
+   "status": "COMPILE FAILED",
+   "entry": "flag_gems.scaled_dot_product_attention direct call",
+   "assertion": "GROUP_HEAD CompileTimeAssertionFailure (BLOCK_N <= HEAD_DIM tile constraint)",
+   "minimal_repro": "flag_gems.scaled_dot_product_attention(q,k,v,attn_mask=bool[B,1,S,S],dropout_p=0.0)",
+   "impl": "FlagGems-base/src @ 29e14822 (v5.3.5-46)",
+   "blocked_shapes": [
+    "B10 H16 S512 D64 bf16 + bool mask"
+   ]
+  }
+ }
+}
