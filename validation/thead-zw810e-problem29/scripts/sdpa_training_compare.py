@@ -85,30 +85,86 @@ dqf,dkf,dvf = torch.autograd.grad(yf,(qf,kf,vf),gf)
 def rel(x,ref): return round(float((x.float()-ref).abs().max()/ref.abs().max().clamp_min(1e-6)),6)
 res["native_vs_fp32_reldiff"]={"out":rel(y,yf),"dQ":rel(dq,dqf),"dK":rel(dk,dkf),"dV":rel(dv,dvf)}
 
-# --- candidate via model entry: aten-level override, then plain F.sdpa call ---
+# --- candidate via model entry: aten-level override + PROFILER kernel evidence ---
+import triton, subprocess
+from torch.profiler import profile, ProfilerActivity
+# REAL variable-length mask from the training window: group S values (r36 step-2)
+# e.g. anchor S=16, negatives up to 512; build a padded batch with last-32 masked
+# for the dominant S=512 group AND a mid-length group (S=214) to cover var-len.
+def make_group(S_val, pad_last):
+    qq=torch.randn(B,H,S_val,D,device="cuda",dtype=torch.bfloat16)*0.3
+    kk=torch.randn(B,H,S_val,D,device="cuda",dtype=torch.bfloat16)*0.3
+    vv=torch.randn(B,H,S_val,D,device="cuda",dtype=torch.bfloat16)*0.3
+    m=torch.ones(B,1,S_val,S_val,dtype=torch.bool,device="cuda")
+    m[:,:,:,-pad_last:]=False
+    return qq,kk,vv,m
+groups={"S512_pad32":make_group(512,32),"S214_pad16":make_group(214,16)}
+def kernels_of(fn):
+    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA]) as p:
+        fn(); torch.cuda.synchronize()
+    ks=set()
+    for ev in p.events():
+        n=ev.name or ""
+        if any(t in n.lower() for t in ("attention","fmha","sdpa","flash")) and "aten::" not in n:
+            ks.add(n[:100])
+    return sorted(ks)
+res["real_varlen_groups"]={}
+for gname,(qq,kk,vv,m) in groups.items():
+    res["real_varlen_groups"][gname]={"native_kernels":kernels_of(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.1)),
+        "fwd_ms":timed(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.1))}
 sys.path.insert(0,"/tmp/opencode/FlagGems-base/src")
-import flag_gems, triton
-fg_repro={"component_versions":{"torch":torch.__version__,"triton":triton.__version__},
-           "entry":"flag_gems.only_enable(['scaled_dot_product_attention']) then F.scaled_dot_product_attention (model entry, aten-level)",
-           "impl":"FlagGems-base/src @ 29e14822 (v5.3.5-46)","full_exception":None,
-           "tile_params_from_exception":None,"minimal_repro":"flag_gems.only_enable(['scaled_dot_product_attention']); F.scaled_dot_product_attention(q,k,v,attn_mask=bool mask,dropout_p=0.0)",
-           "blocked_shapes":[f"B{B} H{H} S{S} D{D} bf16 + bool mask"]}
+import flag_gems
+flag_sha=subprocess.run(["git","-C","/tmp/opencode/FlagGems-base","rev-parse","--short","HEAD"],capture_output=True,text=True).stdout.strip() or "29e14822"
+fg_repro={"component_versions":{"torch":torch.__version__,"triton":triton.__version__,"flag_gems_sha":flag_sha},
+           "entry":"flag_gems.only_enable(['scaled_dot_product_attention']) then F.scaled_dot_product_attention (model entry)",
+           "replay_cmd":"python3 examples/retrieval/sdpa_training_compare.py --out <json>  (self-contained; profiler kernel evidence written to results/sdpa_kernel_evidence_r42.json)",
+           "full_exception":None,"tile_params_from_exception":None}
+only_enable_ok=True
 try:
-    flag_gems.only_enable(include=["scaled_dot_product_attention"])
-    try:
-        yc = F.scaled_dot_product_attention(q,k,v,attn_mask=mask,dropout_p=0.0)
-        res["candidate"]={"status":"ran","fwd_ms":timed(fwd_only(0.0))}
-    except Exception as ex:
-        import traceback
-        fg_repro["full_exception"]=traceback.format_exc()[-2000:]
-        for ln in fg_repro["full_exception"].splitlines():
-            if "BLOCK" in ln or "HEAD_DIM" in ln or "GROUP_HEAD" in ln:
-                fg_repro["tile_params_from_exception"]=ln.strip(); break
-        res["candidate"]={"status":"COMPILE FAILED via model entry (F.scaled_dot_product_attention)","repro":fg_repro}
+    import warnings, io, contextlib
+    buf=io.StringIO()
+    with contextlib.redirect_stderr(buf):
+        flag_gems.only_enable(include=["scaled_dot_product_attention"])
+    only_enable_msg=buf.getvalue().strip()
 except Exception as ex:
-    fg_repro["full_exception"]=f"{type(ex).__name__}: {ex}"
-    res["candidate"]={"status":"registration failed","repro":fg_repro}
-
+    only_enable_ok=False; only_enable_msg=str(ex)
+qq,kk,vv,m=groups["S512_pad32"]
+cand_kernels=kernels_of(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))
+# same dropout (p=0.0) on the native side so the native _dropout variant cannot
+# masquerade as a different kernel
+native_kernels_p0=kernels_of(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))
+native_kernels=res["real_varlen_groups"]["S512_pad32"]["native_kernels"]
+engaged = set(cand_kernels) != set(native_kernels_p0)
+# only_enable registered nothing -> entry cannot route to a FlagGems kernel
+registered_nothing = "No op to register" in only_enable_msg
+res["candidate_via_model_entry"]={
+    "only_enable_message":only_enable_msg[:200] or "(none)",
+    "native_kernels_p0":native_kernels_p0,"native_kernels_p01_dropout_variant":native_kernels,
+    "after_only_enable_kernels":cand_kernels,
+    "kernel_set_differs_same_dropout":engaged,
+    "only_enable_registered_nothing":registered_nothing,
+    "status":("NO-OP PASSTHROUGH (profiler-verified: identical kernel set to native at same dropout; only_enable registered no op)"
+              if (not engaged or registered_nothing) else "CANDIDATE KERNEL ENGAGED"),
+    "note":"the _dropout-suffixed native kernel is the p=0.1 native variant, not a candidate; comparison is at identical p=0.0",
+    "fwd_ms_after_only_enable":timed(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))}
+# direct-call candidate: capture full exception + tile params
+try:
+    yc=flag_gems.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0)
+    res["candidate_direct"]={"status":"ran","fwd_ms":timed(lambda: flag_gems.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))}
+except Exception as ex:
+    import traceback
+    tb=traceback.format_exc()
+    fg_repro["full_exception"]=tb[-2500:]
+    tiles=[ln.strip() for ln in tb.splitlines() if ("BLOCK" in ln or "HEAD_DIM" in ln or "GROUP_HEAD" in ln)]
+    fg_repro["tile_params_from_exception"]=tiles[:6]
+    fg_repro["blocked_shapes"]=[f"B{B} H{H} S{S} D{D} bf16 + bool mask (S512_pad32, S214_pad16)"]
+    fg_repro["minimal_repro"]="flag_gems.scaled_dot_product_attention(q[B,H,S,D],k,v,attn_mask=bool[B,1,S,S],dropout_p=0.0)  # bf16"
+    res["candidate_direct"]={"status":"COMPILE FAILED - CANDIDATE BLOCKED","repro":fg_repro}
+# save profiler raw evidence alongside
+json.dump({"native_kernels_p0":native_kernels_p0,"native_kernels_p01_dropout_variant":native_kernels,
+           "after_only_enable_kernels":cand_kernels,"kernel_set_differs_same_dropout":engaged,
+           "only_enable_registered_nothing":registered_nothing},open(a.out.replace(".json","")+"_kernel_evidence.json","w"),indent=1)
 json.dump(res,open(a.out,"w"),indent=1)
 print(json.dumps({k2:v2 for k2,v2 in res.items() if k2 in ("independence","native_fwd_p0_ms","native_bwd_p0_ms","native_full_p0_ms","native_fwd_p01_ms","native_bwd_p01_ms","native_full_p01_ms","native_vs_fp32_reldiff")},indent=1))
-print("candidate:", res["candidate"]["status"])
+print("candidate via entry:", res["candidate_via_model_entry"]["status"])
+print("direct:", res["candidate_direct"]["status"])

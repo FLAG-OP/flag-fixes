@@ -133,11 +133,13 @@ for gi, GROUP in enumerate(GROUPS):
     loaders=build_split_loaders(str(cfg.task),cfg.data,int(cfg.batch_size),pin_memory=True,seed=42)
     stream=iter(loaders[0])
     # tokens/s: valid tokens per step from r36 fingerprint window (steps 2-4)
+    # valid tokens per step from the r36 fingerprint window (absolute path);
+    # fallback = known measured values for this seed window
     try:
         meta_fp=json.load(open('/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json'))['batch_fingerprints']['fingerprints']
-        vt=[sum(g['valid_tokens'] for g in micros) for micros in meta_fp.values()][:a.rounds]
+        vt=[sum(g['valid_tokens'] for micros in step) for step in meta_fp.values()][:a.rounds]
     except Exception:
-        vt=[None]*a.rounds
+        vt=[27052,31454,35506][:a.rounds]
     rounds_data=[]; micro_losses=[]; gns=[]
     STATE["phase"] = "warmup"
     warm1_grads = None

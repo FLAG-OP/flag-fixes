@@ -1,0 +1,16 @@
+=== HBM/PCM probe round-42 (2026-11-24T02:30:17Z) ===
+cmd: /usr/local/PPU_SDK/asight/bin/acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count 3 python3 /tmp/tiny_gemm.py
+T-Head Asight Compute version v2.1.0_20260416-3bb05b6
+acu_exit_code=101
+[Asight]: Abort current profiling(PID:2450260): Device is not ready for profiling. Please run "dmesg --level=err,crit,alert,emerg" to identify which application is using the device.
+
+[Asight]: All target application created processes are terminated.
+--- dmesg PCM ---
+[1138492.865001] [alixpu] PPU0000 PCM is in used by app[pg-exporter]!
+[1138492.885495] [alixpu] PPU0000 PCM is in used by app[pg-exporter]!
+--- pg-exporter process ---
+root     2450248  0.0  0.0   4756  3772 ?        Ss   10:30   0:00 /usr/bin/bash -c cd /tmp/opencode/zw810e-problem29 && { echo "=== HBM/PCM probe round-42 ($(date -u +%FT%TZ)) ==="; echo "cmd: /usr/local/PPU_SDK/asight/bin/acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count 3 python3 /tmp/tiny_gemm.py"; /usr/local/PPU_SDK/asight/bin/acu --version 2>&1 | head -1; /usr/local/PPU_SDK/asight/bin/acu --metrics ppu__time_duration.sum,kvd__bytes_load_pipe_l2.sum,kvd__bytes_store_pipe_l2.sum --launch-count 3 python3 /tmp/tiny_gemm.py > /tmp/acu_r42.out 2>&1; ACU_RC=$?; echo "acu_exit_code=$ACU_RC"; tail -3 /tmp/acu_r42.out; echo "--- dmesg PCM ---"; dmesg --level=err,crit,alert,emerg 2>/dev/null | grep -i "PCM" | tail -2; echo "--- pg-exporter process ---"; ps aux 2>/dev/null | grep -i "[p]g-exporter" | head -2 || echo "(not visible in this container namespace)"; echo "--- status ---"; echo "HBM read/write bytes + compute-unit activity: BLOCKED (PCM held by platform daemon pg-exporter; acu exit $ACU_RC)"; echo "L2 metrics (kvd__bytes_load/store_pipe_l2): also BLOCKED by same PCM lock"; echo "platform feedback: not yet received (no channel from this environment; request recorded here)"; } > logs/hbm_probe_r42.log 2>&1; cat logs/hbm_probe_r42.log | tail -12
+--- status ---
+HBM read/write bytes + compute-unit activity: BLOCKED (PCM held by platform daemon pg-exporter; acu exit 101)
+L2 metrics (kvd__bytes_load/store_pipe_l2): also BLOCKED by same PCM lock
+platform feedback: not yet received (no channel from this environment; request recorded here)

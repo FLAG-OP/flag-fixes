@@ -504,7 +504,7 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 **HBM：BLOCKED**——Asight v2.1.0 在位；PCM 被 pg-exporter 占用（dmesg 证据 `logs/hbm_probe_r34.log`）；复测命令已记录；**HBM 字节/带宽/利用率均为估算，不列入已完成测量**。SDPA dropout 配置 0.1（模块级激活）、SDPA 内部 dropout 标志未知、反向重算未知。
 
 **估算标注**：dW 提升/135.7 参照/逐元素融合等收益数字全部为估算（依据同窗实测差值），非实测结论。ac2g 时间戳=主机提交时刻（统一口径）。
-#### 3c-4. 命中数证实 + 中序列 dW + 配对整步（round-38b，复审 2026-11-22）
+#### 3c-4. 命中数证实 + 中序列 dW + 配对整步（round-38b）——**历史记录，整步数字与"方差带内"表述已 superseded，当前口径见 3c-6/3c-8**
 
 **命中数诊断**（`candidate_hit_counts_r38.json`，dispatch probe 固定匹配）：候选（FlagGems mm selective）**替换反向全部 mm 5,768 次/步**——dW_ffn 960、dX_ffn 480、dW_attention_proj 1,920、dX_attention_proj 1,920、other 488；**前向 addmm 2,908 未替换**（候选只注册 aten.mm）。
 
@@ -512,9 +512,9 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 
 **SDPA mask 修正后对照**（`sdpa_training_compare_r38.json`）：mask 语义修正（True=参与，padded=False）；**padded-V 独立性 0.0**（有效区域输出不受 padding V 影响 ✓）；native p=0 fwd 0.70/fwd+bwd **1.21ms**（graph 外计时修正，旧 1.93 含图内重建）、p=0.1 时 1.38ms（**dropout 执行的间接证据**；实际 p UNKNOWN）；FlagGems SDPA 编译失败（完整异常/签名/版本已存 JSON）。
 
-**整步配对（方差如实）**：native 两 pass 中位 2112.0/2123.3（差 11.3ms）；mm 候选中位 2117.1 落在方差带内——dW 局部 15.6ms（+中序列 18.1ms）**未复现为可分辨的整步收益**（5,768 次 mm/步逐调用分发开销为疑似抵消项）；候选不采纳，库级接入列入后续。
+**整步配对（方差如实）**：native 两 pass 中位 2112.0/2123.3（差 11.3ms）；mm 候选中位 2117.1 落在方差带内——dW 局部 15.6ms（+中序列 18.1ms）**未复现为可分辨的整步收益**；候选不采纳。**[superseded："分发开销抵消"为当时的推测，复审明确不能据此宣称；"库级接入"亦未验证，均不再是当前结论]**
 
-#### 3c-5. 三组交错对照定论（round-39，复审 e3a4998 实验 1）
+#### 3c-5. 三组交错对照（round-39）——**历史记录：其中 dW-only 零命中 bug 导致的"0ms 保留"结论已撤回；2117ms 候选测量已 RETIRED；当前口径见 3c-6/3c-8**
 
 真实入口内三组（各自独立进程、同 seed 同窗、3 轮交错记录）：
 
@@ -524,24 +524,19 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 | wrapped-stock（bmm 逃逸）| 2,140.1 | 1909.9/2140.1/2366.6 | 0.9490/0.4723/0.6942 | **包装本身 ≈ 无开销**（−12ms 在方差内；bmm/mm 内在差含入）|
 | wrapped-FlagGems mm | **19,600.7** | 1955.0/21415.6/19600.7 | 0.9446/0.4788/0.6818 | **灾难性**：Triton JIT/autotune 风暴 + 逐调用开销 |
 
-**对复审问题的回答**：dW 局部 33.69ms 潜力经 aten-override 接入 **0ms 保留到整步**——FlagGems Triton mm 路径在训练规模不可用（新形状 autotune 风暴 + 逐调用开销）。**call 级增益（103–110 vs 88 TFLOP/s）仍成立**，但兑现需要库/厂商级 dW kernel 接入（无逐调用分发），已按形状目标（4096×5120×1024 类）列入后续移交。
+**[superseded——该 dW-only 组实为零命中 bug，结论撤回]** **对复审问题的回答**：dW 局部 33.69ms 潜力经 aten-override 接入 **0ms 保留到整步**——FlagGems Triton mm 路径在训练规模不可用（新形状 autotune 风暴 + 逐调用开销）。**call 级增益（103–110 vs 88 TFLOP/s）仍成立**，但兑现需要库/厂商级 dW kernel 接入（无逐调用分发），已按形状目标（4096×5120×1024 类）列入后续移交。
 
 **先前 2117ms"候选"测量 RETIRED**：同 only_enable 调用跨运行行为不一致（一次近 native 空转、一次触发 Triton 路径），根因未定——该结果不可靠，不再引用。wrapped-stock 对照初次实现 RecursionError（override 内重入 aten.mm），改 bmm 逃逸（bmm/mm 内在差已计入并注明）。
 
 **命中分类修正**（`candidate_hit_counts_r38.json`）：前向 = addmm（未替换）+ loss mm（候选替换，8 次）；反向 FFN dX 两类合计 **960** ✓（此前 480 归入 other）；dW_ffn 960；attn_proj dX/dW 各 1,920。
 
-#### 3c-6. 四组整步对照定论（round-40 修正，`wholestep_perf_r40.json`；round-39 的 dW-only 零命中结论**已撤回**——路由键不匹配 bug，本轮修复并验证命中 960 timed + 96 warmup、12/12 形状、零命中即 exit 4）
+#### 3c-6. 四组整步对照（round-42 修正口径；早期"精度通过/保留 80% 局部收益/唯一可用接入路径"的表述**已标记 superseded**，见 3c-8）
 
-干净 perf 模式（路由生效、无事件/计数污染）四组 3 rounds：
-
-| 组 | 中位 ms | rounds | Δ vs native | Δ vs wrapped-stock |
-|---|---:|---|---:|---:|
-| native | 2,134.3 | 1906.0/2134.3/2359.5 | — | — |
-| wrapped-stock（mm.out 逃逸）| 2,163.2 | 1947.0/2163.2/2382.2 | +28.9 | — |
-| fg_all | 2,279.3 | 2080.4/2279.3/2650.8 | +145.0 | −(n/a) |
-| **dW-only（真正路由，命中已验证）** | **2,141.9** | 1906.9/2141.9/2355.3 | **+7.6（逐轮 +0.9/+7.6/−4.2，中位 +0.9——中性）** | **−26.9（逐轮 −40.1/−21.3/−26.9）** |
-
-**结论（修正后）**：33.69ms 局部潜力在 Python 级路由接入下**相对 native 中性**（+0.9ms 中位，噪声内）——路由/分发开销（~29ms，即 wrapped-stock 与 native 差）抵消了候选 kernel 收益；**相对同包装 stock 保留 ~27ms（≈局部潜力的 80%）**。精度 ✓（非有限 0、末轮 loss 差 0.004–0.011 bf16 级、命中 12/12）。**不采纳 Python 路由接入**；库级（无逐调用分发）接入预期可保留大部分 33.69ms——仍为移交方向。fg_all +145ms（435 冷形状 990.8ms 编译含执行、28,880 次含预热——诊断分账见 `wholestep_groups_r40.json`）。
+**当前可证结论**：
+- **整步**：dW-only 相对 native 的三步配对差为 −6.8/+7.3/+1.8 ms（中位 +1.8，`wholestep_perf_r42.json`）；各步负载不同导致轮间 sd≈225ms，故仅配对差有效——**当前三步窗口未分辨出稳定整步收益**，不能据此宣称收益已被某项开销抵消，也不能宣称有收益
+- **单算子预算与整步差值同口径**：预算按本三步窗口实际命中加权约 **25.09 ms/步**（复审口径）；旧 step-2 的 33.69 ms 与三步中位数不可直接相除——**已停止该比较**
+- **精度**：dW-only 同状态梯度判定 **FAIL**（阈值 2%，最差 12.1%）；但 3c-8 证明该偏差处于 **native 自身非确定性基线内**（native-vs-native 同状态最大 23–43%），且冻结 dW 输出 stock 与 FlagGems **逐位一致**——FAIL 归因于设备非确定性而非候选 kernel；**不作为部署候选**（结论不变，归因修正）
+- fg_all 整步 +75 ms 且首跑含约 18.5 s 冷编译（3c-8）
 
 #### 3c-7. SDPA 训练态重测（round-41，`sdpa_training_compare_r41.json`，复审 5b8fb29 项 5）
 
@@ -551,6 +546,41 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 - **候选经模型入口（only_enable→F.sdpa）**：**NO-OP PASSTHROUGH VERIFIED**——profiler 证实执行 kernel 为 **fmha_cutlassF_bf16_aligned_k64x128x64_sm80（AttentionKernelFA2，与 native 相同）**；该 FlagGems 构建在 PPU 上未提供经 aten 入口的替代 SDPA kernel
 - **直接调用候选（flag_gems.scaled_dot_product_attention）**：编译失败（GROUP_HEAD 断言，BLOCK_N≤HEAD_DIM tile 约束）——最小复现/实现版本（FlagGems-base @ 29e14822）/受阻形状归档
 - **结论**：本栈无可用 SDPA 候选替代（入口透传 + 直调编译失败）；native（cutlassFA2 kernel）为唯一可用路径
+
+#### 3c-8. 精度闭环 + 冷/热重放 + SDPA profiler 证据（round-42，复审 fe65d8f）
+
+**精度闭环**（`acc_closure_r42.json`；`accuracy_closure.py`，三组同状态对照）：
+- **同状态前提全部成立**：init 参数哈希 `74fb309b`、CPU RNG `59294f27`、CUDA RNG `aefdce03`、4 个 micro 输入哈希——三组（native/wrapped-stock/dW-only）**完全一致**，排除 RNG/输入/初始化差异
+- **native-vs-native（两次独立运行）非确定性基线**：ffn_up max 23.2%/median 3.7%；ffn_down max 33.8%/median 11.1%；attn_output max **43.1%**/median 15.8%
+- **dW-only vs native**：ffn_up 14.9%/5.6%；ffn_down 67.6%/9.5%；attn_output 43.1%/14.8%——**落在 native 自身非确定性基线量级内**
+- **wrapped-stock（mm.out，同一 stock kernel）vs native**：14.9%/67.6%/29.9%——**仅改用 mm.out 即产生同量级偏差**，证明偏差来自执行路径非确定性而非候选 kernel
+- **冻结 dW 对照**（从真实训练反向捕获的 gy/x 固定后单独比较）：**stock 与 FlagGems dW 输出逐位一致**（fg_vs_stock reldiff **0.0**，36 形状，非有限 0）
+- **结论**：上一轮 12.1% FAIL 的来源是**设备原生非确定性**（同状态 native 自比即达 23–43%），非 dW 候选；attention.output 的误差**不是**"dW 误差沿反向图传播"（已撤回该表述）——它是 native 非确定性的表现。dW-only 仍**不作为部署候选**（FAIL 判定保留，归因修正）
+
+**冷/热重放**（`coldwarm_cold_r42.json` / `coldwarm_warm_r42.json`，固定 seed 42 init/批次窗口/RNG，Triton cache 目录隔离）：
+
+| | COLD（空缓存）| WARM（预填充缓存）|
+|---|---:|---:|
+| warmup0 | **21,901 ms** | 5,900 ms |
+| timed 0/1/2 | 2500/3661/2939 | 2511/2712/2936 |
+| 首次调用总耗时（含编译+执行）| **20,081 ms** | 1,578 ms |
+| 缓存新增条目（miss 代理）| 31 | **0** |
+| 单形状首次调用 median/max | 1.43 / **1,472** ms | 1.42 / 934 ms |
+| 稳态 ms/调用（含每次 sync）| 0.1685 | 0.1684 |
+
+- **约 20 秒慢步 = 冷编译伪影，且发生在 warmup0**（此前无独立 warmup 的运行把编译成本计入首个计时步）——已说明 warmup 事件不进入首个计时步的前提是需要独立 warmup
+- **编译 ≈ 18.5 s**（cold−warm 首次调用差），缓存命中可消除（warm 新增 0 条目）；**但 warm 下仍有 934 ms 单形状首调用**——为进程内 autotune/首次启动开销（非缓存 miss）
+- **每个计时步仍引入新形状**（303→369→435），因逐步序列长度不同——这是 fg_all 整步变慢的根因：**动态形状 × 首调用开销**，而非单次 kernel 执行慢
+- 边界说明：`first_ms` 含编译+autotune+执行+同步，未设 TRITON_KERNEL_DUMP 故无法再细分；`later_ms` 为稳态执行+同步；compiler log 未捕获（已注明）
+
+**SDPA profiler 证据**（`sdpa_training_compare_r42.json` + `sdpa_training_compare_r42_kernel_evidence.json`，脚本内置 profiler 自动生成 kernel 字段）：
+- **模型入口 only_enable 后 = NO-OP PASSTHROUGH**：同 dropout(p=0) 下 kernel 集合与 native **完全一致**（`fmha_cutlassF_bf16_aligned_k64x128x64_sm80` AttentionKernelFA2）；**only_enable 返回 "No op to register"**（决定性证据——该 FlagGems 构建在 PPU 无 aten 级 SDPA kernel）
+- 修正：`_dropout_sm80` 后缀 kernel 是 **native p=0.1 变体**（证实 dropout 执行），非候选——上轮以此判"engaged"为误判，已撤回
+- **直调候选 = COMPILE FAILED（受阻）**：`tl.static_assert(BLOCK_N <= HEAD_DIM)`，tile 参数（GROUP_HEAD/HEAD_DIM/HEAD_DIM_ACTUAL/BLOCK_M/BLOCK_N）已记录；FlagGems SHA `29e14822`；受阻形状 S512_pad32 / S214_pad16；最小复现已存
+- 真实变长 mask：S512(pad32) fwd 0.784ms、S214(pad16) 0.205ms（p=0.1，含 dropout 变体 kernel）
+- S 轴扰动独立性 0.0 / 无 mask 对照 6.75；统一边界 fwd/bwd/full = 0.7018/1.1251/1.8723 ms(p0)；native vs FP32 0.35–0.48%
+
+**HBM/计算单元利用率：BLOCKED**（`logs/hbm_probe_r42.log`）——acu 真实退出码 **101**（本轮直接捕获，解决此前 0/101 矛盾）；dmesg `PPU0000 PCM is in used by app[pg-exporter]`；L2 指标同受 PCM 锁阻塞；平台反馈渠道本环境不可达（已记录请求）。
 
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 

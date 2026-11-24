@@ -1,0 +1,82 @@
+{
+ "shape": "B10 H16 S512 D64 bf16",
+ "mask": "bool True=participate; last 32 KEYS masked (S-axis)",
+ "dropout": {
+  "model_config_hidden_dropout_prob": 0.1,
+  "sdpa_internal_p": "recorded below; module-level dropout active",
+  "randomness_control": "torch global generator seeded (torch.manual_seed(0)); dropout masks generated per call by backend"
+ },
+ "independence": {
+  "with_mask_valid_region_max_diff": 0.0,
+  "no_mask_control_max_diff": 6.75,
+  "interpretation": "with-mask diff ~0 => masked-position V does not affect valid outputs; no-mask diff >>0 => perturbation is real"
+ },
+ "native_fwd_p0_ms": 0.6989,
+ "native_bwd_p0_ms": 1.1278,
+ "native_full_p0_ms": 1.8751,
+ "native_fwd_p01_ms": 0.7853,
+ "native_bwd_p01_ms": 1.2991,
+ "native_full_p01_ms": 2.1294,
+ "native_vs_fp32_reldiff": {
+  "out": 0.003505,
+  "dQ": 0.004829,
+  "dK": 0.004317,
+  "dV": 0.003805
+ },
+ "real_varlen_groups": {
+  "S512_pad32": {
+   "native_kernels": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::"
+   ],
+   "fwd_ms": 0.7858
+  },
+  "S214_pad16": {
+   "native_kernels": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::"
+   ],
+   "fwd_ms": 0.2038
+  }
+ },
+ "candidate_via_model_entry": {
+  "only_enable_message": "/tmp/opencode/FlagGems-base/src/flag_gems/runtime/op_registrar.py:99: UserWarning: only_enable failed: No op to register. Check if include is correct.\n  warnings.warn(",
+  "native_kernels_p0": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm"
+  ],
+  "native_kernels_p01_dropout_variant": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::"
+  ],
+  "after_only_enable_kernels": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm"
+  ],
+  "kernel_set_differs_same_dropout": false,
+  "only_enable_registered_nothing": true,
+  "status": "NO-OP PASSTHROUGH (profiler-verified: identical kernel set to native at same dropout; only_enable registered no op)",
+  "note": "the _dropout-suffixed native kernel is the p=0.1 native variant, not a candidate; comparison is at identical p=0.0",
+  "fwd_ms_after_only_enable": 0.7001
+ },
+ "candidate_direct": {
+  "status": "COMPILE FAILED - CANDIDATE BLOCKED",
+  "repro": {
+   "component_versions": {
+    "torch": "2.10.0",
+    "triton": "3.6.0",
+    "flag_gems_sha": "29e14822"
+   },
+   "entry": "flag_gems.only_enable(['scaled_dot_product_attention']) then F.scaled_dot_product_attention (model entry)",
+   "replay_cmd": "python3 examples/retrieval/sdpa_training_compare.py --out <json>  (self-contained; profiler kernel evidence written to results/sdpa_kernel_evidence_r42.json)",
+   "full_exception": "oduct_attention_forward(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 906, in scaled_dot_product_attention_forward\n    _attn_fwd[grid](\n  File \"/usr/local/lib/python3.12/site-packages/triton/runtime/jit.py\", line 399, in <lambda>\n    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py\", line 1701, in run\n    kernel = self.fn.run(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py\", line 1082, in run\n    ret = self.fn.run(\n          ^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/runtime/jit.py\", line 763, in run\n    kernel = self._do_compile(key, signature, device, constexprs, options, attrs, warmup)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/runtime/jit.py\", line 906, in _do_compile\n    kernel = self.compile(src, target=target, options=options.__dict__)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/spec/ppu/triton/compiler/compiler.py\", line 330, in compile\n    module = backend.make_ir(src, options, codegen_fns, module_map, context)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/backends/compiler.py\", line 64, in make_ir\n    return src.make_ir(self.target, options, codegen_fns, module_map, context)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/spec/ppu/triton/compiler/compiler.py\", line 106, in make_ir\n    return ast_to_ttir(self.fn, self, context=context, options=options, codegen_fns=codegen_fns,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntriton.compiler.errors.CompileTimeAssertionFailure: at 43:4:\n    GROUP_HEAD: tl.constexpr,\n    Q_CTX,\n    KV_CTX,\n    HEAD_DIM: tl.constexpr,\n    HEAD_DIM_ACTUAL: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    STAGE: tl.constexpr,\n    HAS_ATTN_MASK: tl.constexpr,\n    PRE_LOAD_V: tl.constexpr,\n):\n    tl.static_assert(BLOCK_N <= HEAD_DIM)\n    ^\n",
+   "tile_params_from_exception": [
+    "GROUP_HEAD: tl.constexpr,",
+    "HEAD_DIM: tl.constexpr,",
+    "HEAD_DIM_ACTUAL: tl.constexpr,",
+    "BLOCK_M: tl.constexpr,",
+    "BLOCK_N: tl.constexpr,",
+    "tl.static_assert(BLOCK_N <= HEAD_DIM)"
+   ],
+   "blocked_shapes": [
+    "B10 H16 S512 D64 bf16 + bool mask (S512_pad32, S214_pad16)"
+   ],
+   "minimal_repro": "flag_gems.scaled_dot_product_attention(q[B,H,S,D],k,v,attn_mask=bool[B,1,S,S],dropout_p=0.0)  # bf16"
+  }
+ }
+}
