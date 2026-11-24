@@ -1,0 +1,114 @@
+{
+ "hit_step": 2,
+ "snapshot": {
+  "param_hash": "a1fa171062659f67",
+  "rng_cpu": "59294f27b0e77a92",
+  "rng_cuda": "85f7f89c7e6c13ba",
+  "input_hashes": [
+   "7a23d6bbb8fcaf11",
+   "288503503a6302c1",
+   "873051929d240157",
+   "8606eac50a5afca1"
+  ]
+ },
+ "thresholds": {
+  "grad_rel_tol": 0.02,
+  "basis": "existing 2% floored rel gate (floor=0.01*max|ref| per tensor), same as prior rounds"
+ },
+ "hits_this_step": {
+  "dw_only": {
+   "[1024, 3740]x[3740, 4096]": 24,
+   "[4096, 3740]x[3740, 1024]": 24,
+   "[1024, 4430]x[4430, 4096]": 24,
+   "[4096, 4430]x[4430, 1024]": 24,
+   "[1024, 5120]x[5120, 4096]": 96,
+   "[4096, 5120]x[5120, 1024]": 96,
+   "[1024, 2990]x[2990, 4096]": 24,
+   "[4096, 2990]x[2990, 1024]": 24,
+   "[1024, 3290]x[3290, 4096]": 24,
+   "[4096, 3290]x[3290, 1024]": 24,
+   "[1024, 4310]x[4310, 4096]": 24,
+   "[4096, 4310]x[4310, 1024]": 24
+  },
+  "total": 432,
+  "note": "hits counted ONLY inside the hit step; native/wrapped_stock routes record none"
+ },
+ "comparisons": {
+  "A_native_run1_vs_native_run2_nondet": {
+   "FFN_up": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   },
+   "FFN_down": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   },
+   "attn_out_proj": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   }
+  },
+  "B_wrapped_stock_vs_native": {
+   "FFN_up": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   },
+   "FFN_down": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   },
+   "attn_out_proj": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   }
+  },
+  "C_dw_only_vs_native": {
+   "FFN_up": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   },
+   "FFN_down": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   },
+   "attn_out_proj": {
+    "grad_rel_max": 0.0,
+    "grad_rel_median": 0.0,
+    "post_param_absdiff_max": 0.0,
+    "grad_nonfinite": 0,
+    "PASS_2pct": true
+   }
+  }
+ },
+ "grad_norms": {
+  "native_run1": 10.5625,
+  "native_run2": 10.5625,
+  "wrapped_stock": 10.5625,
+  "dw_only": 10.5625
+ },
+ "verdict": "dw-only PASS at 2% grad gate on the hit step; native-vs-native baseline itself PASS at the same gate"
+}
