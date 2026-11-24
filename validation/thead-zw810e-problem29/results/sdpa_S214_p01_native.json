@@ -1,0 +1,58 @@
+{
+ "impl": "native",
+ "dropout_p": 0.1,
+ "shape": [
+  10,
+  16,
+  214,
+  64
+ ],
+ "q_stride": [
+  219136,
+  64,
+  1024,
+  1
+ ],
+ "k_stride": [
+  219136,
+  64,
+  1024,
+  1
+ ],
+ "v_stride": [
+  219136,
+  64,
+  1024,
+  1
+ ],
+ "mask": {
+  "shape": [
+   10,
+   1,
+   214,
+   214
+  ],
+  "dtype": "torch.float32",
+  "stride": [
+   45796,
+   45796,
+   214,
+   1
+  ],
+  "min": -3.4028234663852886e+38,
+  "valid_frac": 0.6336
+ },
+ "autocast": "bf16 (model path)",
+ "inputs": "captured from real model forward (sdpa_real_S214_inputs.pt)",
+ "forward_ran": true,
+ "fwd_only_ms": 0.2005,
+ "fwd_kernels": [
+  "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80"
+ ],
+ "backward_supported": true,
+ "ran": true,
+ "fwd_ms": 0.2009,
+ "bwd_ms": 0.389,
+ "full_ms": 0.5992,
+ "bwd_kernels": []
+}

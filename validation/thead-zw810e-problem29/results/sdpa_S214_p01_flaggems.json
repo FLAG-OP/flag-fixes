@@ -1,0 +1,56 @@
+{
+ "impl": "flaggems",
+ "dropout_p": 0.1,
+ "shape": [
+  10,
+  16,
+  214,
+  64
+ ],
+ "q_stride": [
+  219136,
+  64,
+  1024,
+  1
+ ],
+ "k_stride": [
+  219136,
+  64,
+  1024,
+  1
+ ],
+ "v_stride": [
+  219136,
+  64,
+  1024,
+  1
+ ],
+ "mask": {
+  "shape": [
+   10,
+   1,
+   214,
+   214
+  ],
+  "dtype": "torch.float32",
+  "stride": [
+   45796,
+   45796,
+   214,
+   1
+  ],
+  "min": -3.4028234663852886e+38,
+  "valid_frac": 0.6336
+ },
+ "autocast": "bf16 (model path)",
+ "inputs": "captured from real model forward (sdpa_real_S214_inputs.pt)",
+ "flag_gems_sha": "29e14822",
+ "triton": "3.6.0",
+ "ran": false,
+ "error": {
+  "type": "AssertionError: Currenty only support dropout_p=0.0",
+  "full_tail": "Traceback (most recent call last):\n  File \"/tmp/opencode/FlagScale-ppu/examples/retrieval/sdpa_real_shape.py\", line 61, in <module>\n    y=sdpa(qq,kk,vv,m,a.dropout)\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagScale-ppu/examples/retrieval/sdpa_real_shape.py\", line 53, in sdpa\n    def sdpa(qq,kk,vv,mm,p): return flag_gems.scaled_dot_product_attention(qq,kk,vv,attn_mask=mm,dropout_p=p)\n                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1165, in scaled_dot_product_attention\n    return ScaleDotProductAttention.apply(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/function.py\", line 583, in apply\n    return super().apply(*args, **kwargs)  # type: ignore[misc]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1116, in forward\n    o, M = scaled_dot_product_attention_forward(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 853, in scaled_dot_product_attention_forward\n    assert dropout_p == 0.0, \"Currenty only support dropout_p=0.0\"\n           ^^^^^^^^^^^^^^^^\nAssertionError: Currenty only support dropout_p=0.0\n",
+  "static_assert": [],
+  "command": "python3 examples/retrieval/sdpa_real_shape.py --inputs /tmp/opencode/zw810e-problem29/results/sdpa_S214_target_r45.pt --impl flaggems --dropout 0.1 --out /tmp/opencode/zw810e-problem29/results/sdpa_S214_p01_flaggems.json"
+ }
+}

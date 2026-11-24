@@ -143,10 +143,11 @@
    32,
    32
   ],
-  "mechanism_confirmed": "cold cache: timed step slows (timed1 3135ms vs warm 2229ms) because each timed step introduces NEW sequence lengths -> new mm shapes (303->369->435) -> in-process compile/autotune; cache entries grow only during cold run",
   "old_20s_magnitude_reproduced": false,
   "old_slow_step_cause": "UNDETERMINED (max 3.1s reproduced vs ~20s observed; different prior conditions)",
-  "compile_exec_split": "NOT separable (no TRITON_KERNEL_DUMP/MLIR timestamps); cache-entry deltas + new-shape counts as proxies"
+  "compile_exec_split": "NOT separable (no TRITON_KERNEL_DUMP/MLIR timestamps); cache-entry deltas + new-shape counts as proxies",
+  "observed_in_this_replay": "first-run slowdown reproducible (cold warmup0 22,151 vs warm 6,786 ms); post-warmup slowest timed step 3,135 ms",
+  "old_slow_step_conclusion": "NOT REPRODUCED; exact cause UNDETERMINED (old entry had 2 warmups; ~20 s were timed steps after warmup)"
  },
  "5_sdpa_per_shape": {
   "actual_model_call": {

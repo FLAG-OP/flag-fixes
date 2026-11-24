@@ -568,7 +568,7 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 | 单形状首次调用 median/max | 1.43 / **1,472** ms | 1.42 / 934 ms |
 | 稳态 ms/调用（含每次 sync）| 0.1685 | 0.1684 |
 
-- **约 20 秒慢步 = 冷编译伪影，且发生在 warmup0**（此前无独立 warmup 的运行把编译成本计入首个计时步）——已说明 warmup 事件不进入首个计时步的前提是需要独立 warmup
+- **[已撤回]** 此前"约 20 秒慢步 = 冷编译伪影、发生在 warmup0、旧入口无独立 warmup"的表述**全部撤回**：旧 `threeway_mm_compare.py` 入口**已有两个预热步**，旧的 ~20 s 出现在**预热之后的计时步**；本表只是冷/热缓存对**首跑时间**的实测差异（warmup0 22 s vs 5.9 s），**不能解释旧计时步**。旧慢步的统一口径见 3c-9-C：**未复现，确切原因未确定**
 - **[已撤回]** 冷/热首次调用耗时之差（20,081−1,578 ms）混有编译、加载、执行与同步（诊断脚本每次 MM 都同步），**不称为编译时间**
 - **每个计时步仍引入新形状**（303→369→435），因逐步序列长度不同——这是 fg_all 整步变慢的根因：**动态形状 × 首调用开销**，而非单次 kernel 执行慢
 - 边界说明：`first_ms` 含编译+autotune+执行+同步，未设 TRITON_KERNEL_DUMP 故无法再细分；`later_ms` 为稳态执行+同步；compiler log 未捕获（已注明）
@@ -656,25 +656,50 @@ native 有效 tokens/s：14,255 / 14,748 / 15,065。**dW-only 相对 native 的�
 - 其余：S 轴扰动独立性 **0.0**、无 mask 对照 6.72 / 8.31；fwd/bwd/完整（p0）S512 0.693/1.128/1.868ms、S214 0.178/0.341/0.537ms；native vs FP32 0.29–0.55%
 - **[已完成，见 3c-9-E]** 真实训练态 S=228（模型实际调用捕获）对照已完成：候选**前向可运行且更快，但反向与 dropout 均不支持**
 
-**E. 真实训练态 SDPA（S=228，`sdpa_real_S228_summary.json`，复审 bqPbopQ 项 2）**
+**E. 真实训练态 SDPA（round-45 修正，`sdpa_review_r45_summary.json`）——候选不可用，"前向更快"已撤回**
 
-从真实模型前向捕获实际输入：S=228、**Q/K/V 均非连续**转置视图（stride `[233472,64,1024,1]`）、**逐样本** float32 加性 mask（`-3.4e38`，有效位置仅 **29.7%**）、模型实际 **dropout_p=0.1**、autocast bf16。单形状隔离，两侧统一 autocast/布局/输入准备/计时边界：
+**目标批次已找回**（`sdpa_S214_target_r45_manifest.json`）：step 2 / micro 0 / negative_2，指纹 `4d84ea53dba8924d`，10 条序列、**1,356 个有效 token**、**S=214**——与复审 trace 记录完全一致。此前名为"S214"的文件实为 S=228，现以文件名区分（`S214_*` / `S228_*`）。捕获 Q/K/V、逐样本加性 mask 及**真实反传梯度 dO**：
 
-| 实现 | p | 前向 ms | 反向 ms | 完整 ms | 实际 kernel |
-|---|---|---:|---:|---:|---|
-| native | 0.0 | 0.184 | 0.347 | 0.543 | `fmha_cutlassF…_sm80` |
-| native | **0.1（模型实际）** | 0.206 | 0.395 | 0.611 | `…_dropout_sm80` |
-| FlagGems | 0.0 | **0.104** | **不支持** | — | `ScaleDotProductAttention` |
-| FlagGems | **0.1** | **不支持** | — | — | — |
+| 张量 | shape | dtype | stride | 连续 |
+|---|---|---|---|---|
+| Q / K / V | [10,16,214,64] | bf16 | [219136,64,1024,1] | 否（转置视图）|
+| mask | [10,1,214,214] | float32 | [45796,45796,214,1] | 逐样本，`-3.4e38`，有效 63.4% |
+| **dO** | [10,16,214,64] | bf16 | [219136,64,1024,1] | **否**（与 Q 同布局）|
 
-- **限制一（反向）**：`flag_gems/ops/attention.py:975 assert do.is_contiguous()`——真实训练 Q/K/V 为转置视图，候选反向要求 dO 连续（FlagGems `29e14822`，triton 3.6.0，完整 traceback 与命令已存 JSON）
-- **限制二（dropout）**：`AssertionError: Currently only support dropout_p=0.0`——模型实际使用 0.1
-- native vs FP32（p=0，同输入同上游梯度）：out 0.16% / dQ 1.19% / dK 0.23% / dV 0.23%
-- **判定**：候选为**仅前向**（比 native 快 1.8×），**训练态不可用**；native cutlassFA2 仍是唯一可训练路径。S=512 编译失败证据沿用
+**先比前向，再固定数值只改 dO 布局独立测反向**（`sdpa_dO_S214_*.json` / `sdpa_dO_S228_*.json`）：
 
-**E. HBM / 计算单元利用率：BLOCKED**（`logs/hbm_probe_r42.log`，本轮复用）——acu 退出码 101、dmesg PCM 被 `pg-exporter` 占用；平台窗口待协调
+| | S=214 目标批次 | S=228 |
+|---|---|---|
+| **native 前向 vs FP32** | **0.18%** | **0.16%** |
+| **候选 前向 vs FP32** | **79.3%**（max_abs 6.6 / 输出量级 8.4）| **78.8%** |
+| native 反向 dQ/dK/dV（原始 dO）| 2.9e-3 / 3.3e-3 / 2.8e-3 | 4.9e-3 / 3.6e-3 / 2.7e-3 |
+| native 反向（dO 连续化）| **与原始完全相同** | 同 |
+| 候选反向 · 原始 dO | 失败 `attention.py:975 assert do.is_contiguous()` | 同 |
+| 候选反向 · dO 连续化 | **仍失败 → `:977 query.is_contiguous()`** | 同 |
+| 候选反向 · Q/K/V+dO 全连续 | 可跑但**数值错误**：dQ 5.35 / dK 7.77 | dQ 3.95e3 / dK 1.58e3 |
 
-#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
+- **反向限制已定位为两条独立断言**（`:975` dO、`:977` query）——真实训练中 dO **和** Q 都是非连续转置视图，仅连续化 dO 不够
+- **候选前向在真实输入上数值就是错的（~79%）**，全连续化后反向能跑也是继承错误的前向 → **此前"前向快 1.8×"是在错误数值下测得，已撤回**
+- **模型实际 dropout=0.1**（`sdpa_S214_p01_*.json`）：native 完整前反向 **0.599 ms**（kernel `…_dropout_sm80`）；候选命中 `Currently only support dropout_p=0.0`（两形状一致）
+- `p=0` 的前向速度差**单列、不计入训练吞吐**（0.106 vs 0.178 ms，数值错误下测得，无采用意义）
+- **判定：FlagGems SDPA 在真实训练态不可用**（前向数值错误 + Q/dO 连续性约束 + 不支持 dropout）；训练继续使用 native cutlassFA2。S=512 编译失败证据沿用
+
+**F. dW 命中步精度的独立复算（`acc_hit_step_r44_recomputed.json`，`recompute_dw_accuracy.py`，复审 bqQqCnw 项 2）**
+
+从归档 `.records.pkl` 用独立脚本重算（不复用原比较逻辑），明确梯度采样于 `clip_grad_norm_` **之后**、`optimizer.step` **之前**：
+
+| 对照（native_run1 为参考）| FFN 升维 | FFN 降维 | attn 输出投影 | 更新后参数位比较 |
+|---|---|---|---|---|
+| A native_run2 | 0.000e+00 PASS | 0.000e+00 PASS | 0.000e+00 PASS | 0 / 100,663,296 · 0 / 100,663,296 · 0 / 25,165,824 |
+| B wrapped-stock | 0.000e+00 PASS | 0.000e+00 PASS | 0.000e+00 PASS | 同上，不一致元素 **0** |
+| **C dW-only** | **0.000e+00 PASS** | **0.000e+00 PASS** | **0.000e+00 PASS** | **不一致元素 0** |
+
+- 未舍入误差全部**精确为零**（非四舍五入）；各组 NaN/Inf = 0；退出码 0
+- 退出码已覆盖：缺失目标 → 2、零命中 → 3、非有限 → 4、门限失败 → 5
+- **判定：dW-only 在命中步通过 2% 门限（PASS），更新后目标参数按 int32 位表示逐位相同**
+- **待证实项**：旧运行 12–40% 的 native-vs-native 偏差只在同快照重放中消失，其确切来源（跨轨迹分叉 vs 其他）**仍待证实**——目前仅有"同快照重跑确定性"这一正面证据
+
+#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
 

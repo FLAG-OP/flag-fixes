@@ -1,0 +1,91 @@
+{
+ "label": "S214_target",
+ "impl": "flaggems",
+ "S": 214,
+ "dropout_p": 0.0,
+ "input_strides": {
+  "q": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "k": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "v": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "dO": [
+   219136,
+   64,
+   1024,
+   1
+  ]
+ },
+ "input_contig": {
+  "q": false,
+  "k": false,
+  "v": false,
+  "dO": false
+ },
+ "fp32_ref": {
+  "out_absmax": 8.369343757629395,
+  "dQ_absmax": 6.37773991911672e-05,
+  "dO_absmax": 0.0002899169921875
+ },
+ "forward": {
+  "ran": true,
+  "out_stride": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "out_contig": false,
+  "vs_fp32_max_abs": 6.635130405426025,
+  "vs_fp32_relmax": 0.7927898168563843,
+  "fwd_ms": 0.1185
+ },
+ "backward_dO_original_layout": {
+  "ran": false,
+  "dO_stride_used": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "first_fail": "File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward",
+  "assert_or_error": "AssertionError",
+  "tail": "^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py\", line 865, in _engine_run_backward\n    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/function.py\", line 317, in apply\n    return user_fn(self, *args)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward\n    dq, dk, dv = scaled_dot_product_attention_backward(\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 975, in scaled_dot_product_attention_backward\n    assert do.is_contiguous()\n           ^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+ },
+ "backward_dO_contiguous": {
+  "ran": false,
+  "dO_stride_used": [
+   219136,
+   13696,
+   64,
+   1
+  ],
+  "first_fail": "File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward",
+  "assert_or_error": "AssertionError",
+  "tail": "ngine_run_backward(\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py\", line 865, in _engine_run_backward\n    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/function.py\", line 317, in apply\n    return user_fn(self, *args)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward\n    dq, dk, dv = scaled_dot_product_attention_backward(\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 977, in scaled_dot_product_attention_backward\n    query.is_contiguous()\nAssertionError\n"
+ },
+ "backward_all_contiguous": {
+  "ran": true,
+  "dQ_vs_fp32_relmax": 5.353435039520264,
+  "dK_vs_fp32_relmax": 7.773690223693848,
+  "dV_vs_fp32_relmax": 0.8010130524635315,
+  "dQ_nonfinite": 0,
+  "fwd_out_vs_fp32_relmax": 0.7927898168563843,
+  "bwd_ms_incl_contiguize": 0.4489
+ },
+ "dO_contiguize_copy_ms": 0.0174,
+ "full_fwd_bwd_with_copy_ms": null
+}

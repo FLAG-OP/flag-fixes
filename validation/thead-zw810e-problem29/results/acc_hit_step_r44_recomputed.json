@@ -1,0 +1,117 @@
+{
+ "record_file": "results/acc_hit_step_r44.json.records.pkl",
+ "tol": 0.02,
+ "grad_sampling": "grads recorded AFTER clip_grad_norm_ and BEFORE optimizer.step (clipped values)",
+ "metric": "per-element |x-ref| / max(|ref|, 0.01*max|ref|)) -> max over tensor; UNROUNDED",
+ "groups": {
+  "A_native_run2_vs_native_run1": {
+   "FFN_up": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 100663296,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   },
+   "FFN_down": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 100663296,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   },
+   "attn_out_proj": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 25165824,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   }
+  },
+  "B_wrapped_stock_vs_native_run1": {
+   "FFN_up": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 100663296,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   },
+   "FFN_down": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 100663296,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   },
+   "attn_out_proj": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 25165824,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   }
+  },
+  "C_dw_only_vs_native_run1": {
+   "FFN_up": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 100663296,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   },
+   "FFN_down": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 100663296,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   },
+   "attn_out_proj": {
+    "tensors": 24,
+    "grad_rel_max_unrounded": 0.0,
+    "grad_rel_median_unrounded": 0.0,
+    "nan_inf_candidate": 0,
+    "nan_inf_reference": 0,
+    "post_param_bits_unequal": 0,
+    "post_param_numel": 25165824,
+    "post_param_absdiff_max_unrounded": 0.0,
+    "PASS": true
+   }
+  }
+ },
+ "exit_reason": 0,
+ "dw_only_hits_this_step": 432,
+ "missing_targets": [],
+ "verdict": "dw-only PASS at 2% floored-rel gate on the hit step (unrounded recomputation)"
+}
