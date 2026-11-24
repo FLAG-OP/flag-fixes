@@ -56,12 +56,23 @@ except Exception:
 
 # ---------- BACKWARD: only dO layout changes ----------
 def bwd(dO_in):
+    """clone inputs + forward + backward (the WHOLE thing). Timed as
+    'clone_fwd_bwd_ms' - NOT a backward-only number (review bqR2JZg)."""
     with AC():
         qq,kk,vv=[t.detach().clone().requires_grad_(True) for t in (q,k,v)]
         qq.data=q; kk.data=k; vv.data=v          # keep captured non-contiguous layout
         yy=sdpa(qq,kk,vv,m,0.0)
         g=torch.autograd.grad(yy,(qq,kk,vv),dO_in,retain_graph=True)
     return g,yy
+
+def bwd_only_fn(dO_in):
+    """TRUE backward-only: graph built ONCE outside timing; timed region =
+    autograd.grad only (no clone, no forward)."""
+    with AC():
+        qq,kk,vv=[t.detach().clone().requires_grad_(True) for t in (q,k,v)]
+        qq.data=q; kk.data=k; vv.data=v
+        yy=sdpa(qq,kk,vv,m,0.0)
+    return lambda: torch.autograd.grad(yy,(qq,kk,vv),dO_in,retain_graph=True)
 for tag,dO_in in (("dO_original_layout",dO),("dO_contiguous",dO.contiguous())):
     try:
         g,yy=bwd(dO_in)
@@ -69,7 +80,9 @@ for tag,dO_in in (("dO_original_layout",dO),("dO_contiguous",dO.contiguous())):
         res[f"backward_{tag}"]={"ran":True,"dO_stride_used":list(dO_in.stride()),"dO_contig":dO_in.is_contiguous(),
             "dQ_vs_fp32_relmax":rel(dq,dqf),"dK_vs_fp32_relmax":rel(dk,dkf),"dV_vs_fp32_relmax":rel(dv,dvf),
             "dQ_nonfinite":int((~torch.isfinite(dq.float())).sum()),"dK_nonfinite":int((~torch.isfinite(dk.float())).sum()),"dV_nonfinite":int((~torch.isfinite(dv.float())).sum()),
-            "bwd_ms":timed(lambda: bwd(dO_in))}
+            "clone_fwd_bwd_ms":timed(lambda: bwd(dO_in)),
+            "bwd_only_ms":timed(bwd_only_fn(dO_in)),
+            "timing_boundaries":{"clone_fwd_bwd_ms":"input clone + forward + backward","bwd_only_ms":"autograd.grad only; graph prebuilt outside"}}
     except Exception:
         tb=traceback.format_exc()
         res[f"backward_{tag}"]={"ran":False,"dO_stride_used":list(dO_in.stride()),
@@ -109,7 +122,7 @@ json.dump(res,open(a.out,"w"),indent=1)
 print(f"[{a.label}/{a.impl}] S{q.shape[2]} | fwd ran={res['forward']['ran']} rel={res['forward'].get('vs_fp32_relmax')} {res['forward'].get('fwd_ms')}ms")
 for tag in ("dO_original_layout","dO_contiguous"):
     b=res[f"backward_{tag}"]
-    if b["ran"]: print(f"   bwd[{tag}]: dO_contig={b['dO_contig']} relQ/K/V {b['dQ_vs_fp32_relmax']:.2e}/{b['dK_vs_fp32_relmax']:.2e}/{b['dV_vs_fp32_relmax']:.2e} bwd {b['bwd_ms']}ms")
+    if b["ran"]: print(f"   bwd[{tag}]: dO_contig={b['dO_contig']} relQ/K/V {b['dQ_vs_fp32_relmax']:.2e}/{b['dK_vs_fp32_relmax']:.2e}/{b['dV_vs_fp32_relmax']:.2e} | clone+fwd+bwd {b['clone_fwd_bwd_ms']}ms | bwd-only {b['bwd_only_ms']}ms")
     else: print(f"   bwd[{tag}]: FAIL {b['assert_or_error'][:90]} | first_fail: {b['first_fail']}")
 b=res["backward_all_contiguous"]
 if b["ran"]: print(f"   bwd[all_contiguous]: relQ/K/V {b['dQ_vs_fp32_relmax']:.2e}/{b['dK_vs_fp32_relmax']:.2e}/{b['dV_vs_fp32_relmax']:.2e} | fwd_out_rel {b['fwd_out_vs_fp32_relmax']:.2e} | {b['bwd_ms_incl_contiguize']}ms")

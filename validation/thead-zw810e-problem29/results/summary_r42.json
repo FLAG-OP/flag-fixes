@@ -109,7 +109,8 @@
   "steady_ms_per_call_cold": 0.1685,
   "steady_ms_per_call_warm": 0.1684,
   "unique_shapes": 435,
-  "verdict": "~20s slow steps = COLD COMPILE artifact in warmup0; dynamic shapes x first-call cost is fg_all's whole-step slowdown cause; warmup events bleed into step 1 only when no separate warmup exists"
+  "verdict": "first-run slowdown with cold cache is reproducible (warmup0 21.9s vs 5.9s); the historical ~20s TIMED steps are NOT REPRODUCED, exact cause UNDETERMINED (old entry had 2 warmup steps)",
+  "warm_first_run_note": "warm warmup0 5.9s > timed ~2.5s: first-encounter cost persists with cache hits (cache_new=0); composition (autotune/launch/load) not separated"
  },
  "4_sdpa": {
   "independence": {

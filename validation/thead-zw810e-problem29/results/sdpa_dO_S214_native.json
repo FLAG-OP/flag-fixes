@@ -51,7 +51,7 @@
   "out_contig": false,
   "vs_fp32_max_abs": 0.015423774719238281,
   "vs_fp32_relmax": 0.0018428893527016044,
-  "fwd_ms": 0.1783
+  "fwd_ms": 0.1786
  },
  "backward_dO_original_layout": {
   "ran": true,
@@ -68,7 +68,12 @@
   "dQ_nonfinite": 0,
   "dK_nonfinite": 0,
   "dV_nonfinite": 0,
-  "bwd_ms": 0.5278
+  "clone_fwd_bwd_ms": 0.5277,
+  "bwd_only_ms": 0.3413,
+  "timing_boundaries": {
+   "clone_fwd_bwd_ms": "input clone + forward + backward",
+   "bwd_only_ms": "autograd.grad only; graph prebuilt outside"
+  }
  },
  "backward_dO_contiguous": {
   "ran": true,
@@ -85,7 +90,12 @@
   "dQ_nonfinite": 0,
   "dK_nonfinite": 0,
   "dV_nonfinite": 0,
-  "bwd_ms": 0.5484
+  "clone_fwd_bwd_ms": 0.5474,
+  "bwd_only_ms": 0.3589,
+  "timing_boundaries": {
+   "clone_fwd_bwd_ms": "input clone + forward + backward",
+   "bwd_only_ms": "autograd.grad only; graph prebuilt outside"
+  }
  },
  "backward_all_contiguous": {
   "ran": true,
@@ -94,8 +104,8 @@
   "dV_vs_fp32_relmax": 0.002778389258310199,
   "dQ_nonfinite": 0,
   "fwd_out_vs_fp32_relmax": 0.0018428893527016044,
-  "bwd_ms_incl_contiguize": 0.5993
+  "bwd_ms_incl_contiguize": 0.5988
  },
  "dO_contiguize_copy_ms": 0.018,
- "full_fwd_bwd_with_copy_ms": 0.5587
+ "full_fwd_bwd_with_copy_ms": 0.5593
 }

@@ -570,7 +570,7 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 
 - **[已撤回]** 此前"约 20 秒慢步 = 冷编译伪影、发生在 warmup0、旧入口无独立 warmup"的表述**全部撤回**：旧 `threeway_mm_compare.py` 入口**已有两个预热步**，旧的 ~20 s 出现在**预热之后的计时步**；本表只是冷/热缓存对**首跑时间**的实测差异（warmup0 22 s vs 5.9 s），**不能解释旧计时步**。旧慢步的统一口径见 3c-9-C：**未复现，确切原因未确定**
 - **[已撤回]** 冷/热首次调用耗时之差（20,081−1,578 ms）混有编译、加载、执行与同步（诊断脚本每次 MM 都同步），**不称为编译时间**
-- **每个计时步仍引入新形状**（303→369→435），因逐步序列长度不同——这是 fg_all 整步变慢的根因：**动态形状 × 首调用开销**，而非单次 kernel 执行慢
+- **每个计时步仍引入新形状**（303→369→435，逐步序列长度不同）。这是**已观察到的事实**，与 fg_all 的整步变慢**相关**，但**未通过对照实验证实为根因**（未做"固定形状 vs 动态形状"的单变量对照）——不写成因果结论
 - 边界说明：`first_ms` 含编译+autotune+执行+同步，未设 TRITON_KERNEL_DUMP 故无法再细分；`later_ms` 为稳态执行+同步；compiler log 未捕获（已注明）
 
 **SDPA profiler 证据**（`sdpa_training_compare_r42.json` + `sdpa_training_compare_r42_kernel_evidence.json`，脚本内置 profiler 自动生成 kernel 字段）：
@@ -673,6 +673,7 @@ native 有效 tokens/s：14,255 / 14,748 / 15,065。**dW-only 相对 native 的�
 | **native 前向 vs FP32** | **0.18%** | **0.16%** |
 | **候选 前向 vs FP32** | **79.3%**（max_abs 6.6 / 输出量级 8.4）| **78.8%** |
 | native 反向 dQ/dK/dV（原始 dO）| 2.9e-3 / 3.3e-3 / 2.8e-3 | 4.9e-3 / 3.6e-3 / 2.7e-3 |
+| native 反向耗时：**仅反向** / clone+前向+反向 | **0.341** / 0.528 ms | **0.347** / 0.538 ms |
 | native 反向（dO 连续化）| **与原始完全相同** | 同 |
 | 候选反向 · 原始 dO | 失败 `attention.py:975 assert do.is_contiguous()` | 同 |
 | 候选反向 · dO 连续化 | **仍失败 → `:977 query.is_contiguous()`** | 同 |
@@ -682,6 +683,7 @@ native 有效 tokens/s：14,255 / 14,748 / 15,065。**dW-only 相对 native 的�
 - **候选前向在真实输入上数值就是错的（~79%）**，全连续化后反向能跑也是继承错误的前向 → **此前"前向快 1.8×"是在错误数值下测得，已撤回**
 - **模型实际 dropout=0.1**（`sdpa_S214_p01_*.json`）：native 完整前反向 **0.599 ms**（kernel `…_dropout_sm80`）；候选命中 `Currently only support dropout_p=0.0`（两形状一致）
 - `p=0` 的前向速度差**单列、不计入训练吞吐**（0.106 vs 0.178 ms，数值错误下测得，无采用意义）
+- **计时边界（复审 bqR2JZg 更正）**：此前标为 `bwd_ms` 的数值实为"输入 clone + 前向 + 反向"的合计；现拆为 `clone_fwd_bwd_ms` 与 **`bwd_only_ms`（图在计时外预建，仅计 autograd.grad）**，并在 JSON 的 `timing_boundaries` 中注明
 - **判定：FlagGems SDPA 在真实训练态不可用**（前向数值错误 + Q/dO 连续性约束 + 不支持 dropout）；训练继续使用 native cutlassFA2。S=512 编译失败证据沿用
 
 **F. dW 命中步精度的独立复算（`acc_hit_step_r44_recomputed.json`，`recompute_dw_accuracy.py`，复审 bqQqCnw 项 2）**
@@ -697,7 +699,11 @@ native 有效 tokens/s：14,255 / 14,748 / 15,065。**dW-only 相对 native 的�
 - 未舍入误差全部**精确为零**（非四舍五入）；各组 NaN/Inf = 0；退出码 0
 - 退出码已覆盖：缺失目标 → 2、零命中 → 3、非有限 → 4、门限失败 → 5
 - **判定：dW-only 在命中步通过 2% 门限（PASS），更新后目标参数按 int32 位表示逐位相同**
-- **待证实项**：旧运行 12–40% 的 native-vs-native 偏差只在同快照重放中消失，其确切来源（跨轨迹分叉 vs 其他）**仍待证实**——目前仅有"同快照重跑确定性"这一正面证据
+- **复算脚本已按复审修正**（`recompute_dw_accuracy.py`）：改为**逐元素** `|x−ref| / max(|ref|, 0.01·max|ref|, eps=1e-12)` 再取最大（旧的张量级 floor 对 `ref=[1,1e-4]`、`x=[1.001,1e-4]` 给 10%，正确值 **0.1%**）；比较前先校验 **72 个目标层**的键、形状、元素数、有限性（缺失/形状不符/空组均为结构错误）；`--selftest` 三个回归场景全部通过：同值输入 exit 0、**删空候选 `post_params` → exit 2（非零）**、公式 → 0.1000%
+- **records 可得性（如实）**：`records.pkl` 为 **6.9 GB**（72 目标层 × 4 组，float32），超出 git 限制且本环境无 release/artifact 权限。已入库 **576 个逐张量 sha256**（`acc_hit_step_r44_tensor_hashes.json`）供完整性核对
+- **"从快照重建同一记录"不成立**（`acc_hit_step_r46_rebuild_check.json`）：新进程从 seed 42 重建后，与归档记录**逐位匹配 0/72**（grad_norm 10.5625 → 12.1250）——**同进程内**快照恢复是确定性的，**跨进程**重建不是（模型初始化或前两步存在非确定性来源）。可复现的是**判定**（每次运行内四组仍逐位一致、PASS、命中 432），不是绝对张量值
+- **需要协助**：请维护方将 `acc_hit_step_r44.json.records.pkl`（sha256 `7d00baa3…`）作为 release artifact 附加，或授予 artifact 上传权限
+- **待证实项**：旧运行 12–40% 的 native-vs-native 偏差只在同快照重放中消失，其确切来源**仍待证实**
 
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 

@@ -101,7 +101,7 @@
    2438.8
   ],
   "reproduced_magnitude": false,
-  "magnitude_unreproduced_note": "exact ~20s timed-step magnitude NOT reproduced (max 3.1s here). Old run had different conditions (no separate warmup phase in threeway script, fg_all with only_enable vs direct call here, different cache state). Root cause of the exact 20s magnitude: UNDETERMINED - recorded honestly per review instruction",
+  "magnitude_unreproduced_note": "exact ~20s timed-step magnitude NOT reproduced (max 3.1s here). CORRECTION: the old threeway_mm_compare.py entry DID have two warmup steps; its ~20s steps were TIMED steps after warmup. That entry registered FlagGems via only_enable while this replay calls flag_gems.mm directly, and the cache state differed. Conclusion: NOT REPRODUCED, exact cause UNDETERMINED.",
   "compile_vs_exec_split": "not separable: TRITON_KERNEL_DUMP/MLIR timestamps not enabled; per-step cache entry deltas + new-shape counts are the available proxies",
   "observed_in_this_replay": "cold cache: warmup0 22,151 ms vs warm 6,786 ms (first-run slowdown, reproducible); post-warmup slowest timed step 3,135 ms cold vs 2,229 ms warm",
   "old_slow_step_conclusion": "NOT REPRODUCED; exact cause UNDETERMINED. The old threeway entry HAD 2 warmup steps and its ~20 s steps were timed steps after warmup; this replay's first-run slowdown does not explain them."
