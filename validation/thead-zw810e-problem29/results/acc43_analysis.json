@@ -1,0 +1,303 @@
+{
+ "same_state_preconditions": {
+  "init": true,
+  "rng_cpu": true,
+  "rng_cuda": true,
+  "micro_inputs": true
+ },
+ "A_native_run1_vs_run2_nondet": {
+  "ffn_up": {
+   "max": 0.1208,
+   "median": 0.0432
+  },
+  "ffn_down": {
+   "max": 0.3378,
+   "median": 0.0975
+  },
+  "attn_output": {
+   "max": 0.4032,
+   "median": 0.153
+  }
+ },
+ "B_wrapped_stock_vs_native": {
+  "ffn_up": {
+   "max": 0.1488,
+   "median": 0.0343
+  },
+  "ffn_down": {
+   "max": 0.3125,
+   "median": 0.0851
+  },
+  "attn_output": {
+   "max": 0.431,
+   "median": 0.1268
+  }
+ },
+ "C_dw_only_vs_native": {
+  "ffn_up": {
+   "max": 0.1488,
+   "median": 0.0393
+  },
+  "ffn_down": {
+   "max": 0.3125,
+   "median": 0.1181
+  },
+  "attn_output": {
+   "max": 0.2907,
+   "median": 0.1567
+  }
+ },
+ "dw_only_per_shape_hits": {
+  "[1024, 5120]x[5120, 4096]": 408,
+  "[4096, 5120]x[5120, 1024]": 408,
+  "[1024, 3740]x[3740, 4096]": 24,
+  "[4096, 3740]x[3740, 1024]": 24,
+  "[1024, 4430]x[4430, 4096]": 24,
+  "[4096, 4430]x[4430, 1024]": 24,
+  "[1024, 2990]x[2990, 4096]": 24,
+  "[4096, 2990]x[2990, 1024]": 24,
+  "[1024, 3290]x[3290, 4096]": 24,
+  "[4096, 3290]x[3290, 1024]": 24,
+  "[1024, 4310]x[4310, 4096]": 24,
+  "[4096, 4310]x[4310, 1024]": 24
+ },
+ "frozen_dW_12shapes": {
+  "n_shapes": 12,
+  "n_bitwise_identical": 12,
+  "unequal_elements_total": 0,
+  "numel_total": 50331648,
+  "max_abs_err_unrounded_overall": 0.0,
+  "nonfinite_total": 0,
+  "per_shape": {
+   "[1024, 5120]x[5120, 4096]": {
+    "hits": 408,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     1024
+    ],
+    "stride_x": [
+     4096,
+     1
+    ],
+    "input_sha256_16": "ea5b5f8e7eee8d5a",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[4096, 5120]x[5120, 1024]": {
+    "hits": 408,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     4096
+    ],
+    "stride_x": [
+     1024,
+     1
+    ],
+    "input_sha256_16": "c027c9ccffae8d44",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[1024, 3740]x[3740, 4096]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     1024
+    ],
+    "stride_x": [
+     4096,
+     1
+    ],
+    "input_sha256_16": "1c5ae062ea6fbaa0",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[4096, 3740]x[3740, 1024]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     4096
+    ],
+    "stride_x": [
+     1024,
+     1
+    ],
+    "input_sha256_16": "066eaeaeeee93e59",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[1024, 4430]x[4430, 4096]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     1024
+    ],
+    "stride_x": [
+     4096,
+     1
+    ],
+    "input_sha256_16": "c1a7d4bbd9688c47",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[4096, 4430]x[4430, 1024]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     4096
+    ],
+    "stride_x": [
+     1024,
+     1
+    ],
+    "input_sha256_16": "e3dcf2999fa194c8",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[1024, 2990]x[2990, 4096]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     1024
+    ],
+    "stride_x": [
+     4096,
+     1
+    ],
+    "input_sha256_16": "609f62483f7bdd6d",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[4096, 2990]x[2990, 1024]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     4096
+    ],
+    "stride_x": [
+     1024,
+     1
+    ],
+    "input_sha256_16": "8bd5534d4684ac81",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[1024, 3290]x[3290, 4096]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     1024
+    ],
+    "stride_x": [
+     4096,
+     1
+    ],
+    "input_sha256_16": "45def6182b6d9b00",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[4096, 3290]x[3290, 1024]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     4096
+    ],
+    "stride_x": [
+     1024,
+     1
+    ],
+    "input_sha256_16": "83a50800774d2d3e",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[1024, 4310]x[4310, 4096]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     1024
+    ],
+    "stride_x": [
+     4096,
+     1
+    ],
+    "input_sha256_16": "4211a9b4f1f4f8a0",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   },
+   "[4096, 4310]x[4310, 1024]": {
+    "hits": 24,
+    "dtype": "torch.bfloat16",
+    "stride_gy": [
+     1,
+     4096
+    ],
+    "stride_x": [
+     1024,
+     1
+    ],
+    "input_sha256_16": "dcb2b218b8de9898",
+    "bitwise_identical": true,
+    "unequal_elements": 0,
+    "numel": 4194304,
+    "max_abs_err_unrounded": 0.0,
+    "stock_nonfinite": 0,
+    "fg_nonfinite": 0
+   }
+  }
+ },
+ "scope_note": "frozen dW compares the dW OUTPUT tensor only (same captured gy/x); the A/B/C same-state comparisons cover the full backward at first warmup step"
+}

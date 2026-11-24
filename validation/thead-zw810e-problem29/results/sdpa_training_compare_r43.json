@@ -1,0 +1,111 @@
+{
+ "actual_model_call": {
+  "dropout_p": 0.1,
+  "mask": "float32 additive [B,1,S,S], -inf at padded keys",
+  "layout": "[B,H,S,D] transposed view strides [B*H*S? -> H*S, D, H*D, 1]",
+  "is_causal": false,
+  "source": "sdpa_actual_call_r43.json (captured from real model forward)"
+ },
+ "shapes": {
+  "S512_pad32": {
+   "q_stride": [
+    524288,
+    64,
+    1024,
+    1
+   ],
+   "mask_dtype": "torch.float32",
+   "independence": {
+    "with_mask_valid_query_allD_max_diff": 0.0,
+    "no_mask_control_max_diff": 6.71875
+   },
+   "fwd_p0_ms": 0.6926,
+   "bwd_p0_ms": 1.1275,
+   "full_p0_ms": 1.8681,
+   "fwd_p01_ms": 0.7769,
+   "bwd_p01_ms": 1.2966,
+   "full_p01_ms": 2.1303,
+   "native_vs_fp32_reldiff": {
+    "out": 0.003488,
+    "dQ": 0.005489,
+    "dK": 0.00294,
+    "dV": 0.003837
+   },
+   "native_kernels_p01": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80"
+   ],
+   "native_kernels_p0": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, "
+   ],
+   "after_only_enable_kernels_p0": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, "
+   ],
+   "entry_kernel_set_differs_same_dropout": false,
+   "entry_status": "NO-OP PASSTHROUGH (identical kernel set at same dropout; only_enable: 'No op to register')",
+   "fwd_p0_ms_after_only_enable": 0.6918,
+   "direct_call": {
+    "status": "COMPILE FAILED - CANDIDATE BLOCKED",
+    "flag_gems_sha": "29e14822",
+    "triton": "3.6.0",
+    "torch": "2.10.0",
+    "tile_params_from_exception": [
+     "GROUP_HEAD: tl.constexpr,",
+     "HEAD_DIM: tl.constexpr,",
+     "HEAD_DIM_ACTUAL: tl.constexpr,",
+     "BLOCK_M: tl.constexpr,",
+     "BLOCK_N: tl.constexpr,",
+     "tl.static_assert(BLOCK_N <= HEAD_DIM)"
+    ],
+    "static_assert_lines": [
+     "tl.static_assert(BLOCK_N <= HEAD_DIM)"
+    ],
+    "blocked_shape": "B10 H16 S512 D64 bf16 + float32 additive mask pad32",
+    "minimal_repro": "flag_gems.scaled_dot_product_attention(q[B,16,512,64] non-contig, k, v, attn_mask=float32[B,1,512,512] -inf padded, dropout_p=0.0)",
+    "full_exception_tail": "le \"/usr/local/lib/python3.12/site-packages/triton/spec/ppu/triton/compiler/compiler.py\", line 330, in compile\n    module = backend.make_ir(src, options, codegen_fns, module_map, context)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/backends/compiler.py\", line 64, in make_ir\n    return src.make_ir(self.target, options, codegen_fns, module_map, context)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/spec/ppu/triton/compiler/compiler.py\", line 106, in make_ir\n    return ast_to_ttir(self.fn, self, context=context, options=options, codegen_fns=codegen_fns,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntriton.compiler.errors.CompileTimeAssertionFailure: at 43:4:\n    GROUP_HEAD: tl.constexpr,\n    Q_CTX,\n    KV_CTX,\n    HEAD_DIM: tl.constexpr,\n    HEAD_DIM_ACTUAL: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    STAGE: tl.constexpr,\n    HAS_ATTN_MASK: tl.constexpr,\n    PRE_LOAD_V: tl.constexpr,\n):\n    tl.static_assert(BLOCK_N <= HEAD_DIM)\n    ^\n"
+   }
+  },
+  "S214_pad16": {
+   "q_stride": [
+    219136,
+    64,
+    1024,
+    1
+   ],
+   "mask_dtype": "torch.float32",
+   "independence": {
+    "with_mask_valid_query_allD_max_diff": 0.0,
+    "no_mask_control_max_diff": 8.3125
+   },
+   "fwd_p0_ms": 0.1776,
+   "bwd_p0_ms": 0.3408,
+   "full_p0_ms": 0.5373,
+   "fwd_p01_ms": 0.1999,
+   "bwd_p01_ms": 0.3881,
+   "full_p01_ms": 0.6074,
+   "native_vs_fp32_reldiff": {
+    "out": 0.00399,
+    "dQ": 0.004369,
+    "dK": 0.00344,
+    "dV": 0.003821
+   },
+   "native_kernels_p01": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80"
+   ],
+   "native_kernels_p0": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, "
+   ],
+   "after_only_enable_kernels_p0": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, "
+   ],
+   "entry_kernel_set_differs_same_dropout": false,
+   "entry_status": "NO-OP PASSTHROUGH (identical kernel set at same dropout; only_enable: 'No op to register')",
+   "fwd_p0_ms_after_only_enable": 0.1785,
+   "direct_call": {
+    "status": "ran",
+    "fwd_ms": 0.1062
+   }
+  }
+ },
+ "only_enable_message": "/tmp/opencode/FlagGems-base/src/flag_gems/runtime/op_registrar.py:99: UserWarning: only_enable failed: No op to register. Check if include is correct.\n  warnings.warn(",
+ "per_shape_subprocess": true
+}

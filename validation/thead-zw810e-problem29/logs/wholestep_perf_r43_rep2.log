@@ -1,0 +1,21 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+GROUP_ORDER: ['dw_only_routed', 'fg_all', 'wrapped_stock_mmout', 'native']
+/usr/local/lib/python3.12/site-packages/torch/library.py:357: UserWarning: Warning only once for all operators,  other operators may also be overridden.
+  Overriding a previously registered kernel for the same operator and the same dispatch key
+  operator: aten::mm(Tensor self, Tensor mat2) -> Tensor
+    registered at aten/src/ATen/RegisterSchema.cpp:6
+  dispatch key: CUDA
+  previous kernel: registered at ../aten/src/ATen/LegacyBatchingRegistrations.cpp:1076
+       new kernel: registered at /tmp/opencode/FlagScale-ppu/examples/retrieval/wholestep_mm_groups.py:122 (Triggered internally at ../aten/src/ATen/core/dispatch/OperatorEntry.cpp:208.)
+  self.m.impl(
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+[dw_only_routed] median 2124.5 ms | dw int-hits 1056
+[fg_all] median 2211.0 ms | rounds [1976.6, 2211.0, 2760.1] | param 76ec147384b3fdff | cold_calls 0
+[wrapped_stock_mmout] median 2150.2 ms | rounds [1934.1, 2150.2, 2375.2] | param 88edfa302f4a305d | cold_calls 0
+[native] median 2135.6 ms | rounds [1928.4, 2135.6, 2394.3] | param 7823754d476c059c | cold_calls 0
+saved /tmp/opencode/zw810e-problem29/results/wholestep_perf_r43_rep2.json

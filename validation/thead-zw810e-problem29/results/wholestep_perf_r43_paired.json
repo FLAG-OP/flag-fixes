@@ -1,0 +1,138 @@
+{
+ "group_order": {
+  "rep1": "native,wrapped_stock,fg_all,dw_only",
+  "rep2": "dw_only,fg_all,wrapped_stock,native"
+ },
+ "rep1": {
+  "native": [
+   1897.8,
+   2132.8,
+   2356.9
+  ],
+  "dw_only": [
+   1909.8,
+   2140.3,
+   2349.4
+  ],
+  "wrapped_stock": [
+   1919.1,
+   2150.6,
+   2382.0
+  ],
+  "valid_tokens": [
+   27052,
+   31454,
+   35506
+  ],
+  "input_hashes_dw": [
+   "d2bfed5625354170",
+   "c5896ff2bece725f",
+   "6228631cc16cc2dd"
+  ],
+  "input_hashes_native": [
+   "d2bfed5625354170",
+   "c5896ff2bece725f",
+   "6228631cc16cc2dd"
+  ],
+  "hashes_equal_across_groups": true,
+  "tokens_per_s_native": [
+   14255,
+   14748,
+   15065
+  ],
+  "tokens_per_s_dw": [
+   14165,
+   14696,
+   15113
+  ],
+  "dw_vs_native_paired": [
+   12.0,
+   7.5,
+   -7.5
+  ],
+  "dw_vs_native_paired_median": 7.5,
+  "dw_vs_wrapped_paired": [
+   -9.3,
+   -10.3,
+   -32.6
+  ],
+  "dw_vs_wrapped_paired_median": -10.3
+ },
+ "rep2": {
+  "native": [
+   1928.4,
+   2135.6,
+   2394.3
+  ],
+  "dw_only": [
+   1893.9,
+   2124.5,
+   2337.6
+  ],
+  "wrapped_stock": [
+   1934.1,
+   2150.2,
+   2375.2
+  ],
+  "valid_tokens": [
+   27052,
+   31454,
+   35506
+  ],
+  "input_hashes_dw": [
+   "d2bfed5625354170",
+   "c5896ff2bece725f",
+   "6228631cc16cc2dd"
+  ],
+  "input_hashes_native": [
+   "d2bfed5625354170",
+   "c5896ff2bece725f",
+   "6228631cc16cc2dd"
+  ],
+  "hashes_equal_across_groups": true,
+  "tokens_per_s_native": [
+   14028,
+   14728,
+   14830
+  ],
+  "tokens_per_s_dw": [
+   14284,
+   14805,
+   15189
+  ],
+  "dw_vs_native_paired": [
+   -34.5,
+   -11.1,
+   -56.7
+  ],
+  "dw_vs_native_paired_median": -34.5,
+  "dw_vs_wrapped_paired": [
+   -40.2,
+   -25.7,
+   -37.6
+  ],
+  "dw_vs_wrapped_paired_median": -37.6
+ },
+ "combined": {
+  "dw_vs_native_all6": [
+   12.0,
+   7.5,
+   -7.5,
+   -34.5,
+   -11.1,
+   -56.7
+  ],
+  "median": -29.15,
+  "min": -40.2,
+  "max": -9.3,
+  "dw_vs_wrapped_all6": [
+   -9.3,
+   -10.3,
+   -32.6,
+   -40.2,
+   -25.7,
+   -37.6
+  ],
+  "tokens_note": "valid tokens counted from ACTUAL batches via tokenizer attention_mask (no stored constants); identical across groups within each rep"
+ }
+}

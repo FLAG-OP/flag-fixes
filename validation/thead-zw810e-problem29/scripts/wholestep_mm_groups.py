@@ -84,6 +84,11 @@ if ACC_MODE:
     GROUPS = ["native", "dw_only_routed"]
 else:
     GROUPS = ["native", "wrapped_stock_mmout", "fg_all", "dw_only_routed"]
+# review df851e0 item 3: rotate group order between independent repeats
+_ORDER = os.environ.get("GROUP_ORDER", "")
+if _ORDER:
+    GROUPS = _ORDER.split(",")
+    print("GROUP_ORDER:", GROUPS, flush=True)
 results = {}
 ref_accuracy = None
 param_snap = {}
@@ -133,13 +138,21 @@ for gi, GROUP in enumerate(GROUPS):
     loaders=build_split_loaders(str(cfg.task),cfg.data,int(cfg.batch_size),pin_memory=True,seed=42)
     stream=iter(loaders[0])
     # tokens/s: valid tokens per step from r36 fingerprint window (steps 2-4)
-    # valid tokens per step from the r36 fingerprint window (absolute path);
-    # fallback = known measured values for this seed window
-    try:
-        meta_fp=json.load(open('/tmp/opencode/zw810e-problem29/results/training_trace_r36_meta.json'))['batch_fingerprints']['fingerprints']
-        vt=[sum(g['valid_tokens'] for micros in step) for step in meta_fp.values()][:a.rounds]
-    except Exception:
-        vt=[27052,31454,35506][:a.rounds]
+    # review df851e0 item 3: count valid tokens from the ACTUAL batches consumed
+    # (tokenizer attention_mask), never a stored constant; also hash each step's
+    # inputs so groups can be checked for identical batches.
+    from transformers import AutoTokenizer
+    _tok = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
+    def step_tokens_and_hash(step_batches):
+        valid = 0; h = hashlib.sha256()
+        for batch in step_batches:
+            for k in sorted(batch.keys()):
+                h.update(("|".join(batch[k])).encode())
+                enc = _tok(batch[k], padding=True, truncation=True,
+                           max_length=int(cfg.model.get("max_length", 8192)), return_tensors=None)
+                valid += sum(sum(1 for x in m if x == 1) for m in enc["attention_mask"])
+        return valid, h.hexdigest()[:16]
+    vt = [None]*a.rounds      # filled per round below
     rounds_data=[]; micro_losses=[]; gns=[]
     STATE["phase"] = "warmup"
     warm1_grads = None
@@ -165,9 +178,10 @@ for gi, GROUP in enumerate(GROUPS):
     for i in range(a.rounds):
         t0=time.perf_counter()
         optimizer.zero_grad(set_to_none=True)
-        ml=[]
+        ml=[]; step_batches=[]
         for micro in range(accum):
             batch=next(stream)
+            step_batches.append(batch)
             with autocast_context(dev,dtype_name):
                 loss=loss_for_batch(model,processor,str(cfg.task),batch,dev,float(cfg.temperature))
             ml.append(round(float(loss.detach()),6))
@@ -177,8 +191,12 @@ for gi, GROUP in enumerate(GROUPS):
         torch.cuda.synchronize()
         if "flush" in STATE: STATE["flush"]()
         ms=(time.perf_counter()-t0)*1000
+        # tokenise AFTER timing (outside the measured window)
+        n_valid, in_hash = step_tokens_and_hash(step_batches)
+        vt[i] = n_valid
         rounds_data.append({"round":i,"step_ms":round(ms,1),"micro_losses":ml,"grad_norm":round(gn,4),
-                             "valid_tokens_per_s":round(vt[i]/(ms/1000)) if vt[i] else None})
+                             "valid_tokens":n_valid,"input_hash":in_hash,
+                             "valid_tokens_per_s":round(n_valid/(ms/1000))})
         micro_losses.extend(ml)
         gns.append(gn)
     # accuracy capture: per-micro losses (all rounds) + LAST-round grads (p.grad still set) + params
@@ -207,6 +225,8 @@ for gi, GROUP in enumerate(GROUPS):
     res={"group":GROUP,"median_ms":round(statistics.median([r["step_ms"] for r in rounds_data]),1),
           "step_ms":[r["step_ms"] for r in rounds_data],
           "valid_tokens_per_s":[r.get("valid_tokens_per_s") for r in rounds_data],
+          "valid_tokens":[r.get("valid_tokens") for r in rounds_data],
+          "input_hashes":[r.get("input_hash") for r in rounds_data],
           "micro_losses_last_round":rounds_data[-1]["micro_losses"],
           "grad_norms_warmup":gns[:2],"grad_norms_rounds":[r["grad_norm"] for r in rounds_data],
           "param_hash16":param_hash,"param_absmax":round(pmax,4),
@@ -216,7 +236,7 @@ for gi, GROUP in enumerate(GROUPS):
         ref_accuracy = {"micro_losses_last_round":rounds_data[-1]["micro_losses"],
                          "grad_norms_rounds":[r["grad_norm"] for r in rounds_data],
                          "param_hash16":param_hash}
-    else:
+    elif ref_accuracy is not None:
         dl = [round(x-y,6) for x,y in zip(rounds_data[-1]["micro_losses"], ref_accuracy["micro_losses_last_round"])]
         gn_d = [round(x-y,3) for x,y in zip([r["grad_norm"] for r in rounds_data], ref_accuracy["grad_norms_rounds"])]
         nonfinite = int((~torch.isfinite(torch.cat([p.detach().float().view(-1) for p in trainable]))).sum())

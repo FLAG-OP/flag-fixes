@@ -554,8 +554,8 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 - **native-vs-native（两次独立运行）非确定性基线**：ffn_up max 23.2%/median 3.7%；ffn_down max 33.8%/median 11.1%；attn_output max **43.1%**/median 15.8%
 - **dW-only vs native**：ffn_up 14.9%/5.6%；ffn_down 67.6%/9.5%；attn_output 43.1%/14.8%——**落在 native 自身非确定性基线量级内**
 - **wrapped-stock（mm.out，同一 stock kernel）vs native**：14.9%/67.6%/29.9%——**仅改用 mm.out 即产生同量级偏差**，证明偏差来自执行路径非确定性而非候选 kernel
-- **冻结 dW 对照**（从真实训练反向捕获的 gy/x 固定后单独比较）：**stock 与 FlagGems dW 输出逐位一致**（fg_vs_stock reldiff **0.0**，36 形状，非有限 0）
-- **结论**：上一轮 12.1% FAIL 的来源是**设备原生非确定性**（同状态 native 自比即达 23–43%），非 dW 候选；attention.output 的误差**不是**"dW 误差沿反向图传播"（已撤回该表述）——它是 native 非确定性的表现。dW-only 仍**不作为部署候选**（FAIL 判定保留，归因修正）
+- **[superseded]** ~~冻结 dW 对照：stock 与 FlagGems dW 输出逐位一致（36 形状）~~——**已撤回**：该轮只比较了前 **4** 项，且以四舍五入后的相对误差 0.0 推出"36 形状逐位一致"；正确的 12 形状原始位模式对照见 **3c-9-A**
+- **[superseded，见 3c-9]** 上一轮"12.1% FAIL 已排除候选影响"的归因**不再作为结论**：该轮精度脚本用了比性能组更宽的维度条件分发，attention 权重梯度也进入了候选，两组选中的调用不同；且冻结 dW 只覆盖前 4 项、用四舍五入后的相对误差 0.0 声称"36 形状逐位一致"——**该表述已撤回**。当前可证结论以 3c-9 为准
 
 **冷/热重放**（`coldwarm_cold_r42.json` / `coldwarm_warm_r42.json`，固定 seed 42 init/批次窗口/RNG，Triton cache 目录隔离）：
 
@@ -569,7 +569,7 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 | 稳态 ms/调用（含每次 sync）| 0.1685 | 0.1684 |
 
 - **约 20 秒慢步 = 冷编译伪影，且发生在 warmup0**（此前无独立 warmup 的运行把编译成本计入首个计时步）——已说明 warmup 事件不进入首个计时步的前提是需要独立 warmup
-- **编译 ≈ 18.5 s**（cold−warm 首次调用差），缓存命中可消除（warm 新增 0 条目）；**但 warm 下仍有 934 ms 单形状首调用**——为进程内 autotune/首次启动开销（非缓存 miss）
+- **[superseded，见 3c-9]** "编译 ≈ 18.5 s"**已撤回**：该数字是冷/热两次运行首次调用耗时之差，而诊断脚本每次 MM 都同步，其中混有编译、加载、执行与同步，不能称为纯编译时间
 - **每个计时步仍引入新形状**（303→369→435），因逐步序列长度不同——这是 fg_all 整步变慢的根因：**动态形状 × 首调用开销**，而非单次 kernel 执行慢
 - 边界说明：`first_ms` 含编译+autotune+执行+同步，未设 TRITON_KERNEL_DUMP 故无法再细分；`later_ms` 为稳态执行+同步；compiler log 未捕获（已注明）
 
@@ -581,6 +581,66 @@ per-step memcpy（首步）：HtoD 40 条 0.08ms; DtoH 20 条 0.01ms; DtoD 20 �
 - S 轴扰动独立性 0.0 / 无 mask 对照 6.75；统一边界 fwd/bwd/full = 0.7018/1.1251/1.8723 ms(p0)；native vs FP32 0.35–0.48%
 
 **HBM/计算单元利用率：BLOCKED**（`logs/hbm_probe_r42.log`）——acu 真实退出码 **101**（本轮直接捕获，解决此前 0/101 矛盾）；dmesg `PPU0000 PCM is in used by app[pg-exporter]`；L2 指标同受 PCM 锁阻塞；平台反馈渠道本环境不可达（已记录请求）。
+
+#### 3c-9. round-43 修正：同路由精度归因 + 12 形状逐位对照 + 实际吞吐 + 原入口慢步重放 + SDPA 逐形状（复审 df851e0）
+
+**A. 精度归因（与性能组同一 12 形状白名单，`acc43_analysis.json`）**
+
+同状态前提全部成立（init `74fb309b`、CPU RNG `59294f27`、CUDA RNG `aefdce03`、4 个 micro 输入哈希）。逐形状命中：S512 对各 408 次、中序列 8 形状各 24 次，共 **1,056**（与性能组一致，attention 权重梯度**未**进入候选）。
+
+| 对照（首 warmup 步目标梯度，floored rel）| ffn_up max / median | ffn_down max / median | attn_output max / median |
+|---|---|---|---|
+| A native vs native（两次独立运行）| 12.1% / 4.3% | **33.8%** / 9.8% | 40.3% / 15.3% |
+| B wrapped-stock vs native | 14.9% / 3.4% | 31.3% / 8.5% | 43.1% / 12.7% |
+| C dW-only vs native | 14.9% / 3.9% | **31.3%** / 11.8% | 29.1% / 15.7% |
+
+- 上一轮"候选 67.57% vs 原生 33.78%"的差距**已消除**：改用同一白名单后，候选对原生的最大偏差（31.3%）**不高于**原生自比（33.8%），三组的中位数同量级
+- **冻结 dW 逐位对照（12/12 形状，`acc43_analysis.json.frozen_dW_12shapes`）**：对真实反向捕获的同一对 gy/x，stock（`mm.out`）与候选（`flag_gems.mm`，设备 kernel 为 Triton `mm_kernel_general`，与 stock 的 `gemm_ktype0…` **确为不同 kernel**）的输出**按原始 int16 位模式比较：50,331,648 个元素中不等元素 0 个，未舍入最大绝对误差 0.0，非有限 0**；每形状保留 dtype、stride、输入哈希
+- **判定边界（如实）**：冻结对照只证明 **dW 输出张量**在候选 kernel 下不引入差异；整段反向的偏差（上表）由设备运行间非确定性主导。**部署判断沿用 2% 梯度门限下 FAIL**——该门限在当前设备非确定性下对任何实现（含 native 自比）都不成立，因此不能据此判定候选，也**不宣称已排除候选影响**
+
+**B. 有效吞吐与配对整步（`wholestep_perf_r43_paired.json`，两次独立重复、组序轮换）**
+
+有效 token 从**实际消费的批次**经 tokenizer attention_mask 统计（不再使用存储常数）；各组输入哈希逐步一致。两步窗口 token 数 27,052 / 31,454 / 35,506。
+
+| 重复（组序）| native ms | dW-only ms | dW−native 配对差 | dW−wrapped-stock 配对差 |
+|---|---|---|---|---|
+| rep1（native 先）| 1897.8/2132.8/2356.9 | 1909.8/2140.3/2349.4 | +12.0 / +7.5 / −7.5（中位 +7.5）| −9.3 / −10.3 / −32.6 |
+| rep2（dW-only 先）| 1928.4/2135.6/2394.3 | 1893.9/2124.5/2337.6 | −34.5 / −11.1 / −56.7（中位 −34.5）| −40.2 / −25.7 / −37.6 |
+
+native 有效 tokens/s：14,255 / 14,748 / 15,065。**dW-only 相对 native 的配对差随重复变号**（rep1 偏正、rep2 偏负，合并 6 个范围 −56.7～+12.0）→ **原生训练整步尚无稳定加速，也未分辨出稳定回退**；相对同包装 stock 的 6 个配对差全为负（−9.3～−40.2）→ 同包装下改善一致成立。
+
+**C. 旧慢步原入口重放（`orig_replay_cold_r43.json` / `orig_replay_warm_r43.json`）**
+
+用**原计时入口**（无逐 MM 事件/同步，仅整数首遇计数），固定 seed 42 init/批次窗口/RNG，Triton cache 目录隔离：
+
+| 步 | COLD ms（本步新形状 / 缓存条目）| WARM ms（本步新形状 / 缓存条目）|
+|---|---|---|
+| warmup0 | 22,151（123 / 29）| 6,786（123 / 32）|
+| warmup1 | 3,638（102 / 31）| 2,204（102 / 32）|
+| timed0 | 1,944（78 / 31）| 2,096（78 / 32）|
+| timed1 | **3,135**（66 / 32）| 2,229（66 / 32）|
+| timed2 | 2,439（66 / 32）| 2,419（66 / 32）|
+
+- **机制确认**：每个计时步都引入新的序列长度 → 新 mm 形状（435 个唯一形状，分布于 5 步：123/102/78/66/66）；冷缓存下 timed1 3,135ms 明显慢于热缓存 2,229ms
+- **缓存条目仅 31→32**，远少于 435 个形状——Triton kernel 跨形状共享；且**热缓存下新形状首遇成本仍在**（warm0 6,786ms，缓存新增 0）→ 每个新形状的成本不全是磁盘缓存缺失，含进程内 autotune/首次启动
+- **旧 ~20 秒计时步的量级未能复现**（本次计时步最大 3.1s）。旧运行条件不同（threeway 脚本无独立 warmup 阶段、经 only_enable 注册而非直调、缓存状态不同）→ **旧慢步的确切原因标为"未确定"**，如实记录
+- 编译/加载/执行/同步**未能分离**：未启用 TRITON_KERNEL_DUMP / MLIR 时间戳；以每步缓存条目增量与新形状数作为替代证据
+
+**D. SDPA 逐形状（`sdpa_training_compare_r43.json`，模型实际调用签名）**
+
+从真实模型捕获（`sdpa_actual_call_r43.json`）：**dropout_p=0.1**、mask 为 **float32 加性 `[B,1,S,S]`（padding 位置 −inf）**、q 布局 `[B,H,S,D]` 转置视图（非连续）、`is_causal=False`；在 autocast bf16 下执行。顺序：先采同 dropout 的 native kernel，再 `only_enable` 后采对照。
+
+| 形状 | native kernel（p=0 / p=0.1）| only_enable 入口 | 直调候选 |
+|---|---|---|---|
+| S512_pad32 | `…k64x128x64_sm80` / `…_dropout_sm80` | **NO-OP PASSTHROUGH**（kernel 集合相同）| **COMPILE FAILED**：`tl.static_assert(BLOCK_N <= HEAD_DIM)` |
+| S214_pad16 | 同上 | **NO-OP PASSTHROUGH** | **可运行**：fwd **0.1062ms** vs native 0.1776ms |
+
+- `only_enable` 返回 `No op to register`（两种形状均如此）→ 模型入口不切换 kernel
+- **直调候选的可用性依赖形状**：S=512 受阻，**S=214 可运行且前向更快**——此前"本栈无 SDPA 候选"的笼统结论**修正为按形状区分**
+- 其余：S 轴扰动独立性 **0.0**、无 mask 对照 6.72 / 8.31；fwd/bwd/完整（p0）S512 0.693/1.128/1.868ms、S214 0.178/0.341/0.537ms；native vs FP32 0.29–0.55%
+- **未完成**：S214 候选的输出/dQ/dK/dV 数值对照与反向计时尚未测——列为**进行中**，不据此下性能结论
+
+**E. HBM / 计算单元利用率：BLOCKED**（`logs/hbm_probe_r42.log`，本轮复用）——acu 退出码 101、dmesg PCM 被 `pg-exporter` 占用；平台窗口待协调
 
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 

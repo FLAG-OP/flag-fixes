@@ -1,0 +1,225 @@
+{
+ "device": "PPU-ZW810E",
+ "groups": {
+  "dw_only_routed": {
+   "group": "dw_only_routed",
+   "median_ms": 2124.5,
+   "step_ms": [
+    1893.9,
+    2124.5,
+    2337.6
+   ],
+   "valid_tokens_per_s": [
+    14284,
+    14805,
+    15189
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.686328,
+    0.824365,
+    0.553906,
+    0.749048
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    11.1875
+   ],
+   "grad_norms_rounds": [
+    14.0625,
+    27.375,
+    9.8125
+   ],
+   "param_hash16": "4af99d9e7ceef1ae",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "dw_hits_summary": {
+    "timed_hits": 0,
+    "warmup_hits": 0,
+    "shapes_hit": 0,
+    "shapes_expected": 12,
+    "missing_shapes": [
+     [
+      4096,
+      2990,
+      2990,
+      1024
+     ],
+     [
+      4096,
+      5120,
+      5120,
+      1024
+     ],
+     [
+      1024,
+      3740,
+      3740,
+      4096
+     ],
+     [
+      4096,
+      4430,
+      4430,
+      1024
+     ],
+     [
+      4096,
+      3740,
+      3740,
+      1024
+     ],
+     [
+      1024,
+      2990,
+      2990,
+      4096
+     ]
+    ],
+    "per_shape_timed": {}
+   },
+   "dw_perf_int_count": 1056
+  },
+  "fg_all": {
+   "group": "fg_all",
+   "median_ms": 2211.0,
+   "step_ms": [
+    1976.6,
+    2211.0,
+    2760.1
+   ],
+   "valid_tokens_per_s": [
+    13686,
+    14226,
+    12864
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.694629,
+    0.825562,
+    0.549512,
+    0.753223
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    11.5625
+   ],
+   "grad_norms_rounds": [
+    11.375,
+    10.4375,
+    11.375
+   ],
+   "param_hash16": "76ec147384b3fdff",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0
+  },
+  "wrapped_stock_mmout": {
+   "group": "wrapped_stock_mmout",
+   "median_ms": 2150.2,
+   "step_ms": [
+    1934.1,
+    2150.2,
+    2375.2
+   ],
+   "valid_tokens_per_s": [
+    13987,
+    14629,
+    14949
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.69834,
+    0.821924,
+    0.559766,
+    0.748657
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    14.6875
+   ],
+   "grad_norms_rounds": [
+    10.375,
+    9.5625,
+    10.8125
+   ],
+   "param_hash16": "88edfa302f4a305d",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0
+  },
+  "native": {
+   "group": "native",
+   "median_ms": 2135.6,
+   "step_ms": [
+    1928.4,
+    2135.6,
+    2394.3
+   ],
+   "valid_tokens_per_s": [
+    14028,
+    14728,
+    14830
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.705371,
+    0.821216,
+    0.551074,
+    0.758423
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    11.4375
+   ],
+   "grad_norms_rounds": [
+    9.375,
+    10.25,
+    10.5
+   ],
+   "param_hash16": "7823754d476c059c",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0
+  }
+ },
+ "dW_shape_set_size": 12,
+ "notes": "wrapped-stock uses aten.mm.out escape = TRUE stock kernel; dw_only routes measured FFN dW shapes to FlagGems mm, all else stock mm.out; cold_first_calls = shapes triggering first-encounter compile in fg_all"
+}

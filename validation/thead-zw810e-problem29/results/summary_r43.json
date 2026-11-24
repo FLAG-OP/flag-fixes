@@ -1,0 +1,192 @@
+{
+ "run_commit_note": "round-43 (review df851e0 six items)",
+ "1_accuracy_same_routing": {
+  "preconditions_same_state": {
+   "init": true,
+   "rng_cpu": true,
+   "rng_cuda": true,
+   "micro_inputs": true
+  },
+  "routing": "exact 12-shape whitelist shared with perf group; attention dW NOT routed",
+  "per_shape_hits_total": 1056,
+  "A_native_vs_native_max": {
+   "ffn_up": 0.1208,
+   "ffn_down": 0.3378,
+   "attn_output": 0.4032
+  },
+  "B_wrapped_stock_vs_native_max": {
+   "ffn_up": 0.1488,
+   "ffn_down": 0.3125,
+   "attn_output": 0.431
+  },
+  "C_dw_only_vs_native_max": {
+   "ffn_up": 0.1488,
+   "ffn_down": 0.3125,
+   "attn_output": 0.2907
+  },
+  "verdict": "deploy judgment stays FAIL at 2% grad gate; gate unsatisfiable under device nondeterminism (native-vs-native max 33.8% ffn_down) -> candidate NOT cleared, NOT blamed"
+ },
+ "2_frozen_dW_12_shapes": {
+  "n_shapes": 12,
+  "n_bitwise_identical": 12,
+  "unequal_elements": 0,
+  "numel": 50331648,
+  "max_abs_err_unrounded": 0.0,
+  "nonfinite": 0,
+  "comparison": "raw int16 bit patterns of bf16 outputs; dtype/stride/input-hash preserved per shape",
+  "kernels_differ": "stock=gemm_ktype0_aiu1_mtype1_dtypeBF16... (vendor); candidate=mm_kernel_general (Triton)",
+  "scope": "dW OUTPUT tensor only on identical captured gy/x"
+ },
+ "3_throughput_paired": {
+  "token_source": "tokenizer attention_mask on actual consumed batches",
+  "valid_tokens": [
+   27052,
+   31454,
+   35506
+  ],
+  "input_hashes_equal_across_groups": true,
+  "native_tokens_per_s": [
+   14255,
+   14748,
+   15065
+  ],
+  "dw_vs_native_all6": [
+   12.0,
+   7.5,
+   -7.5,
+   -34.5,
+   -11.1,
+   -56.7
+  ],
+  "dw_vs_native_median": -29.15,
+  "dw_vs_native_range": [
+   -40.2,
+   -9.3
+  ],
+  "dw_vs_wrapped_all6": [
+   -9.3,
+   -10.3,
+   -32.6,
+   -40.2,
+   -25.7,
+   -37.6
+  ],
+  "dw_vs_wrapped_range": [
+   -40.2,
+   -9.3
+  ],
+  "verdict": "sign flips between repeats -> no stable whole-step gain or regression vs native; vs same-wrapper stock all 6 negative"
+ },
+ "4_old_slow_steps_orig_entry_replay": {
+  "cold_steps": [
+   [
+    "warmup0",
+    22150.7
+   ],
+   [
+    "warmup1",
+    3637.7
+   ],
+   [
+    "timed0",
+    1944.0
+   ],
+   [
+    "timed1",
+    3135.2
+   ],
+   [
+    "timed2",
+    2438.8
+   ]
+  ],
+  "warm_steps": [
+   [
+    "warmup0",
+    6786.2
+   ],
+   [
+    "warmup1",
+    2203.5
+   ],
+   [
+    "timed0",
+    2095.8
+   ],
+   [
+    "timed1",
+    2228.5
+   ],
+   [
+    "timed2",
+    2419.0
+   ]
+  ],
+  "new_shapes_per_step": [
+   123,
+   102,
+   78,
+   66,
+   66
+  ],
+  "cache_entries_cold": [
+   29,
+   31,
+   31,
+   32,
+   32
+  ],
+  "cache_entries_warm": [
+   32,
+   32,
+   32,
+   32,
+   32
+  ],
+  "mechanism_confirmed": "cold cache: timed step slows (timed1 3135ms vs warm 2229ms) because each timed step introduces NEW sequence lengths -> new mm shapes (303->369->435) -> in-process compile/autotune; cache entries grow only during cold run",
+  "old_20s_magnitude_reproduced": false,
+  "old_slow_step_cause": "UNDETERMINED (max 3.1s reproduced vs ~20s observed; different prior conditions)",
+  "compile_exec_split": "NOT separable (no TRITON_KERNEL_DUMP/MLIR timestamps); cache-entry deltas + new-shape counts as proxies"
+ },
+ "5_sdpa_per_shape": {
+  "actual_model_call": {
+   "dropout_p": 0.1,
+   "mask": "float32 additive [B,1,S,S], -inf at padded keys",
+   "layout": "[B,H,S,D] transposed view strides [B*H*S? -> H*S, D, H*D, 1]",
+   "is_causal": false,
+   "source": "sdpa_actual_call_r43.json (captured from real model forward)"
+  },
+  "only_enable_message": "/tmp/opencode/FlagGems-base/src/flag_gems/runtime/op_registrar.py:99: UserWarnin",
+  "S512_pad32": {
+   "entry": "NO-OP PASSTHROUGH (identical kernel set at same dropout; only_enable: 'No op to register')",
+   "direct": "COMPILE FAILED - CANDIDATE BLOCKED",
+   "static_assert": [
+    "tl.static_assert(BLOCK_N <= HEAD_DIM)"
+   ],
+   "fwd_bwd_full_p0": [
+    0.6926,
+    1.1275,
+    1.8681
+   ]
+  },
+  "S214_pad16": {
+   "entry": "NO-OP PASSTHROUGH (identical kernel set at same dropout; only_enable: 'No op to register')",
+   "direct": "ran",
+   "direct_fwd_ms": 0.1062,
+   "native_fwd_p0_ms": 0.1776,
+   "fwd_bwd_full_p0": [
+    0.1776,
+    0.3408,
+    0.5373
+   ]
+  },
+  "native_kernel_p0": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, "
+  ],
+  "native_kernel_p01": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80"
+  ],
+  "pending": "S214 candidate output/dQ/dK/dV numeric compare + backward timing NOT yet measured (IN PROGRESS)"
+ },
+ "6_hbm": "BLOCKED (acu exit 101, dmesg PCM pg-exporter; log reused from r42)"
+}

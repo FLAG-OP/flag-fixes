@@ -1,18 +1,14 @@
-"""Review 5b8fb29 item 5: training-mode SDPA retest (full rewrite).
-- Perturb V along S axis at MASKED positions: v2[:, :, -32:, :] ; compare ALL D
-  channels on VALID queries; PLUS no-mask control proving same perturbation
-  changes output without mask.
-- Timings: forward, backward, and one direct full fwd+bwd — unified clone /
-  graph-build / sync boundaries on BOTH sides.
-- Candidate via the model's F.scaled_dot_product_attention entry (aten-level);
-  backend/kernel recorded.
-- Numeric (dropout=0): outputs + dQ/dK/dV vs FP32 reference with same upstream
-  grads. Dropout config recorded; randomness = torch generator (seeded).
-- On compile failure: impl SHA, actual tile params from exception, minimal
-  repro, full traceback, blocked shapes."""
-import argparse, json, statistics, sys
+"""Review df851e0 item 5: SDPA with the model's ACTUAL call signature.
+Captured from the real model (sdpa_actual_call_r43.json): dropout_p=0.1,
+attn_mask = float32 ADDITIVE [B,1,S,S] with -inf at padded keys, q/k/v layout
+[B,H,S,D] with TRANSPOSED (non-contiguous) strides, is_causal=False.
+Order per shape: sample native kernels FIRST, then only_enable + sample again.
+S=512 and S=214 tested separately. Direct FlagGems call tested per shape."""
+import argparse, json, statistics, subprocess, sys, traceback
 import torch
 import torch.nn.functional as F
+AC = lambda: torch.autocast("cuda", dtype=torch.bfloat16)   # model runs under autocast
+from torch.profiler import profile, ProfilerActivity
 
 def timed(fn, iters=20, warmup=5):
     for _ in range(warmup): fn()
@@ -23,148 +19,145 @@ def timed(fn, iters=20, warmup=5):
     torch.cuda.synchronize()
     return round(statistics.median([s.elapsed_time(e) for s,e in ev]),4)
 
-ap=argparse.ArgumentParser(); ap.add_argument("--out",required=True)
-a=ap.parse_args()
-B,H,S,D = 10,16,512,64
-torch.manual_seed(0)
-q=torch.randn(B,H,S,D,device="cuda",dtype=torch.bfloat16)*0.3
-k=torch.randn(B,H,S,D,device="cuda",dtype=torch.bfloat16)*0.3
-v=torch.randn(B,H,S,D,device="cuda",dtype=torch.bfloat16)*0.3
-mask=torch.ones(B,1,S,S,dtype=torch.bool,device="cuda")
-mask[:,:,:,-32:]=False   # last 32 KEYS masked (S-axis), True=participate
-res={"shape":f"B{B} H{H} S{S} D{D} bf16","mask":"bool True=participate; last 32 KEYS masked (S-axis)",
-     "dropout":{"model_config_hidden_dropout_prob":0.1,"sdpa_internal_p":"recorded below; module-level dropout active",
-                 "randomness_control":"torch global generator seeded (torch.manual_seed(0)); dropout masks generated per call by backend"}}
-
-# --- S-axis perturbation independence + no-mask control ---
-v2=v.clone(); v2[:,:,-32:,:]+=100.0        # perturb V at MASKED key positions (S axis)
-with torch.no_grad():
-    y_m = F.scaled_dot_product_attention(q,k,v,attn_mask=mask,dropout_p=0.0)
-    y_m2 = F.scaled_dot_product_attention(q,k,v2,attn_mask=mask,dropout_p=0.0)
-    y_nom = F.scaled_dot_product_attention(q,k,v,attn_mask=None,dropout_p=0.0)
-    y_nom2 = F.scaled_dot_product_attention(q,k,v2,attn_mask=None,dropout_p=0.0)
-res["independence"]={
-    "with_mask_valid_region_max_diff": round(float((y_m2-y_m)[:,:,:,:S-32].abs().max()),8),
-    "no_mask_control_max_diff": round(float((y_nom2-y_nom).abs().max()),6),
-    "interpretation":"with-mask diff ~0 => masked-position V does not affect valid outputs; no-mask diff >>0 => perturbation is real"}
-
-# --- timings: fwd / bwd / full, unified boundaries ---
-def make_inputs(require_grad=True):
-    if require_grad:
-        return [t.detach().clone().requires_grad_(True) for t in (q,k,v)]
-    return [t.detach().clone() for t in (q,k,v)]
-def fwd_only(p):
-    qq,kk,vv = make_inputs(False)
-    return lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=mask,dropout_p=p)
-def bwd_only(p):
-    qq,kk,vv = make_inputs(True)
-    y = F.scaled_dot_product_attention(qq,kk,vv,attn_mask=mask,dropout_p=p)   # graph+clone OUTSIDE timing
-    g = torch.ones_like(y)
-    return lambda: torch.autograd.grad(y,(qq,kk,vv),g,retain_graph=True)
-def full_fwd_bwd(p):
-    def fn():
-        qq,kk,vv = make_inputs(True)
-        y = F.scaled_dot_product_attention(qq,kk,vv,attn_mask=mask,dropout_p=p)
-        torch.autograd.grad(y,(qq,kk,vv),torch.ones_like(y))
-    return fn
-for p,label in ((0.0,"p0"),(0.1,"p01")):
-    res[f"native_fwd_{label}_ms"]=timed(fwd_only(p))
-    res[f"native_bwd_{label}_ms"]=timed(bwd_only(p))
-    res[f"native_full_{label}_ms"]=timed(full_fwd_bwd(p))
-
-# --- numeric vs FP32 (dropout=0, same upstream grad) ---
-qq,kk,vv = make_inputs(True)
-y = F.scaled_dot_product_attention(qq,kk,vv,attn_mask=mask,dropout_p=0.0)
-g = torch.ones_like(y)
-dq,dk,dv = torch.autograd.grad(y,(qq,kk,vv),g,retain_graph=True)
-qf,kf,vf = [t.float().detach().requires_grad_(True) for t in (q,k,v)]
-mf = mask if mask.dtype!=torch.bool else mask
-yf = F.scaled_dot_product_attention(qf,kf,vf,attn_mask=mask,dropout_p=0.0)
-gf = torch.ones_like(yf)
-dqf,dkf,dvf = torch.autograd.grad(yf,(qf,kf,vf),gf)
-def rel(x,ref): return round(float((x.float()-ref).abs().max()/ref.abs().max().clamp_min(1e-6)),6)
-res["native_vs_fp32_reldiff"]={"out":rel(y,yf),"dQ":rel(dq,dqf),"dK":rel(dk,dkf),"dV":rel(dv,dvf)}
-
-# --- candidate via model entry: aten-level override + PROFILER kernel evidence ---
-import triton, subprocess
-from torch.profiler import profile, ProfilerActivity
-# REAL variable-length mask from the training window: group S values (r36 step-2)
-# e.g. anchor S=16, negatives up to 512; build a padded batch with last-32 masked
-# for the dominant S=512 group AND a mid-length group (S=214) to cover var-len.
-def make_group(S_val, pad_last):
-    qq=torch.randn(B,H,S_val,D,device="cuda",dtype=torch.bfloat16)*0.3
-    kk=torch.randn(B,H,S_val,D,device="cuda",dtype=torch.bfloat16)*0.3
-    vv=torch.randn(B,H,S_val,D,device="cuda",dtype=torch.bfloat16)*0.3
-    m=torch.ones(B,1,S_val,S_val,dtype=torch.bool,device="cuda")
-    m[:,:,:,-pad_last:]=False
-    return qq,kk,vv,m
-groups={"S512_pad32":make_group(512,32),"S214_pad16":make_group(214,16)}
-def kernels_of(fn):
+def device_kernels(fn):
+    fn(); torch.cuda.synchronize()
     with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA]) as p:
         fn(); torch.cuda.synchronize()
     ks=set()
-    for ev in p.events():
-        n=ev.name or ""
-        if any(t in n.lower() for t in ("attention","fmha","sdpa","flash")) and "aten::" not in n:
-            ks.add(n[:100])
+    for e in p.events():
+        n=e.name or ""
+        dt=str(getattr(e,"device_type",""))
+        if n and ("attention" in n.lower() or "fmha" in n.lower() or "sdpa" in n.lower()) and "aten::" not in n and "autograd" not in n and "Backward" not in n:
+            ks.add(n[:110])
     return sorted(ks)
-res["real_varlen_groups"]={}
-for gname,(qq,kk,vv,m) in groups.items():
-    res["real_varlen_groups"][gname]={"native_kernels":kernels_of(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.1)),
-        "fwd_ms":timed(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.1))}
-sys.path.insert(0,"/tmp/opencode/FlagGems-base/src")
-import flag_gems
-flag_sha=subprocess.run(["git","-C","/tmp/opencode/FlagGems-base","rev-parse","--short","HEAD"],capture_output=True,text=True).stdout.strip() or "29e14822"
-fg_repro={"component_versions":{"torch":torch.__version__,"triton":triton.__version__,"flag_gems_sha":flag_sha},
-           "entry":"flag_gems.only_enable(['scaled_dot_product_attention']) then F.scaled_dot_product_attention (model entry)",
-           "replay_cmd":"python3 examples/retrieval/sdpa_training_compare.py --out <json>  (self-contained; profiler kernel evidence written to results/sdpa_kernel_evidence_r42.json)",
-           "full_exception":None,"tile_params_from_exception":None}
-only_enable_ok=True
-try:
-    import warnings, io, contextlib
+
+ap=argparse.ArgumentParser(); ap.add_argument("--out",required=True)
+ap.add_argument("--shape",default="", help="S512_pad32 | S214_pad16 | '' = run both via subprocesses")
+a=ap.parse_args()
+SHAPE_MAP={"S512_pad32":(512,32),"S214_pad16":(214,16)}
+def run_one(shape_key, out):
+    global a
+    import sys as _s
+    a=argparse.Namespace(out=out, shape=shape_key)
+    B,H,D = 10,16,64
+    torch.manual_seed(0)
+    res={"actual_model_call":{"dropout_p":0.1,"mask":"float32 additive [B,1,S,S], -inf at padded keys",
+         "layout":"[B,H,S,D] transposed view strides [B*H*S? -> H*S, D, H*D, 1]","is_causal":False,
+         "source":"sdpa_actual_call_r43.json (captured from real model forward)"},
+         "shapes":{}}
+
+    def make_case(S_val, pad_last):
+        # replicate the model's layout: hidden [B,S,H,D] -> transpose(1,2) -> [B,H,S,D] view
+        hidden=torch.randn(B,S_val,H,D,device="cuda",dtype=torch.bfloat16)*0.3
+        q=hidden.transpose(1,2)                     # non-contiguous, like the model
+        k=torch.randn(B,S_val,H,D,device="cuda",dtype=torch.bfloat16).transpose(1,2)*0.3
+        v=torch.randn(B,S_val,H,D,device="cuda",dtype=torch.bfloat16).transpose(1,2)*0.3
+        # float32 additive mask: 0 for valid keys, -inf for padded (model semantics)
+        m=torch.zeros(B,1,S_val,S_val,device="cuda",dtype=torch.float32)
+        m[:,:,:,-pad_last:]=float("-inf")
+        return q.contiguous().clone().transpose(1,2).transpose(1,2) if False else q, k, v, m
+
+    for S_val,pad in ((512,32),(214,16)):
+        q,k,v,m=make_case(S_val,pad)
+        e={"q_stride":list(q.stride()),"mask_dtype":str(m.dtype)}
+        def fwd(p):
+            def _f():
+                with AC(): return F.scaled_dot_product_attention(q,k,v,attn_mask=m,dropout_p=p)
+            return _f
+        # S-axis perturbation of V at MASKED key positions + no-mask control
+        v2=v.clone(); v2[:,:,-pad:,:]+=100.0
+        with torch.no_grad():
+            with AC():
+                y_m=F.scaled_dot_product_attention(q,k,v,attn_mask=m,dropout_p=0.0)
+                y_m2=F.scaled_dot_product_attention(q,k,v2,attn_mask=m,dropout_p=0.0)
+                y_n=F.scaled_dot_product_attention(q,k,v,dropout_p=0.0); y_n2=F.scaled_dot_product_attention(q,k,v2,dropout_p=0.0)
+        e["independence"]={"with_mask_valid_query_allD_max_diff":round(float((y_m2-y_m)[:,:,:S_val-pad,:].abs().max()),8),
+                           "no_mask_control_max_diff":round(float((y_n2-y_n).abs().max()),6)}
+        # timings: fwd / bwd / full at p=0 and p=0.1 (unified boundaries)
+        for p,label in ((0.0,"p0"),(0.1,"p01")):
+            e[f"fwd_{label}_ms"]=timed(fwd(p))
+            qq,kk,vv=[t.detach().clone().requires_grad_(True) for t in (q,k,v)]
+            with AC(): y=F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=p)
+            g=torch.ones_like(y)
+            e[f"bwd_{label}_ms"]=timed(lambda: torch.autograd.grad(y,(qq,kk,vv),g,retain_graph=True))
+            def full():
+                q2,k2,v2_=[t.detach().clone().requires_grad_(True) for t in (q,k,v)]
+                with AC(): yy=F.scaled_dot_product_attention(q2,k2,v2_,attn_mask=m,dropout_p=p)
+                torch.autograd.grad(yy,(q2,k2,v2_),torch.ones_like(yy))
+            e[f"full_{label}_ms"]=timed(full)
+        # numeric vs FP32 (p=0, same upstream grad)
+        qq,kk,vv=[t.detach().clone().requires_grad_(True) for t in (q,k,v)]
+        with AC(): y=F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0)
+        dq,dk,dv=torch.autograd.grad(y,(qq,kk,vv),torch.ones_like(y),retain_graph=True)
+        qf,kf,vf=[t.detach().float().clone().requires_grad_(True) for t in (q,k,v)]
+        yf=F.scaled_dot_product_attention(qf,kf,vf,attn_mask=m,dropout_p=0.0)   # fp32 ref, no autocast
+        dqf,dkf,dvf=torch.autograd.grad(yf,(qf,kf,vf),torch.ones_like(yf))
+        def rel(x,r): return round(float((x.float()-r).abs().max()/r.abs().max().clamp_min(1e-6)),6)
+        e["native_vs_fp32_reldiff"]={"out":rel(y,yf),"dQ":rel(dq,dqf),"dK":rel(dk,dkf),"dV":rel(dv,dvf)}
+        # STEP 1: native kernels at SAME dropout (p=0.1 and p=0) BEFORE any registration
+        e["native_kernels_p01"]=device_kernels(fwd(0.1))
+        e["native_kernels_p0"]=device_kernels(fwd(0.0))
+        res["shapes"][f"S{S_val}_pad{pad}"]=e
+
+    # STEP 2: register candidate, then sample again (per shape) + direct call per shape
+    sys.path.insert(0,"/tmp/opencode/FlagGems-base/src")
+    import triton, flag_gems, io, contextlib, warnings
+    fg_sha=subprocess.run(["git","-C","/tmp/opencode/FlagGems-base","rev-parse","--short","HEAD"],capture_output=True,text=True).stdout.strip() or "29e14822"
     buf=io.StringIO()
-    with contextlib.redirect_stderr(buf):
+    with contextlib.redirect_stderr(buf), warnings.catch_warnings():
+        warnings.simplefilter("always")
         flag_gems.only_enable(include=["scaled_dot_product_attention"])
-    only_enable_msg=buf.getvalue().strip()
-except Exception as ex:
-    only_enable_ok=False; only_enable_msg=str(ex)
-qq,kk,vv,m=groups["S512_pad32"]
-cand_kernels=kernels_of(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))
-# same dropout (p=0.0) on the native side so the native _dropout variant cannot
-# masquerade as a different kernel
-native_kernels_p0=kernels_of(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))
-native_kernels=res["real_varlen_groups"]["S512_pad32"]["native_kernels"]
-engaged = set(cand_kernels) != set(native_kernels_p0)
-# only_enable registered nothing -> entry cannot route to a FlagGems kernel
-registered_nothing = "No op to register" in only_enable_msg
-res["candidate_via_model_entry"]={
-    "only_enable_message":only_enable_msg[:200] or "(none)",
-    "native_kernels_p0":native_kernels_p0,"native_kernels_p01_dropout_variant":native_kernels,
-    "after_only_enable_kernels":cand_kernels,
-    "kernel_set_differs_same_dropout":engaged,
-    "only_enable_registered_nothing":registered_nothing,
-    "status":("NO-OP PASSTHROUGH (profiler-verified: identical kernel set to native at same dropout; only_enable registered no op)"
-              if (not engaged or registered_nothing) else "CANDIDATE KERNEL ENGAGED"),
-    "note":"the _dropout-suffixed native kernel is the p=0.1 native variant, not a candidate; comparison is at identical p=0.0",
-    "fwd_ms_after_only_enable":timed(lambda: F.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))}
-# direct-call candidate: capture full exception + tile params
-try:
-    yc=flag_gems.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0)
-    res["candidate_direct"]={"status":"ran","fwd_ms":timed(lambda: flag_gems.scaled_dot_product_attention(qq,kk,vv,attn_mask=m,dropout_p=0.0))}
-except Exception as ex:
-    import traceback
-    tb=traceback.format_exc()
-    fg_repro["full_exception"]=tb[-2500:]
-    tiles=[ln.strip() for ln in tb.splitlines() if ("BLOCK" in ln or "HEAD_DIM" in ln or "GROUP_HEAD" in ln)]
-    fg_repro["tile_params_from_exception"]=tiles[:6]
-    fg_repro["blocked_shapes"]=[f"B{B} H{H} S{S} D{D} bf16 + bool mask (S512_pad32, S214_pad16)"]
-    fg_repro["minimal_repro"]="flag_gems.scaled_dot_product_attention(q[B,H,S,D],k,v,attn_mask=bool[B,1,S,S],dropout_p=0.0)  # bf16"
-    res["candidate_direct"]={"status":"COMPILE FAILED - CANDIDATE BLOCKED","repro":fg_repro}
-# save profiler raw evidence alongside
-json.dump({"native_kernels_p0":native_kernels_p0,"native_kernels_p01_dropout_variant":native_kernels,
-           "after_only_enable_kernels":cand_kernels,"kernel_set_differs_same_dropout":engaged,
-           "only_enable_registered_nothing":registered_nothing},open(a.out.replace(".json","")+"_kernel_evidence.json","w"),indent=1)
-json.dump(res,open(a.out,"w"),indent=1)
-print(json.dumps({k2:v2 for k2,v2 in res.items() if k2 in ("independence","native_fwd_p0_ms","native_bwd_p0_ms","native_full_p0_ms","native_fwd_p01_ms","native_bwd_p01_ms","native_full_p01_ms","native_vs_fp32_reldiff")},indent=1))
-print("candidate via entry:", res["candidate_via_model_entry"]["status"])
-print("direct:", res["candidate_direct"]["status"])
+    only_msg=buf.getvalue().strip()
+    res["only_enable_message"]=only_msg[:200]
+    for S_val,pad in ((512,32),(214,16)):
+        q,k,v,m=make_case(S_val,pad)
+        e=res["shapes"][f"S{S_val}_pad{pad}"]
+        after=device_kernels(lambda: (AC().__enter__(), F.scaled_dot_product_attention(q,k,v,attn_mask=m,dropout_p=0.0))[1])
+        e["after_only_enable_kernels_p0"]=after
+        e["entry_kernel_set_differs_same_dropout"]=set(after)!=set(e["native_kernels_p0"])
+        e["entry_status"]=("NO-OP PASSTHROUGH (identical kernel set at same dropout; only_enable: '"+("No op to register" if "No op to register" in only_msg else "registered")+"')"
+                           if (not e["entry_kernel_set_differs_same_dropout"]) else "CANDIDATE KERNEL ENGAGED")
+        def _fa():
+            with AC(): return F.scaled_dot_product_attention(q,k,v,attn_mask=m,dropout_p=0.0)
+        e["fwd_p0_ms_after_only_enable"]=timed(_fa)
+        # direct call per shape
+        try:
+            with AC(): flag_gems.scaled_dot_product_attention(q,k,v,attn_mask=m,dropout_p=0.0)
+            e["direct_call"]={"status":"ran","fwd_ms":timed(lambda: flag_gems.scaled_dot_product_attention(q,k,v,attn_mask=m,dropout_p=0.0))}
+        except Exception:
+            tb=traceback.format_exc()
+            tiles=[ln.strip() for ln in tb.splitlines() if ("BLOCK" in ln or "HEAD_DIM" in ln or "GROUP_HEAD" in ln)]
+            e["direct_call"]={"status":"COMPILE FAILED - CANDIDATE BLOCKED","flag_gems_sha":fg_sha,
+                              "triton":triton.__version__,"torch":torch.__version__,
+                              "tile_params_from_exception":tiles[:8],
+                              "static_assert_lines":[t for t in tiles if "static_assert" in t],
+                              "blocked_shape":f"B{B} H{H} S{S_val} D{D} bf16 + float32 additive mask pad{pad}",
+                              "minimal_repro":f"flag_gems.scaled_dot_product_attention(q[B,{H},{S_val},{D}] non-contig, k, v, attn_mask=float32[B,1,{S_val},{S_val}] -inf padded, dropout_p=0.0)",
+                              "full_exception_tail":tb[-1200:]}
+    json.dump(res,open(a.out,"w"),indent=1)
+    for sk,e in res["shapes"].items():
+        print(f"{sk}: indep {e['independence']} | fwd/bwd/full p0 {e['fwd_p0_ms']}/{e['bwd_p0_ms']}/{e['full_p0_ms']} p01 {e['fwd_p01_ms']}/{e['bwd_p01_ms']}/{e['full_p01_ms']}")
+        print(f"   native p0 kernels: {[k[:60] for k in e['native_kernels_p0']]}")
+        print(f"   native p01 kernels: {[k[:60] for k in e['native_kernels_p01']]}")
+        print(f"   entry: {e['entry_status']} | direct: {e['direct_call']['status']} {e['direct_call'].get('static_assert_lines','')}")
+    print("only_enable:", only_msg[:120])
+
+
+if a.shape == "":
+    import subprocess, os
+    merged={"actual_model_call":None,"shapes":{},"only_enable_message":None,"per_shape_subprocess":True}
+    for sk in SHAPE_MAP:
+        tmp=a.out+"."+sk+".json"
+        env=dict(os.environ); env["PYTHONPATH"]=env.get("PYTHONPATH","")+":/tmp/opencode/FlagGems-base/src"
+        r=subprocess.run([sys.executable,__file__,"--out",tmp,"--shape",sk],env=env,capture_output=True,text=True,timeout=1200)
+        print(f"[{sk}] exit={r.returncode} | {r.stdout.strip()[-300:]}", flush=True)
+        if r.returncode!=0: print(f"[{sk}] STDERR tail: {r.stderr.strip()[-500:]}", flush=True)
+        if os.path.exists(tmp):
+            d=json.load(open(tmp)); merged["shapes"].update(d.get("shapes",{}))
+            merged["actual_model_call"]=merged["actual_model_call"] or d.get("actual_model_call")
+            merged["only_enable_message"]=merged["only_enable_message"] or d.get("only_enable_message")
+    json.dump(merged,open(a.out,"w"),indent=1)
+    for sk,e in merged["shapes"].items():
+        print(f"{sk}: entry={e.get('entry_status')} | direct={e.get('direct_call',{}).get('status')}")
+else:
+    run_one(a.shape, a.out)

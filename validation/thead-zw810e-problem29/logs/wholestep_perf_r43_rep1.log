@@ -1,0 +1,13 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+GROUP_ORDER: ['native', 'wrapped_stock_mmout', 'fg_all', 'dw_only_routed']
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+[native] median 2132.8 ms | rounds [1897.8, 2132.8, 2356.9] | param 3c8b0a970945bc9b | cold_calls 0
+[wrapped_stock_mmout] median 2150.6 ms | rounds [1919.1, 2150.6, 2382.0] | param 6fc548f09c6a3fb4 | cold_calls 0
+[fg_all] median 2223.6 ms | rounds [1986.7, 2223.6, 2465.1] | param e0974d921a9aacdc | cold_calls 0
+[dw_only_routed] median 2140.3 ms | dw int-hits 1056
+saved /tmp/opencode/zw810e-problem29/results/wholestep_perf_r43_rep1.json
