@@ -54,6 +54,20 @@ def route(self, other):
         STATE["pending"].append(("fg_all", key, s, e, key not in STATE["first_call"]))
         STATE["first_call"][key] = True
         return r
+    if mode == "dw_native_contig":
+        # review bqWBBIQ item 1: single-factor control. SAME whitelist, SAME Python
+        # routing, SAME output allocation - but the dW product is computed by the
+        # NATIVE mm on an explicitly contiguous() copy (no Triton kernel).
+        if key in STATE["dW_shapes"]:
+            if STATE.get("perf_mode"):
+                STATE["dw_perf_count"] = STATE.get("dw_perf_count", 0) + 1
+            # whitelisted dW: NATIVE kernel on an explicitly contiguous() copy
+            out = torch.empty(self.shape[0], other.shape[1], device=self.device, dtype=self.dtype)
+            return MM_OUT(self.contiguous(), other, out=out)
+        # non-whitelist: IDENTICAL to dw_only_routed's fallback (mm.out + preallocated out),
+        # so the two candidates differ ONLY in the whitelisted-dW kernel
+        out = torch.empty(self.shape[0], other.shape[1], device=self.device, dtype=self.dtype)
+        return MM_OUT(self, other, out=out)
     if mode == "dw_only_routed":
         if key in STATE["dW_shapes"]:
             if STATE.get("perf_mode"):
@@ -83,7 +97,7 @@ ACC_MODE = os.environ.get("WSACC","") == "1"
 if ACC_MODE:
     GROUPS = ["native", "dw_only_routed"]
 else:
-    GROUPS = ["native", "wrapped_stock_mmout", "fg_all", "dw_only_routed"]
+    GROUPS = ["native", "wrapped_stock_mmout", "fg_all", "dw_only_routed", "dw_native_contig"]
 # review df851e0 item 3: rotate group order between independent repeats
 _ORDER = os.environ.get("GROUP_ORDER", "")
 if _ORDER:
@@ -118,6 +132,10 @@ for gi, GROUP in enumerate(GROUPS):
             STATE["liball"] = torch.library.Library("aten","IMPL")
             STATE["liball"].impl("mm", route, "CUDA")
             STATE["fgall_reg"] = True
+        elif GROUP == "dw_native_contig" and not STATE.get("dwn_reg"):
+            STATE["libn"] = torch.library.Library("aten","IMPL")
+            STATE["libn"].impl("mm", route, "CUDA")
+            STATE["dwn_reg"] = True
         elif GROUP == "dw_only_routed" and not STATE.get("dw_reg"):
             STATE["libdw"] = torch.library.Library("aten","IMPL")
             STATE["libdw"].impl("mm", route, "CUDA")
@@ -293,7 +311,7 @@ for gi, GROUP in enumerate(GROUPS):
                 json.dump({"fatal":"accuracy FAIL","detail":res["dw_accuracy_acceptance"]}, open(a.out+".accfail.json","w"), indent=1)
                 sys.exit(5)
 
-    if GROUP == "dw_only_routed":
+    if GROUP in ("dw_only_routed","dw_native_contig"):
         hits = STATE.get("dw_hits", {})
         timed_total = sum(c for (k, ph), c in hits.items() if ph == "timed")
         warm_total = sum(c for (k, ph), c in hits.items() if ph == "warmup")
@@ -305,13 +323,14 @@ for gi, GROUP in enumerate(GROUPS):
                                     "per_shape_timed": {f"{list(k[0])}x{list(k[1])}|{ph}": c for (k,ph),c in sorted(hits.items()) if ph=="timed"}}
         if STATE.get("perf_mode"):
             timed_total = STATE.get("dw_perf_count", 0)
+            STATE["dW_shapes"] = STATE.get("dW_shapes")
             if timed_total == 0:
                 print("FATAL: dw perf-mode int-counter hits ZERO", file=sys.stderr)
                 sys.exit(4)
             res["dw_perf_int_count"] = timed_total
             results[GROUP]=res
             print(f"[{GROUP}] median {res['median_ms']} ms | dw int-hits {timed_total}", flush=True)
-            for lk in ("lib","liball","libdw"):
+            for lk in ("lib","liball","libdw","libn"):
                 if STATE.get(lk):
                     try: STATE[lk]._destroy()
                     except Exception: pass
@@ -326,7 +345,7 @@ for gi, GROUP in enumerate(GROUPS):
     results[GROUP]=res
     print(f"[{GROUP}] median {res['median_ms']} ms | rounds {res['step_ms']} | param {param_hash} | cold_calls {res['cold_first_calls']}", flush=True)
     # teardown override libraries between groups (best effort)
-    for lk in ("lib","liball","libdw"):
+    for lk in ("lib","liball","libdw","libn"):
         if STATE.get(lk):
             try: STATE[lk]._destroy()
             except Exception: pass

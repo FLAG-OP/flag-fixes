@@ -8,7 +8,7 @@ Review bqR2JZg fixes:
     same shape and element count as the reference, and all finite.
   * Post-update params compared by raw int32 bits; unequal-element count reported.
   * Grads are the CLIPPED values (recorded after clip_grad_norm_, before optimizer.step).
-Exit codes: 0 PASS | 2 missing target keys | 3 zero hits | 4 non-finite | 5 gate FAIL | 6 shape/size mismatch
+Exit codes: 0 PASS | 2 missing/extra target keys (vs independent 72-key expectation) | 3 zero hits | 4 non-finite | 5 candidate gate FAIL | 6 shape/size mismatch | 7 native self-comparison INVALID
 Regression: --selftest runs three scenarios (identical -> 0; emptied post_params -> 2;
 ref=[1,1e-4]/x=[1.001,1e-4] -> ~0.1%)."""
 import pickle, sys, json, torch, hashlib
@@ -33,6 +33,18 @@ def validate(ref, cand, label):
             if Rk[n].numel()!=Ck[n].numel(): probs.append(f"{label}:{kind}:{n} numel mismatch")
             if nonfinite(Ck[n])>0: probs.append(f"{label}:{kind}:{n} nonfinite={nonfinite(Ck[n])}")
     return probs
+N_LAYERS=24
+def expected_keys():
+    """Independent expected key set from the MODEL STRUCTURE (BGE-M3: 24 encoder
+    layers x 3 target classes = 72). Not derived from the records - so a record
+    that silently dropped targets cannot pass (review bqWBBIQ scenario 1)."""
+    ks=[]
+    for i in range(N_LAYERS):
+        ks.append(f"backbone.encoder.layer.{i}.intermediate.dense")          # FFN up
+        ks.append(f"backbone.encoder.layer.{i}.output.dense")                # FFN down
+        ks.append(f"backbone.encoder.layer.{i}.attention.output.dense")      # attn out proj
+    return set(ks)
+EXP=expected_keys()
 def file_sha(p):
     h=hashlib.sha256()
     with open(p,"rb") as f:
@@ -50,7 +62,16 @@ def run(RECF, OUT):
            "B_wrapped_stock_vs_native_run1":R["wrapped_stock"],
            "C_dw_only_vs_native_run1":dw}
     structural=[]
+    # coverage vs the independent expected key set (72) - for EVERY group
+    res["expected_targets"]=len(EXP)
+    res["coverage"]={}
     for cname,C in comps.items():
+        for kind in ("pre_grads","post_params"):
+            have=set(C[kind].keys())
+            missing=sorted(EXP-have); extra=sorted(have-EXP)
+            res["coverage"][f"{cname}.{kind}"]={"have":len(have),"expected":len(EXP),"missing":len(missing),"extra":len(extra)}
+            if missing: structural.append(f"{cname}:{kind}: {len(missing)} expected targets MISSING (e.g. {missing[:2]})")
+            if extra: structural.append(f"{cname}:{kind}: {len(extra)} unexpected keys (e.g. {extra[:2]})")
         structural+=validate(ref,C,cname)
         per={}
         for g in ("FFN_up","FFN_down","attn_out_proj"):
@@ -74,13 +95,17 @@ def run(RECF, OUT):
     res["problems"]=structural
     total_nf=sum(v["nan_inf_candidate"]+v["nan_inf_reference"] for c in res["comparisons"].values() for v in c.values())
     C=res["comparisons"]["C_dw_only_vs_native_run1"]
+    A=res["comparisons"]["A_native_run2_vs_native_run1"]
+    res["native_self_comparison_valid"]=all(v["PASS"] for v in A.values())
+    res["candidate_vs_native_pass"]=all(v["PASS"] for v in C.values())
     if res["dw_only_hits_this_step"]==0: res["exit_reason"]=3
     elif structural: res["exit_reason"]=(6 if any("shape" in p or "numel" in p for p in structural) else 2)
     elif total_nf>0: res["exit_reason"]=4
-    elif not all(v["PASS"] for v in C.values()): res["exit_reason"]=5
+    elif not res["native_self_comparison_valid"]: res["exit_reason"]=7
+    elif not res["candidate_vs_native_pass"]: res["exit_reason"]=5
     else: res["exit_reason"]=0
-    res["verdict"]=(f"dw-only PASS at {TOL:.0%} per-element floored-rel gate (unrounded recomputation)" if res["exit_reason"]==0
-                    else f"FAIL/ABORT exit={res['exit_reason']}: {structural[:3] if structural else 'gate/nonfinite'}")
+    res["verdict"]=("dw-only PASS at {:.0%} per-element floored-rel gate (unrounded recomputation); native self-comparison valid".format(TOL) if res["exit_reason"]==0
+                    else f"FAIL/ABORT exit={res['exit_reason']}: {structural[:3] if structural else ('native self-comparison INVALID' if res['exit_reason']==7 else 'gate/nonfinite')}")
     json.dump(res,open(OUT,"w"),indent=1)
     for c,per in res["comparisons"].items():
         for g,v in per.items():
@@ -88,36 +113,41 @@ def run(RECF, OUT):
             print(f"{c:<34}{g:<14} grad_rel_max {gs} | nf {v['nan_inf_candidate']}/{v['nan_inf_reference']} | param bits unequal {v['post_param_bits_unequal']}/{v['post_param_numel']} | {'PASS' if v['PASS'] else 'FAIL'}")
     print("VERDICT:",res["verdict"]); return res["exit_reason"]
 def selftest():
-    import copy, tempfile, os
-    def mk(n_layers=2):
-        names=([f"backbone.encoder.layer.{i}.intermediate.dense" for i in range(n_layers)]
-               +[f"backbone.encoder.layer.{i}.output.dense" for i in range(n_layers)]
-               +[f"backbone.encoder.layer.{i}.attention.output.dense" for i in range(n_layers)])
-        torch.manual_seed(0)
-        g={n:torch.randn(4,4) for n in names}; pp={n:torch.randn(4,4) for n in names}
-        return {"pre_grads":g,"post_params":pp,"hit_total":5}
-    base=mk()   # ONE fixture, deep-copied into every group (the reference must be the same data)
-    R={"native_run1":copy.deepcopy(base),"native_run2":copy.deepcopy(base),
-       "wrapped_stock":copy.deepcopy(base),"dw_only":copy.deepcopy(base)}
-    cases=[]
-    # 1) identical -> exit 0
-    f=tempfile.mktemp(suffix=".pkl"); pickle.dump(R,open(f,"wb"))
-    cases.append(("identical input -> exit 0", f, 0))
-    # 2) emptied candidate post_params -> nonzero
-    R2=copy.deepcopy(R); R2["dw_only"]["post_params"]={}
-    f2=tempfile.mktemp(suffix=".pkl"); pickle.dump(R2,open(f2,"wb"))
-    cases.append(("emptied candidate post_params -> NONZERO exit", f2, "nonzero"))
-    bad=0
-    import io, contextlib
-    for name,f,exp in cases:
+    """Five regression scenarios (review bqWBBIQ): identical -> 0; emptied post_params -> 2;
+    per-element formula -> 0.1%; shrunk to 3 targets -> 2; doubled grad in the
+    native self-comparison -> 7."""
+    import copy, tempfile, io, contextlib
+    torch.manual_seed(0)
+    full={"pre_grads":{n:torch.randn(4,4) for n in EXP},"post_params":{n:torch.randn(4,4) for n in EXP},"hit_total":5}
+    R={"native_run1":copy.deepcopy(full),"native_run2":copy.deepcopy(full),
+       "wrapped_stock":copy.deepcopy(full),"dw_only":copy.deepcopy(full)}
+    def go(recs):
+        f=tempfile.mktemp(suffix=".pkl"); pickle.dump(recs,open(f,"wb"))
         with contextlib.redirect_stdout(io.StringIO()):
             rc=run(f, f+".json")
-        ok=(rc==exp) if exp!="nonzero" else (rc!=0)
+        return rc, json.load(open(f+".json"))
+    bad=0
+    def check(name, rc, exp, extra=None):
+        nonlocal bad
+        ok=(rc==exp) and (extra is None or extra)
         print(("PASS " if ok else "FAIL ")+name+f" (exit {rc})"); bad+=(not ok)
-    # 3) formula check: ref=[1,1e-4], x=[1.001,1e-4] -> ~0.1%
+    rc,_=go(R);                                            check("1 identical full records -> exit 0", rc, 0)
+    R2=copy.deepcopy(R); R2["dw_only"]["post_params"]={}; rc,_=go(R2); check("2 emptied candidate post_params -> exit 2", rc, 2)
     e=elem_rel_max(torch.tensor([1.001,0.0001]), torch.tensor([1.0,0.0001]))
-    ok=abs(e-0.001)<2e-4; print(("PASS " if ok else "FAIL ")+f"per-element formula ref=[1,1e-4] x=[1.001,1e-4] -> {e:.4%} (expect ~0.1%)"); bad+=(not ok)
+    check("3 per-element formula ref=[1,1e-4] x=[1.001,1e-4] -> ~0.1%", (0 if abs(e-0.001)<2e-4 else 1), 0); print(f"   value {e:.4%}")
+    def shrink(rec):
+        keep=[]; seen=set()
+        for n in rec["pre_grads"]:
+            g=grp(n)
+            if g not in seen: seen.add(g); keep.append(n)
+        return {"pre_grads":{n:rec["pre_grads"][n] for n in keep},"post_params":{n:rec["post_params"][n] for n in keep},"hit_total":rec.get("hit_total",0)}
+    R3={g:shrink(v) for g,v in R.items()}; rc,d=go(R3)
+    check("4 all groups shrunk to 3 targets -> exit 2", rc, 2, d["coverage"]["C_dw_only_vs_native_run1.pre_grads"]["missing"]==69)
+    R4=copy.deepcopy(R); n0=sorted(R4["native_run2"]["pre_grads"])[0]
+    R4["native_run2"]["pre_grads"][n0]=R4["native_run2"]["pre_grads"][n0]*2
+    rc,d=go(R4); check("5 doubled grad in native self-comparison -> exit 7", rc, 7, d["native_self_comparison_valid"] is False)
     print("SELFTEST", "PASS" if bad==0 else f"FAIL({bad})"); return 1 if bad else 0
+
 if __name__=="__main__":
     if len(sys.argv)>=2 and sys.argv[1]=="--selftest": sys.exit(selftest())
     sys.exit(run(sys.argv[1], sys.argv[2]))

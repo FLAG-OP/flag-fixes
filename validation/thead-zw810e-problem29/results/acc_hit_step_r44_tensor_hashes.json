@@ -1,5 +1,5 @@
 {
- "note": "per-tensor sha256 of the archived records (float32 bytes). The full records pickle is 6.9 GB and is NOT committed; re-run accuracy_hit_step.py (deterministic from seed 42) and compare against these hashes, or run recompute_dw_accuracy.py on the rebuilt records.",
+ "note": "per-tensor sha256 of the ARCHIVED records (float32 bytes). CORRECTION (review bqWBBIQ): seed 42 does NOT deterministically rebuild these tensors across processes - a new process matched 0/72 per group (acc_hit_step_r46_rebuild_check.json). Within-process snapshot restore IS deterministic. To verify these hashes the original 6.9 GB records.pkl must be obtained from the maintainer (overall sha256 7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3); then: python3 scripts/recompute_dw_accuracy.py <records.pkl> <out.json>",
  "groups": {
   "native_run1": {
    "hit_total": 0,
@@ -605,5 +605,7 @@
     "backbone.encoder.layer.23.output.dense": "227f2bb99f7094b8c046e4fa0657429bdf6d263891748167208bbca8b2b9da8a"
    }
   }
- }
+ },
+ "records_overall_sha256": "7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3",
+ "determinism_statement_corrected": true
 }

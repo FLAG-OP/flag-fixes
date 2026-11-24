@@ -699,11 +699,51 @@ native 有效 tokens/s：14,255 / 14,748 / 15,065。**dW-only 相对 native 的�
 - 未舍入误差全部**精确为零**（非四舍五入）；各组 NaN/Inf = 0；退出码 0
 - 退出码已覆盖：缺失目标 → 2、零命中 → 3、非有限 → 4、门限失败 → 5
 - **判定：dW-only 在命中步通过 2% 门限（PASS），更新后目标参数按 int32 位表示逐位相同**
-- **复算脚本已按复审修正**（`recompute_dw_accuracy.py`）：改为**逐元素** `|x−ref| / max(|ref|, 0.01·max|ref|, eps=1e-12)` 再取最大（旧的张量级 floor 对 `ref=[1,1e-4]`、`x=[1.001,1e-4]` 给 10%，正确值 **0.1%**）；比较前先校验 **72 个目标层**的键、形状、元素数、有限性（缺失/形状不符/空组均为结构错误）；`--selftest` 三个回归场景全部通过：同值输入 exit 0、**删空候选 `post_params` → exit 2（非零）**、公式 → 0.1000%
+- **复算脚本已按复审修正**（`recompute_dw_accuracy.py`）：改为**逐元素** `|x−ref| / max(|ref|, 0.01·max|ref|, eps=1e-12)` 再取最大（旧的张量级 floor 对 `ref=[1,1e-4]`、`x=[1.001,1e-4]` 给 10%，正确值 **0.1%**）；比较前先对**独立预期键集**（模型结构：24 层 × 3 类 = **72**，非从记录推导）校验键、形状、元素数、有限性；**原生自比有效性纳入整体验收**（exit 7）；`--selftest` **五个**回归场景全过：同值 → 0、删空 `post_params` → 2、公式 → 0.1000%、**四组缩到 3 目标 → 2**、**native 自比梯度翻倍 → 7**。真实记录重算：72/72 覆盖、自比有效、候选 PASS、exit 0
 - **records 可得性（如实）**：`records.pkl` 为 **6.9 GB**（72 目标层 × 4 组，float32），超出 git 限制且本环境无 release/artifact 权限。已入库 **576 个逐张量 sha256**（`acc_hit_step_r44_tensor_hashes.json`）供完整性核对
 - **"从快照重建同一记录"不成立**（`acc_hit_step_r46_rebuild_check.json`）：新进程从 seed 42 重建后，与归档记录**逐位匹配 0/72**（grad_norm 10.5625 → 12.1250）——**同进程内**快照恢复是确定性的，**跨进程**重建不是（模型初始化或前两步存在非确定性来源）。可复现的是**判定**（每次运行内四组仍逐位一致、PASS、命中 432），不是绝对张量值
 - **需要协助**：请维护方将 `acc_hit_step_r44.json.records.pkl`（sha256 `7d00baa3…`）作为 release artifact 附加，或授予 artifact 上传权限
 - **待证实项**：旧运行 12–40% 的 native-vs-native 偏差只在同快照重放中消失，其确切来源**仍待证实**
+
+#### 3c-10. Python 路由能解释多少整步差值（round-47，复审 bqWBBIQ 项 1，`route_isolation_r47.json`）
+
+**假设（可证伪）**：dW-only 整步中性源于 **Python `aten::mm` override 的 host 分发开销**，而非 kernel 无收益。
+
+**单因素对照**（原 BGE-M3 入口、单卡 BF16、seed 42 快照、白名单/预热相同、profiler 关闭、3 个真实步 27,052/31,454/35,506 tokens、两次独立重复并交换组序）：
+
+| 路径 | 白名单 dW 的计算 | 非白名单回退 |
+|---|---|---|
+| native | 原生 `mm` | — |
+| dw_only_routed | **Triton `flag_gems.mm`**（Python 路由）| `mm.out` + 预分配 |
+| dw_native_contig | **原生 `mm` + 显式 `.contiguous()`**（同一路由，无 Triton）| **同上，完全一致** |
+
+逐步配对差（ms，相对 native；输入哈希三组一致）：
+
+| 重复（组序）| dw_only − native | native+contig − native |
+|---|---|---|
+| rep1（native → dw_only → contig）| +30.9 / +3.6 / +10.3 | +60.3 / +57.2 / +57.4 |
+| rep2（contig → dw_only → native）| +33.4 / −7.5 / −22.7 | +10.4 / +7.8 / −10.3 |
+
+- dw_only vs native 6 次：范围 −22.7～+33.4，**变号**（与此前两轮一致）；native+contig vs native：6 次中 **4 次为正**（更慢），rep1 一致慢 ~57 ms
+- 命中计数在两次重复间 1056/2112 **互换**——IMPL 库叠加导致后注册者截获前组计数，**归属不可靠**（计时不受影响，各组独立计时）
+
+**trace 诊断（profiler 开，仅诊断）**：
+
+| 模式 | host `aten::mm` 次数 | host CPU 时间 |
+|---|---:|---:|
+| native | **5,776** | **308.5 ms** |
+| dw_only_routed | **11,120** | **611.1 ms（+303）** |
+| dw_native_contig | 11,552 | 497.2 ms |
+
+**结论**：
+- **Python override 使 host `aten::mm` 事件翻倍、host CPU 时间 +303 ms/步**——比 dW kernel 可省的 ≤33 ms/步**大一个量级**，吞掉了全部 kernel 收益。**假设成立**：整步中性由路由的 host 开销解释
+- 路由**判断本身**很便宜（~0.65 µs/次 × 5,768 ≈ 3.8 ms/步）；开销来自 **aten → Python → aten 的双重穿越**，不是形状查找
+- **输出分配不是原因**（`empty+mm.out` vs `mm` 差 ±10 µs）
+- **原生 + `.contiguous()` 不能替代候选**：显式复制的成本高于它消除的转置视图惩罚
+- **kernel 收益的来源已厘清**：FlagGems `mm` 内部对非连续输入调 `.contiguous()`；在**连续**操作数上它与原生持平（102.6 vs 98.6 TF/s），在真实**转置视图**上原生降到 82.7 TF/s 而它保持 102.4——所谓"收益"实为"原生 mm 处理转置视图慢"
+- **本设备微基准跨进程不稳定**（同一形状两次测得 0.42 ms 与 1.69 ms）——整步配对是唯一可靠比较
+
+**对训练方案的影响**：只有**非 Python 的库级注册**才可能让 dW 收益到达整步；本环境的 FlagGems `mm` 是 Python 函数，**该路径不可用**——列为下一个可证伪测试，**未执行**。所需协助：C++/库级 hook，或原生对转置视图操作数的支持。
 
 #### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 
