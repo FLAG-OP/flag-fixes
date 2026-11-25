@@ -11,7 +11,7 @@
   "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
  },
  "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
- "cross_process_warning": "a candidate run in ANOTHER process is not a valid comparison: models rebuilt from the same seed in different processes are not identical (acc_hit_step_r46_rebuild_check 0/72). The first r57 attempt compared across processes and showed fake grad max_rel 215 / loss0 0.95186 vs 0.94985; discarded.",
+ "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
  "candidate": "prefetch_loss_reimpl_run1",
  "native_runs": 3,
  "candidate_runs": 2,
@@ -41,8 +41,8 @@
     "embedding_tables": {
      "tensors": 3,
      "bitwise_identical": 1,
-     "max_abs": 7.82e-05,
-     "max_rel": 0.630769,
+     "max_abs": 0.00031376,
+     "max_rel": 1.458333,
      "over_2pct": 2,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -67,14 +67,17 @@
     },
     "embedding_tables": {
      "tensors": 3,
-     "bitwise_identical": 3,
-     "max_abs": 0.0,
-     "max_rel": 0.0,
+     "bitwise_identical": 1,
+     "max_abs": 6.104e-05,
+     "max_rel": 0.005279,
      "over_2pct": 0,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
-     "n_differing": 0,
-     "differing": []
+     "n_differing": 2,
+     "differing": [
+      "backbone.embeddings.position_embeddings.weight",
+      "backbone.embeddings.word_embeddings.weight"
+     ]
     }
    },
    "optimizer_state": {
@@ -92,9 +95,9 @@
     "embedding_tables": {
      "tensors": 9,
      "bitwise_identical": 5,
-     "max_abs": 8.3e-07,
-     "max_rel": 0.634286,
-     "over_2pct": 2,
+     "max_abs": 3.31e-06,
+     "max_rel": 1.45384,
+     "over_2pct": 4,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
      "n_differing": 4,
@@ -107,7 +110,7 @@
     }
    },
    "param_sha256_dense_equal": true,
-   "param_sha256_all_equal": true
+   "param_sha256_all_equal": false
   },
   {
    "kind": "native_vs_native",
@@ -134,8 +137,8 @@
     "embedding_tables": {
      "tensors": 3,
      "bitwise_identical": 1,
-     "max_abs": 0.00013447,
-     "max_rel": 0.970982,
+     "max_abs": 0.00017738,
+     "max_rel": 1.142724,
      "over_2pct": 2,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -160,15 +163,16 @@
     },
     "embedding_tables": {
      "tensors": 3,
-     "bitwise_identical": 2,
-     "max_abs": 3.815e-05,
-     "max_rel": 0.003299,
+     "bitwise_identical": 1,
+     "max_abs": 6.104e-05,
+     "max_rel": 0.005279,
      "over_2pct": 0,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
-     "n_differing": 1,
+     "n_differing": 2,
      "differing": [
-      "backbone.embeddings.position_embeddings.weight"
+      "backbone.embeddings.position_embeddings.weight",
+      "backbone.embeddings.word_embeddings.weight"
      ]
     }
    },
@@ -187,9 +191,9 @@
     "embedding_tables": {
      "tensors": 9,
      "bitwise_identical": 5,
-     "max_abs": 1.42e-06,
-     "max_rel": 0.969685,
-     "over_2pct": 3,
+     "max_abs": 1.89e-06,
+     "max_rel": 1.143153,
+     "over_2pct": 4,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
      "n_differing": 4,
@@ -229,8 +233,8 @@
     "embedding_tables": {
      "tensors": 3,
      "bitwise_identical": 1,
-     "max_abs": 0.00013447,
-     "max_rel": 0.970982,
+     "max_abs": 0.00031376,
+     "max_rel": 1.40625,
      "over_2pct": 2,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -255,15 +259,16 @@
     },
     "embedding_tables": {
      "tensors": 3,
-     "bitwise_identical": 2,
-     "max_abs": 3.815e-05,
-     "max_rel": 0.003299,
+     "bitwise_identical": 1,
+     "max_abs": 6.104e-05,
+     "max_rel": 0.005279,
      "over_2pct": 0,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
-     "n_differing": 1,
+     "n_differing": 2,
      "differing": [
-      "backbone.embeddings.position_embeddings.weight"
+      "backbone.embeddings.position_embeddings.weight",
+      "backbone.embeddings.word_embeddings.weight"
      ]
     }
    },
@@ -282,9 +287,9 @@
     "embedding_tables": {
      "tensors": 9,
      "bitwise_identical": 5,
-     "max_abs": 1.42e-06,
-     "max_rel": 0.969685,
-     "over_2pct": 3,
+     "max_abs": 3.31e-06,
+     "max_rel": 1.400198,
+     "over_2pct": 4,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
      "n_differing": 4,
@@ -715,7 +720,7 @@
      "tensors": 3,
      "bitwise_identical": 0,
      "max_abs": 0.00195312,
-     "max_rel": 1.466667,
+     "max_rel": 2.28,
      "over_2pct": 3,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -789,7 +794,7 @@
      "tensors": 9,
      "bitwise_identical": 3,
      "max_abs": 2.098e-05,
-     "max_rel": 1.466049,
+     "max_rel": 2.287129,
      "over_2pct": 6,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -842,7 +847,7 @@
      "tensors": 3,
      "bitwise_identical": 0,
      "max_abs": 0.00195312,
-     "max_rel": 1.466667,
+     "max_rel": 2.28,
      "over_2pct": 3,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -916,7 +921,7 @@
      "tensors": 9,
      "bitwise_identical": 3,
      "max_abs": 2.098e-05,
-     "max_rel": 1.466049,
+     "max_rel": 2.287129,
      "over_2pct": 6,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -969,7 +974,7 @@
      "tensors": 3,
      "bitwise_identical": 0,
      "max_abs": 0.00195312,
-     "max_rel": 1.466667,
+     "max_rel": 2.28,
      "over_2pct": 3,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -1043,7 +1048,7 @@
      "tensors": 9,
      "bitwise_identical": 3,
      "max_abs": 2.098e-05,
-     "max_rel": 1.466049,
+     "max_rel": 2.287129,
      "over_2pct": 6,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -1086,8 +1091,8 @@
     "embedding_tables": {
      "tensors": 3,
      "bitwise_identical": 1,
-     "max_abs": 0.00017881,
-     "max_rel": 1.190128,
+     "max_abs": 0.0003233,
+     "max_rel": 1.858207,
      "over_2pct": 2,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -1112,16 +1117,15 @@
     },
     "embedding_tables": {
      "tensors": 3,
-     "bitwise_identical": 1,
-     "max_abs": 4.578e-05,
-     "max_rel": 0.003959,
+     "bitwise_identical": 2,
+     "max_abs": 1.2e-07,
+     "max_rel": 1e-05,
      "over_2pct": 0,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
-     "n_differing": 2,
+     "n_differing": 1,
      "differing": [
-      "backbone.embeddings.position_embeddings.weight",
-      "backbone.embeddings.word_embeddings.weight"
+      "backbone.embeddings.position_embeddings.weight"
      ]
     }
    },
@@ -1140,8 +1144,8 @@
     "embedding_tables": {
      "tensors": 9,
      "bitwise_identical": 5,
-     "max_abs": 1.89e-06,
-     "max_rel": 1.188039,
+     "max_abs": 3.41e-06,
+     "max_rel": 1.850754,
      "over_2pct": 3,
      "nonfinite": 0,
      "nontensor_mismatch": 0,
@@ -1168,7 +1172,7 @@
   "pairs": 3,
   "dense_tensors_identical_in_all_pairs": true,
   "pairs_with_embedding_table_diffs": 3,
-  "embedding_table_grad_max_abs": 0.00013447
+  "embedding_table_grad_max_abs": 0.00031376
  },
  "candidate_pairs": 7,
  "dense_grad_tensors_differing_max_per_pair": 386,
@@ -1188,11 +1192,11 @@
   "ec537caa272300b814df036e359a379e696559fd21db839a5c166754a8709979"
  ],
  "step_ms": [
-  1883.2,
-  1884.3,
-  1891.7,
-  1902.8,
-  1895.9
+  1880.6,
+  1874.6,
+  1881.7,
+  1901.0,
+  1894.5
  ],
  "losses_micro": [
   [

@@ -1,0 +1,31 @@
+{
+ "field_version": "route_from_step0_v2",
+ "mode": "native_from_start",
+ "warmup_steps": 2,
+ "config": "bge_m3_ppu.yaml, seed 42, FL_ADAMW_FUSED=0, fresh process",
+ "warmup_losses": [
+  [
+   1.1659667491912842,
+   1.851904273033142,
+   1.2880859375,
+   0.695605456829071
+  ],
+  [
+   1.225488305091858,
+   0.956982433795929,
+   0.519824206829071,
+   0.89208984375
+  ]
+ ],
+ "params_dense_sha256_after_warmup": "95d45d92adafbd2d0abd86effb5b2b974b9559f9b70bc2a69563e694cbcde73b",
+ "optimizer_state_dense_sha256_after_warmup": "053eb99e500792e78292ac7e6d01c21b0fa86b438d757d27ab2ca5b1f86794a0",
+ "hit_step_micro_losses": [
+  0.947509765625,
+  0.5918213129043579,
+  0.4313720762729645,
+  0.732861340045929
+ ],
+ "hit_step_grad_norm": 10.6875,
+ "route_hits": {},
+ "hit_step_dense_grad_sha256": "830a7c6bd48d3cf23704e2665fb8ae30d188ab17b6f9c74b7f7432bd1ef00001"
+}

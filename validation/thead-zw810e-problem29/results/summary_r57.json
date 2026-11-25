@@ -6,6 +6,7 @@
   "round-56's '-25.2 ms, 12/12 faster' tokenize prefetch is RETRACTED: it was a measurement-path artefact (experiment-only synchronize in compute). On the exact entry loop the faithful prefetch is SLOWER: 12/12, median +27.7 ms.",
   "the round-56 / run-1 prefetch implementation was NOT numerically equivalent to the entry (loss re-implemented outside autocast): micro-0 loss 0.927814 vs 0.917383, 386/386 dense grads differ (max_abs 0.008789).",
   "forward gaps are now attributed with explicit markers: of the 28 forward gaps >= 2 ms in the profiled entry-loop trace (3 steps) 25 are tokenizer-dominated (94-98% of the gap); forward UNKNOWN is 0.76 ms in total (0.8%). What is left stays UNKNOWN.",
+  "NEW SCOPE LIMIT: bitwise reproducibility on this device was observed only for runs that repeat an identical run pattern - with another run pattern 4/4 native fresh processes differ (hit-step grad norm 10.6875-11.9375). All 'bitwise identical' results are same-state, same-pattern comparisons; multi-step trajectories of native itself vary at the ulp level.",
   "in the unprofiled entry the forward phase is device-bound: the pageable H2D copy is a full stream sync (host blocked 245 ms/step inside move_features) but removing it (pinned + non_blocking, bitwise-identical state) does not change the step time (-1.8 ms median, CI [-10.1, +8.1]).",
   "dW Python route: training state bitwise identical (386/386 dense grads, 391/391 params, optimizer state); on the entry loop diff-in-diff -9.0 ms, 95% CI [-17.5, -0.6], 13/14 processes negative; ~0.4% of a step, candidate only."
  ],
@@ -27,7 +28,7 @@
    "pairs": 3,
    "dense_tensors_identical_in_all_pairs": true,
    "pairs_with_embedding_table_diffs": 3,
-   "embedding_table_grad_max_abs": 0.00015545
+   "embedding_table_grad_max_abs": 0.00014973
   },
   "dense_param_tensors": 386,
   "candidates": {
@@ -167,7 +168,7 @@
     ]
    }
   },
-  "cross_process_warning": "a candidate run in ANOTHER process is not a valid comparison: models rebuilt from the same seed in different processes are not identical (acc_hit_step_r46_rebuild_check 0/72). The first r57 attempt compared across processes and showed fake grad max_rel 215 / loss0 0.95186 vs 0.94985; discarded.",
+  "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
   "invalid_first_version": "commit fc2a466e carried a prefetch_loss_reimpl_run1 comparison whose NATIVE baseline had been run WITHOUT autocast (script bug: the candidate's outer-autocast flag also applied to the native runs; native param sha256 509df944... instead of b133cb9f..., native loss 0.928161 instead of 0.917383). Its numbers (loss 0.928161 vs 0.927814, grad norm 9.9375 vs 9.5, grad max_abs 0.6875, optimizer-state max_abs 7.2e-3) were artefacts of that and are withdrawn. Corrected run: natives use the entry path.",
   "verdict": "overlap (prefetch_faithful) vs inline, same snapshot: PASS bitwise - every dense gradient / post-update parameter / optimizer-state tensor identical in all 7 candidate pairs, losses and grad norms equal, 0 non-finite; only the 3 index-accumulated embedding tables differ, and native-vs-native differs on the same tables. The round-56 / run-1 implementation (prefetch_loss_reimpl_run1) FAILS: it is a different computation, not a prefetch of the same one."
  },
@@ -996,6 +997,234 @@
    ],
    "result": "REJECTED: Python GC is 5 collections / 0.4 ms per step (max pause 0.18 ms) and gc.disable() leaves the step time unchanged; the ~2-3.4 ms backward gaps of the profiled trace are not GC. They stay UNKNOWN."
   }
+ },
+ "reproducibility_scope": {
+  "files": "results/route_from_step0_r57.json (five arms, one process) + results/route_from_step0_r57.<mode>_N.json (fresh processes)",
+  "script": "scripts/route_from_step0_consistency.py",
+  "command": "python3 examples/retrieval/route_from_step0_consistency.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --out results/route_from_step0_r57.json ;  ... --mode {native_from_start|route_from_start} --out results/route_from_step0_r57.<mode>_N.json",
+  "design": "every arm: same initial snapshot S0, same batches, CPU+CUDA RNG restored; arms A native, B native again, C mm.out fallback only, D dW route (flag_gems.mm on the whitelisted shapes), E route again; then the hit step on batches 8-11",
+  "in_process_five_arm": {
+   "step0_dense_grads": {
+    "A_native_vs_B_native_again": {
+     "tensors": 386,
+     "bitwise_identical": 93,
+     "differing": 293,
+     "max_abs": 0.001953125,
+     "over_2pct": 109
+    },
+    "A_native_vs_C_fallback_only": {
+     "tensors": 386,
+     "bitwise_identical": 88,
+     "differing": 298,
+     "max_abs": 0.001953125,
+     "over_2pct": 106
+    },
+    "A_native_vs_D_route": {
+     "tensors": 386,
+     "bitwise_identical": 87,
+     "differing": 299,
+     "max_abs": 0.001953125,
+     "over_2pct": 128
+    },
+    "A_native_vs_E_route_again": {
+     "tensors": 386,
+     "bitwise_identical": 69,
+     "differing": 317,
+     "max_abs": 0.0009765625,
+     "over_2pct": 112
+    },
+    "D_route_vs_E_route_again": {
+     "tensors": 386,
+     "bitwise_identical": 71,
+     "differing": 315,
+     "max_abs": 0.001953125,
+     "over_2pct": 127
+    },
+    "C_fallback_only_vs_D_route": {
+     "tensors": 386,
+     "bitwise_identical": 97,
+     "differing": 289,
+     "max_abs": 0.0009765625,
+     "over_2pct": 120
+    }
+   },
+   "params_after_2_steps": {
+    "A_native_vs_B_native_again": {
+     "tensors": 388,
+     "bitwise_identical": 56,
+     "differing": 332,
+     "max_abs": 6.103515625e-05
+    },
+    "A_native_vs_C_fallback_only": {
+     "tensors": 388,
+     "bitwise_identical": 57,
+     "differing": 331,
+     "max_abs": 6.103515625e-05
+    },
+    "A_native_vs_D_route": {
+     "tensors": 388,
+     "bitwise_identical": 56,
+     "differing": 332,
+     "max_abs": 6.103515625e-05
+    },
+    "A_native_vs_E_route_again": {
+     "tensors": 388,
+     "bitwise_identical": 56,
+     "differing": 332,
+     "max_abs": 6.103515625e-05
+    },
+    "D_route_vs_E_route_again": {
+     "tensors": 388,
+     "bitwise_identical": 59,
+     "differing": 329,
+     "max_abs": 6.103515625e-05
+    },
+    "C_fallback_only_vs_D_route": {
+     "tensors": 388,
+     "bitwise_identical": 58,
+     "differing": 330,
+     "max_abs": 9.1552734375e-05
+    }
+   },
+   "losses_equal_per_step": {
+    "A_native_vs_B_native_again": [
+     true,
+     false
+    ],
+    "A_native_vs_C_fallback_only": [
+     true,
+     false
+    ],
+    "A_native_vs_D_route": [
+     true,
+     false
+    ],
+    "A_native_vs_E_route_again": [
+     true,
+     false
+    ],
+    "D_route_vs_E_route_again": [
+     true,
+     false
+    ],
+    "C_fallback_only_vs_D_route": [
+     true,
+     false
+    ]
+   },
+   "hits_per_arm": {
+    "A_native": {},
+    "B_native_again": {},
+    "C_fallback_only": {
+     "((1024, 5120), (5120, 4096))": 48,
+     "((4096, 5120), (5120, 1024))": 48
+    },
+    "D_route": {
+     "((1024, 5120), (5120, 4096))": 48,
+     "((4096, 5120), (5120, 1024))": 48
+    },
+    "E_route_again": {
+     "((1024, 5120), (5120, 4096))": 48,
+     "((4096, 5120), (5120, 1024))": 48
+    }
+   },
+   "first_batch_sha256": {
+    "A_native": "ee6faadec6f0ea86",
+    "B_native_again": "ee6faadec6f0ea86",
+    "C_fallback_only": "ee6faadec6f0ea86",
+    "D_route": "ee6faadec6f0ea86",
+    "E_route_again": "ee6faadec6f0ea86"
+   },
+   "restored_param_sha256": {
+    "A_native": "6eb4982f9e4e5392",
+    "B_native_again": "6eb4982f9e4e5392",
+    "C_fallback_only": "6eb4982f9e4e5392",
+    "D_route": "6eb4982f9e4e5392",
+    "E_route_again": "6eb4982f9e4e5392"
+   }
+  },
+  "fresh_processes": {
+   "native_from_start": {
+    "n_processes": 4,
+    "warmup_dense_param_sha256": [
+     "95d45d92adafbd2d0abd86effb5b2b974b9559f9b70bc2a69563e694cbcde73b",
+     "0c00b1fb4749d3e9283981e21b8d40a3013c199461dcf9a12b0aa0afdc42b405",
+     "c81cc913f66baa449a801c09448b0bb4ad41980940fdb5988f06c103408da56c",
+     "45d3a85dca57de13e18111dd07a702f2bbe78b9f80f2e4907606c698868ed1f1"
+    ],
+    "hit_step_micro0_loss": [
+     0.94751,
+     0.951953,
+     0.947314,
+     0.94458
+    ],
+    "hit_step_grad_norm": [
+     10.6875,
+     10.75,
+     11.9375,
+     10.875
+    ],
+    "hit_step_dense_grad_sha256": [
+     "830a7c6bd48d3cf23704e2665fb8ae30d188ab17b6f9c74b7f7432bd1ef00001",
+     "daf6eff179dbec1131e43ed6a616e6aa4f615e7af4822a9733affe1fe1ef636b",
+     "e64994b898cab6f8b0814617a7d46e8ad1bfb54b47aa97f1e7e3ce05d4f44aaf",
+     "f781df70450862cc90f534a89ed499f7bb1a73205ae95d533b47cc865a8c7968"
+    ]
+   },
+   "route_from_start": {
+    "n_processes": 3,
+    "warmup_dense_param_sha256": [
+     "2989abcefd25e635044c19d846363c0b77b0665b577c2bbf16cfd2432d0a6179",
+     "a2109794869debee5ed96fbef29edaec22151d70394f4b7b4a52b4adca76f3f0",
+     "ca5b5739cefa8eed0c8b9e44453c0e1bcd61e43131f218ab9948cee985e8bb8d"
+    ],
+    "hit_step_micro0_loss": [
+     0.948975,
+     0.948486,
+     0.952002
+    ],
+    "hit_step_grad_norm": [
+     9.125,
+     10.5,
+     13.5
+    ],
+    "hit_step_dense_grad_sha256": [
+     "22d8fbc0cf6916b4a11a038c7d8c59fcbea64c0bf3992728057d7c5ceeeb20f0",
+     "7314af62a513f26fdd5c2b9be9e01711d14cedfe951f09f769433ab4ce3ff518",
+     "7d513fafa9baf07cac1fbe1f74a565d928bec7d4d1d3be9986297d9f53a75542"
+    ]
+   },
+   "train_state_consistency_script_native": {
+    "n_processes": 5,
+    "post_hit_step_dense_param_sha256": "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202",
+    "hit_step_micro0_loss": 0.917383,
+    "grad_norm": 9.5,
+    "note": "train_state_consistency.py has a different host sync pattern (no gradient copies before clip) - with THAT pattern five fresh processes were identical"
+   }
+  },
+  "finding": "Bitwise reproducibility on this device was observed only for runs that repeat an identical run pattern; the cause of the dependence is NOT determined. The native warmup is reproducible across fresh processes with the run pattern of train_state_consistency.py (5/5) but NOT with the run pattern of this script (the two scripts compute the same warmup step and differ only in host-side work around it: gradient copies to host before clip, an initial parameter hash, batches fetched before the micro steps): 4 native processes give 4 different states (hit-step micro-0 loss 0.944580-0.951953, grad norm 10.6875-11.9375); in-process replays of the native path from the same initial snapshot differ in 293/386 dense step-0 gradient tensors (max_abs 0.001953). With the dW route registered before the warmup: 3 processes, 3 different states (grad norm 9.125-13.5).",
+  "route_vs_native_in_process": {
+   "step0_dense_grads_A_vs_D": {
+    "tensors": 386,
+    "bitwise_identical": 87,
+    "differing": 299,
+    "max_abs": 0.001953125,
+    "over_2pct": 128
+   },
+   "params_A_vs_D": {
+    "tensors": 388,
+    "bitwise_identical": 56,
+    "differing": 332,
+    "max_abs": 6.103515625e-05
+   },
+   "reading": "same magnitudes as native vs native (A vs B): no route-specific effect is visible at this level, and none can be excluded at the ulp level"
+  },
+  "consequences": [
+   "Every 'bitwise identical' statement in this PR (r43 frozen dW operands, r44/r46 hit step, r57 snapshot replay) is a same-state comparison between runs with an identical run pattern. None of them is a statement about whole-trajectory equality.",
+   "The r46 'cross-process rebuild 0/72' result is an instance of this (different run conditions), not evidence of a candidate effect. The first r57 attempt's phase A/B discrepancy is likewise NOT attributed to cross-process rebuild; the explanation given in commits fc2a466e / cea8f018 is withdrawn.",
+   "Multi-step trajectory differences of ulp origin (native hit-step grad norm 10.6875-11.9375, micro-0 loss 0.944580-0.951953 across 4 processes) cannot be used to compare candidates; same-state single-step replay is the valid instrument.",
+   "dW route registered before the warmup: variability across 3 processes (grad norm 9.125-13.5) vs native 10.6875-11.9375; too few runs to say whether the route widens the native band (flag_gems.mm uses triton.autotune and has a Stream-K path). OPEN."
+  ]
  },
  "item4_hardware_counters": {
   "status": "BLOCKED - unchanged",
