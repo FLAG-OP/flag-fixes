@@ -14,10 +14,11 @@ Compared after the step, per parameter tensor:
   error, max relative error (floored at 1% of the tensor's max |value|),
   non-finite count, non-tensor state equality, SHA-256 of the parameter bytes.
 
-Known device non-determinism: the three embedding tables (word / position /
-token_type) get their gradient from an index-accumulating backward whose
-summation order is not reproducible, so two NATIVE runs differ on exactly these
-tensors. They are reported separately and excluded from the candidate verdict.
+Known device non-determinism: the word / position embedding tables get their
+gradient from an index-accumulating backward whose summation order is not
+reproducible, so two NATIVE runs differ on exactly these two tensors (the dense
+tensors and token_type_embeddings are identical). They are reported separately
+and excluded from the candidate verdict.
 
 A cross-process design (candidate in another process) is NOT valid here: models
 rebuilt from the same seed in different processes are not identical (0/72 tensors,
@@ -53,7 +54,7 @@ STATIC={"field_version":"train_state_v2","time_unit":"ms",
  "design":"ONE process per candidate: after 2 warmup optimizer steps one snapshot (model, optimizer state, CPU+CUDA RNG, the 4 micro-batches) is taken; native x3 from the snapshot, then the candidate is installed and run x2 from the same snapshot. Each run = one optimizer step of the ORIGINAL entry loop (loss under autocast via the untouched loss_for_batch, isfinite(loss) host sync, backward, clip_grad_norm_, optimizer.step).",
  "rng_dropout_data_order":"CPU and CUDA RNG states are restored from the snapshot before every run (dropout masks identical); the 4 micro-batches are deep-copied in the snapshot (data order fixed); tokenization has no randomness; the prefetch worker thread consumes no torch RNG.",
  "thresholds":{"grad_rel_tol":0.02,"param_abs_tol":1e-3,"state_rel_tol":0.02,"nonfinite_max":0,"basis":"2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"},
- "embedding_tables":"word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+ "embedding_tables":"word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
  "cross_process_warning":"SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism."}
 if a.merge:
     import glob
@@ -244,7 +245,7 @@ res={"candidate":a.candidate,"native_runs":len(NAT),"candidate_runs":len(CAND),"
      "param_sha256_dense_equal_all_pairs":all(p["param_sha256_dense_equal"] for p in cv),
      "param_sha256_dense":[r["param_sha256_dense"] for r in NAT+CAND],"step_ms":[r["step_ms"] for r in NAT+CAND],
      "losses_micro":[r["losses"] for r in NAT+CAND],"grad_norm":[r["grad_norm"] for r in NAT+CAND]}
-if bit: res["verdict"]="PASS (bitwise): in all %d candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the %d embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism)."%(len(cv),len(EMB))
+if bit: res["verdict"]="PASS (bitwise): in all %d candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism)."%(len(cv))
 elif win: res["verdict"]="PASS (within declared thresholds, NOT bitwise): dense grad max_rel %g, param max_abs %g over %d candidate pairs; %d dense grad tensors differ."%(res["dense_grad_max_rel"],res["dense_param_max_abs"],len(cv),gd)
 else: res["verdict"]="FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to %d per pair, grad max_rel %g, param max_abs %g)."%(gd,res["dense_grad_max_rel"],res["dense_param_max_abs"])
 json.dump(dict(STATIC,**res),open(a.out[:-5]+"."+a.candidate+".json","w"),indent=1)

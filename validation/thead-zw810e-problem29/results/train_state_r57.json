@@ -10,7 +10,7 @@
   "nonfinite_max": 0,
   "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
  },
- "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+ "embedding_tables": "word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
  "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
  "native_band_reference": {
   "pairs": 3,
@@ -32,7 +32,7 @@
     "nonfinite_max": 0,
     "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
    },
-   "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+   "embedding_tables": "word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
    "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
    "candidate": "dw_route",
    "native_runs": 3,
@@ -1066,7 +1066,7 @@
     9.5,
     9.5
    ],
-   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism)."
+   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism)."
   },
   "h2d_nonblocking": {
    "field_version": "train_state_v2",
@@ -1080,7 +1080,7 @@
     "nonfinite_max": 0,
     "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
    },
-   "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+   "embedding_tables": "word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
    "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
    "candidate": "h2d_nonblocking",
    "native_runs": 3,
@@ -2122,7 +2122,7 @@
     9.5,
     9.5
    ],
-   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism)."
+   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism)."
   },
   "prefetch_faithful": {
    "field_version": "train_state_v2",
@@ -2136,7 +2136,7 @@
     "nonfinite_max": 0,
     "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
    },
-   "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+   "embedding_tables": "word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
    "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
    "candidate": "prefetch_faithful",
    "native_runs": 3,
@@ -3172,7 +3172,7 @@
     9.5,
     9.5
    ],
-   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism)."
+   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism)."
   },
   "prefetch_loss_reimpl": {
    "field_version": "train_state_v2",
@@ -3186,7 +3186,7 @@
     "nonfinite_max": 0,
     "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
    },
-   "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+   "embedding_tables": "word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
    "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
    "candidate": "prefetch_loss_reimpl",
    "native_runs": 3,
@@ -4216,7 +4216,7 @@
     9.5,
     9.5
    ],
-   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism)."
+   "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism)."
   },
   "prefetch_loss_reimpl_run1": {
    "field_version": "train_state_v2",
@@ -4230,7 +4230,7 @@
     "nonfinite_max": 0,
     "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
    },
-   "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+   "embedding_tables": "word / position embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: in every native-vs-native and candidate-vs-native pair these 2 tables differ (gradients and optimizer state) while all 386 dense gradient tensors, the dense parameters and the dense optimizer state are bitwise identical; token_type_embeddings is identical too. Reported separately, excluded from the candidate verdict.",
    "cross_process_warning": "SCOPE (round-57): the bitwise comparisons of this file are between runs that repeat an identical run pattern inside one process (same ops, same synchronization points, same restored snapshot). With THIS script five fresh processes reproduced the native state exactly (post-hit-step dense-parameter sha256 b133cb9f..., loss 0.917383, grad norm 9.5). With a different run pattern the native warmup was NOT reproducible, not even across fresh processes (route_from_step0_r57.*.native_from_start_*.json: 4 processes, 4 different states) - see summary_r57.json reproducibility_scope; the cause is not determined. The first r57 attempt ran the candidate in another process with the route registered before the warmup (loss0 0.95186 vs 0.94985); it was discarded as a comparison and is NOT evidence of cross-process non-determinism.",
    "candidate": "prefetch_loss_reimpl_run1",
    "native_runs": 3,
