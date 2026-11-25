@@ -24,7 +24,55 @@
   "uncovered_device_ms": 53.39,
   "hot6_device_ms": 220.11,
   "hot6_headroom_ms": 57.19,
-  "retraction": "The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED; only the per-row headroom above, with its coverage, is valid.",
+  "window_note": "the 100 per-shape rows come from ONE training step (kernel_efficiency_r36, step 2); 772.12 ms is the 3-step mean backward-GEMM time. 718.73/772.12 is reported as a RATIO BETWEEN DIFFERENT WINDOWS, not a same-window coverage percentage.",
+  "retraction": "The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED. per-shape headroom = device_ms - FLOPs/peak is the ideal-device-time gap UNDER THE 139.2 REFERENCE ASSUMPTION; it is NOT an end-to-end ceiling.",
+  "by_group": [
+   {
+    "group": "long (token dim >= 4000)",
+    "n": 46,
+    "device_ms": 470.85,
+    "headroom_ms": 145.14,
+    "kinds": {
+     "dW_ffn_up": 8,
+     "dW_ffn_down": 3,
+     "dX_ffn_down": 3,
+     "dX_ffn_up": 16,
+     "dX_other": 2,
+     "dX_attn_proj": 4,
+     "dW_other": 10
+    },
+    "calls": 2400
+   },
+   {
+    "group": "mid (1400 <= token dim < 4000)",
+    "n": 40,
+    "device_ms": 215.76,
+    "headroom_ms": 75.18,
+    "kinds": {
+     "dW_ffn_down": 3,
+     "dW_ffn_up": 3,
+     "dX_attn_proj": 10,
+     "dX_ffn_down": 10,
+     "dW_other": 7,
+     "dW_attn_proj": 7
+    },
+    "calls": 2400
+   },
+   {
+    "group": "short (token dim < 1400)",
+    "n": 14,
+    "device_ms": 32.12,
+    "headroom_ms": 28.42,
+    "kinds": {
+     "dX_attn_proj": 3,
+     "dW_attn_proj": 3,
+     "dW_other": 4,
+     "dX_ffn_down": 3,
+     "dX_other": 1
+    },
+    "calls": 968
+   }
+  ],
   "rows": [
    {
     "kind": "dW_ffn_up",
@@ -4839,7 +4887,7 @@
  },
  "conclusion": {
   "situation_1_compute_efficiency": "6 hot backward-GEMM shapes run at 88.1-129.25 TFLOP/s = 63%-93% of the 139.2 reference. Per-shape headroom (device_ms - FLOPs/139.2e12) over the 100 measured backward dW/dX rows = 248.73 ms/step, covering 718.73 ms of the 772 ms backward GEMM (93.1%); 53.39 ms is not measured per shape. The earlier 'up to 285 ms/step' extrapolation from 6 rows is RETRACTED.",
-  "situation_2_forced_traffic": "dW arithmetic intensity 643-706 FLOP/byte -> STRONGLY COMPUTE-BOUND (AI is far above any roofline knee; a bf16 GEMM at 2765 GB/s HBM and 139 TFLOP/s has its knee at ~50 FLOP/byte). The per-shape bw_lb_gbps (1.2e5-2.3e5 GB/s) is NOT physically meaningful as an HBM requirement: it assumes every operand byte is fetched once per call with no cache reuse across the 96 calls of the step, whereas weights/activations are reused via on-chip caches. It is reported only as the formal lower-bound formula value and MUST NOT be read as an achieved or required HBM bandwidth.",
+  "situation_2_logical_traffic": "dW arithmetic intensity 656-706 FLOP/byte; logical byte rate (each operand read/written once) 124-126 GB/s on the S=512 shapes. Whether the GEMMs are compute-bound is a HYPOTHESIS TO VERIFY: it needs real HBM counters (BLOCKED) because cache reuse and repeated reads change the actual traffic. No 'strongly compute-bound' claim is made.",
   "situation_2_contiguous_copy": "the .contiguous() copy FlagGems mm performs on a transposed A adds 8053.06 MB (S=512 dW-up) and 2013.27 MB (S=512 dW-down) of extra read+write per shape per step - a real extra traffic item, counted SEPARATELY from the GEMM body; it is why native+contiguous() loses (+32.4 ms median) while FlagGems still gains (its Triton kernel is faster on the contiguous operand by more than the copy costs)",
   "situation_3_idle_large": "per-step idle 211-250 ms (87.9-91.5% busy) - idle is 8%-12% of the step and is NOT attributable without a host swimlane (needs counters/platform)",
   "ranking": "backward GEMM (38%) > backward attention (18.5%) > forward GEMM (16.2%) > forward attention (10.1%)",

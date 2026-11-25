@@ -1,0 +1,685 @@
+{
+ "field_version": "gap_v2",
+ "time_unit": "ms",
+ "method": "CPU windows from cat==user_annotation only (GPU markers kept separately); clipped union of kernel/memcpy/memset; per gap: CPU-op \u222a runtime \u222a sync intervals -> covered_ms, remainder UNKNOWN; tokenize attribution only when a tokenize cpu_op interval INTERSECTS the gap",
+ "fix_note": "gap_v1 (round-52) mixed user_annotation and gpu_user_annotation by name; GPU markers overwrote CPU ones and backward windows showed 0 ms (real CPU value e.g. rf_s2_backward_m0 = 317.08 ms). Superseded.",
+ "steps": {
+  "s2": {
+   "cpu_micro_windows": {
+    "rf_s2_forward_m0": {
+     "cpu_marker_ms": 167.25,
+     "device_busy_union_ms": 111.83,
+     "idle_ms": 55.43,
+     "n_gaps": 2896,
+     "largest_gap_ms": 19.24
+    },
+    "rf_s2_backward_m0": {
+     "cpu_marker_ms": 317.08,
+     "device_busy_union_ms": 300.16,
+     "idle_ms": 16.92,
+     "n_gaps": 8356,
+     "largest_gap_ms": 1.35
+    },
+    "rf_s2_forward_m1": {
+     "cpu_marker_ms": 165.83,
+     "device_busy_union_ms": 127.99,
+     "idle_ms": 37.84,
+     "n_gaps": 2772,
+     "largest_gap_ms": 4.7
+    },
+    "rf_s2_backward_m1": {
+     "cpu_marker_ms": 386.4,
+     "device_busy_union_ms": 367.33,
+     "idle_ms": 19.07,
+     "n_gaps": 8820,
+     "largest_gap_ms": 0.08
+    },
+    "rf_s2_forward_m2": {
+     "cpu_marker_ms": 160.85,
+     "device_busy_union_ms": 122.37,
+     "idle_ms": 38.49,
+     "n_gaps": 2913,
+     "largest_gap_ms": 5.01
+    },
+    "rf_s2_backward_m2": {
+     "cpu_marker_ms": 316.05,
+     "device_busy_union_ms": 296.9,
+     "idle_ms": 19.15,
+     "n_gaps": 8679,
+     "largest_gap_ms": 0.68
+    },
+    "rf_s2_forward_m3": {
+     "cpu_marker_ms": 162.53,
+     "device_busy_union_ms": 123.51,
+     "idle_ms": 39.02,
+     "n_gaps": 2847,
+     "largest_gap_ms": 4.87
+    },
+    "rf_s2_backward_m3": {
+     "cpu_marker_ms": 355.24,
+     "device_busy_union_ms": 336.71,
+     "idle_ms": 18.53,
+     "n_gaps": 8794,
+     "largest_gap_ms": 0.1
+    },
+    "rf_s2_clip_optimizer": {
+     "cpu_marker_ms": 12.27,
+     "device_busy_union_ms": 9.98,
+     "idle_ms": 2.29,
+     "n_gaps": 171,
+     "largest_gap_ms": 1.17
+    }
+   },
+   "gpu_side_marker_ms": {
+    "rf_s2_forward_m0": 161.86,
+    "rf_s2_backward_m0": 0.0,
+    "rf_s2_forward_m1": 192.47,
+    "rf_s2_backward_m1": 0.0,
+    "rf_s2_forward_m2": 168.86,
+    "rf_s2_backward_m2": 0.0,
+    "rf_s2_forward_m3": 181.11,
+    "rf_s2_backward_m3": 0.0,
+    "rf_s2_clip_optimizer": 4.46
+   },
+   "n_gaps_ge2ms": 13,
+   "idle_in_gaps_ge2ms": 60.17,
+   "top_gaps": [
+    {
+     "gap_start_us": 4401435785566.0,
+     "gap_ms": 19.241,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 1.52,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 17.72,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 1.52,
+      "UNKNOWN": 17.72
+     }
+    },
+    {
+     "gap_start_us": 4401436874004.3,
+     "gap_ms": 5.009,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.21,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 4.799,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.21,
+      "UNKNOWN": 4.799
+     }
+    },
+    {
+     "gap_start_us": 4401437352596.5,
+     "gap_ms": 4.873,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.211,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 4.662,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.211,
+      "UNKNOWN": 4.662
+     }
+    },
+    {
+     "gap_start_us": 4401436323748.8,
+     "gap_ms": 4.705,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.206,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 4.499,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.206,
+      "UNKNOWN": 4.499
+     }
+    },
+    {
+     "gap_start_us": 4401437433453.6,
+     "gap_ms": 3.935,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.208,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 3.727,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.208,
+      "UNKNOWN": 3.727
+     }
+    },
+    {
+     "gap_start_us": 4401435852090.8,
+     "gap_ms": 3.79,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.218,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 3.572,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.218,
+      "UNKNOWN": 3.572
+     }
+    }
+   ]
+  },
+  "s3": {
+   "cpu_micro_windows": {
+    "rf_s3_forward_m0": {
+     "cpu_marker_ms": 162.19,
+     "device_busy_union_ms": 129.36,
+     "idle_ms": 32.83,
+     "n_gaps": 2715,
+     "largest_gap_ms": 4.79
+    },
+    "rf_s3_backward_m0": {
+     "cpu_marker_ms": 387.02,
+     "device_busy_union_ms": 366.17,
+     "idle_ms": 20.84,
+     "n_gaps": 8442,
+     "largest_gap_ms": 0.14
+    },
+    "rf_s3_forward_m1": {
+     "cpu_marker_ms": 193.72,
+     "device_busy_union_ms": 156.68,
+     "idle_ms": 37.04,
+     "n_gaps": 2856,
+     "largest_gap_ms": 4.4
+    },
+    "rf_s3_backward_m1": {
+     "cpu_marker_ms": 418.62,
+     "device_busy_union_ms": 398.97,
+     "idle_ms": 19.66,
+     "n_gaps": 8824,
+     "largest_gap_ms": 0.1
+    },
+    "rf_s3_forward_m2": {
+     "cpu_marker_ms": 183.46,
+     "device_busy_union_ms": 144.05,
+     "idle_ms": 39.41,
+     "n_gaps": 2813,
+     "largest_gap_ms": 3.28
+    },
+    "rf_s3_backward_m2": {
+     "cpu_marker_ms": 418.78,
+     "device_busy_union_ms": 398.81,
+     "idle_ms": 19.97,
+     "n_gaps": 8891,
+     "largest_gap_ms": 0.12
+    },
+    "rf_s3_forward_m3": {
+     "cpu_marker_ms": 158.22,
+     "device_busy_union_ms": 123.14,
+     "idle_ms": 35.08,
+     "n_gaps": 3077,
+     "largest_gap_ms": 2.91
+    },
+    "rf_s3_backward_m3": {
+     "cpu_marker_ms": 317.54,
+     "device_busy_union_ms": 298.31,
+     "idle_ms": 19.23,
+     "n_gaps": 8500,
+     "largest_gap_ms": 0.12
+    },
+    "rf_s3_clip_optimizer": {
+     "cpu_marker_ms": 12.93,
+     "device_busy_union_ms": 10.25,
+     "idle_ms": 2.68,
+     "n_gaps": 176,
+     "largest_gap_ms": 1.29
+    }
+   },
+   "gpu_side_marker_ms": {
+    "rf_s3_forward_m0": 187.32,
+    "rf_s3_backward_m0": 0.0,
+    "rf_s3_forward_m1": 212.64,
+    "rf_s3_backward_m1": 0.0,
+    "rf_s3_forward_m2": 205.05,
+    "rf_s3_backward_m2": 0.0,
+    "rf_s3_forward_m3": 160.27,
+    "rf_s3_backward_m3": 0.0,
+    "rf_s3_clip_optimizer": 4.51
+   },
+   "n_gaps_ge2ms": 11,
+   "idle_in_gaps_ge2ms": 34.09,
+   "top_gaps": [
+    {
+     "gap_start_us": 4401437893067.2,
+     "gap_ms": 4.795,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.195,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 4.6,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.195,
+      "UNKNOWN": 4.6
+     }
+    },
+    {
+     "gap_start_us": 4401438446936.3,
+     "gap_ms": 4.399,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.202,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 4.197,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.202,
+      "UNKNOWN": 4.197
+     }
+    },
+    {
+     "gap_start_us": 4401439034689.4,
+     "gap_ms": 3.285,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1
+     },
+     "n_sync_in_gap": 0,
+     "host_event_covered_ms": 0.451,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 2.834,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.451,
+      "UNKNOWN": 2.834
+     }
+    },
+    {
+     "gap_start_us": 4401437866709.9,
+     "gap_ms": 3.2,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.203,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 2.997,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.203,
+      "UNKNOWN": 2.997
+     }
+    },
+    {
+     "gap_start_us": 4401438392973.8,
+     "gap_ms": 2.915,
+     "cpu_ops_in_gap": {
+      "aten::to": 2,
+      "aten::_to_copy": 2,
+      "aten::copy_": 2,
+      "aten::empty_strided": 1
+     },
+     "runtime_in_gap": {
+      "cudaStreamSynchronize": 2,
+      "cudaMemcpyAsync": 1
+     },
+     "n_sync_in_gap": 2,
+     "host_event_covered_ms": 2.915,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 0.0,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 2.915,
+      "UNKNOWN": 0.0
+     }
+    },
+    {
+     "gap_start_us": 4401439634809.0,
+     "gap_ms": 2.911,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.206,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 2.705,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.206,
+      "UNKNOWN": 2.705
+     }
+    }
+   ]
+  },
+  "s4": {
+   "cpu_micro_windows": {
+    "rf_s4_forward_m0": {
+     "cpu_marker_ms": 198.6,
+     "device_busy_union_ms": 169.56,
+     "idle_ms": 29.04,
+     "n_gaps": 2780,
+     "largest_gap_ms": 3.48
+    },
+    "rf_s4_backward_m0": {
+     "cpu_marker_ms": 447.87,
+     "device_busy_union_ms": 431.45,
+     "idle_ms": 16.42,
+     "n_gaps": 8549,
+     "largest_gap_ms": 0.12
+    },
+    "rf_s4_forward_m1": {
+     "cpu_marker_ms": 179.32,
+     "device_busy_union_ms": 146.43,
+     "idle_ms": 32.89,
+     "n_gaps": 3198,
+     "largest_gap_ms": 3.24
+    },
+    "rf_s4_backward_m1": {
+     "cpu_marker_ms": 346.19,
+     "device_busy_union_ms": 325.21,
+     "idle_ms": 20.98,
+     "n_gaps": 8579,
+     "largest_gap_ms": 2.52
+    },
+    "rf_s4_forward_m2": {
+     "cpu_marker_ms": 177.01,
+     "device_busy_union_ms": 139.27,
+     "idle_ms": 37.74,
+     "n_gaps": 2787,
+     "largest_gap_ms": 4.17
+    },
+    "rf_s4_backward_m2": {
+     "cpu_marker_ms": 406.39,
+     "device_busy_union_ms": 387.12,
+     "idle_ms": 19.27,
+     "n_gaps": 8893,
+     "largest_gap_ms": 0.19
+    },
+    "rf_s4_forward_m3": {
+     "cpu_marker_ms": 218.64,
+     "device_busy_union_ms": 186.12,
+     "idle_ms": 32.52,
+     "n_gaps": 2804,
+     "largest_gap_ms": 4.54
+    },
+    "rf_s4_backward_m3": {
+     "cpu_marker_ms": 476.34,
+     "device_busy_union_ms": 457.32,
+     "idle_ms": 19.02,
+     "n_gaps": 8914,
+     "largest_gap_ms": 0.1
+    },
+    "rf_s4_clip_optimizer": {
+     "cpu_marker_ms": 14.26,
+     "device_busy_union_ms": 11.05,
+     "idle_ms": 3.21,
+     "n_gaps": 190,
+     "largest_gap_ms": 1.3
+    }
+   },
+   "gpu_side_marker_ms": {
+    "rf_s4_forward_m0": 220.86,
+    "rf_s4_backward_m0": 0.0,
+    "rf_s4_forward_m1": 176.01,
+    "rf_s4_backward_m1": 0.05,
+    "rf_s4_forward_m2": 200.92,
+    "rf_s4_backward_m2": 0.0,
+    "rf_s4_forward_m3": 185.76,
+    "rf_s4_backward_m3": 0.0,
+    "rf_s4_clip_optimizer": 4.6
+   },
+   "n_gaps_ge2ms": 10,
+   "idle_in_gaps_ge2ms": 30.47,
+   "top_gaps": [
+    {
+     "gap_start_us": 4401441891326.6,
+     "gap_ms": 4.542,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.22,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 4.323,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.22,
+      "UNKNOWN": 4.323
+     }
+    },
+    {
+     "gap_start_us": 4401441309179.3,
+     "gap_ms": 4.168,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.207,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 3.96,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.207,
+      "UNKNOWN": 3.96
+     }
+    },
+    {
+     "gap_start_us": 4401441375043.8,
+     "gap_ms": 3.867,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.203,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 3.664,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.203,
+      "UNKNOWN": 3.664
+     }
+    },
+    {
+     "gap_start_us": 4401440132345.0,
+     "gap_ms": 3.484,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.22,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 3.264,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.22,
+      "UNKNOWN": 3.264
+     }
+    },
+    {
+     "gap_start_us": 4401440780698.9,
+     "gap_ms": 3.244,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 0.214,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 3.03,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 0.214,
+      "UNKNOWN": 3.03
+     }
+    },
+    {
+     "gap_start_us": 4401441279749.8,
+     "gap_ms": 2.6,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "n_sync_in_gap": 1,
+     "host_event_covered_ms": 2.068,
+     "tokenize_covered_ms": 0.0,
+     "h2d_memcpys_intersecting_gap": 0,
+     "unknown_ms": 0.532,
+     "attribution": {
+      "tokenize": 0.0,
+      "other_host": 2.068,
+      "UNKNOWN": 0.532
+     }
+    }
+   ]
+  }
+ }
+}

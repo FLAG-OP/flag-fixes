@@ -740,30 +740,35 @@ native 有效 tokens/s：14,416 / 14,895 / 15,197（rep1）。
 
 **对训练方案的影响**：dW Python 路由精度逐位一致（命中步重算 PASS），整步有小幅、方向基本一致的收益（中位 ~5.6 ms ≈ 0.26%），**但 6 步样本、幅度在步间波动内**——**不作为可部署项采纳**（`hardware_status=unverified`），记为**唯一方向为正且可复现的候选**。
 
-#### 3c-11. 软件 roofline（round-51 修正版，复审 bqj7-Bw；`software_roofline_r49.json` / `scripts/software_roofline.py` / 一页结论 `software_roofline_r49_oneline.md`）
+#### 3c-11. 软件 roofline（round-53 修正版，复审 BqnWy6w；`software_roofline_r49.json` / `gap_attribution_r53.json` / `tokenize_overlap_r53.json` / 一页结论 `software_roofline_r49_oneline.md`）
 
-**口径**：模型 FLOPs 与**逻辑字节率**推导，**非 HBM 实测**；`hardware_status=unverified`，HBM 字节/带宽利用率/矩阵单元 activity **BLOCKED**。输入 SHA256 入 JSON（7 个，复审已核验并逐字节复现）。
+**口径**：模型 FLOPs 与**逻辑字节率**推导，**非 HBM 实测**；`hardware_status=unverified`，HBM 字节/带宽利用率/矩阵单元 activity **BLOCKED**。
 
-**本轮四项修正**：① 带宽单位 `bytes/(ms×10⁶)`——S=512 dW 回归用例 **124.75 GB/s**（旧值放大 1000 倍）；指标更名"逻辑字节率"，**"强计算受限"降级为待验证假设**；② 12 个 dW 形状按**转置标志**与白名单**精确匹配 12/12**（旧版误含 3 行 dX），两条基线中位数分离（**Python 路由 −5.6 / 显式连续化 +32.35 ms**，源 JSON 已修正）；③ **撤回"整步最多省 285 ms"**；④ 空隙按单微批次切窗归因（`gap_attribution_r51.json`）。
+**本轮修正**：① 删除 `1.2e5–2.3e5 GB/s` 与"强计算受限"旧字符串，计算受限改为**待验证假设**；② 100 行逐形状来自**单步**，772.12 ms 为**三步均值**，两者比值不写成同窗口覆盖率；③ headroom 按真实序列维度分组，`device_ms − FLOPs/peak` 是参考假设下的理想设备时间差**非端到端上限**；④ gap attribution 改用 `cat==user_annotation` CPU marker（旧版同名覆盖致 backward 窗口 0 ms，`gap_v1` superseded）。
 
 | 组 | 设备 ms/步 | 有效 TFLOP/s | vs 139.2 | 逻辑字节率 |
 |---|---:|---:|---:|---:|
 | 反向 GEMM | 772.12（38.0%）| 88–129（6 热点）| 63%–93% | 124–183 GB/s |
-| 反向 attention | 375.44（18.5%）| 13.48（阶段口径，不可比峰值）| — | — |
+| 反向 attention | 375.44（18.5%）| 13.48（阶段口径）| 不可比 | — |
 | S=512 dW | 46.80 | 88.1 | 63.3% | **124.75 GB/s** |
-| 中序列 dW | 10.32 | 86.4 | 62.1% | 125.0 GB/s |
 
-**逐形状 headroom + 覆盖率（第 3 项）**：100 行覆盖 **718.73 ms（772.12 的 93.1%）**，headroom 合计 **248.73 ms/步**。**6 个热点行仅 57.19 ms headroom（23%），其余 94 行 191.54 ms（77%）**——headroom 主要在中/短形状，不在热点。**短形状 `[160,1024,1024]` 93.1% 的时间是固定开销**（理想 0.46 / 实际 6.72 ms）。
+**headroom 按序列维度分组**：
 
-**dW 三路径逐形状（12/12 有记录）**：native 183.06 ms / FlagGems **150.60（−32.46）** / 显式连续化 **214.19（+31.16）**。单算子省 32 ms，整步 Python 路由只兑现 −5.6 ms（差额 = host 分发开销）。
+| 组 | 行数 | 设备 ms | headroom ms | 占比 |
+|---|---:|---:|---:|---:|
+| **长序列（≥4000）** | 46 | 470.85 | **145.14** | **58%** |
+| 中序列（1400–4000）| 40 | 215.76 | 75.18 | 30% |
+| 短序列（<1400）| 14 | 32.12 | 28.42 | 11% |
 
-**空隙归因（第 4 项）**：每前向窗口空闲 28–38 ms、最大单段 3–5 ms；**所有最大空隙从前一 kernel 结束开始、到 `Memcpy HtoD (Pageable→Device)` 开始结束**，空隙起点无 cpu_op → **host 侧 tokenize 阻塞设备**。微基准：H2D 本身只 0.029 ms，非来源。
+**修正**：headroom **58% 在长序列**，非上轮所说"77% 在中短形状"；短序列比例高（`[160,1024,1024]` 88%）但绝对量仅 11%。
 
-**训练决策（假设 → 实验 → 判定）**：假设"tokenize 组 i+1 与组 i 计算重叠可消除空隙"。单因素对照（只改 tokenize 时机，`F.normalize` 尾部与真实一致，profiler 关，两次重复组序轮换）：overlap − inline = **−3.7/−1.0/+1.7 | +2.9/−9.0/+7.7，中位 +0.35 ms，3/6 为负**；loss 等价 0.4%。**假设被否定**——整步持平，host 已被 tokenize 占满。首次运行漏 `F.normalize`（loss ~1568），该批已丢弃。
+**空隙归因（gap_v2）**：backward 窗口几乎无大空隙（最大 0.08–2.52 ms）；空隙集中在 forward 窗口（29–55 ms/微批次）。最大 19.24 ms gap：host 事件仅覆盖 **1.52 ms**、**tokenize 覆盖 0.0**、**UNKNOWN 17.72 ms**；典型 3–5 ms gap ~95% UNKNOWN，空隙内无 H2D memcpy。**上轮"host tokenize 阻塞设备"的归因不成立**，已撤回。
 
-**下一步（按 headroom 重排）**：(1) **短形状固定开销**（191.54 ms headroom，`[160,1024,1024]` 93%）；(2) 厂商转置视图 dW 专用路径；(3) 训练态 SDPA；(4) ~~tokenize 重叠~~ 已否定，空隙其他成分 **UNKNOWN**。
+**分词重叠假设（重做，原训练入口）**：上轮实验**作废**（`sorted()` 把 negative_1 当 positive、`zero_grad` 每 micro、无真实重叠）。重做版：显式 anchor/positive/negative_1..3、每步一次 zero_grad、4 micro 累积、loss 与 `embedding_loss` 一致（inline loss0 **0.95/0.47/0.69** ✓）；执行顺序确实改变（inline 重叠 0.0 ms，overlap **34–39 ms**）；**整步 9 次配对差中位 −3.4 ms、5/9 为负 → 持平**；**新发现：overlap 模式出现 loss 异常值 2.5–3.2（inline 无）→ tokenizer 非线程安全**。**判定：性能上不成立、实现不正确，不采纳**。
 
-#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
+**下一步**：长序列 GEMM（145 ms headroom）> 中序列（75）> 短序列（28）；forward 窗口空隙 ~95% UNKNOWN，需 host 显式埋点才能归因。
+
+#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
 

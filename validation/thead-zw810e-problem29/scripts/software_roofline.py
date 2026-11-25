@@ -99,7 +99,24 @@ out["headroom_by_shape"]={
    "backward_gemm_total_ms_per_step":BG,"coverage_pct_of_backward_gemm":round(cov_device/BG*100,1),
    "covered_headroom_ms_per_step":round(cov_head,2),"uncovered_device_ms":round(BG-cov_device,2),
    "hot6_device_ms":round(sum(r["device_ms"] for r in hot6),2),"hot6_headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in hot6),2),
-   "retraction":"The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED; only the per-row headroom above, with its coverage, is valid.",
+   "window_note":"the 100 per-shape rows come from ONE training step (kernel_efficiency_r36, step 2); 772.12 ms is the 3-step mean backward-GEMM time. 718.73/772.12 is reported as a RATIO BETWEEN DIFFERENT WINDOWS, not a same-window coverage percentage.",
+   "retraction":"The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED. per-shape headroom = device_ms - FLOPs/peak is the ideal-device-time gap UNDER THE 139.2 REFERENCE ASSUMPTION; it is NOT an end-to-end ceiling.",
+   "by_group":[
+     {"group":"long (token dim >= 4000)","n":sum(1 for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000),
+      "device_ms":round(sum(r["device_ms"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000),2),
+      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000),2),
+      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000)),
+      "calls":sum(r["count"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000)},
+     {"group":"mid (1400 <= token dim < 4000)","n":sum(1 for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000),
+      "device_ms":round(sum(r["device_ms"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000),2),
+      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000),2),
+      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000)),
+      "calls":sum(r["count"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000)},
+     {"group":"short (token dim < 1400)","n":sum(1 for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400),
+      "device_ms":round(sum(r["device_ms"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400),2),
+      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400),2),
+      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400)),
+      "calls":sum(r["count"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400)}],
    "rows":sorted([{k:r[k] for k in ("kind","shape","count","device_ms","flops_tflop","effective_tflops","ideal_ms_at_peak","headroom_ms_vs_peak","headroom_pct_of_shape_time")} for r in bw_rows],key=lambda x:-x["headroom_ms_vs_peak"])}
 
 # sanity: backward GEMM hotspots should land ~88-129 TFLOP/s (63%-93% of 139.2)
@@ -262,7 +279,7 @@ dw_ai=[x["native"]["ai"] for x in dw12]; dw_bw=[x["native"]["bw_lb_gbps"] for x 
 idle=[crit[s]["idle_ms"] for s in crit]
 out["conclusion"]={
  "situation_1_compute_efficiency":f"6 hot backward-GEMM shapes run at {hot_eff['eff_min']}-{hot_eff['eff_max']} TFLOP/s = {hot_eff['util_min']*100:.0f}%-{hot_eff['util_max']*100:.0f}% of the {PEAK} reference. Per-shape headroom (device_ms - FLOPs/139.2e12) over the {out['headroom_by_shape']['n_rows']} measured backward dW/dX rows = {out['headroom_by_shape']['covered_headroom_ms_per_step']} ms/step, covering {out['headroom_by_shape']['covered_device_ms_per_step']} ms of the 772 ms backward GEMM ({out['headroom_by_shape']['coverage_pct_of_backward_gemm']}%); {out['headroom_by_shape']['uncovered_device_ms']} ms is not measured per shape. The earlier 'up to 285 ms/step' extrapolation from 6 rows is RETRACTED.",
- "situation_2_forced_traffic":f"dW arithmetic intensity {min(dw_ai):.0f}-{max(dw_ai):.0f} FLOP/byte -> STRONGLY COMPUTE-BOUND (AI is far above any roofline knee; a bf16 GEMM at 2765 GB/s HBM and 139 TFLOP/s has its knee at ~50 FLOP/byte). The per-shape bw_lb_gbps (1.2e5-2.3e5 GB/s) is NOT physically meaningful as an HBM requirement: it assumes every operand byte is fetched once per call with no cache reuse across the 96 calls of the step, whereas weights/activations are reused via on-chip caches. It is reported only as the formal lower-bound formula value and MUST NOT be read as an achieved or required HBM bandwidth.",
+ "situation_2_logical_traffic":"dW arithmetic intensity 656-706 FLOP/byte; logical byte rate (each operand read/written once) 124-126 GB/s on the S=512 shapes. Whether the GEMMs are compute-bound is a HYPOTHESIS TO VERIFY: it needs real HBM counters (BLOCKED) because cache reuse and repeated reads change the actual traffic. No 'strongly compute-bound' claim is made.",
  "situation_2_contiguous_copy":f"the .contiguous() copy FlagGems mm performs on a transposed A adds {dw12[0]['flaggems_contiguous_copy']['extra_bytes_lb_mb'] if dw12 else 0} MB (S=512 dW-up) and {dw12[1]['flaggems_contiguous_copy']['extra_bytes_lb_mb'] if len(dw12)>1 else 0} MB (S=512 dW-down) of extra read+write per shape per step - a real extra traffic item, counted SEPARATELY from the GEMM body; it is why native+contiguous() loses (+32.4 ms median) while FlagGems still gains (its Triton kernel is faster on the contiguous operand by more than the copy costs)",
  "situation_3_idle_large":f"per-step idle {min(idle):.0f}-{max(idle):.0f} ms ({crit['s2']['busy_pct']:.1f}-{crit['s4']['busy_pct']:.1f}% busy) - idle is 8%-12% of the step and is NOT attributable without a host swimlane (needs counters/platform)",
  "ranking":"backward GEMM (38%) > backward attention (18.5%) > forward GEMM (16.2%) > forward attention (10.1%)",

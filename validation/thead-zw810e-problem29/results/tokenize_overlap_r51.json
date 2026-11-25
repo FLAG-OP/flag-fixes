@@ -48,5 +48,6 @@
   "note": "<0.2%: bf16-level, math identical"
  },
  "verdict": "HYPOTHESIS REJECTED: overlap vs inline flips sign across 6 paired steps (median 0.3 ms, 3/6 negative) -> whole-step FLAT. The per-micro-batch host-tokenize gap cannot be recovered by simple overlap (the host is already saturated by tokenize, so overlapping adds sync points instead of hiding them).",
- "note_on_first_attempt": "the FIRST run of this experiment omitted F.normalize (loss ~1568 instead of ~2.9) and its numbers were DISCARDED; the corrected run reproduces the real loss magnitude and is the one reported here."
+ "note_on_first_attempt": "the FIRST run of this experiment omitted F.normalize (loss ~1568 instead of ~2.9) and its numbers were DISCARDED; the corrected run reproduces the real loss magnitude and is the one reported here.",
+ "RETRACTED": "Superseded by tokenize_overlap_r53.json. This version: sorted() made negative_1 the positive (wrong loss semantics), zero_grad ran per micro (grad accumulation broken), and inline/overlap had the same host order (no real overlap). Its numbers are not valid evidence."
 }
