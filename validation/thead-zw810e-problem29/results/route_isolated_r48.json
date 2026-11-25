@@ -236,10 +236,6 @@
   0.1,
   -11.1
  ],
- "median": 32.35,
- "min": 10.3,
- "max": 41.2,
- "n_negative": 0,
  "native_contig_vs_native_all6": [
   35.4,
   10.3,
@@ -267,5 +263,18 @@
    "no library-level/C++ hook is available in this environment (FlagGems mm is a Python function) - the remaining host cost cannot be removed here"
   ],
   "training_impact": "dW Python route: precision bitwise-identical (hit-step recompute PASS), small consistent whole-step gain (~5.6 ms median, ~0.26%). Not adopted as deployable (hardware_status unverified; gain within noise); recorded as the one candidate with a positive, reproducible-sign result. Native contiguous() alternative closed."
- }
+ },
+ "py_route_median_ms": -5.6,
+ "py_route_min_ms": -18.8,
+ "py_route_max_ms": 0.1,
+ "py_route_n_negative": 5,
+ "native_contig_median_ms": 32.35,
+ "native_contig_min_ms": 10.3,
+ "native_contig_max_ms": 41.2,
+ "native_contig_n_negative": 0,
+ "FIELD_FIX_NOTE": "FIXED round-51 (review bqj7-Bw): the old flat keys median/min/max/n_negative held the native_contig values and were mislabeled as py_route. Per-path keys added above; the old flat keys are retained below as legacy_contig_* for traceability.",
+ "legacy_contig_median_ms": 32.35,
+ "legacy_contig_min_ms": 10.3,
+ "legacy_contig_max_ms": 41.2,
+ "legacy_contig_n_negative": 0
 }

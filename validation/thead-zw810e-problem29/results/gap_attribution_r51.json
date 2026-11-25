@@ -1,0 +1,611 @@
+{
+ "method": "window per micro-batch from CPU rf markers (forward_m{i}/backward_m{i}); device events crossing a boundary are CLIPPED into it; union of clipped intervals; gaps = uncovered time inside the window. Host reconciliation uses the trace's own cpu_op / cuda_runtime / sync events and ac2g correlation ids. No PCM.",
+ "field_version": "gap_v1",
+ "time_unit": "ms",
+ "steps": {
+  "s2": {
+   "micro_windows": {
+    "rf_s2_forward_m0": {
+     "window_ms": 161.86,
+     "busy_union_ms": 125.64,
+     "idle_ms": 36.23,
+     "n_gaps": 3150,
+     "largest_gap_ms": 3.79
+    },
+    "rf_s2_backward_m0": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s2_forward_m1": {
+     "window_ms": 192.47,
+     "busy_union_ms": 156.37,
+     "idle_ms": 36.1,
+     "n_gaps": 3102,
+     "largest_gap_ms": 4.7
+    },
+    "rf_s2_backward_m1": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s2_forward_m2": {
+     "window_ms": 168.86,
+     "busy_union_ms": 131.02,
+     "idle_ms": 37.84,
+     "n_gaps": 3102,
+     "largest_gap_ms": 5.01
+    },
+    "rf_s2_backward_m2": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 2,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s2_forward_m3": {
+     "window_ms": 181.11,
+     "busy_union_ms": 142.76,
+     "idle_ms": 38.35,
+     "n_gaps": 3150,
+     "largest_gap_ms": 4.87
+    },
+    "rf_s2_backward_m3": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s2_clip_optimizer": {
+     "window_ms": 4.46,
+     "busy_union_ms": 2.64,
+     "idle_ms": 1.81,
+     "n_gaps": 68,
+     "largest_gap_ms": 1.17
+    }
+   },
+   "n_idle_gaps_ge2ms": 13,
+   "idle_in_gaps_ge2ms": 60.17,
+   "top_gaps": [
+    {
+     "gap_start_us": 4401435785566.0,
+     "gap_ms": 19.241,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {},
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 1.395,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401436874004.3,
+     "gap_ms": 5.009,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 326,
+      "aten::as_strided": 278,
+      "aten::transpose": 227
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.02,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401437352596.5,
+     "gap_ms": 4.873,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 320,
+      "aten::as_strided": 276,
+      "aten::transpose": 225
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.015,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401436323748.8,
+     "gap_ms": 4.705,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 323,
+      "aten::as_strided": 276,
+      "aten::transpose": 225
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.016,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401437433453.6,
+     "gap_ms": 3.935,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 329,
+      "aten::as_strided": 278,
+      "aten::transpose": 227
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.014,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401435852090.8,
+     "gap_ms": 3.79,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 331,
+      "aten::as_strided": 281,
+      "aten::transpose": 230
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.023,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    }
+   ]
+  },
+  "s3": {
+   "micro_windows": {
+    "rf_s3_forward_m0": {
+     "window_ms": 187.32,
+     "busy_union_ms": 155.93,
+     "idle_ms": 31.38,
+     "n_gaps": 3054,
+     "largest_gap_ms": 4.79
+    },
+    "rf_s3_backward_m0": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s3_forward_m1": {
+     "window_ms": 212.64,
+     "busy_union_ms": 177.13,
+     "idle_ms": 35.51,
+     "n_gaps": 3102,
+     "largest_gap_ms": 4.4
+    },
+    "rf_s3_backward_m1": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s3_forward_m2": {
+     "window_ms": 205.05,
+     "busy_union_ms": 168.14,
+     "idle_ms": 36.91,
+     "n_gaps": 3126,
+     "largest_gap_ms": 3.28
+    },
+    "rf_s3_backward_m2": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s3_forward_m3": {
+     "window_ms": 160.27,
+     "busy_union_ms": 126.37,
+     "idle_ms": 33.9,
+     "n_gaps": 3174,
+     "largest_gap_ms": 2.91
+    },
+    "rf_s3_backward_m3": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s3_clip_optimizer": {
+     "window_ms": 4.51,
+     "busy_union_ms": 2.64,
+     "idle_ms": 1.87,
+     "n_gaps": 68,
+     "largest_gap_ms": 1.29
+    }
+   },
+   "n_idle_gaps_ge2ms": 11,
+   "idle_in_gaps_ge2ms": 34.09,
+   "top_gaps": [
+    {
+     "gap_start_us": 4401437893067.2,
+     "gap_ms": 4.795,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 325,
+      "aten::as_strided": 245,
+      "aten::transpose": 226
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.015,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401438446936.3,
+     "gap_ms": 4.399,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 313,
+      "aten::as_strided": 271,
+      "aten::transpose": 220
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.016,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401439034689.4,
+     "gap_ms": 3.285,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 291,
+      "aten::as_strided": 250,
+      "aten::transpose": 205
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.03,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401437866709.9,
+     "gap_ms": 3.2,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 324,
+      "aten::as_strided": 277,
+      "aten::transpose": 226
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.013,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401438392973.8,
+     "gap_ms": 2.915,
+     "cpu_ops_in_gap": {
+      "aten::to": 1,
+      "aten::_to_copy": 1,
+      "aten::empty_strided": 1,
+      "aten::copy_": 1
+     },
+     "runtime_in_gap": {
+      "cudaStreamSynchronize": 2,
+      "cudaMemcpyAsync": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::transpose": 249,
+      "aten::as_strided": 249,
+      "aten::t": 165
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.014,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401439634809.0,
+     "gap_ms": 2.911,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 309,
+      "aten::as_strided": 261,
+      "aten::transpose": 213
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.014,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    }
+   ]
+  },
+  "s4": {
+   "micro_windows": {
+    "rf_s4_forward_m0": {
+     "window_ms": 220.86,
+     "busy_union_ms": 193.04,
+     "idle_ms": 27.83,
+     "n_gaps": 3054,
+     "largest_gap_ms": 3.48
+    },
+    "rf_s4_backward_m0": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s4_forward_m1": {
+     "window_ms": 176.01,
+     "busy_union_ms": 146.43,
+     "idle_ms": 29.58,
+     "n_gaps": 3198,
+     "largest_gap_ms": 3.24
+    },
+    "rf_s4_backward_m1": {
+     "window_ms": 0.05,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.05,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.05
+    },
+    "rf_s4_forward_m2": {
+     "window_ms": 200.92,
+     "busy_union_ms": 165.73,
+     "idle_ms": 35.19,
+     "n_gaps": 3101,
+     "largest_gap_ms": 4.17
+    },
+    "rf_s4_backward_m2": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 3,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s4_forward_m3": {
+     "window_ms": 185.76,
+     "busy_union_ms": 155.55,
+     "idle_ms": 30.21,
+     "n_gaps": 2474,
+     "largest_gap_ms": 4.54
+    },
+    "rf_s4_backward_m3": {
+     "window_ms": 0.0,
+     "busy_union_ms": 0.0,
+     "idle_ms": 0.0,
+     "n_gaps": 2,
+     "largest_gap_ms": 0.0
+    },
+    "rf_s4_clip_optimizer": {
+     "window_ms": 4.6,
+     "busy_union_ms": 2.65,
+     "idle_ms": 1.95,
+     "n_gaps": 68,
+     "largest_gap_ms": 1.3
+    }
+   },
+   "n_idle_gaps_ge2ms": 10,
+   "idle_in_gaps_ge2ms": 30.47,
+   "top_gaps": [
+    {
+     "gap_start_us": 4401441891326.6,
+     "gap_ms": 4.542,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 322,
+      "aten::as_strided": 276,
+      "aten::transpose": 225
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.016,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401441309179.3,
+     "gap_ms": 4.168,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 309,
+      "aten::as_strided": 261,
+      "aten::transpose": 213
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.016,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401441375043.8,
+     "gap_ms": 3.867,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 311,
+      "aten::as_strided": 263,
+      "aten::transpose": 215
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.015,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401440132345.0,
+     "gap_ms": 3.484,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 311,
+      "aten::as_strided": 270,
+      "aten::transpose": 219
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.017,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401440780698.9,
+     "gap_ms": 3.244,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::view": 317,
+      "aten::as_strided": 275,
+      "aten::transpose": 224
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.015,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    },
+    {
+     "gap_start_us": 4401441279749.8,
+     "gap_ms": 2.6,
+     "cpu_ops_in_gap": {
+      "aten::to": 3,
+      "aten::empty": 2,
+      "aten::lift_fresh": 2,
+      "aten::detach_": 2
+     },
+     "runtime_in_gap": {
+      "cudaMemcpyAsync": 1,
+      "cudaStreamSynchronize": 1
+     },
+     "host_ops_ending_before_gap": {
+      "aten::add_": 298,
+      "aten::transpose": 288,
+      "aten::as_strided": 288
+     },
+     "next_device_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel_launch_lead_ms": 0.02,
+     "attribution": "HOST-SIDE: cpu ops / runtime calls fill the gap -> submission gap (host-bound)"
+    }
+   ]
+  }
+ }
+}
