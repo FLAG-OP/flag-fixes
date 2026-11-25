@@ -1,7 +1,8 @@
 {
- "field_version": "gap_v2",
+ "field_version": "gap_v3",
  "time_unit": "ms",
  "method": "CPU windows from cat==user_annotation only (GPU markers kept separately); clipped union of kernel/memcpy/memset; per gap: CPU-op \u222a runtime \u222a sync intervals -> covered_ms, remainder UNKNOWN; tokenize attribution only when a tokenize cpu_op interval INTERSECTS the gap",
+ "fix_note_v3": "host events are now clipped to each gap BEFORE union (v2 over-reported coverage for edge-straddling events). ",
  "fix_note": "gap_v1 (round-52) mixed user_annotation and gpu_user_annotation by name; GPU markers overwrote CPU ones and backward windows showed 0 ms (real CPU value e.g. rf_s2_backward_m0 = 317.08 ms). Superseded.",
  "steps": {
   "s2": {
@@ -98,14 +99,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 1.52,
+     "host_event_covered_ms": 1.504,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 17.72,
+     "unknown_ms": 17.737,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 1.52,
-      "UNKNOWN": 17.72
+      "other_host": 1.504,
+      "UNKNOWN": 17.737
      }
     },
     {
@@ -122,14 +123,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.21,
+     "host_event_covered_ms": 0.048,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 4.799,
+     "unknown_ms": 4.961,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.21,
-      "UNKNOWN": 4.799
+      "other_host": 0.048,
+      "UNKNOWN": 4.961
      }
     },
     {
@@ -146,14 +147,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.211,
+     "host_event_covered_ms": 0.046,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 4.662,
+     "unknown_ms": 4.828,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.211,
-      "UNKNOWN": 4.662
+      "other_host": 0.046,
+      "UNKNOWN": 4.828
      }
     },
     {
@@ -170,14 +171,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.206,
+     "host_event_covered_ms": 0.048,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 4.499,
+     "unknown_ms": 4.657,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.206,
-      "UNKNOWN": 4.499
+      "other_host": 0.048,
+      "UNKNOWN": 4.657
      }
     },
     {
@@ -194,14 +195,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.208,
+     "host_event_covered_ms": 0.041,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 3.727,
+     "unknown_ms": 3.894,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.208,
-      "UNKNOWN": 3.727
+      "other_host": 0.041,
+      "UNKNOWN": 3.894
      }
     },
     {
@@ -218,14 +219,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.218,
+     "host_event_covered_ms": 0.074,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 3.572,
+     "unknown_ms": 3.716,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.218,
-      "UNKNOWN": 3.572
+      "other_host": 0.074,
+      "UNKNOWN": 3.716
      }
     }
    ]
@@ -324,14 +325,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.195,
+     "host_event_covered_ms": 0.043,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 4.6,
+     "unknown_ms": 4.751,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.195,
-      "UNKNOWN": 4.6
+      "other_host": 0.043,
+      "UNKNOWN": 4.751
      }
     },
     {
@@ -348,14 +349,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.202,
+     "host_event_covered_ms": 0.043,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 4.197,
+     "unknown_ms": 4.355,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.202,
-      "UNKNOWN": 4.197
+      "other_host": 0.043,
+      "UNKNOWN": 4.355
      }
     },
     {
@@ -371,14 +372,14 @@
       "cudaMemcpyAsync": 1
      },
      "n_sync_in_gap": 0,
-     "host_event_covered_ms": 0.451,
+     "host_event_covered_ms": 0.103,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 2.834,
+     "unknown_ms": 3.182,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.451,
-      "UNKNOWN": 2.834
+      "other_host": 0.103,
+      "UNKNOWN": 3.182
      }
     },
     {
@@ -395,14 +396,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.203,
+     "host_event_covered_ms": 0.04,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 2.997,
+     "unknown_ms": 3.16,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.203,
-      "UNKNOWN": 2.997
+      "other_host": 0.04,
+      "UNKNOWN": 3.16
      }
     },
     {
@@ -419,14 +420,14 @@
       "cudaMemcpyAsync": 1
      },
      "n_sync_in_gap": 2,
-     "host_event_covered_ms": 2.915,
+     "host_event_covered_ms": 2.904,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 0.0,
+     "unknown_ms": 0.011,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 2.915,
-      "UNKNOWN": 0.0
+      "other_host": 2.904,
+      "UNKNOWN": 0.011
      }
     },
     {
@@ -443,14 +444,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.206,
+     "host_event_covered_ms": 0.043,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 2.705,
+     "unknown_ms": 2.868,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.206,
-      "UNKNOWN": 2.705
+      "other_host": 0.043,
+      "UNKNOWN": 2.868
      }
     }
    ]
@@ -549,14 +550,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.22,
+     "host_event_covered_ms": 0.047,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 4.323,
+     "unknown_ms": 4.495,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.22,
-      "UNKNOWN": 4.323
+      "other_host": 0.047,
+      "UNKNOWN": 4.495
      }
     },
     {
@@ -573,14 +574,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.207,
+     "host_event_covered_ms": 0.049,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 3.96,
+     "unknown_ms": 4.119,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.207,
-      "UNKNOWN": 3.96
+      "other_host": 0.049,
+      "UNKNOWN": 4.119
      }
     },
     {
@@ -597,14 +598,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.203,
+     "host_event_covered_ms": 0.044,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 3.664,
+     "unknown_ms": 3.823,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.203,
-      "UNKNOWN": 3.664
+      "other_host": 0.044,
+      "UNKNOWN": 3.823
      }
     },
     {
@@ -621,14 +622,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.22,
+     "host_event_covered_ms": 0.052,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 3.264,
+     "unknown_ms": 3.431,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.22,
-      "UNKNOWN": 3.264
+      "other_host": 0.052,
+      "UNKNOWN": 3.431
      }
     },
     {
@@ -645,14 +646,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 0.214,
+     "host_event_covered_ms": 0.043,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 3.03,
+     "unknown_ms": 3.201,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 0.214,
-      "UNKNOWN": 3.03
+      "other_host": 0.043,
+      "UNKNOWN": 3.201
      }
     },
     {
@@ -669,14 +670,14 @@
       "cudaStreamSynchronize": 1
      },
      "n_sync_in_gap": 1,
-     "host_event_covered_ms": 2.068,
+     "host_event_covered_ms": 0.109,
      "tokenize_covered_ms": 0.0,
      "h2d_memcpys_intersecting_gap": 0,
-     "unknown_ms": 0.532,
+     "unknown_ms": 2.491,
      "attribution": {
       "tokenize": 0.0,
-      "other_host": 2.068,
-      "UNKNOWN": 0.532
+      "other_host": 0.109,
+      "UNKNOWN": 2.491
      }
     }
    ]

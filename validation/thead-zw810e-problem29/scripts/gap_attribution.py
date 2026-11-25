@@ -45,9 +45,9 @@ first={}
 for e in CPU:
     st=e["name"].split("_")[1]; first.setdefault(st,e["ts"])
 order=sorted(first.items(),key=lambda kv:kv[1]); allend=max(e["ts"]+e.get("dur",0) for e in act)
-res={"field_version":"gap_v2","time_unit":"ms",
+res={"field_version":"gap_v3","time_unit":"ms",
  "method":"CPU windows from cat==user_annotation only (GPU markers kept separately); clipped union of kernel/memcpy/memset; per gap: CPU-op ∪ runtime ∪ sync intervals -> covered_ms, remainder UNKNOWN; tokenize attribution only when a tokenize cpu_op interval INTERSECTS the gap",
- "fix_note":"gap_v1 (round-52) mixed user_annotation and gpu_user_annotation by name; GPU markers overwrote CPU ones and backward windows showed 0 ms (real CPU value e.g. rf_s2_backward_m0 = 317.08 ms). Superseded.",
+ "fix_note_v3":"host events are now clipped to each gap BEFORE union (v2 over-reported coverage for edge-straddling events). ","fix_note":"gap_v1 (round-52) mixed user_annotation and gpu_user_annotation by name; GPU markers overwrote CPU ones and backward windows showed 0 ms (real CPU value e.g. rf_s2_backward_m0 = 317.08 ms). Superseded.",
  "steps":{}}
 for i,(st,t0) in enumerate(order):
     t1=order[i+1][1] if i+1<len(order) else allend
@@ -70,20 +70,24 @@ for i,(st,t0) in enumerate(order):
         sync=[e for e in rin if "Synchronize" in e.get("name","") or "synchronize" in e.get("name","")]
         tokn=[e for e in cin if is_tokenize(e)]
         h2d=[e for e in win_act if e.get("cat")=="gpu_memcpy" and "HtoD" in e.get("name","") and e["ts"]<gb and e["ts"]+e.get("dur",0)>ga]
-        cov=union([(e["ts"],e["ts"]+e.get("dur",0)) for e in cin+rin])
-        cov_c=min(cov,(gb-ga))
-        tok_cov=min(union([(e["ts"],e["ts"]+e.get("dur",0)) for e in tokn]),(gb-ga)) if tokn else 0.0
+        # FIX (review BqpXfeg item 3): clip EACH event to the gap BEFORE the union.
+        # The old code unioned full event lengths and only clamped the sum, so an
+        # event straddling a gap edge contributed its whole duration (step 4 2.600 ms
+        # gap reported 2.068 ms covered; clipped it is ~0.110 ms, UNKNOWN ~2.49 ms).
+        def clip_iv(items): return [(max(e["ts"],ga),min(e["ts"]+e.get("dur",0),gb)) for e in items if e["ts"]<gb and e["ts"]+e.get("dur",0)>ga]
+        cov=union(clip_iv(cin+rin))
+        tok_cov=union(clip_iv(tokn)) if tokn else 0.0
         top.append({"gap_start_us":round(ga,1),"gap_ms":round(dur,3),
                     "cpu_ops_in_gap":dict(collections.Counter(e["name"] for e in cin).most_common(4)),
                     "runtime_in_gap":dict(collections.Counter(e["name"] for e in rin).most_common(4)),
                     "n_sync_in_gap":len(sync),
-                    "host_event_covered_ms":round(cov_c/1000,3),
+                    "host_event_covered_ms":round(cov/1000,3),
                     "tokenize_covered_ms":round(tok_cov/1000,3),
                     "h2d_memcpys_intersecting_gap":len(h2d),
-                    "unknown_ms":round(dur-cov_c/1000,3),
+                    "unknown_ms":round(dur-cov/1000,3),
                     "attribution":{"tokenize":round(tok_cov/1000,3) if tokn else 0.0,
-                                   "other_host":round((cov_c-tok_cov)/1000,3),
-                                   "UNKNOWN":round(dur-cov_c/1000,3)}})
+                                   "other_host":round((cov-tok_cov)/1000,3),
+                                   "UNKNOWN":round(dur-cov/1000,3)}})
     res["steps"][st]={"cpu_micro_windows":micro,"gpu_side_marker_ms":gpu_side,
                       "n_gaps_ge2ms":len(sg),"idle_in_gaps_ge2ms":round(sum(y-x for x,y in sg)/1000,2),
                       "top_gaps":top}

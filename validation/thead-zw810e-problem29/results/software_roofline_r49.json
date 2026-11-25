@@ -18,10 +18,10 @@
   "method": "per-shape ideal time = FLOPs/(139.2e12) [ms]; headroom = device_ms - ideal_ms (clamped >=0); summed over ALL backward dW/dX rows",
   "n_rows": 100,
   "covered_device_ms_per_step": 718.73,
-  "backward_gemm_total_ms_per_step": 772.12,
-  "coverage_pct_of_backward_gemm": 93.1,
   "covered_headroom_ms_per_step": 248.73,
-  "uncovered_device_ms": 53.39,
+  "single_step_covered_device_ms": 718.73,
+  "three_step_mean_backward_gemm_ms": 772.12,
+  "coverage_note": "single-step rows (718.73 ms, step 2) and the 3-step mean (772.12 ms) are DIFFERENT windows; no coverage % and no 'uncovered' ms is derived from them (the previously derived coverage percentage and uncovered-ms figures are removed).",
   "hot6_device_ms": 220.11,
   "hot6_headroom_ms": 57.19,
   "window_note": "the 100 per-shape rows come from ONE training step (kernel_efficiency_r36, step 2); 772.12 ms is the 3-step mean backward-GEMM time. 718.73/772.12 is reported as a RATIO BETWEEN DIFFERENT WINDOWS, not a same-window coverage percentage.",
@@ -29,50 +29,222 @@
   "by_group": [
    {
     "group": "long (token dim >= 4000)",
-    "n": 46,
-    "device_ms": 470.85,
-    "headroom_ms": 145.14,
+    "n": 18,
+    "device_ms": 311.11,
+    "headroom_ms": 87.16,
     "kinds": {
-     "dW_ffn_up": 8,
+     "dW_ffn_up": 5,
      "dW_ffn_down": 3,
      "dX_ffn_down": 3,
-     "dX_ffn_up": 16,
-     "dX_other": 2,
-     "dX_attn_proj": 4,
-     "dW_other": 10
+     "dX_ffn_up": 3,
+     "dX_attn_proj": 4
     },
-    "calls": 2400
+    "calls": 1344,
+    "top_shapes": [
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       5120,
+       1024
+      ],
+      "count": 96,
+      "device_ms": 46.8,
+      "headroom_ms_vs_peak": 17.179
+     },
+     {
+      "kind": "dW_ffn_down",
+      "shape": [
+       1024,
+       5120,
+       4096
+      ],
+      "count": 96,
+      "device_ms": 46.71,
+      "headroom_ms_vs_peak": 17.089
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       5120,
+       1024,
+       1024
+      ],
+      "count": 288,
+      "device_ms": 28.37,
+      "headroom_ms_vs_peak": 6.154
+     },
+     {
+      "kind": "dX_ffn_down",
+      "shape": [
+       5120,
+       1024,
+       4096
+      ],
+      "count": 96,
+      "device_ms": 34.56,
+      "headroom_ms_vs_peak": 4.939
+     },
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       4430,
+       1024
+      ],
+      "count": 24,
+      "device_ms": 10.32,
+      "headroom_ms_vs_peak": 3.913
+     }
+    ]
    },
    {
     "group": "mid (1400 <= token dim < 4000)",
-    "n": 40,
-    "device_ms": 215.76,
-    "headroom_ms": 75.18,
+    "n": 60,
+    "device_ms": 324.79,
+    "headroom_ms": 113.91,
     "kinds": {
      "dW_ffn_down": 3,
-     "dW_ffn_up": 3,
+     "dW_ffn_up": 6,
      "dX_attn_proj": 10,
      "dX_ffn_down": 10,
-     "dW_other": 7,
+     "dX_ffn_up": 10,
+     "dW_other": 14,
      "dW_attn_proj": 7
     },
-    "calls": 2400
+    "calls": 2880,
+    "top_shapes": [
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       1670,
+       1024,
+       1024
+      ],
+      "count": 96,
+      "device_ms": 5.9,
+      "headroom_ms_vs_peak": 3.485
+     },
+     {
+      "kind": "dW_ffn_down",
+      "shape": [
+       1024,
+       3740,
+       4096
+      ],
+      "count": 24,
+      "device_ms": 8.69,
+      "headroom_ms_vs_peak": 3.281
+     },
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       3740,
+       1024
+      ],
+      "count": 24,
+      "device_ms": 8.67,
+      "headroom_ms_vs_peak": 3.261
+     },
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       3290,
+       1024
+      ],
+      "count": 24,
+      "device_ms": 7.89,
+      "headroom_ms_vs_peak": 3.131
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       1740,
+       1024,
+       1024
+      ],
+      "count": 96,
+      "device_ms": 5.63,
+      "headroom_ms_vs_peak": 3.113
+     }
+    ]
    },
    {
     "group": "short (token dim < 1400)",
-    "n": 14,
-    "device_ms": 32.12,
-    "headroom_ms": 28.42,
+    "n": 22,
+    "device_ms": 82.83,
+    "headroom_ms": 47.65,
     "kinds": {
+     "dX_other": 3,
      "dX_attn_proj": 3,
      "dW_attn_proj": 3,
-     "dW_other": 4,
+     "dW_other": 7,
      "dX_ffn_down": 3,
-     "dX_other": 1
+     "dX_ffn_up": 3
     },
-    "calls": 968
+    "calls": 1544,
+    "top_shapes": [
+     {
+      "kind": "dX_other",
+      "shape": [
+       1024,
+       5120,
+       1024
+      ],
+      "count": 288,
+      "device_ms": 31.77,
+      "headroom_ms_vs_peak": 9.554
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       160,
+       1024,
+       1024
+      ],
+      "count": 192,
+      "device_ms": 6.72,
+      "headroom_ms_vs_peak": 6.257
+     },
+     {
+      "kind": "dW_attn_proj",
+      "shape": [
+       1024,
+       160,
+       1024
+      ],
+      "count": 192,
+      "device_ms": 5.25,
+      "headroom_ms_vs_peak": 4.787
+     },
+     {
+      "kind": "dX_other",
+      "shape": [
+       1024,
+       5120,
+       1024
+      ],
+      "count": 96,
+      "device_ms": 10.6,
+      "headroom_ms_vs_peak": 3.195
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       180,
+       1024,
+       1024
+      ],
+      "count": 96,
+      "device_ms": 3.41,
+      "headroom_ms_vs_peak": 3.15
+     }
+    ]
    }
   ],
+  "token_dim_rule": "dW: reduction dim K (= A[1], the token dim of x) ; dX: output row dim M (= A[0]) ; loss matmul: listed separately. The old max(M,K) rule counted the fixed FFN feature dim 4096 as a long sequence (review BqpXfeg item 4).",
   "rows": [
    {
     "kind": "dW_ffn_up",
@@ -81,6 +253,7 @@
      5120,
      1024
     ],
+    "token_dim": 5120,
     "count": 96,
     "device_ms": 46.8,
     "flops_tflop": 4.1232,
@@ -96,6 +269,7 @@
      5120,
      4096
     ],
+    "token_dim": 5120,
     "count": 96,
     "device_ms": 46.71,
     "flops_tflop": 4.1232,
@@ -111,6 +285,7 @@
      5120,
      1024
     ],
+    "token_dim": 1024,
     "count": 288,
     "device_ms": 31.77,
     "flops_tflop": 3.0924,
@@ -126,6 +301,7 @@
      1024,
      1024
     ],
+    "token_dim": 160,
     "count": 192,
     "device_ms": 6.72,
     "flops_tflop": 0.0644,
@@ -141,6 +317,7 @@
      1024,
      1024
     ],
+    "token_dim": 5120,
     "count": 288,
     "device_ms": 28.37,
     "flops_tflop": 3.0924,
@@ -156,6 +333,7 @@
      1024,
      4096
     ],
+    "token_dim": 5120,
     "count": 96,
     "device_ms": 34.56,
     "flops_tflop": 4.1232,
@@ -171,6 +349,7 @@
      160,
      1024
     ],
+    "token_dim": 160,
     "count": 192,
     "device_ms": 5.25,
     "flops_tflop": 0.0644,
@@ -186,6 +365,7 @@
      4430,
      1024
     ],
+    "token_dim": 4430,
     "count": 24,
     "device_ms": 10.32,
     "flops_tflop": 0.8919,
@@ -201,6 +381,7 @@
      4430,
      4096
     ],
+    "token_dim": 4430,
     "count": 24,
     "device_ms": 10.25,
     "flops_tflop": 0.8919,
@@ -216,6 +397,7 @@
      1024,
      1024
     ],
+    "token_dim": 4430,
     "count": 96,
     "device_ms": 10.17,
     "flops_tflop": 0.8919,
@@ -231,6 +413,7 @@
      4310,
      1024
     ],
+    "token_dim": 4310,
     "count": 24,
     "device_ms": 9.98,
     "flops_tflop": 0.8677,
@@ -246,6 +429,7 @@
      4310,
      4096
     ],
+    "token_dim": 4310,
     "count": 24,
     "device_ms": 9.97,
     "flops_tflop": 0.8677,
@@ -261,6 +445,7 @@
      1024,
      1024
     ],
+    "token_dim": 1670,
     "count": 96,
     "device_ms": 5.9,
     "flops_tflop": 0.3362,
@@ -276,6 +461,7 @@
      1024,
      1024
     ],
+    "token_dim": 4310,
     "count": 96,
     "device_ms": 9.67,
     "flops_tflop": 0.8677,
@@ -291,6 +477,7 @@
      3740,
      4096
     ],
+    "token_dim": 3740,
     "count": 24,
     "device_ms": 8.69,
     "flops_tflop": 0.753,
@@ -306,6 +493,7 @@
      3740,
      1024
     ],
+    "token_dim": 3740,
     "count": 24,
     "device_ms": 8.67,
     "flops_tflop": 0.753,
@@ -321,6 +509,7 @@
      5120,
      1024
     ],
+    "token_dim": 1024,
     "count": 96,
     "device_ms": 10.6,
     "flops_tflop": 1.0308,
@@ -336,6 +525,7 @@
      1024,
      1024
     ],
+    "token_dim": 180,
     "count": 96,
     "device_ms": 3.41,
     "flops_tflop": 0.0362,
@@ -351,6 +541,7 @@
      3290,
      1024
     ],
+    "token_dim": 3290,
     "count": 24,
     "device_ms": 7.89,
     "flops_tflop": 0.6624,
@@ -366,6 +557,7 @@
      1024,
      1024
     ],
+    "token_dim": 1740,
     "count": 96,
     "device_ms": 5.63,
     "flops_tflop": 0.3503,
@@ -381,6 +573,7 @@
      3290,
      4096
     ],
+    "token_dim": 3290,
     "count": 24,
     "device_ms": 7.82,
     "flops_tflop": 0.6624,
@@ -396,6 +589,7 @@
      4430,
      1024
     ],
+    "token_dim": 4430,
     "count": 96,
     "device_ms": 9.43,
     "flops_tflop": 0.8919,
@@ -411,6 +605,7 @@
      1024,
      4096
     ],
+    "token_dim": 4430,
     "count": 24,
     "device_ms": 9.34,
     "flops_tflop": 0.8919,
@@ -426,6 +621,7 @@
      1024,
      1024
     ],
+    "token_dim": 1910,
     "count": 96,
     "device_ms": 5.66,
     "flops_tflop": 0.3845,
@@ -441,6 +637,7 @@
      1024,
      1024
     ],
+    "token_dim": 2990,
     "count": 96,
     "device_ms": 7.22,
     "flops_tflop": 0.602,
@@ -456,6 +653,7 @@
      4310,
      1024
     ],
+    "token_dim": 4310,
     "count": 96,
     "device_ms": 9.07,
     "flops_tflop": 0.8677,
@@ -471,6 +669,7 @@
      1024,
      1024
     ],
+    "token_dim": 140,
     "count": 96,
     "device_ms": 2.97,
     "flops_tflop": 0.0282,
@@ -486,6 +685,7 @@
      4096,
      1024
     ],
+    "token_dim": 4430,
     "count": 24,
     "device_ms": 9.11,
     "flops_tflop": 0.8919,
@@ -501,6 +701,7 @@
      2990,
      1024
     ],
+    "token_dim": 2990,
     "count": 24,
     "device_ms": 7.0,
     "flops_tflop": 0.602,
@@ -516,6 +717,7 @@
      1024,
      1024
     ],
+    "token_dim": 2100,
     "count": 96,
     "device_ms": 5.7,
     "flops_tflop": 0.4228,
@@ -531,6 +733,7 @@
      2990,
      4096
     ],
+    "token_dim": 2990,
     "count": 24,
     "device_ms": 6.98,
     "flops_tflop": 0.602,
@@ -546,6 +749,7 @@
      1024,
      1024
     ],
+    "token_dim": 2140,
     "count": 96,
     "device_ms": 5.69,
     "flops_tflop": 0.4308,
@@ -561,6 +765,7 @@
      3740,
      1024
     ],
+    "token_dim": 3740,
     "count": 96,
     "device_ms": 7.97,
     "flops_tflop": 0.753,
@@ -576,6 +781,7 @@
      4096,
      1024
     ],
+    "token_dim": 1670,
     "count": 24,
     "device_ms": 4.89,
     "flops_tflop": 0.3362,
@@ -591,6 +797,7 @@
      4096,
      1024
     ],
+    "token_dim": 4310,
     "count": 24,
     "device_ms": 8.64,
     "flops_tflop": 0.8677,
@@ -606,6 +813,7 @@
      4096,
      1024
     ],
+    "token_dim": 1740,
     "count": 24,
     "device_ms": 4.89,
     "flops_tflop": 0.3503,
@@ -621,6 +829,7 @@
      3290,
      1024
     ],
+    "token_dim": 3290,
     "count": 96,
     "device_ms": 7.11,
     "flops_tflop": 0.6624,
@@ -636,6 +845,7 @@
      180,
      1024
     ],
+    "token_dim": 180,
     "count": 96,
     "device_ms": 2.57,
     "flops_tflop": 0.0362,
@@ -651,6 +861,7 @@
      4096,
      1024
     ],
+    "token_dim": 5120,
     "count": 96,
     "device_ms": 31.9,
     "flops_tflop": 4.1232,
@@ -666,6 +877,7 @@
      2490,
      1024
     ],
+    "token_dim": 2490,
     "count": 24,
     "device_ms": 5.87,
     "flops_tflop": 0.5013,
@@ -681,6 +893,7 @@
      2490,
      4096
     ],
+    "token_dim": 2490,
     "count": 24,
     "device_ms": 5.85,
     "flops_tflop": 0.5013,
@@ -696,6 +909,7 @@
      2990,
      1024
     ],
+    "token_dim": 2990,
     "count": 96,
     "device_ms": 6.49,
     "flops_tflop": 0.602,
@@ -711,6 +925,7 @@
      140,
      1024
     ],
+    "token_dim": 140,
     "count": 96,
     "device_ms": 2.36,
     "flops_tflop": 0.0282,
@@ -726,6 +941,7 @@
      4096,
      1024
     ],
+    "token_dim": 1910,
     "count": 24,
     "device_ms": 4.9,
     "flops_tflop": 0.3845,
@@ -741,6 +957,7 @@
      2230,
      1024
     ],
+    "token_dim": 2230,
     "count": 24,
     "device_ms": 5.32,
     "flops_tflop": 0.449,
@@ -756,6 +973,7 @@
      2140,
      1024
     ],
+    "token_dim": 2140,
     "count": 24,
     "device_ms": 5.18,
     "flops_tflop": 0.4308,
@@ -771,6 +989,7 @@
      1024,
      1024
     ],
+    "token_dim": 3290,
     "count": 96,
     "device_ms": 6.84,
     "flops_tflop": 0.6624,
@@ -786,6 +1005,7 @@
      2230,
      4096
     ],
+    "token_dim": 2230,
     "count": 24,
     "device_ms": 5.3,
     "flops_tflop": 0.449,
@@ -801,6 +1021,7 @@
      1024,
      1024
     ],
+    "token_dim": 5120,
     "count": 96,
     "device_ms": 9.45,
     "flops_tflop": 1.0308,
@@ -816,6 +1037,7 @@
      2140,
      4096
     ],
+    "token_dim": 2140,
     "count": 24,
     "device_ms": 5.14,
     "flops_tflop": 0.4308,
@@ -831,6 +1053,7 @@
      2100,
      1024
     ],
+    "token_dim": 2100,
     "count": 24,
     "device_ms": 5.04,
     "flops_tflop": 0.4228,
@@ -846,6 +1069,7 @@
      4096,
      1024
     ],
+    "token_dim": 2990,
     "count": 24,
     "device_ms": 6.31,
     "flops_tflop": 0.602,
@@ -861,6 +1085,7 @@
      2100,
      4096
     ],
+    "token_dim": 2100,
     "count": 24,
     "device_ms": 5.02,
     "flops_tflop": 0.4228,
@@ -876,6 +1101,7 @@
      4096,
      1024
     ],
+    "token_dim": 2100,
     "count": 24,
     "device_ms": 4.95,
     "flops_tflop": 0.4228,
@@ -891,6 +1117,7 @@
      4096,
      1024
     ],
+    "token_dim": 2140,
     "count": 24,
     "device_ms": 4.97,
     "flops_tflop": 0.4308,
@@ -906,6 +1133,7 @@
      2490,
      1024
     ],
+    "token_dim": 2490,
     "count": 96,
     "device_ms": 5.47,
     "flops_tflop": 0.5013,
@@ -921,6 +1149,7 @@
      1910,
      1024
     ],
+    "token_dim": 1910,
     "count": 24,
     "device_ms": 4.63,
     "flops_tflop": 0.3845,
@@ -936,6 +1165,7 @@
      1910,
      4096
     ],
+    "token_dim": 1910,
     "count": 24,
     "device_ms": 4.57,
     "flops_tflop": 0.3845,
@@ -951,6 +1181,7 @@
      1740,
      1024
     ],
+    "token_dim": 1740,
     "count": 24,
     "device_ms": 4.32,
     "flops_tflop": 0.3503,
@@ -966,6 +1197,7 @@
      160,
      4096
     ],
+    "token_dim": 160,
     "count": 48,
     "device_ms": 2.26,
     "flops_tflop": 0.0644,
@@ -981,6 +1213,7 @@
      1740,
      4096
     ],
+    "token_dim": 1740,
     "count": 24,
     "device_ms": 4.31,
     "flops_tflop": 0.3503,
@@ -996,6 +1229,7 @@
      160,
      1024
     ],
+    "token_dim": 160,
     "count": 48,
     "device_ms": 2.23,
     "flops_tflop": 0.0644,
@@ -1011,6 +1245,7 @@
      1670,
      1024
     ],
+    "token_dim": 1670,
     "count": 24,
     "device_ms": 4.18,
     "flops_tflop": 0.3362,
@@ -1026,6 +1261,7 @@
      2230,
      1024
     ],
+    "token_dim": 2230,
     "count": 96,
     "device_ms": 4.99,
     "flops_tflop": 0.449,
@@ -1041,6 +1277,7 @@
      2140,
      1024
     ],
+    "token_dim": 2140,
     "count": 96,
     "device_ms": 4.84,
     "flops_tflop": 0.4308,
@@ -1056,6 +1293,7 @@
      1670,
      4096
     ],
+    "token_dim": 1670,
     "count": 24,
     "device_ms": 4.16,
     "flops_tflop": 0.3362,
@@ -1071,6 +1309,7 @@
      1024,
      1024
     ],
+    "token_dim": 3740,
     "count": 96,
     "device_ms": 7.15,
     "flops_tflop": 0.753,
@@ -1086,6 +1325,7 @@
      2100,
      1024
     ],
+    "token_dim": 2100,
     "count": 96,
     "device_ms": 4.74,
     "flops_tflop": 0.4228,
@@ -1101,6 +1341,7 @@
      1024,
      4096
     ],
+    "token_dim": 160,
     "count": 48,
     "device_ms": 2.1,
     "flops_tflop": 0.0644,
@@ -1116,6 +1357,7 @@
      1024,
      1024
     ],
+    "token_dim": 2230,
     "count": 96,
     "device_ms": 4.86,
     "flops_tflop": 0.449,
@@ -1131,6 +1373,7 @@
      1670,
      1024
     ],
+    "token_dim": 1670,
     "count": 96,
     "device_ms": 4.02,
     "flops_tflop": 0.3362,
@@ -1146,6 +1389,7 @@
      1740,
      1024
     ],
+    "token_dim": 1740,
     "count": 96,
     "device_ms": 4.11,
     "flops_tflop": 0.3503,
@@ -1161,6 +1405,7 @@
      1910,
      1024
     ],
+    "token_dim": 1910,
     "count": 96,
     "device_ms": 4.35,
     "flops_tflop": 0.3845,
@@ -1176,6 +1421,7 @@
      4096,
      1024
     ],
+    "token_dim": 160,
     "count": 48,
     "device_ms": 2.01,
     "flops_tflop": 0.0644,
@@ -1191,6 +1437,7 @@
      1024,
      1024
     ],
+    "token_dim": 2490,
     "count": 96,
     "device_ms": 4.89,
     "flops_tflop": 0.5013,
@@ -1206,6 +1453,7 @@
      4096,
      1024
     ],
+    "token_dim": 3290,
     "count": 24,
     "device_ms": 5.99,
     "flops_tflop": 0.6624,
@@ -1221,6 +1469,7 @@
      1024,
      4096
     ],
+    "token_dim": 3740,
     "count": 24,
     "device_ms": 6.62,
     "flops_tflop": 0.753,
@@ -1236,6 +1485,7 @@
      1024,
      4096
     ],
+    "token_dim": 1670,
     "count": 24,
     "device_ms": 3.61,
     "flops_tflop": 0.3362,
@@ -1251,6 +1501,7 @@
      1024,
      4096
     ],
+    "token_dim": 4310,
     "count": 24,
     "device_ms": 7.37,
     "flops_tflop": 0.8677,
@@ -1266,6 +1517,7 @@
      1024,
      4096
     ],
+    "token_dim": 3290,
     "count": 24,
     "device_ms": 5.76,
     "flops_tflop": 0.6624,
@@ -1281,6 +1533,7 @@
      1024,
      4096
     ],
+    "token_dim": 2990,
     "count": 24,
     "device_ms": 5.31,
     "flops_tflop": 0.602,
@@ -1296,6 +1549,7 @@
      1024,
      4096
     ],
+    "token_dim": 2490,
     "count": 24,
     "device_ms": 4.52,
     "flops_tflop": 0.5013,
@@ -1311,6 +1565,7 @@
      140,
      4096
     ],
+    "token_dim": 140,
     "count": 24,
     "device_ms": 1.08,
     "flops_tflop": 0.0282,
@@ -1326,6 +1581,7 @@
      180,
      4096
     ],
+    "token_dim": 180,
     "count": 24,
     "device_ms": 1.12,
     "flops_tflop": 0.0362,
@@ -1341,6 +1597,7 @@
      180,
      1024
     ],
+    "token_dim": 180,
     "count": 24,
     "device_ms": 1.12,
     "flops_tflop": 0.0362,
@@ -1356,6 +1613,7 @@
      140,
      1024
     ],
+    "token_dim": 140,
     "count": 24,
     "device_ms": 1.05,
     "flops_tflop": 0.0282,
@@ -1371,6 +1629,7 @@
      1024,
      4096
     ],
+    "token_dim": 2230,
     "count": 24,
     "device_ms": 4.07,
     "flops_tflop": 0.449,
@@ -1386,6 +1645,7 @@
      1024,
      4096
     ],
+    "token_dim": 180,
     "count": 24,
     "device_ms": 1.06,
     "flops_tflop": 0.0362,
@@ -1401,6 +1661,7 @@
      1024,
      4096
     ],
+    "token_dim": 140,
     "count": 24,
     "device_ms": 0.99,
     "flops_tflop": 0.0282,
@@ -1416,6 +1677,7 @@
      4096,
      1024
     ],
+    "token_dim": 2230,
     "count": 24,
     "device_ms": 4.01,
     "flops_tflop": 0.449,
@@ -1431,6 +1693,7 @@
      1024,
      4096
     ],
+    "token_dim": 2100,
     "count": 24,
     "device_ms": 3.82,
     "flops_tflop": 0.4228,
@@ -1446,6 +1709,7 @@
      1024,
      4096
     ],
+    "token_dim": 1910,
     "count": 24,
     "device_ms": 3.53,
     "flops_tflop": 0.3845,
@@ -1461,6 +1725,7 @@
      4096,
      1024
     ],
+    "token_dim": 140,
     "count": 24,
     "device_ms": 0.94,
     "flops_tflop": 0.0282,
@@ -1476,6 +1741,7 @@
      1024,
      4096
     ],
+    "token_dim": 1740,
     "count": 24,
     "device_ms": 3.25,
     "flops_tflop": 0.3503,
@@ -1491,6 +1757,7 @@
      4096,
      1024
     ],
+    "token_dim": 180,
     "count": 24,
     "device_ms": 0.99,
     "flops_tflop": 0.0362,
@@ -1506,6 +1773,7 @@
      1024,
      4096
     ],
+    "token_dim": 2140,
     "count": 24,
     "device_ms": 3.8,
     "flops_tflop": 0.4308,
@@ -1521,6 +1789,7 @@
      4096,
      1024
     ],
+    "token_dim": 3740,
     "count": 24,
     "device_ms": 6.01,
     "flops_tflop": 0.753,
@@ -1536,6 +1805,7 @@
      4096,
      1024
     ],
+    "token_dim": 2490,
     "count": 24,
     "device_ms": 4.01,
     "flops_tflop": 0.5013,
@@ -1551,6 +1821,7 @@
      10,
      1024
     ],
+    "token_dim": 10,
     "count": 4,
     "device_ms": 0.14,
     "flops_tflop": 0.0,
@@ -1566,6 +1837,7 @@
      40,
      1024
     ],
+    "token_dim": 10,
     "count": 4,
     "device_ms": 0.09,
     "flops_tflop": 0.0,
@@ -1734,6 +2006,7 @@
    "bw_lb_gbps": 124.8,
    "arithmetic_intensity": 706.21,
    "per_call_ms": 0.4875,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 29.621,
    "headroom_ms_vs_peak": 17.179,
    "headroom_pct_of_shape_time": 36.7
@@ -1757,6 +2030,7 @@
    "bw_lb_gbps": 125.0,
    "arithmetic_intensity": 706.21,
    "per_call_ms": 0.48656,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 29.621,
    "headroom_ms_vs_peak": 17.089,
    "headroom_pct_of_shape_time": 36.6
@@ -1780,6 +2054,7 @@
    "bw_lb_gbps": 168.9,
    "arithmetic_intensity": 706.21,
    "per_call_ms": 0.36,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 29.621,
    "headroom_ms_vs_peak": 4.939,
    "headroom_pct_of_shape_time": 14.3
@@ -1803,6 +2078,7 @@
    "bw_lb_gbps": 183.0,
    "arithmetic_intensity": 706.21,
    "per_call_ms": 0.33229,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 29.621,
    "headroom_ms_vs_peak": 2.279,
    "headroom_pct_of_shape_time": 7.1
@@ -1826,6 +2102,7 @@
    "bw_lb_gbps": 209.1,
    "arithmetic_intensity": 465.45,
    "per_call_ms": 0.11031,
+   "token_dim": 1024,
    "ideal_ms_at_peak": 22.216,
    "headroom_ms_vs_peak": 9.554,
    "headroom_pct_of_shape_time": 30.1
@@ -1849,6 +2126,7 @@
    "bw_lb_gbps": 234.2,
    "arithmetic_intensity": 465.45,
    "per_call_ms": 0.09851,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 22.216,
    "headroom_ms_vs_peak": 6.154,
    "headroom_pct_of_shape_time": 21.7
@@ -1872,6 +2150,7 @@
    "bw_lb_gbps": 208.9,
    "arithmetic_intensity": 465.45,
    "per_call_ms": 0.11042,
+   "token_dim": 1024,
    "ideal_ms_at_peak": 7.405,
    "headroom_ms_vs_peak": 3.195,
    "headroom_pct_of_shape_time": 30.1
@@ -1895,6 +2174,7 @@
    "bw_lb_gbps": 125.0,
    "arithmetic_intensity": 691.35,
    "per_call_ms": 0.43,
+   "token_dim": 4430,
    "ideal_ms_at_peak": 6.407,
    "headroom_ms_vs_peak": 3.913,
    "headroom_pct_of_shape_time": 37.9
@@ -1918,6 +2198,7 @@
    "bw_lb_gbps": 125.9,
    "arithmetic_intensity": 691.35,
    "per_call_ms": 0.42708,
+   "token_dim": 4430,
    "ideal_ms_at_peak": 6.407,
    "headroom_ms_vs_peak": 3.843,
    "headroom_pct_of_shape_time": 37.5
@@ -1941,6 +2222,7 @@
    "bw_lb_gbps": 191.1,
    "arithmetic_intensity": 458.96,
    "per_call_ms": 0.10594,
+   "token_dim": 4430,
    "ideal_ms_at_peak": 6.407,
    "headroom_ms_vs_peak": 3.763,
    "headroom_pct_of_shape_time": 37.0
@@ -1964,6 +2246,7 @@
    "bw_lb_gbps": 126.3,
    "arithmetic_intensity": 688.36,
    "per_call_ms": 0.41583,
+   "token_dim": 4310,
    "ideal_ms_at_peak": 6.233,
    "headroom_ms_vs_peak": 3.747,
    "headroom_pct_of_shape_time": 37.5
@@ -1987,6 +2270,7 @@
    "bw_lb_gbps": 126.4,
    "arithmetic_intensity": 688.36,
    "per_call_ms": 0.41542,
+   "token_dim": 4310,
    "ideal_ms_at_peak": 6.233,
    "headroom_ms_vs_peak": 3.737,
    "headroom_pct_of_shape_time": 37.5
@@ -2010,6 +2294,7 @@
    "bw_lb_gbps": 196.1,
    "arithmetic_intensity": 457.64,
    "per_call_ms": 0.10073,
+   "token_dim": 4310,
    "ideal_ms_at_peak": 6.233,
    "headroom_ms_vs_peak": 3.437,
    "headroom_pct_of_shape_time": 35.5
@@ -2033,6 +2318,7 @@
    "bw_lb_gbps": 234.3,
    "arithmetic_intensity": 465.45,
    "per_call_ms": 0.09844,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 7.405,
    "headroom_ms_vs_peak": 2.045,
    "headroom_pct_of_shape_time": 21.6
@@ -2056,6 +2342,7 @@
    "bw_lb_gbps": 206.1,
    "arithmetic_intensity": 458.96,
    "per_call_ms": 0.09823,
+   "token_dim": 4430,
    "ideal_ms_at_peak": 6.407,
    "headroom_ms_vs_peak": 3.023,
    "headroom_pct_of_shape_time": 32.1
@@ -2079,6 +2366,7 @@
    "bw_lb_gbps": 138.1,
    "arithmetic_intensity": 691.35,
    "per_call_ms": 0.38917,
+   "token_dim": 4430,
    "ideal_ms_at_peak": 6.407,
    "headroom_ms_vs_peak": 2.933,
    "headroom_pct_of_shape_time": 31.4
@@ -2102,6 +2390,7 @@
    "bw_lb_gbps": 141.6,
    "arithmetic_intensity": 691.35,
    "per_call_ms": 0.37958,
+   "token_dim": 4430,
    "ideal_ms_at_peak": 6.407,
    "headroom_ms_vs_peak": 2.703,
    "headroom_pct_of_shape_time": 29.7
@@ -2125,6 +2414,7 @@
    "bw_lb_gbps": 209.1,
    "arithmetic_intensity": 457.64,
    "per_call_ms": 0.09448,
+   "token_dim": 4310,
    "ideal_ms_at_peak": 6.233,
    "headroom_ms_vs_peak": 2.837,
    "headroom_pct_of_shape_time": 31.3
@@ -2148,6 +2438,7 @@
    "bw_lb_gbps": 128.9,
    "arithmetic_intensity": 672.01,
    "per_call_ms": 0.36208,
+   "token_dim": 3740,
    "ideal_ms_at_peak": 5.409,
    "headroom_ms_vs_peak": 3.281,
    "headroom_pct_of_shape_time": 37.8
@@ -2171,6 +2462,7 @@
    "bw_lb_gbps": 129.2,
    "arithmetic_intensity": 672.01,
    "per_call_ms": 0.36125,
+   "token_dim": 3740,
    "ideal_ms_at_peak": 5.409,
    "headroom_ms_vs_peak": 3.261,
    "headroom_pct_of_shape_time": 37.6
@@ -2194,6 +2486,7 @@
    "bw_lb_gbps": 145.9,
    "arithmetic_intensity": 688.36,
    "per_call_ms": 0.36,
+   "token_dim": 4310,
    "ideal_ms_at_peak": 6.233,
    "headroom_ms_vs_peak": 2.407,
    "headroom_pct_of_shape_time": 27.9
@@ -2217,6 +2510,7 @@
    "bw_lb_gbps": 209.8,
    "arithmetic_intensity": 450.35,
    "per_call_ms": 0.08302,
+   "token_dim": 3740,
    "ideal_ms_at_peak": 5.409,
    "headroom_ms_vs_peak": 2.561,
    "headroom_pct_of_shape_time": 32.1
@@ -2240,6 +2534,7 @@
    "bw_lb_gbps": 128.0,
    "arithmetic_intensity": 655.89,
    "per_call_ms": 0.32875,
+   "token_dim": 3290,
    "ideal_ms_at_peak": 4.759,
    "headroom_ms_vs_peak": 3.131,
    "headroom_pct_of_shape_time": 39.7
@@ -2263,6 +2558,7 @@
    "bw_lb_gbps": 129.1,
    "arithmetic_intensity": 655.89,
    "per_call_ms": 0.32583,
+   "token_dim": 3290,
    "ideal_ms_at_peak": 4.759,
    "headroom_ms_vs_peak": 3.061,
    "headroom_pct_of_shape_time": 39.1
@@ -2286,6 +2582,7 @@
    "bw_lb_gbps": 171.0,
    "arithmetic_intensity": 688.36,
    "per_call_ms": 0.30708,
+   "token_dim": 4310,
    "ideal_ms_at_peak": 6.233,
    "headroom_ms_vs_peak": 1.137,
    "headroom_pct_of_shape_time": 15.4
@@ -2309,6 +2606,7 @@
    "bw_lb_gbps": 190.7,
    "arithmetic_intensity": 437.14,
    "per_call_ms": 0.07521,
+   "token_dim": 2990,
    "ideal_ms_at_peak": 4.325,
    "headroom_ms_vs_peak": 2.895,
    "headroom_pct_of_shape_time": 40.1
@@ -2332,6 +2630,7 @@
    "bw_lb_gbps": 233.8,
    "arithmetic_intensity": 450.35,
    "per_call_ms": 0.07448,
+   "token_dim": 3740,
    "ideal_ms_at_peak": 5.409,
    "headroom_ms_vs_peak": 1.741,
    "headroom_pct_of_shape_time": 24.3
@@ -2355,6 +2654,7 @@
    "bw_lb_gbps": 210.3,
    "arithmetic_intensity": 443.05,
    "per_call_ms": 0.07406,
+   "token_dim": 3290,
    "ideal_ms_at_peak": 4.759,
    "headroom_ms_vs_peak": 2.351,
    "headroom_pct_of_shape_time": 33.1
@@ -2378,6 +2678,7 @@
    "bw_lb_gbps": 133.7,
    "arithmetic_intensity": 643.02,
    "per_call_ms": 0.29167,
+   "token_dim": 2990,
    "ideal_ms_at_peak": 4.325,
    "headroom_ms_vs_peak": 2.675,
    "headroom_pct_of_shape_time": 38.2
@@ -2401,6 +2702,7 @@
    "bw_lb_gbps": 134.1,
    "arithmetic_intensity": 643.02,
    "per_call_ms": 0.29083,
+   "token_dim": 2990,
    "ideal_ms_at_peak": 4.325,
    "headroom_ms_vs_peak": 2.655,
    "headroom_pct_of_shape_time": 38.0
@@ -2424,6 +2726,7 @@
    "bw_lb_gbps": 218.6,
    "arithmetic_intensity": 443.05,
    "per_call_ms": 0.07125,
+   "token_dim": 3290,
    "ideal_ms_at_peak": 4.759,
    "headroom_ms_vs_peak": 2.081,
    "headroom_pct_of_shape_time": 30.4
@@ -2447,6 +2750,7 @@
    "bw_lb_gbps": 78.6,
    "arithmetic_intensity": 121.9,
    "per_call_ms": 0.035,
+   "token_dim": 160,
    "ideal_ms_at_peak": 0.463,
    "headroom_ms_vs_peak": 6.257,
    "headroom_pct_of_shape_time": 93.1
@@ -2470,6 +2774,7 @@
    "bw_lb_gbps": 169.3,
    "arithmetic_intensity": 672.01,
    "per_call_ms": 0.27583,
+   "token_dim": 3740,
    "ideal_ms_at_peak": 5.409,
    "headroom_ms_vs_peak": 1.211,
    "headroom_pct_of_shape_time": 18.3
@@ -2493,6 +2798,7 @@
    "bw_lb_gbps": 212.2,
    "arithmetic_intensity": 437.14,
    "per_call_ms": 0.0676,
+   "token_dim": 2990,
    "ideal_ms_at_peak": 4.325,
    "headroom_ms_vs_peak": 2.165,
    "headroom_pct_of_shape_time": 33.4
@@ -2516,6 +2822,7 @@
    "bw_lb_gbps": 148.4,
    "arithmetic_intensity": 643.02,
    "per_call_ms": 0.26292,
+   "token_dim": 2990,
    "ideal_ms_at_peak": 4.325,
    "headroom_ms_vs_peak": 1.985,
    "headroom_pct_of_shape_time": 31.5
@@ -2539,6 +2846,7 @@
    "bw_lb_gbps": 186.4,
    "arithmetic_intensity": 672.01,
    "per_call_ms": 0.25042,
+   "token_dim": 3740,
    "ideal_ms_at_peak": 5.409,
    "headroom_ms_vs_peak": 0.601,
    "headroom_pct_of_shape_time": 10.0
@@ -2562,6 +2870,7 @@
    "bw_lb_gbps": 168.6,
    "arithmetic_intensity": 655.89,
    "per_call_ms": 0.24958,
+   "token_dim": 3290,
    "ideal_ms_at_peak": 4.759,
    "headroom_ms_vs_peak": 1.231,
    "headroom_pct_of_shape_time": 20.6
@@ -2585,6 +2894,7 @@
    "bw_lb_gbps": 145.4,
    "arithmetic_intensity": 391.86,
    "per_call_ms": 0.06146,
+   "token_dim": 1670,
    "ideal_ms_at_peak": 2.415,
    "headroom_ms_vs_peak": 3.485,
    "headroom_pct_of_shape_time": 59.1
@@ -2608,6 +2918,7 @@
    "bw_lb_gbps": 138.5,
    "arithmetic_intensity": 616.41,
    "per_call_ms": 0.24458,
+   "token_dim": 2490,
    "ideal_ms_at_peak": 3.601,
    "headroom_ms_vs_peak": 2.269,
    "headroom_pct_of_shape_time": 38.7
@@ -2631,6 +2942,7 @@
    "bw_lb_gbps": 139.0,
    "arithmetic_intensity": 616.41,
    "per_call_ms": 0.24375,
+   "token_dim": 2490,
    "ideal_ms_at_peak": 3.601,
    "headroom_ms_vs_peak": 2.249,
    "headroom_pct_of_shape_time": 38.4
@@ -2654,6 +2966,7 @@
    "bw_lb_gbps": 175.3,
    "arithmetic_intensity": 655.89,
    "per_call_ms": 0.24,
+   "token_dim": 3290,
    "ideal_ms_at_peak": 4.759,
    "headroom_ms_vs_peak": 1.001,
    "headroom_pct_of_shape_time": 17.4
@@ -2677,6 +2990,7 @@
    "bw_lb_gbps": 180.2,
    "arithmetic_intensity": 411.64,
    "per_call_ms": 0.05938,
+   "token_dim": 2100,
    "ideal_ms_at_peak": 3.037,
    "headroom_ms_vs_peak": 2.663,
    "headroom_pct_of_shape_time": 46.7
@@ -2700,6 +3014,7 @@
    "bw_lb_gbps": 183.3,
    "arithmetic_intensity": 413.15,
    "per_call_ms": 0.05927,
+   "token_dim": 2140,
    "ideal_ms_at_peak": 3.095,
    "headroom_ms_vs_peak": 2.595,
    "headroom_pct_of_shape_time": 45.6
@@ -2723,6 +3038,7 @@
    "bw_lb_gbps": 168.3,
    "arithmetic_intensity": 403.77,
    "per_call_ms": 0.05896,
+   "token_dim": 1910,
    "ideal_ms_at_peak": 2.762,
    "headroom_ms_vs_peak": 2.898,
    "headroom_pct_of_shape_time": 51.2
@@ -2746,6 +3062,7 @@
    "bw_lb_gbps": 157.3,
    "arithmetic_intensity": 395.6,
    "per_call_ms": 0.05865,
+   "token_dim": 1740,
    "ideal_ms_at_peak": 2.517,
    "headroom_ms_vs_peak": 3.113,
    "headroom_pct_of_shape_time": 55.3
@@ -2769,6 +3086,7 @@
    "bw_lb_gbps": 215.8,
    "arithmetic_intensity": 424.68,
    "per_call_ms": 0.05698,
+   "token_dim": 2490,
    "ideal_ms_at_peak": 3.601,
    "headroom_ms_vs_peak": 1.869,
    "headroom_pct_of_shape_time": 34.2
@@ -2792,6 +3110,7 @@
    "bw_lb_gbps": 140.9,
    "arithmetic_intensity": 599.11,
    "per_call_ms": 0.22167,
+   "token_dim": 2230,
    "ideal_ms_at_peak": 3.226,
    "headroom_ms_vs_peak": 2.094,
    "headroom_pct_of_shape_time": 39.4
@@ -2815,6 +3134,7 @@
    "bw_lb_gbps": 176.3,
    "arithmetic_intensity": 643.02,
    "per_call_ms": 0.22125,
+   "token_dim": 2990,
    "ideal_ms_at_peak": 4.325,
    "headroom_ms_vs_peak": 0.985,
    "headroom_pct_of_shape_time": 18.5
@@ -2838,6 +3158,7 @@
    "bw_lb_gbps": 141.4,
    "arithmetic_intensity": 599.11,
    "per_call_ms": 0.22083,
+   "token_dim": 2230,
    "ideal_ms_at_peak": 3.226,
    "headroom_ms_vs_peak": 2.074,
    "headroom_pct_of_shape_time": 39.1
@@ -2861,6 +3182,7 @@
    "bw_lb_gbps": 100.7,
    "arithmetic_intensity": 121.9,
    "per_call_ms": 0.02734,
+   "token_dim": 160,
    "ideal_ms_at_peak": 0.463,
    "headroom_ms_vs_peak": 4.787,
    "headroom_pct_of_shape_time": 91.2
@@ -2884,6 +3206,7 @@
    "bw_lb_gbps": 140.4,
    "arithmetic_intensity": 592.42,
    "per_call_ms": 0.21583,
+   "token_dim": 2140,
    "ideal_ms_at_peak": 3.095,
    "headroom_ms_vs_peak": 2.085,
    "headroom_pct_of_shape_time": 40.3
@@ -2907,6 +3230,7 @@
    "bw_lb_gbps": 141.5,
    "arithmetic_intensity": 592.42,
    "per_call_ms": 0.21417,
+   "token_dim": 2140,
    "ideal_ms_at_peak": 3.095,
    "headroom_ms_vs_peak": 2.045,
    "headroom_pct_of_shape_time": 39.8
@@ -2930,6 +3254,7 @@
    "bw_lb_gbps": 142.3,
    "arithmetic_intensity": 589.31,
    "per_call_ms": 0.21,
+   "token_dim": 2100,
    "ideal_ms_at_peak": 3.037,
    "headroom_ms_vs_peak": 2.003,
    "headroom_pct_of_shape_time": 39.7
@@ -2953,6 +3278,7 @@
    "bw_lb_gbps": 142.9,
    "arithmetic_intensity": 589.31,
    "per_call_ms": 0.20917,
+   "token_dim": 2100,
    "ideal_ms_at_peak": 3.037,
    "headroom_ms_vs_peak": 1.983,
    "headroom_pct_of_shape_time": 39.5
@@ -2976,6 +3302,7 @@
    "bw_lb_gbps": 216.1,
    "arithmetic_intensity": 416.4,
    "per_call_ms": 0.05198,
+   "token_dim": 2230,
    "ideal_ms_at_peak": 3.226,
    "headroom_ms_vs_peak": 1.764,
    "headroom_pct_of_shape_time": 35.4
@@ -2999,6 +3326,7 @@
    "bw_lb_gbps": 146.3,
    "arithmetic_intensity": 592.42,
    "per_call_ms": 0.20708,
+   "token_dim": 2140,
    "ideal_ms_at_peak": 3.095,
    "headroom_ms_vs_peak": 1.875,
    "headroom_pct_of_shape_time": 37.7
@@ -3022,6 +3350,7 @@
    "bw_lb_gbps": 144.9,
    "arithmetic_intensity": 589.31,
    "per_call_ms": 0.20625,
+   "token_dim": 2100,
    "ideal_ms_at_peak": 3.037,
    "headroom_ms_vs_peak": 1.913,
    "headroom_pct_of_shape_time": 38.6
@@ -3045,6 +3374,7 @@
    "bw_lb_gbps": 136.9,
    "arithmetic_intensity": 573.31,
    "per_call_ms": 0.20417,
+   "token_dim": 1910,
    "ideal_ms_at_peak": 2.762,
    "headroom_ms_vs_peak": 2.138,
    "headroom_pct_of_shape_time": 43.6
@@ -3068,6 +3398,7 @@
    "bw_lb_gbps": 125.1,
    "arithmetic_intensity": 549.6,
    "per_call_ms": 0.20375,
+   "token_dim": 1670,
    "ideal_ms_at_peak": 2.415,
    "headroom_ms_vs_peak": 2.475,
    "headroom_pct_of_shape_time": 50.6
@@ -3091,6 +3422,7 @@
    "bw_lb_gbps": 128.6,
    "arithmetic_intensity": 556.97,
    "per_call_ms": 0.20375,
+   "token_dim": 1740,
    "ideal_ms_at_peak": 2.517,
    "headroom_ms_vs_peak": 2.373,
    "headroom_pct_of_shape_time": 48.5
@@ -3114,6 +3446,7 @@
    "bw_lb_gbps": 241.4,
    "arithmetic_intensity": 424.68,
    "per_call_ms": 0.05094,
+   "token_dim": 2490,
    "ideal_ms_at_peak": 3.601,
    "headroom_ms_vs_peak": 1.289,
    "headroom_pct_of_shape_time": 26.4
@@ -3137,6 +3470,7 @@
    "bw_lb_gbps": 221.9,
    "arithmetic_intensity": 416.4,
    "per_call_ms": 0.05063,
+   "token_dim": 2230,
    "ideal_ms_at_peak": 3.226,
    "headroom_ms_vs_peak": 1.634,
    "headroom_pct_of_shape_time": 33.6
@@ -3160,6 +3494,7 @@
    "bw_lb_gbps": 215.5,
    "arithmetic_intensity": 413.15,
    "per_call_ms": 0.05042,
+   "token_dim": 2140,
    "ideal_ms_at_peak": 3.095,
    "headroom_ms_vs_peak": 1.745,
    "headroom_pct_of_shape_time": 36.1
@@ -3183,6 +3518,7 @@
    "bw_lb_gbps": 216.7,
    "arithmetic_intensity": 411.64,
    "per_call_ms": 0.04938,
+   "token_dim": 2100,
    "ideal_ms_at_peak": 3.037,
    "headroom_ms_vs_peak": 1.703,
    "headroom_pct_of_shape_time": 35.9
@@ -3206,6 +3542,7 @@
    "bw_lb_gbps": 144.9,
    "arithmetic_intensity": 573.31,
    "per_call_ms": 0.19292,
+   "token_dim": 1910,
    "ideal_ms_at_peak": 2.762,
    "headroom_ms_vs_peak": 1.868,
    "headroom_pct_of_shape_time": 40.3
@@ -3229,6 +3566,7 @@
    "bw_lb_gbps": 146.8,
    "arithmetic_intensity": 573.31,
    "per_call_ms": 0.19042,
+   "token_dim": 1910,
    "ideal_ms_at_peak": 2.762,
    "headroom_ms_vs_peak": 1.808,
    "headroom_pct_of_shape_time": 39.6
@@ -3252,6 +3590,7 @@
    "bw_lb_gbps": 179.9,
    "arithmetic_intensity": 616.41,
    "per_call_ms": 0.18833,
+   "token_dim": 2490,
    "ideal_ms_at_peak": 3.601,
    "headroom_ms_vs_peak": 0.919,
    "headroom_pct_of_shape_time": 20.3
@@ -3275,6 +3614,7 @@
    "bw_lb_gbps": 218.9,
    "arithmetic_intensity": 403.77,
    "per_call_ms": 0.04531,
+   "token_dim": 1910,
    "ideal_ms_at_peak": 2.762,
    "headroom_ms_vs_peak": 1.588,
    "headroom_pct_of_shape_time": 36.5
@@ -3298,6 +3638,7 @@
    "bw_lb_gbps": 145.6,
    "arithmetic_intensity": 556.97,
    "per_call_ms": 0.18,
+   "token_dim": 1740,
    "ideal_ms_at_peak": 2.517,
    "headroom_ms_vs_peak": 1.803,
    "headroom_pct_of_shape_time": 41.7
@@ -3321,6 +3662,7 @@
    "bw_lb_gbps": 145.9,
    "arithmetic_intensity": 556.97,
    "per_call_ms": 0.17958,
+   "token_dim": 1740,
    "ideal_ms_at_peak": 2.517,
    "headroom_ms_vs_peak": 1.793,
    "headroom_pct_of_shape_time": 41.6
@@ -3344,6 +3686,7 @@
    "bw_lb_gbps": 146.4,
    "arithmetic_intensity": 549.6,
    "per_call_ms": 0.17417,
+   "token_dim": 1670,
    "ideal_ms_at_peak": 2.415,
    "headroom_ms_vs_peak": 1.765,
    "headroom_pct_of_shape_time": 42.2
@@ -3367,6 +3710,7 @@
    "bw_lb_gbps": 147.1,
    "arithmetic_intensity": 549.6,
    "per_call_ms": 0.17333,
+   "token_dim": 1670,
    "ideal_ms_at_peak": 2.415,
    "headroom_ms_vs_peak": 1.745,
    "headroom_pct_of_shape_time": 41.9
@@ -3390,6 +3734,7 @@
    "bw_lb_gbps": 215.5,
    "arithmetic_intensity": 395.6,
    "per_call_ms": 0.04281,
+   "token_dim": 1740,
    "ideal_ms_at_peak": 2.517,
    "headroom_ms_vs_peak": 1.593,
    "headroom_pct_of_shape_time": 38.8
@@ -3413,6 +3758,7 @@
    "bw_lb_gbps": 184.1,
    "arithmetic_intensity": 599.11,
    "per_call_ms": 0.16958,
+   "token_dim": 2230,
    "ideal_ms_at_peak": 3.226,
    "headroom_ms_vs_peak": 0.844,
    "headroom_pct_of_shape_time": 20.7
@@ -3436,6 +3782,7 @@
    "bw_lb_gbps": 213.4,
    "arithmetic_intensity": 391.86,
    "per_call_ms": 0.04187,
+   "token_dim": 1670,
    "ideal_ms_at_peak": 2.415,
    "headroom_ms_vs_peak": 1.605,
    "headroom_pct_of_shape_time": 39.9
@@ -3459,6 +3806,7 @@
    "bw_lb_gbps": 202.8,
    "arithmetic_intensity": 616.41,
    "per_call_ms": 0.16708,
+   "token_dim": 2490,
    "ideal_ms_at_peak": 3.601,
    "headroom_ms_vs_peak": 0.409,
    "headroom_pct_of_shape_time": 10.2
@@ -3482,6 +3830,7 @@
    "bw_lb_gbps": 186.9,
    "arithmetic_intensity": 599.11,
    "per_call_ms": 0.16708,
+   "token_dim": 2230,
    "ideal_ms_at_peak": 3.226,
    "headroom_ms_vs_peak": 0.784,
    "headroom_pct_of_shape_time": 19.6
@@ -3505,6 +3854,7 @@
    "bw_lb_gbps": 187.8,
    "arithmetic_intensity": 589.31,
    "per_call_ms": 0.15917,
+   "token_dim": 2100,
    "ideal_ms_at_peak": 3.037,
    "headroom_ms_vs_peak": 0.783,
    "headroom_pct_of_shape_time": 20.5
@@ -3528,6 +3878,7 @@
    "bw_lb_gbps": 191.4,
    "arithmetic_intensity": 592.42,
    "per_call_ms": 0.15833,
+   "token_dim": 2140,
    "ideal_ms_at_peak": 3.095,
    "headroom_ms_vs_peak": 0.705,
    "headroom_pct_of_shape_time": 18.6
@@ -3551,6 +3902,7 @@
    "bw_lb_gbps": 169.5,
    "arithmetic_intensity": 549.6,
    "per_call_ms": 0.15042,
+   "token_dim": 1670,
    "ideal_ms_at_peak": 2.415,
    "headroom_ms_vs_peak": 1.195,
    "headroom_pct_of_shape_time": 33.1
@@ -3574,6 +3926,7 @@
    "bw_lb_gbps": 190.0,
    "arithmetic_intensity": 573.31,
    "per_call_ms": 0.14708,
+   "token_dim": 1910,
    "ideal_ms_at_peak": 2.762,
    "headroom_ms_vs_peak": 0.768,
    "headroom_pct_of_shape_time": 21.8
@@ -3597,6 +3950,7 @@
    "bw_lb_gbps": 79.8,
    "arithmetic_intensity": 133.18,
    "per_call_ms": 0.03552,
+   "token_dim": 180,
    "ideal_ms_at_peak": 0.26,
    "headroom_ms_vs_peak": 3.15,
    "headroom_pct_of_shape_time": 92.4
@@ -3620,6 +3974,7 @@
    "bw_lb_gbps": 193.5,
    "arithmetic_intensity": 556.97,
    "per_call_ms": 0.13542,
+   "token_dim": 1740,
    "ideal_ms_at_peak": 2.517,
    "headroom_ms_vs_peak": 0.733,
    "headroom_pct_of_shape_time": 22.6
@@ -3643,6 +3998,7 @@
    "bw_lb_gbps": 86.3,
    "arithmetic_intensity": 109.94,
    "per_call_ms": 0.03094,
+   "token_dim": 140,
    "ideal_ms_at_peak": 0.203,
    "headroom_ms_vs_peak": 2.767,
    "headroom_pct_of_shape_time": 93.2
@@ -3666,6 +4022,7 @@
    "bw_lb_gbps": 105.9,
    "arithmetic_intensity": 133.18,
    "per_call_ms": 0.02677,
+   "token_dim": 180,
    "ideal_ms_at_peak": 0.26,
    "headroom_ms_vs_peak": 2.31,
    "headroom_pct_of_shape_time": 89.9
@@ -3689,6 +4046,7 @@
    "bw_lb_gbps": 108.6,
    "arithmetic_intensity": 109.94,
    "per_call_ms": 0.02458,
+   "token_dim": 140,
    "ideal_ms_at_peak": 0.203,
    "headroom_ms_vs_peak": 2.157,
    "headroom_pct_of_shape_time": 91.4
@@ -3712,6 +4070,7 @@
    "bw_lb_gbps": 213.0,
    "arithmetic_intensity": 133.86,
    "per_call_ms": 0.04708,
+   "token_dim": 160,
    "ideal_ms_at_peak": 0.463,
    "headroom_ms_vs_peak": 1.797,
    "headroom_pct_of_shape_time": 79.5
@@ -3735,6 +4094,7 @@
    "bw_lb_gbps": 215.8,
    "arithmetic_intensity": 133.86,
    "per_call_ms": 0.04646,
+   "token_dim": 160,
    "ideal_ms_at_peak": 0.463,
    "headroom_ms_vs_peak": 1.767,
    "headroom_pct_of_shape_time": 79.2
@@ -3758,6 +4118,7 @@
    "bw_lb_gbps": 229.2,
    "arithmetic_intensity": 133.86,
    "per_call_ms": 0.04375,
+   "token_dim": 160,
    "ideal_ms_at_peak": 0.463,
    "headroom_ms_vs_peak": 1.637,
    "headroom_pct_of_shape_time": 78.0
@@ -3781,6 +4142,7 @@
    "bw_lb_gbps": 239.5,
    "arithmetic_intensity": 133.86,
    "per_call_ms": 0.04187,
+   "token_dim": 160,
    "ideal_ms_at_peak": 0.463,
    "headroom_ms_vs_peak": 1.547,
    "headroom_pct_of_shape_time": 77.0
@@ -3804,6 +4166,7 @@
    "bw_lb_gbps": 219.3,
    "arithmetic_intensity": 147.57,
    "per_call_ms": 0.04667,
+   "token_dim": 180,
    "ideal_ms_at_peak": 0.26,
    "headroom_ms_vs_peak": 0.86,
    "headroom_pct_of_shape_time": 76.8
@@ -3827,6 +4190,7 @@
    "bw_lb_gbps": 219.3,
    "arithmetic_intensity": 147.57,
    "per_call_ms": 0.04667,
+   "token_dim": 180,
    "ideal_ms_at_peak": 0.26,
    "headroom_ms_vs_peak": 0.86,
    "headroom_pct_of_shape_time": 76.8
@@ -3850,6 +4214,7 @@
    "bw_lb_gbps": 218.3,
    "arithmetic_intensity": 119.57,
    "per_call_ms": 0.045,
+   "token_dim": 140,
    "ideal_ms_at_peak": 0.203,
    "headroom_ms_vs_peak": 0.877,
    "headroom_pct_of_shape_time": 81.2
@@ -3873,6 +4238,7 @@
    "bw_lb_gbps": 231.7,
    "arithmetic_intensity": 147.57,
    "per_call_ms": 0.04417,
+   "token_dim": 180,
    "ideal_ms_at_peak": 0.26,
    "headroom_ms_vs_peak": 0.8,
    "headroom_pct_of_shape_time": 75.5
@@ -3896,6 +4262,7 @@
    "bw_lb_gbps": 224.5,
    "arithmetic_intensity": 119.57,
    "per_call_ms": 0.04375,
+   "token_dim": 140,
    "ideal_ms_at_peak": 0.203,
    "headroom_ms_vs_peak": 0.847,
    "headroom_pct_of_shape_time": 80.7
@@ -3919,6 +4286,7 @@
    "bw_lb_gbps": 248.0,
    "arithmetic_intensity": 147.57,
    "per_call_ms": 0.04125,
+   "token_dim": 180,
    "ideal_ms_at_peak": 0.26,
    "headroom_ms_vs_peak": 0.73,
    "headroom_pct_of_shape_time": 73.7
@@ -3942,6 +4310,7 @@
    "bw_lb_gbps": 238.1,
    "arithmetic_intensity": 119.57,
    "per_call_ms": 0.04125,
+   "token_dim": 140,
    "ideal_ms_at_peak": 0.203,
    "headroom_ms_vs_peak": 0.787,
    "headroom_pct_of_shape_time": 79.5
@@ -3965,6 +4334,7 @@
    "bw_lb_gbps": 250.8,
    "arithmetic_intensity": 119.57,
    "per_call_ms": 0.03917,
+   "token_dim": 140,
    "ideal_ms_at_peak": 0.203,
    "headroom_ms_vs_peak": 0.737,
    "headroom_pct_of_shape_time": 78.4
@@ -3988,6 +4358,7 @@
    "bw_lb_gbps": 2.9,
    "arithmetic_intensity": 7.94,
    "per_call_ms": 0.035,
+   "token_dim": 10,
    "ideal_ms_at_peak": 0.0,
    "headroom_ms_vs_peak": 0.14,
    "headroom_pct_of_shape_time": 100.0
@@ -4011,6 +4382,7 @@
    "bw_lb_gbps": 4.6,
    "arithmetic_intensity": 7.94,
    "per_call_ms": 0.0225,
+   "token_dim": 10,
    "ideal_ms_at_peak": 0.0,
    "headroom_ms_vs_peak": 0.09,
    "headroom_pct_of_shape_time": 100.0
@@ -4886,7 +5258,7 @@
   ]
  },
  "conclusion": {
-  "situation_1_compute_efficiency": "6 hot backward-GEMM shapes run at 88.1-129.25 TFLOP/s = 63%-93% of the 139.2 reference. Per-shape headroom (device_ms - FLOPs/139.2e12) over the 100 measured backward dW/dX rows = 248.73 ms/step, covering 718.73 ms of the 772 ms backward GEMM (93.1%); 53.39 ms is not measured per shape. The earlier 'up to 285 ms/step' extrapolation from 6 rows is RETRACTED.",
+  "situation_1_compute_efficiency": "6 hot backward-GEMM shapes run at 88.1-129.25 TFLOP/s = 63%-93% of the 139.2 reference. Per-shape headroom (device_ms - FLOPs/139.2e12, the ideal-device-time gap under that reference, NOT an end-to-end ceiling) over 100 backward dW/dX rows of step 2 = 248.73 ms; by token-dim group: long (token dim >= 4000): 87.16 ms over 311.11 ms device (18 rows); mid (1400 <= token dim < 4000): 113.91 ms over 324.79 ms device (60 rows); short (token dim < 1400): 47.65 ms over 82.83 ms device (22 rows). The 3-step mean backward GEMM (772.12 ms) is a different window and is not divided by these single-step rows. The earlier 'up to 285 ms/step' extrapolation is RETRACTED.",
   "situation_2_logical_traffic": "dW arithmetic intensity 656-706 FLOP/byte; logical byte rate (each operand read/written once) 124-126 GB/s on the S=512 shapes. Whether the GEMMs are compute-bound is a HYPOTHESIS TO VERIFY: it needs real HBM counters (BLOCKED) because cache reuse and repeated reads change the actual traffic. No 'strongly compute-bound' claim is made.",
   "situation_2_contiguous_copy": "the .contiguous() copy FlagGems mm performs on a transposed A adds 8053.06 MB (S=512 dW-up) and 2013.27 MB (S=512 dW-down) of extra read+write per shape per step - a real extra traffic item, counted SEPARATELY from the GEMM body; it is why native+contiguous() loses (+32.4 ms median) while FlagGems still gains (its Triton kernel is faster on the contiguous operand by more than the copy costs)",
   "situation_3_idle_large": "per-step idle 211-250 ms (87.9-91.5% busy) - idle is 8%-12% of the step and is NOT attributable without a host swimlane (needs counters/platform)",

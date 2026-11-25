@@ -87,6 +87,7 @@ for r in KE["rows"]:
 # ---- item 3: per-shape headroom WITH coverage (retracts the '285 ms/step' extrapolation) ----
 bw_rows=[r for r in rows if r["phase"]=="backward" and r["kind"].startswith(("dW","dX"))]
 for r in bw_rows:
+    r["token_dim"]=(r["shape"][1] if r["kind"].startswith("dW") else r["shape"][0])
     r["ideal_ms_at_peak"]=round(r["flops_tflop"]*1000/PEAK,3)          # FLOPs/(PEAK*1e12) in ms
     r["headroom_ms_vs_peak"]=round(max(0.0,r["device_ms"]-r["ideal_ms_at_peak"]),3)
     r["headroom_pct_of_shape_time"]=round(r["headroom_ms_vs_peak"]/r["device_ms"]*100,1)
@@ -96,28 +97,34 @@ hot6=[r for r in bw_rows if r["device_ms"]>=25]
 out["headroom_by_shape"]={
    "method":"per-shape ideal time = FLOPs/(139.2e12) [ms]; headroom = device_ms - ideal_ms (clamped >=0); summed over ALL backward dW/dX rows",
    "n_rows":len(bw_rows),"covered_device_ms_per_step":round(cov_device,2),
-   "backward_gemm_total_ms_per_step":BG,"coverage_pct_of_backward_gemm":round(cov_device/BG*100,1),
-   "covered_headroom_ms_per_step":round(cov_head,2),"uncovered_device_ms":round(BG-cov_device,2),
+   "covered_headroom_ms_per_step":round(cov_head,2),
+   "single_step_covered_device_ms":round(cov_device,2),
+   "three_step_mean_backward_gemm_ms":BG,
+   "coverage_note":"single-step rows (718.73 ms, step 2) and the 3-step mean (772.12 ms) are DIFFERENT windows; no coverage % and no 'uncovered' ms is derived from them (the previously derived coverage percentage and uncovered-ms figures are removed).",
    "hot6_device_ms":round(sum(r["device_ms"] for r in hot6),2),"hot6_headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in hot6),2),
    "window_note":"the 100 per-shape rows come from ONE training step (kernel_efficiency_r36, step 2); 772.12 ms is the 3-step mean backward-GEMM time. 718.73/772.12 is reported as a RATIO BETWEEN DIFFERENT WINDOWS, not a same-window coverage percentage.",
    "retraction":"The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED. per-shape headroom = device_ms - FLOPs/peak is the ideal-device-time gap UNDER THE 139.2 REFERENCE ASSUMPTION; it is NOT an end-to-end ceiling.",
    "by_group":[
-     {"group":"long (token dim >= 4000)","n":sum(1 for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000),
-      "device_ms":round(sum(r["device_ms"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000),2),
-      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000),2),
-      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000)),
-      "calls":sum(r["count"] for r in bw_rows if max(r["shape"][0],r["shape"][1])>=4000)},
-     {"group":"mid (1400 <= token dim < 4000)","n":sum(1 for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000),
-      "device_ms":round(sum(r["device_ms"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000),2),
-      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000),2),
-      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000)),
-      "calls":sum(r["count"] for r in bw_rows if 1400<=max(r["shape"][0],r["shape"][1])<4000)},
-     {"group":"short (token dim < 1400)","n":sum(1 for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400),
-      "device_ms":round(sum(r["device_ms"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400),2),
-      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400),2),
-      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400)),
-      "calls":sum(r["count"] for r in bw_rows if max(r["shape"][0],r["shape"][1])<1400)}],
-   "rows":sorted([{k:r[k] for k in ("kind","shape","count","device_ms","flops_tflop","effective_tflops","ideal_ms_at_peak","headroom_ms_vs_peak","headroom_pct_of_shape_time")} for r in bw_rows],key=lambda x:-x["headroom_ms_vs_peak"])}
+     {"group":"long (token dim >= 4000)","n":sum(1 for r in bw_rows if r["token_dim"]>=4000),
+      "device_ms":round(sum(r["device_ms"] for r in bw_rows if r["token_dim"]>=4000),2),
+      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if r["token_dim"]>=4000),2),
+      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if r["token_dim"]>=4000)),
+      "calls":sum(r["count"] for r in bw_rows if r["token_dim"]>=4000),
+      "top_shapes":sorted([{k2:r[k2] for k2 in ("kind","shape","count","device_ms","headroom_ms_vs_peak")} for r in bw_rows if r["token_dim"]>=4000],key=lambda x:-x["headroom_ms_vs_peak"])[:5]},
+     {"group":"mid (1400 <= token dim < 4000)","n":sum(1 for r in bw_rows if 1400<=r["token_dim"]<4000),
+      "device_ms":round(sum(r["device_ms"] for r in bw_rows if 1400<=r["token_dim"]<4000),2),
+      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if 1400<=r["token_dim"]<4000),2),
+      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if 1400<=r["token_dim"]<4000)),
+      "calls":sum(r["count"] for r in bw_rows if 1400<=r["token_dim"]<4000),
+      "top_shapes":sorted([{k2:r[k2] for k2 in ("kind","shape","count","device_ms","headroom_ms_vs_peak")} for r in bw_rows if 1400<=r["token_dim"]<4000],key=lambda x:-x["headroom_ms_vs_peak"])[:5]},
+     {"group":"short (token dim < 1400)","n":sum(1 for r in bw_rows if r["token_dim"]<1400),
+      "device_ms":round(sum(r["device_ms"] for r in bw_rows if r["token_dim"]<1400),2),
+      "headroom_ms":round(sum(r["headroom_ms_vs_peak"] for r in bw_rows if r["token_dim"]<1400),2),
+      "kinds":dict(collections.Counter(r["kind"] for r in bw_rows if r["token_dim"]<1400)),
+      "calls":sum(r["count"] for r in bw_rows if r["token_dim"]<1400),
+      "top_shapes":sorted([{k2:r[k2] for k2 in ("kind","shape","count","device_ms","headroom_ms_vs_peak")} for r in bw_rows if r["token_dim"]<1400],key=lambda x:-x["headroom_ms_vs_peak"])[:5]}],
+   "token_dim_rule":"dW: reduction dim K (= A[1], the token dim of x) ; dX: output row dim M (= A[0]) ; loss matmul: listed separately. The old max(M,K) rule counted the fixed FFN feature dim 4096 as a long sequence (review BqpXfeg item 4).",
+   "rows":sorted([{k:r[k] for k in ("kind","shape","token_dim","count","device_ms","flops_tflop","effective_tflops","ideal_ms_at_peak","headroom_ms_vs_peak","headroom_pct_of_shape_time")} for r in bw_rows],key=lambda x:-x["headroom_ms_vs_peak"])}
 
 # sanity: backward GEMM hotspots should land ~88-129 TFLOP/s (63%-93% of 139.2)
 hot=[r for r in rows if r["phase"]=="backward" and r["device_ms"]>=25]
@@ -278,7 +285,7 @@ hot_eff=out["sanity_backward_gemm_hot"]
 dw_ai=[x["native"]["ai"] for x in dw12]; dw_bw=[x["native"]["bw_lb_gbps"] for x in dw12]
 idle=[crit[s]["idle_ms"] for s in crit]
 out["conclusion"]={
- "situation_1_compute_efficiency":f"6 hot backward-GEMM shapes run at {hot_eff['eff_min']}-{hot_eff['eff_max']} TFLOP/s = {hot_eff['util_min']*100:.0f}%-{hot_eff['util_max']*100:.0f}% of the {PEAK} reference. Per-shape headroom (device_ms - FLOPs/139.2e12) over the {out['headroom_by_shape']['n_rows']} measured backward dW/dX rows = {out['headroom_by_shape']['covered_headroom_ms_per_step']} ms/step, covering {out['headroom_by_shape']['covered_device_ms_per_step']} ms of the 772 ms backward GEMM ({out['headroom_by_shape']['coverage_pct_of_backward_gemm']}%); {out['headroom_by_shape']['uncovered_device_ms']} ms is not measured per shape. The earlier 'up to 285 ms/step' extrapolation from 6 rows is RETRACTED.",
+ "situation_1_compute_efficiency":f"6 hot backward-GEMM shapes run at {hot_eff['eff_min']}-{hot_eff['eff_max']} TFLOP/s = {hot_eff['util_min']*100:.0f}%-{hot_eff['util_max']*100:.0f}% of the {PEAK} reference. Per-shape headroom (device_ms - FLOPs/139.2e12, the ideal-device-time gap under that reference, NOT an end-to-end ceiling) over {out['headroom_by_shape']['n_rows']} backward dW/dX rows of step 2 = {out['headroom_by_shape']['covered_headroom_ms_per_step']} ms; by token-dim group: " + "; ".join(f"{g['group']}: {g['headroom_ms']} ms over {g['device_ms']} ms device ({g['n']} rows)" for g in out['headroom_by_shape']['by_group']) + ". The 3-step mean backward GEMM (772.12 ms) is a different window and is not divided by these single-step rows. The earlier 'up to 285 ms/step' extrapolation is RETRACTED.",
  "situation_2_logical_traffic":"dW arithmetic intensity 656-706 FLOP/byte; logical byte rate (each operand read/written once) 124-126 GB/s on the S=512 shapes. Whether the GEMMs are compute-bound is a HYPOTHESIS TO VERIFY: it needs real HBM counters (BLOCKED) because cache reuse and repeated reads change the actual traffic. No 'strongly compute-bound' claim is made.",
  "situation_2_contiguous_copy":f"the .contiguous() copy FlagGems mm performs on a transposed A adds {dw12[0]['flaggems_contiguous_copy']['extra_bytes_lb_mb'] if dw12 else 0} MB (S=512 dW-up) and {dw12[1]['flaggems_contiguous_copy']['extra_bytes_lb_mb'] if len(dw12)>1 else 0} MB (S=512 dW-down) of extra read+write per shape per step - a real extra traffic item, counted SEPARATELY from the GEMM body; it is why native+contiguous() loses (+32.4 ms median) while FlagGems still gains (its Triton kernel is faster on the contiguous operand by more than the copy costs)",
  "situation_3_idle_large":f"per-step idle {min(idle):.0f}-{max(idle):.0f} ms ({crit['s2']['busy_pct']:.1f}-{crit['s4']['busy_pct']:.1f}% busy) - idle is 8%-12% of the step and is NOT attributable without a host swimlane (needs counters/platform)",

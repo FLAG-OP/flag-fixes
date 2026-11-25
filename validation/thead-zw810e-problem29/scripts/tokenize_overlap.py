@@ -61,37 +61,47 @@ def micro_inline(batch,rec):
     outs={}; ev=[]
     for k in ORDER:
         feats,tt0,tt1=tokenize(batch[k]); x,h0,h1=h2d(feats); y,c0,c1=compute(x)
-        outs[k]=y; ev.append({"group":k,"tokenize":[round(tt0,3),round(tt1,3)],"h2d":[round(h0,3),round(h1,3)],"compute":[round(c0,3),round(c1,3)],"overlap_ms":0.0})
+        outs[k]=y; ev.append({"group":k,"tokenize":[round(tt0,3),round(tt1,3)],"h2d":[round(h0,3),round(h1,3)],"compute":[round(c0,3),round(c1,3)],"overlap_ms":0.0,
+                   "fed_hash":hashlib.sha256(x["input_ids"].cpu().numpy().tobytes()+x["attention_mask"].cpu().numpy().tobytes()).hexdigest()[:16]})
     return loss_of(outs["anchor"],outs["positive"],[outs[n] for n in ORDER[2:]]),ev
 def micro_overlap(batch,rec):
     """host worker thread tokenizes group i+1 while the device runs group i.
-    Only timestamps are recorded here; overlap is computed AFTERWARDS from the
-    interval intersection (tokenize[i+1] vs compute[i]) - no queue replay."""
-    outs={}; ev=[]; q=queue.Queue()
-    def worker(k): q.put((k,)+tokenize(batch[k]))
-    feats,tt0,tt1=tokenize(batch[ORDER[0]])
-    th=threading.Thread(target=worker,args=(ORDER[1],)); th.start()
+    FIX (review BqpXfeg item 1): results are fetched BY GROUP NAME from a dict of
+    futures, never from a shared FIFO. The old shared queue could return whichever
+    worker finished first (e.g. negative_1 before positive) and that group's
+    features were then used for the wrong slot -> wrong loss. Each group also
+    records the sha256 of the input_ids / attention_mask actually fed to the model."""
+    import concurrent.futures
+    outs={}; ev=[]; fut={}
+    ex=concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    def tk(k): return (k,)+tokenize(batch[k])
+    fut[ORDER[0]]=ex.submit(tk,ORDER[0])
     for i,k in enumerate(ORDER):
-        if i>0:
-            kk,feats,tt0,tt1=q.get(); th.join()
+        if i+1<len(ORDER) and ORDER[i+1] not in fut: fut[ORDER[i+1]]=ex.submit(tk,ORDER[i+1])
+        kk,feats,tt0,tt1=fut[k].result()           # BY GROUP NAME
+        assert kk==k, f"sample mismatch: expected {k} got {kk}"
         x,h0,h1=h2d(feats)
-        if i+2<len(ORDER):
-            th=threading.Thread(target=worker,args=(ORDER[i+2],)); th.start()
+        if i+2<len(ORDER) and ORDER[i+2] not in fut: fut[ORDER[i+2]]=ex.submit(tk,ORDER[i+2])
         y,c0,c1=compute(x); outs[k]=y
-        ev.append({"group":k,"tokenize":[round(tt0,3),round(tt1,3)],"h2d":[round(h0,3),round(h1,3)],"compute":[round(c0,3),round(c1,3)]})
+        ev.append({"group":k,"tokenize":[round(tt0,3),round(tt1,3)],"h2d":[round(h0,3),round(h1,3)],"compute":[round(c0,3),round(c1,3)],
+                   "fed_hash":hashlib.sha256(x["input_ids"].cpu().numpy().tobytes()+x["attention_mask"].cpu().numpy().tobytes()).hexdigest()[:16]})
+    ex.shutdown(wait=True)
     return loss_of(outs["anchor"],outs["positive"],[outs[n] for n in ORDER[2:]]),ev
 def step(rec):
     t0=now(); optimizer.zero_grad(set_to_none=True)     # ONCE per step
-    evs=[]; losses=[]
+    evs=[]; losses=[]; batches=[]
     for micro in range(accum):
-        batch=next(stream)
+        batch=next(stream); batches.append(batch)
         loss,ev=(micro_inline if a.mode=="inline" else micro_overlap)(batch,rec)
         (loss/accum).backward()                          # accumulate 4 micros
-        losses.append(float(loss.detach())); evs.append({"micro":micro,"events":ev,
-            "input_hash":hashlib.sha256("|".join("|".join(batch[k]) for k in ORDER).encode()).hexdigest()[:16],
-            "valid_tokens":sum(sum(sum(1 for z in m if z==1) for m in tok(batch[k],padding=True,truncation=True,max_length=ML,return_tensors=None)["attention_mask"]) for k in ORDER)})
+        losses.append(float(loss.detach()))
+        evs.append({"micro":micro,"events":ev,"input_hash":hashlib.sha256("|".join("|".join(batch[k]) for k in ORDER).encode()).hexdigest()[:16]})
     torch.nn.utils.clip_grad_norm_(trainable,1.0); optimizer.step(); torch.cuda.synchronize()
-    return round(now()-t0,1),losses,evs
+    ms=round(now()-t0,1)
+    # token counting / hashing moved OUT of the timed region (review item 2)
+    for mi,b in zip(evs,batches):
+        mi["valid_tokens"]=sum(sum(sum(1 for z in m if z==1) for m in tok(b[k],padding=True,truncation=True,max_length=ML,return_tensors=None)["attention_mask"]) for k in ORDER)
+    return ms,losses,evs
 for _ in range(2): step(False)
 rounds=[step(True) for _ in range(a.rounds)]
 def overlap_of(evs):
