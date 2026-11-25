@@ -33,7 +33,8 @@ acc_hit_step_r46_rebuild_check), which showed up as fake grad max_rel 215.
 --candidate prefetch_loss_reimpl_run1
                                   the same re-implementation invoked OUTSIDE autocast exactly as
                                   round-56 / run-1 did (only the model call under autocast), so the
-                                  logits matmul runs in fp32 instead of the entry's autocast bf16
+                                  logits matmul runs in fp32 instead of the entry's autocast bf16.
+                                  The native runs of this process still use the entry path (autocast)
 --candidate h2d_nonblocking       move_features through pinned buffers + non_blocking=True
                                   (same bytes, same kernels, same order)
 """
@@ -85,8 +86,8 @@ stream=iter(loaders[0])
 EMB=set(n for n,_ in model.named_parameters() if n.endswith(("word_embeddings.weight","position_embeddings.weight","token_type_embeddings.weight")))
 def inline_loss(b): return loss_for_batch(model,processor,str(cfg.task),b,dev,TEMP)
 OUTER_AUTOCAST=True
-def micro_step(loss_fn,b):
-    if OUTER_AUTOCAST:
+def micro_step(loss_fn,b,autocast=True):
+    if autocast:
         with autocast_context(dev,"bf16"):
             raw=loss_fn(b); loss=raw/accum
     else:
@@ -155,11 +156,11 @@ def param_hash(params,skip):
         if skip and n in skip: continue
         t=params[n].contiguous(); h.update(n.encode()); h.update(t.view(torch.uint8).numpy().tobytes())
     return h.hexdigest()
-def run(snap,loss_fn):
+def run(snap,loss_fn,autocast=True):
     model.load_state_dict(copy.deepcopy(snap["model"])); optimizer.load_state_dict(copy.deepcopy(snap["opt"]))
     torch.set_rng_state(snap["rng_cpu"]); torch.cuda.set_rng_state(snap["rng_cuda"])
     optimizer.zero_grad(set_to_none=True); t0=time.perf_counter()
-    losses=[micro_step(loss_fn,b) for b in snap["batches"]]
+    losses=[micro_step(loss_fn,b,autocast) for b in snap["batches"]]
     ms=(time.perf_counter()-t0)*1e3
     grads={n:p.grad.detach().to("cpu") for n,p in model.named_parameters() if p.grad is not None}
     gn=float(torch.nn.utils.clip_grad_norm_(trainable,GN)); optimizer.step()
@@ -206,7 +207,7 @@ snap={"model":copy.deepcopy(model.state_dict()),"opt":copy.deepcopy(optimizer.st
       "rng_cpu":torch.get_rng_state(),"rng_cuda":torch.cuda.get_rng_state(),"batches":copy.deepcopy(batches)}
 NAT=[run(snap,inline_loss) for _ in range(a.native_runs)]
 install()
-CAND=[run(snap,cand_loss) for _ in range(a.candidate_runs)]
+CAND=[run(snap,cand_loss,OUTER_AUTOCAST) for _ in range(a.candidate_runs)]
 pairs=[]
 for i in range(len(NAT)):
     for j in range(i+1,len(NAT)): pairs.append(pair(NAT[i],NAT[j],f"native{i}",f"native{j}","native_vs_native"))

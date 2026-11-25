@@ -16,7 +16,7 @@
   "pairs": 3,
   "dense_tensors_identical_in_all_pairs": true,
   "pairs_with_embedding_table_diffs": 3,
-  "embedding_table_grad_max_abs": 0.00019646
+  "embedding_table_grad_max_abs": 0.00015545
  },
  "dense_param_tensors": 386,
  "candidates": {
@@ -62,679 +62,15 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00015736,
-       "max_rel": 1.282649,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 3.815e-05,
-       "max_rel": 0.003299,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.66e-06,
-       "max_rel": 1.28102,
-       "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "native_vs_native",
-     "a": "native0",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00019646,
-       "max_rel": 1.601368,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 2.08e-06,
-       "max_rel": 1.602711,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "native_vs_native",
-     "a": "native1",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00019646,
-       "max_rel": 1.601368,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 2.08e-06,
-       "max_rel": 1.602711,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "dw_route0",
-     "b": "native0",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00015736,
-       "max_rel": 1.282649,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 3.815e-05,
-       "max_rel": 0.003299,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.66e-06,
-       "max_rel": 1.28102,
-       "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "dw_route0",
-     "b": "native1",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 7.63e-06,
-       "max_rel": 0.059524,
+       "max_abs": 2.527e-05,
+       "max_rel": 0.197173,
        "over_2pct": 1,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 1,
        "differing": [
         "backbone.embeddings.position_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 1.91e-06,
-       "max_rel": 0.000165,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 7,
-       "max_abs": 8e-08,
-       "max_rel": 0.060519,
-       "over_2pct": 1,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "dw_route0",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00019646,
-       "max_rel": 1.601368,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 2.08e-06,
-       "max_rel": 1.602711,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "dw_route1",
-     "b": "native0",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00015736,
-       "max_rel": 1.282649,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 3.815e-05,
-       "max_rel": 0.003299,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.66e-06,
-       "max_rel": 1.28102,
-       "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "dw_route1",
-     "b": "native1",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 5.722e-05,
-       "max_rel": 0.348837,
-       "over_2pct": 1,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
        ]
       }
      },
@@ -777,15 +113,15 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 7,
-       "max_abs": 6.1e-07,
-       "max_rel": 0.353448,
+       "max_abs": 2.6e-07,
+       "max_rel": 0.195312,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 2,
        "differing": [
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq"
        ]
       }
      },
@@ -793,8 +129,8 @@
      "param_sha256_all_equal": true
     },
     {
-     "kind": "candidate_vs_native",
-     "a": "dw_route1",
+     "kind": "native_vs_native",
+     "a": "native0",
      "b": "native2",
      "loss_equal": true,
      "loss_max_abs": 0.0,
@@ -817,8 +153,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00019646,
-       "max_rel": 1.601368,
+       "max_abs": 0.00015545,
+       "max_rel": 1.172662,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -851,6 +187,197 @@
        "nontensor_mismatch": 0,
        "n_differing": 1,
        "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.64e-06,
+       "max_rel": 1.172872,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "native_vs_native",
+     "a": "native1",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00015545,
+       "max_rel": 1.172662,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.64e-06,
+       "max_rel": 1.172872,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "dw_route0",
+     "b": "native0",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 8.106e-05,
+       "max_rel": 0.632441,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -870,8 +397,479 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 2.08e-06,
-       "max_rel": 1.602711,
+       "max_abs": 8.6e-07,
+       "max_rel": 0.63339,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "dw_route0",
+     "b": "native1",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 8.106e-05,
+       "max_rel": 0.632441,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 8.6e-07,
+       "max_rel": 0.63339,
+       "over_2pct": 3,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "dw_route0",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00015545,
+       "max_rel": 1.172662,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.64e-06,
+       "max_rel": 1.172872,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "dw_route1",
+     "b": "native0",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 0.0002079,
+       "max_rel": 1.026786,
+       "over_2pct": 1,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 7,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.024703,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "dw_route1",
+     "b": "native1",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 0.0002079,
+       "max_rel": 1.026786,
+       "over_2pct": 1,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 7,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.024703,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "dw_route1",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.0002079,
+       "max_rel": 1.172662,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.172872,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -912,8 +910,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 5.722e-05,
-       "max_rel": 0.34204,
+       "max_abs": 0.0002079,
+       "max_rel": 1.175595,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -938,15 +936,16 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 1.91e-06,
-       "max_rel": 0.000165,
+       "bitwise_identical": 1,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 1,
+       "n_differing": 2,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight"
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
        ]
       }
      },
@@ -965,8 +964,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 6.1e-07,
-       "max_rel": 0.338925,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.171875,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -993,7 +992,7 @@
     "pairs": 3,
     "dense_tensors_identical_in_all_pairs": true,
     "pairs_with_embedding_table_diffs": 3,
-    "embedding_table_grad_max_abs": 0.00019646
+    "embedding_table_grad_max_abs": 0.00015545
    },
    "candidate_pairs": 7,
    "dense_grad_tensors_differing_max_per_pair": 0,
@@ -1013,11 +1012,11 @@
     "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202"
    ],
    "step_ms": [
-    1880.6,
-    1882.9,
-    1892.5,
-    2911.6,
-    1863.3
+    1882.3,
+    1884.0,
+    1880.0,
+    2886.8,
+    1858.3
    ],
    "losses_micro": [
     [
@@ -1103,8 +1102,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00039339,
-       "max_rel": 3.069196,
+       "max_abs": 0.0001564,
+       "max_rel": 1.155134,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1130,14 +1129,14 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 4.578e-05,
-       "max_rel": 0.003959,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 1,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight"
+        "backbone.embeddings.word_embeddings.weight"
        ]
       }
      },
@@ -1156,8 +1155,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 4.15e-06,
-       "max_rel": 3.06173,
+       "max_abs": 1.65e-06,
+       "max_rel": 1.156745,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1198,8 +1197,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00013733,
-       "max_rel": 0.618004,
+       "max_abs": 0.0001564,
+       "max_rel": 1.155134,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1224,15 +1223,14 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 4.578e-05,
-       "max_rel": 0.003959,
+       "bitwise_identical": 2,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 2,
+       "n_differing": 1,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -1252,8 +1250,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.43e-06,
-       "max_rel": 0.616096,
+       "max_abs": 1.65e-06,
+       "max_rel": 1.156745,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1294,8 +1292,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00039339,
-       "max_rel": 1.257622,
+       "max_abs": 0.00012684,
+       "max_rel": 1.033893,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1321,8 +1319,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 1.91e-06,
-       "max_rel": 0.000165,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1347,9 +1345,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 4.15e-06,
-       "max_rel": 1.25905,
-       "over_2pct": 4,
+       "max_abs": 1.34e-06,
+       "max_rel": 1.034007,
+       "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -1389,8 +1387,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00013733,
-       "max_rel": 0.932836,
+       "max_abs": 0.0001564,
+       "max_rel": 1.249611,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1416,14 +1414,14 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 4.578e-05,
-       "max_rel": 0.003959,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 1,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight"
+        "backbone.embeddings.word_embeddings.weight"
        ]
       }
      },
@@ -1442,8 +1440,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.43e-06,
-       "max_rel": 0.930607,
+       "max_abs": 1.65e-06,
+       "max_rel": 1.248887,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1484,8 +1482,293 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00039339,
-       "max_rel": 3.069196,
+       "max_abs": 7.504e-05,
+       "max_rel": 0.611688,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 7.9e-07,
+       "max_rel": 0.610352,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "h2d_nonblocking0",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00012684,
+       "max_rel": 1.033893,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.34e-06,
+       "max_rel": 1.034007,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "h2d_nonblocking1",
+     "b": "native0",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.0001564,
+       "max_rel": 1.249611,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.65e-06,
+       "max_rel": 1.248887,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "h2d_nonblocking1",
+     "b": "native1",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 5.722e-05,
+       "max_rel": 0.348837,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1535,291 +1818,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 4.15e-06,
-       "max_rel": 3.06173,
-       "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "h2d_nonblocking0",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.26819,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 1.91e-06,
-       "max_rel": 0.000165,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 6.4e-07,
-       "max_rel": 0.264246,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "h2d_nonblocking1",
-     "b": "native0",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00013733,
-       "max_rel": 0.932836,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 4.578e-05,
-       "max_rel": 0.003959,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.43e-06,
-       "max_rel": 0.930607,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "h2d_nonblocking1",
-     "b": "native1",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00039339,
-       "max_rel": 3.069196,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 4.15e-06,
-       "max_rel": 3.06173,
+       "max_abs": 6.1e-07,
+       "max_rel": 0.353448,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1860,8 +1860,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.357587,
+       "max_abs": 0.00012684,
+       "max_rel": 1.033893,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1887,8 +1887,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 1.91e-06,
-       "max_rel": 0.000165,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1913,9 +1913,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 6.4e-07,
-       "max_rel": 0.35903,
-       "over_2pct": 4,
+       "max_abs": 1.34e-06,
+       "max_rel": 1.034007,
+       "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -1955,8 +1955,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 4.387e-05,
-       "max_rel": 0.357587,
+       "max_abs": 7.504e-05,
+       "max_rel": 0.611688,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -1981,14 +1981,16 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
+       "bitwise_identical": 2,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.word_embeddings.weight"
+       ]
       }
      },
      "optimizer_state": {
@@ -2006,9 +2008,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 4.7e-07,
-       "max_rel": 0.35903,
-       "over_2pct": 2,
+       "max_abs": 7.9e-07,
+       "max_rel": 0.610352,
+       "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -2021,7 +2023,7 @@
       }
      },
      "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
+     "param_sha256_all_equal": false
     }
    ],
    "dense_param_tensors": 386,
@@ -2034,7 +2036,7 @@
     "pairs": 3,
     "dense_tensors_identical_in_all_pairs": true,
     "pairs_with_embedding_table_diffs": 3,
-    "embedding_table_grad_max_abs": 0.00039339
+    "embedding_table_grad_max_abs": 0.0001564
    },
    "candidate_pairs": 7,
    "dense_grad_tensors_differing_max_per_pair": 0,
@@ -2054,11 +2056,11 @@
     "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202"
    ],
    "step_ms": [
-    1880.1,
-    1879.5,
-    1886.2,
-    1880.3,
-    1879.3
+    1876.0,
+    1875.0,
+    1887.0,
+    1876.6,
+    1878.1
    ],
    "losses_micro": [
     [
@@ -2144,8 +2146,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00012207,
-       "max_rel": 0.967817,
+       "max_abs": 0.00020218,
+       "max_rel": 1.055271,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2170,14 +2172,15 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 2,
+       "bitwise_identical": 1,
        "max_abs": 6.104e-05,
        "max_rel": 0.005279,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 1,
+       "n_differing": 2,
        "differing": [
+        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -2197,8 +2200,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.25e-06,
-       "max_rel": 0.965074,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.054113,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2239,8 +2242,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00010586,
-       "max_rel": 0.862873,
+       "max_abs": 0.0003252,
+       "max_rel": 2.537203,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2292,8 +2295,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.11e-06,
-       "max_rel": 0.858801,
+       "max_abs": 3.43e-06,
+       "max_rel": 2.536312,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2334,9 +2337,104 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00012207,
-       "max_rel": 0.967817,
+       "max_abs": 0.0003252,
+       "max_rel": 2.537203,
        "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.433e-05,
+       "max_rel": 0.002969,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 3.43e-06,
+       "max_rel": 2.536312,
+       "over_2pct": 3,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_faithful0",
+     "b": "native0",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00020218,
+       "max_rel": 1.434235,
+       "over_2pct": 1,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 2,
@@ -2368,6 +2466,102 @@
        "nontensor_mismatch": 0,
        "n_differing": 1,
        "differing": [
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.430377,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_faithful0",
+     "b": "native1",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00011826,
+       "max_rel": 0.922619,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 3.433e-05,
+       "max_rel": 0.002969,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -2388,200 +2582,8 @@
        "tensors": 9,
        "bitwise_identical": 5,
        "max_abs": 1.25e-06,
-       "max_rel": 0.965074,
+       "max_rel": 0.922061,
        "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_faithful0",
-     "b": "native0",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00015545,
-       "max_rel": 0.853503,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.64e-06,
-       "max_rel": 0.853081,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_faithful0",
-     "b": "native1",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00015545,
-       "max_rel": 0.967817,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.64e-06,
-       "max_rel": 0.965074,
-       "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -2621,8 +2623,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00015545,
-       "max_rel": 0.862873,
+       "max_abs": 0.0003252,
+       "max_rel": 2.537203,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2647,15 +2649,14 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
+       "bitwise_identical": 2,
+       "max_abs": 3.052e-05,
+       "max_rel": 0.002639,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 2,
+       "n_differing": 1,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -2675,9 +2676,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.64e-06,
-       "max_rel": 0.858801,
-       "over_2pct": 4,
+       "max_abs": 3.43e-06,
+       "max_rel": 2.536312,
+       "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -2717,8 +2718,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00027466,
-       "max_rel": 0.805288,
+       "max_abs": 0.00020218,
+       "max_rel": 1.434235,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2743,14 +2744,15 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 2,
+       "bitwise_identical": 1,
        "max_abs": 6.104e-05,
        "max_rel": 0.005279,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 1,
+       "n_differing": 2,
        "differing": [
+        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -2770,8 +2772,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 2.92e-06,
-       "max_rel": 0.805851,
+       "max_abs": 2.18e-06,
+       "max_rel": 1.430377,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -2812,198 +2814,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00027466,
-       "max_rel": 0.967817,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 2.92e-06,
-       "max_rel": 0.965074,
-       "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_faithful1",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00027466,
-       "max_rel": 0.862873,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 2.92e-06,
-       "max_rel": 0.858801,
-       "over_2pct": 3,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_candidate",
-     "a": "prefetch_faithful0",
-     "b": "prefetch_faithful1",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00027466,
-       "max_rel": 1.302083,
+       "max_abs": 0.00011826,
+       "max_rel": 0.922619,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3055,9 +2867,197 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 2.92e-06,
-       "max_rel": 1.305434,
-       "over_2pct": 4,
+       "max_abs": 1.25e-06,
+       "max_rel": 0.922061,
+       "over_2pct": 3,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_faithful1",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 0.0003252,
+       "max_rel": 2.537203,
+       "over_2pct": 1,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 7,
+       "max_abs": 3.43e-06,
+       "max_rel": 2.536312,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_candidate",
+     "a": "prefetch_faithful0",
+     "b": "prefetch_faithful1",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00010324,
+       "max_rel": 0.805432,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.09e-06,
+       "max_rel": 0.806008,
+       "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -3083,7 +3083,7 @@
     "pairs": 3,
     "dense_tensors_identical_in_all_pairs": true,
     "pairs_with_embedding_table_diffs": 3,
-    "embedding_table_grad_max_abs": 0.00012207
+    "embedding_table_grad_max_abs": 0.0003252
    },
    "candidate_pairs": 7,
    "dense_grad_tensors_differing_max_per_pair": 0,
@@ -3103,11 +3103,11 @@
     "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202"
    ],
    "step_ms": [
-    1875.6,
-    1880.0,
-    1884.8,
-    1907.7,
-    1903.7
+    1877.5,
+    1875.1,
+    1884.9,
+    1912.0,
+    1913.3
    ],
    "losses_micro": [
     [
@@ -3193,9 +3193,9 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00032806,
-       "max_rel": 1.589222,
-       "over_2pct": 2,
+       "max_abs": 0.00011826,
+       "max_rel": 0.922619,
+       "over_2pct": 1,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 2,
@@ -3219,14 +3219,16 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
+       "bitwise_identical": 2,
+       "max_abs": 1.91e-06,
+       "max_rel": 0.000165,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
       }
      },
      "optimizer_state": {
@@ -3244,9 +3246,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 3.46e-06,
-       "max_rel": 1.583683,
-       "over_2pct": 4,
+       "max_abs": 1.25e-06,
+       "max_rel": 0.922061,
+       "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -3259,7 +3261,7 @@
       }
      },
      "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
+     "param_sha256_all_equal": false
     },
     {
      "kind": "native_vs_native",
@@ -3286,8 +3288,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00012207,
-       "max_rel": 0.981421,
+       "max_abs": 0.0001049,
+       "max_rel": 0.78497,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3313,8 +3315,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 1.2e-07,
-       "max_rel": 1e-05,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3339,9 +3341,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.3e-06,
-       "max_rel": 0.976562,
-       "over_2pct": 4,
+       "max_abs": 1.13e-06,
+       "max_rel": 0.781938,
+       "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -3381,8 +3383,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00032806,
-       "max_rel": 1.230216,
+       "max_abs": 0.00011826,
+       "max_rel": 0.922619,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3408,8 +3410,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 2,
-       "max_abs": 1.2e-07,
-       "max_rel": 1e-05,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3434,385 +3436,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 3.46e-06,
-       "max_rel": 1.234043,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_loss_reimpl0",
-     "b": "native0",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 8.011e-05,
-       "max_rel": 0.61756,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 8.5e-07,
-       "max_rel": 0.613446,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_loss_reimpl0",
-     "b": "native1",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00032806,
-       "max_rel": 1.589222,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 3.46e-06,
-       "max_rel": 1.583683,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_loss_reimpl0",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 0.00012207,
-       "max_rel": 0.981421,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 1.2e-07,
-       "max_rel": 1e-05,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 1.3e-06,
-       "max_rel": 0.976562,
-       "over_2pct": 4,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 4,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight.exp_avg",
-        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": false
-    },
-    {
-     "kind": "candidate_vs_native",
-     "a": "prefetch_loss_reimpl1",
-     "b": "native0",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.5,
-      9.5
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 7.915e-05,
-       "max_rel": 0.61756,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 2.289e-05,
-       "max_rel": 0.00198,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 5,
-       "max_abs": 8.3e-07,
-       "max_rel": 0.613446,
+       "max_abs": 1.25e-06,
+       "max_rel": 0.922061,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3830,7 +3455,102 @@
     },
     {
      "kind": "candidate_vs_native",
-     "a": "prefetch_loss_reimpl1",
+     "a": "prefetch_loss_reimpl0",
+     "b": "native0",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00010729,
+       "max_rel": 0.837054,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.13e-06,
+       "max_rel": 0.837299,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_loss_reimpl0",
      "b": "native1",
      "loss_equal": true,
      "loss_max_abs": 0.0,
@@ -3853,8 +3573,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00032806,
-       "max_rel": 1.589222,
+       "max_abs": 0.00011826,
+       "max_rel": 0.922619,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3880,8 +3600,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 2.289e-05,
-       "max_rel": 0.00198,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3907,8 +3627,292 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 3.46e-06,
-       "max_rel": 1.583683,
+       "max_abs": 1.25e-06,
+       "max_rel": 0.922061,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_loss_reimpl0",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00010729,
+       "max_rel": 0.837054,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.13e-06,
+       "max_rel": 0.837299,
+       "over_2pct": 4,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_loss_reimpl1",
+     "b": "native0",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.431548,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 3,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 6.6e-07,
+       "max_rel": 0.434639,
+       "over_2pct": 3,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": true
+    },
+    {
+     "kind": "candidate_vs_native",
+     "a": "prefetch_loss_reimpl1",
+     "b": "native1",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00011826,
+       "max_rel": 0.922619,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 1.91e-06,
+       "max_rel": 0.000165,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.25e-06,
+       "max_rel": 0.922061,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3949,8 +3953,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00012207,
-       "max_rel": 0.981421,
+       "max_abs": 0.0001049,
+       "max_rel": 0.78497,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -3975,16 +3979,15 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 2.289e-05,
-       "max_rel": 0.00198,
+       "bitwise_identical": 2,
+       "max_abs": 6.104e-05,
+       "max_rel": 0.005279,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 2,
+       "n_differing": 1,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight",
-        "backbone.embeddings.word_embeddings.weight"
+        "backbone.embeddings.position_embeddings.weight"
        ]
       }
      },
@@ -4003,8 +4006,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.3e-06,
-       "max_rel": 0.976562,
+       "max_abs": 1.13e-06,
+       "max_rel": 0.781938,
        "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4045,8 +4048,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 8.011e-05,
-       "max_rel": 0.571429,
+       "max_abs": 0.00010729,
+       "max_rel": 0.837054,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4071,15 +4074,14 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 1,
-       "max_abs": 2.289e-05,
-       "max_rel": 0.00198,
+       "bitwise_identical": 2,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 2,
+       "n_differing": 1,
        "differing": [
-        "backbone.embeddings.position_embeddings.weight",
         "backbone.embeddings.word_embeddings.weight"
        ]
       }
@@ -4099,9 +4101,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 8.5e-07,
-       "max_rel": 0.575758,
-       "over_2pct": 3,
+       "max_abs": 1.13e-06,
+       "max_rel": 0.837299,
+       "over_2pct": 4,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -4127,7 +4129,7 @@
     "pairs": 3,
     "dense_tensors_identical_in_all_pairs": true,
     "pairs_with_embedding_table_diffs": 3,
-    "embedding_table_grad_max_abs": 0.00032806
+    "embedding_table_grad_max_abs": 0.00011826
    },
    "candidate_pairs": 7,
    "dense_grad_tensors_differing_max_per_pair": 0,
@@ -4147,11 +4149,11 @@
     "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202"
    ],
    "step_ms": [
-    1878.0,
-    1881.7,
-    1885.4,
-    1899.6,
-    1921.4
+    1877.3,
+    1886.0,
+    1886.1,
+    1903.5,
+    1894.0
    ],
    "losses_micro": [
     [
@@ -4219,8 +4221,8 @@
      "loss_equal": true,
      "loss_max_abs": 0.0,
      "grad_norm": [
-      9.9375,
-      9.9375
+      9.5,
+      9.5
      ],
      "grads": {
       "dense": {
@@ -4237,9 +4239,9 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00010037,
-       "max_rel": 0.642395,
-       "over_2pct": 1,
+       "max_abs": 7.82e-05,
+       "max_rel": 0.630769,
+       "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 2,
@@ -4288,9 +4290,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.01e-06,
-       "max_rel": 0.641572,
-       "over_2pct": 1,
+       "max_abs": 8.3e-07,
+       "max_rel": 0.634286,
+       "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -4312,98 +4314,8 @@
      "loss_equal": true,
      "loss_max_abs": 0.0,
      "grad_norm": [
-      9.9375,
-      9.9375
-     ],
-     "grads": {
-      "dense": {
-       "tensors": 386,
-       "bitwise_identical": 386,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 2,
-       "max_abs": 0.00056767,
-       "max_rel": 3.633118,
-       "over_2pct": 1,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 1,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight"
-       ]
-      }
-     },
-     "params": {
-      "dense": {
-       "tensors": 388,
-       "bitwise_identical": 388,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      }
-     },
-     "optimizer_state": {
-      "dense": {
-       "tensors": 1158,
-       "bitwise_identical": 1158,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
-       "over_2pct": 0,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
-      },
-      "embedding_tables": {
-       "tensors": 9,
-       "bitwise_identical": 7,
-       "max_abs": 5.71e-06,
-       "max_rel": 3.62571,
-       "over_2pct": 2,
-       "nonfinite": 0,
-       "nontensor_mismatch": 0,
-       "n_differing": 2,
-       "differing": [
-        "backbone.embeddings.word_embeddings.weight.exp_avg",
-        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
-       ]
-      }
-     },
-     "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
-    },
-    {
-     "kind": "native_vs_native",
-     "a": "native1",
-     "b": "native2",
-     "loss_equal": true,
-     "loss_max_abs": 0.0,
-     "grad_norm": [
-      9.9375,
-      9.9375
+      9.5,
+      9.5
      ],
      "grads": {
       "dense": {
@@ -4420,9 +4332,9 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00056767,
-       "max_rel": 3.633118,
-       "over_2pct": 1,
+       "max_abs": 0.00013447,
+       "max_rel": 0.970982,
+       "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 2,
@@ -4446,14 +4358,16 @@
       },
       "embedding_tables": {
        "tensors": 3,
-       "bitwise_identical": 3,
-       "max_abs": 0.0,
-       "max_rel": 0.0,
+       "bitwise_identical": 2,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 0,
-       "differing": []
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
       }
      },
      "optimizer_state": {
@@ -4471,9 +4385,9 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 5.71e-06,
-       "max_rel": 3.62571,
-       "over_2pct": 2,
+       "max_abs": 1.42e-06,
+       "max_rel": 0.969685,
+       "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
        "n_differing": 4,
@@ -4486,24 +4400,119 @@
       }
      },
      "param_sha256_dense_equal": true,
-     "param_sha256_all_equal": true
+     "param_sha256_all_equal": false
+    },
+    {
+     "kind": "native_vs_native",
+     "a": "native1",
+     "b": "native2",
+     "loss_equal": true,
+     "loss_max_abs": 0.0,
+     "grad_norm": [
+      9.5,
+      9.5
+     ],
+     "grads": {
+      "dense": {
+       "tensors": 386,
+       "bitwise_identical": 386,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 1,
+       "max_abs": 0.00013447,
+       "max_rel": 0.970982,
+       "over_2pct": 2,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 2,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight",
+        "backbone.embeddings.word_embeddings.weight"
+       ]
+      }
+     },
+     "params": {
+      "dense": {
+       "tensors": 388,
+       "bitwise_identical": 388,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 3,
+       "bitwise_identical": 2,
+       "max_abs": 3.815e-05,
+       "max_rel": 0.003299,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 1,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight"
+       ]
+      }
+     },
+     "optimizer_state": {
+      "dense": {
+       "tensors": 1158,
+       "bitwise_identical": 1158,
+       "max_abs": 0.0,
+       "max_rel": 0.0,
+       "over_2pct": 0,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 0,
+       "differing": []
+      },
+      "embedding_tables": {
+       "tensors": 9,
+       "bitwise_identical": 5,
+       "max_abs": 1.42e-06,
+       "max_rel": 0.969685,
+       "over_2pct": 3,
+       "nonfinite": 0,
+       "nontensor_mismatch": 0,
+       "n_differing": 4,
+       "differing": [
+        "backbone.embeddings.position_embeddings.weight.exp_avg",
+        "backbone.embeddings.position_embeddings.weight.exp_avg_sq",
+        "backbone.embeddings.word_embeddings.weight.exp_avg",
+        "backbone.embeddings.word_embeddings.weight.exp_avg_sq"
+       ]
+      }
+     },
+     "param_sha256_dense_equal": true,
+     "param_sha256_all_equal": false
     },
     {
      "kind": "candidate_vs_native",
      "a": "prefetch_loss_reimpl_run10",
      "b": "native0",
      "loss_equal": false,
-     "loss_max_abs": 0.02149665355682373,
+     "loss_max_abs": 0.010431647300720215,
      "grad_norm": [
       9.5,
-      9.9375
+      9.5
      ],
      "grads": {
       "dense": {
        "tensors": 386,
        "bitwise_identical": 0,
-       "max_abs": 0.6875,
-       "max_rel": 95.294113,
+       "max_abs": 0.00878906,
+       "max_rel": 141.463425,
        "over_2pct": 386,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4522,8 +4531,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 0,
-       "max_abs": 0.08081055,
-       "max_rel": 79.11377,
+       "max_abs": 0.00195312,
+       "max_rel": 1.466667,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4538,22 +4547,22 @@
      "params": {
       "dense": {
        "tensors": 388,
-       "bitwise_identical": 56,
+       "bitwise_identical": 92,
        "max_abs": 6.104e-05,
-       "max_rel": 0.071023,
-       "over_2pct": 28,
+       "max_rel": 0.064566,
+       "over_2pct": 13,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 332,
+       "n_differing": 296,
        "differing": [
-        "backbone.embeddings.LayerNorm.bias",
-        "backbone.encoder.layer.0.attention.output.LayerNorm.bias",
         "backbone.encoder.layer.0.attention.output.dense.bias",
         "backbone.encoder.layer.0.attention.output.dense.weight",
         "backbone.encoder.layer.0.attention.self.key.bias",
         "backbone.encoder.layer.0.attention.self.key.weight",
-        "backbone.encoder.layer.0.attention.self.query.bias",
-        "backbone.encoder.layer.0.attention.self.query.weight"
+        "backbone.encoder.layer.0.attention.self.query.weight",
+        "backbone.encoder.layer.0.attention.self.value.bias",
+        "backbone.encoder.layer.0.attention.self.value.weight",
+        "backbone.encoder.layer.0.intermediate.dense.weight"
        ]
       },
       "embedding_tables": {
@@ -4576,8 +4585,8 @@
       "dense": {
        "tensors": 1158,
        "bitwise_identical": 386,
-       "max_abs": 0.00717163,
-       "max_rel": 399.942169,
+       "max_abs": 9.155e-05,
+       "max_rel": 202.5009,
        "over_2pct": 772,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4596,8 +4605,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 3,
-       "max_abs": 0.00083733,
-       "max_rel": 97.580299,
+       "max_abs": 2.098e-05,
+       "max_rel": 1.466049,
        "over_2pct": 6,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4620,17 +4629,17 @@
      "a": "prefetch_loss_reimpl_run10",
      "b": "native1",
      "loss_equal": false,
-     "loss_max_abs": 0.02149665355682373,
+     "loss_max_abs": 0.010431647300720215,
      "grad_norm": [
       9.5,
-      9.9375
+      9.5
      ],
      "grads": {
       "dense": {
        "tensors": 386,
        "bitwise_identical": 0,
-       "max_abs": 0.6875,
-       "max_rel": 95.294113,
+       "max_abs": 0.00878906,
+       "max_rel": 141.463425,
        "over_2pct": 386,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4649,8 +4658,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 0,
-       "max_abs": 0.08081055,
-       "max_rel": 79.11377,
+       "max_abs": 0.00195312,
+       "max_rel": 1.466667,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4665,22 +4674,22 @@
      "params": {
       "dense": {
        "tensors": 388,
-       "bitwise_identical": 56,
+       "bitwise_identical": 92,
        "max_abs": 6.104e-05,
-       "max_rel": 0.071023,
-       "over_2pct": 28,
+       "max_rel": 0.064566,
+       "over_2pct": 13,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 332,
+       "n_differing": 296,
        "differing": [
-        "backbone.embeddings.LayerNorm.bias",
-        "backbone.encoder.layer.0.attention.output.LayerNorm.bias",
         "backbone.encoder.layer.0.attention.output.dense.bias",
         "backbone.encoder.layer.0.attention.output.dense.weight",
         "backbone.encoder.layer.0.attention.self.key.bias",
         "backbone.encoder.layer.0.attention.self.key.weight",
-        "backbone.encoder.layer.0.attention.self.query.bias",
-        "backbone.encoder.layer.0.attention.self.query.weight"
+        "backbone.encoder.layer.0.attention.self.query.weight",
+        "backbone.encoder.layer.0.attention.self.value.bias",
+        "backbone.encoder.layer.0.attention.self.value.weight",
+        "backbone.encoder.layer.0.intermediate.dense.weight"
        ]
       },
       "embedding_tables": {
@@ -4703,8 +4712,8 @@
       "dense": {
        "tensors": 1158,
        "bitwise_identical": 386,
-       "max_abs": 0.00717163,
-       "max_rel": 399.942169,
+       "max_abs": 9.155e-05,
+       "max_rel": 202.5009,
        "over_2pct": 772,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4723,8 +4732,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 3,
-       "max_abs": 0.00083733,
-       "max_rel": 97.580299,
+       "max_abs": 2.098e-05,
+       "max_rel": 1.466049,
        "over_2pct": 6,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4747,17 +4756,17 @@
      "a": "prefetch_loss_reimpl_run10",
      "b": "native2",
      "loss_equal": false,
-     "loss_max_abs": 0.02149665355682373,
+     "loss_max_abs": 0.010431647300720215,
      "grad_norm": [
       9.5,
-      9.9375
+      9.5
      ],
      "grads": {
       "dense": {
        "tensors": 386,
        "bitwise_identical": 0,
-       "max_abs": 0.6875,
-       "max_rel": 95.294113,
+       "max_abs": 0.00878906,
+       "max_rel": 141.463425,
        "over_2pct": 386,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4776,8 +4785,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 0,
-       "max_abs": 0.08081055,
-       "max_rel": 79.11377,
+       "max_abs": 0.00195312,
+       "max_rel": 1.466667,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4792,22 +4801,22 @@
      "params": {
       "dense": {
        "tensors": 388,
-       "bitwise_identical": 56,
+       "bitwise_identical": 92,
        "max_abs": 6.104e-05,
-       "max_rel": 0.071023,
-       "over_2pct": 28,
+       "max_rel": 0.064566,
+       "over_2pct": 13,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 332,
+       "n_differing": 296,
        "differing": [
-        "backbone.embeddings.LayerNorm.bias",
-        "backbone.encoder.layer.0.attention.output.LayerNorm.bias",
         "backbone.encoder.layer.0.attention.output.dense.bias",
         "backbone.encoder.layer.0.attention.output.dense.weight",
         "backbone.encoder.layer.0.attention.self.key.bias",
         "backbone.encoder.layer.0.attention.self.key.weight",
-        "backbone.encoder.layer.0.attention.self.query.bias",
-        "backbone.encoder.layer.0.attention.self.query.weight"
+        "backbone.encoder.layer.0.attention.self.query.weight",
+        "backbone.encoder.layer.0.attention.self.value.bias",
+        "backbone.encoder.layer.0.attention.self.value.weight",
+        "backbone.encoder.layer.0.intermediate.dense.weight"
        ]
       },
       "embedding_tables": {
@@ -4830,8 +4839,8 @@
       "dense": {
        "tensors": 1158,
        "bitwise_identical": 386,
-       "max_abs": 0.00717163,
-       "max_rel": 399.942169,
+       "max_abs": 9.155e-05,
+       "max_rel": 202.5009,
        "over_2pct": 772,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4850,8 +4859,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 3,
-       "max_abs": 0.00083733,
-       "max_rel": 97.580299,
+       "max_abs": 2.098e-05,
+       "max_rel": 1.466049,
        "over_2pct": 6,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4874,17 +4883,17 @@
      "a": "prefetch_loss_reimpl_run11",
      "b": "native0",
      "loss_equal": false,
-     "loss_max_abs": 0.02149665355682373,
+     "loss_max_abs": 0.010431647300720215,
      "grad_norm": [
       9.5,
-      9.9375
+      9.5
      ],
      "grads": {
       "dense": {
        "tensors": 386,
        "bitwise_identical": 0,
-       "max_abs": 0.6875,
-       "max_rel": 95.294113,
+       "max_abs": 0.00878906,
+       "max_rel": 141.463425,
        "over_2pct": 386,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4903,8 +4912,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 0,
-       "max_abs": 0.08081055,
-       "max_rel": 79.11377,
+       "max_abs": 0.00195312,
+       "max_rel": 1.466667,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4919,22 +4928,22 @@
      "params": {
       "dense": {
        "tensors": 388,
-       "bitwise_identical": 56,
+       "bitwise_identical": 92,
        "max_abs": 6.104e-05,
-       "max_rel": 0.071023,
-       "over_2pct": 28,
+       "max_rel": 0.064566,
+       "over_2pct": 13,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 332,
+       "n_differing": 296,
        "differing": [
-        "backbone.embeddings.LayerNorm.bias",
-        "backbone.encoder.layer.0.attention.output.LayerNorm.bias",
         "backbone.encoder.layer.0.attention.output.dense.bias",
         "backbone.encoder.layer.0.attention.output.dense.weight",
         "backbone.encoder.layer.0.attention.self.key.bias",
         "backbone.encoder.layer.0.attention.self.key.weight",
-        "backbone.encoder.layer.0.attention.self.query.bias",
-        "backbone.encoder.layer.0.attention.self.query.weight"
+        "backbone.encoder.layer.0.attention.self.query.weight",
+        "backbone.encoder.layer.0.attention.self.value.bias",
+        "backbone.encoder.layer.0.attention.self.value.weight",
+        "backbone.encoder.layer.0.intermediate.dense.weight"
        ]
       },
       "embedding_tables": {
@@ -4957,8 +4966,8 @@
       "dense": {
        "tensors": 1158,
        "bitwise_identical": 386,
-       "max_abs": 0.00717163,
-       "max_rel": 399.942169,
+       "max_abs": 9.155e-05,
+       "max_rel": 202.5009,
        "over_2pct": 772,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -4977,8 +4986,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 3,
-       "max_abs": 0.00083733,
-       "max_rel": 97.580299,
+       "max_abs": 2.098e-05,
+       "max_rel": 1.466049,
        "over_2pct": 6,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5001,17 +5010,17 @@
      "a": "prefetch_loss_reimpl_run11",
      "b": "native1",
      "loss_equal": false,
-     "loss_max_abs": 0.02149665355682373,
+     "loss_max_abs": 0.010431647300720215,
      "grad_norm": [
       9.5,
-      9.9375
+      9.5
      ],
      "grads": {
       "dense": {
        "tensors": 386,
        "bitwise_identical": 0,
-       "max_abs": 0.6875,
-       "max_rel": 95.294113,
+       "max_abs": 0.00878906,
+       "max_rel": 141.463425,
        "over_2pct": 386,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5030,8 +5039,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 0,
-       "max_abs": 0.08081055,
-       "max_rel": 79.11377,
+       "max_abs": 0.00195312,
+       "max_rel": 1.466667,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5046,22 +5055,22 @@
      "params": {
       "dense": {
        "tensors": 388,
-       "bitwise_identical": 56,
+       "bitwise_identical": 92,
        "max_abs": 6.104e-05,
-       "max_rel": 0.071023,
-       "over_2pct": 28,
+       "max_rel": 0.064566,
+       "over_2pct": 13,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 332,
+       "n_differing": 296,
        "differing": [
-        "backbone.embeddings.LayerNorm.bias",
-        "backbone.encoder.layer.0.attention.output.LayerNorm.bias",
         "backbone.encoder.layer.0.attention.output.dense.bias",
         "backbone.encoder.layer.0.attention.output.dense.weight",
         "backbone.encoder.layer.0.attention.self.key.bias",
         "backbone.encoder.layer.0.attention.self.key.weight",
-        "backbone.encoder.layer.0.attention.self.query.bias",
-        "backbone.encoder.layer.0.attention.self.query.weight"
+        "backbone.encoder.layer.0.attention.self.query.weight",
+        "backbone.encoder.layer.0.attention.self.value.bias",
+        "backbone.encoder.layer.0.attention.self.value.weight",
+        "backbone.encoder.layer.0.intermediate.dense.weight"
        ]
       },
       "embedding_tables": {
@@ -5084,8 +5093,8 @@
       "dense": {
        "tensors": 1158,
        "bitwise_identical": 386,
-       "max_abs": 0.00717163,
-       "max_rel": 399.942169,
+       "max_abs": 9.155e-05,
+       "max_rel": 202.5009,
        "over_2pct": 772,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5104,8 +5113,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 3,
-       "max_abs": 0.00083733,
-       "max_rel": 97.580299,
+       "max_abs": 2.098e-05,
+       "max_rel": 1.466049,
        "over_2pct": 6,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5128,17 +5137,17 @@
      "a": "prefetch_loss_reimpl_run11",
      "b": "native2",
      "loss_equal": false,
-     "loss_max_abs": 0.02149665355682373,
+     "loss_max_abs": 0.010431647300720215,
      "grad_norm": [
       9.5,
-      9.9375
+      9.5
      ],
      "grads": {
       "dense": {
        "tensors": 386,
        "bitwise_identical": 0,
-       "max_abs": 0.6875,
-       "max_rel": 95.294113,
+       "max_abs": 0.00878906,
+       "max_rel": 141.463425,
        "over_2pct": 386,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5157,8 +5166,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 0,
-       "max_abs": 0.08081055,
-       "max_rel": 79.11377,
+       "max_abs": 0.00195312,
+       "max_rel": 1.466667,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5173,22 +5182,22 @@
      "params": {
       "dense": {
        "tensors": 388,
-       "bitwise_identical": 56,
+       "bitwise_identical": 92,
        "max_abs": 6.104e-05,
-       "max_rel": 0.071023,
-       "over_2pct": 28,
+       "max_rel": 0.064566,
+       "over_2pct": 13,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
-       "n_differing": 332,
+       "n_differing": 296,
        "differing": [
-        "backbone.embeddings.LayerNorm.bias",
-        "backbone.encoder.layer.0.attention.output.LayerNorm.bias",
         "backbone.encoder.layer.0.attention.output.dense.bias",
         "backbone.encoder.layer.0.attention.output.dense.weight",
         "backbone.encoder.layer.0.attention.self.key.bias",
         "backbone.encoder.layer.0.attention.self.key.weight",
-        "backbone.encoder.layer.0.attention.self.query.bias",
-        "backbone.encoder.layer.0.attention.self.query.weight"
+        "backbone.encoder.layer.0.attention.self.query.weight",
+        "backbone.encoder.layer.0.attention.self.value.bias",
+        "backbone.encoder.layer.0.attention.self.value.weight",
+        "backbone.encoder.layer.0.intermediate.dense.weight"
        ]
       },
       "embedding_tables": {
@@ -5211,8 +5220,8 @@
       "dense": {
        "tensors": 1158,
        "bitwise_identical": 386,
-       "max_abs": 0.00717163,
-       "max_rel": 399.942169,
+       "max_abs": 9.155e-05,
+       "max_rel": 202.5009,
        "over_2pct": 772,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5231,8 +5240,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 3,
-       "max_abs": 0.00083733,
-       "max_rel": 97.580299,
+       "max_abs": 2.098e-05,
+       "max_rel": 1.466049,
        "over_2pct": 6,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5275,8 +5284,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 0.00014591,
-       "max_rel": 1.189366,
+       "max_abs": 0.00017881,
+       "max_rel": 1.190128,
        "over_2pct": 2,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5302,8 +5311,8 @@
       "embedding_tables": {
        "tensors": 3,
        "bitwise_identical": 1,
-       "max_abs": 6.104e-05,
-       "max_rel": 0.005279,
+       "max_abs": 4.578e-05,
+       "max_rel": 0.003959,
        "over_2pct": 0,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5329,8 +5338,8 @@
       "embedding_tables": {
        "tensors": 9,
        "bitwise_identical": 5,
-       "max_abs": 1.54e-06,
-       "max_rel": 1.186236,
+       "max_abs": 1.89e-06,
+       "max_rel": 1.188039,
        "over_2pct": 3,
        "nonfinite": 0,
        "nontensor_mismatch": 0,
@@ -5357,50 +5366,50 @@
     "pairs": 3,
     "dense_tensors_identical_in_all_pairs": true,
     "pairs_with_embedding_table_diffs": 3,
-    "embedding_table_grad_max_abs": 0.00056767
+    "embedding_table_grad_max_abs": 0.00013447
    },
    "candidate_pairs": 7,
    "dense_grad_tensors_differing_max_per_pair": 386,
-   "dense_param_tensors_differing_max_per_pair": 332,
-   "dense_grad_max_abs": 0.6875,
-   "dense_grad_max_rel": 95.294113,
+   "dense_param_tensors_differing_max_per_pair": 296,
+   "dense_grad_max_abs": 0.00878906,
+   "dense_grad_max_rel": 141.463425,
    "dense_param_max_abs": 6.104e-05,
-   "dense_optimizer_state_max_abs": 0.00717163,
+   "dense_optimizer_state_max_abs": 9.155e-05,
    "loss_equal_all_pairs": false,
-   "grad_norm_equal_all_pairs": false,
+   "grad_norm_equal_all_pairs": true,
    "param_sha256_dense_equal_all_pairs": false,
    "param_sha256_dense": [
-    "509df9444e7a3cd0f2d3cb4157d023cd4fde09207df344386bf122124290070a",
-    "509df9444e7a3cd0f2d3cb4157d023cd4fde09207df344386bf122124290070a",
-    "509df9444e7a3cd0f2d3cb4157d023cd4fde09207df344386bf122124290070a",
+    "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202",
+    "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202",
+    "b133cb9faff25cfb783602dae575132d48bc5932f57ac0f1f0577d31906e4202",
     "ec537caa272300b814df036e359a379e696559fd21db839a5c166754a8709979",
     "ec537caa272300b814df036e359a379e696559fd21db839a5c166754a8709979"
    ],
    "step_ms": [
-    1760.7,
-    1768.5,
-    1770.0,
-    1888.5,
-    1885.0
+    1883.2,
+    1884.3,
+    1891.7,
+    1902.8,
+    1895.9
    ],
    "losses_micro": [
     [
-     0.9281608462333679,
-     0.5780547261238098,
-     0.4089031219482422,
-     0.7283836603164673
+     0.9173828363418579,
+     0.604809582233429,
+     0.416015625,
+     0.727001965045929
     ],
     [
-     0.9281608462333679,
-     0.5780547261238098,
-     0.4089031219482422,
-     0.7283836603164673
+     0.9173828363418579,
+     0.604809582233429,
+     0.416015625,
+     0.727001965045929
     ],
     [
-     0.9281608462333679,
-     0.5780547261238098,
-     0.4089031219482422,
-     0.7283836603164673
+     0.9173828363418579,
+     0.604809582233429,
+     0.416015625,
+     0.727001965045929
     ],
     [
      0.9278144836425781,
@@ -5416,13 +5425,13 @@
     ]
    ],
    "grad_norm": [
-    9.9375,
-    9.9375,
-    9.9375,
+    9.5,
+    9.5,
+    9.5,
     9.5,
     9.5
    ],
-   "verdict": "FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to 386 per pair, grad max_rel 95.2941, param max_abs 6.104e-05)."
+   "verdict": "FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to 386 per pair, grad max_rel 141.463, param max_abs 6.104e-05)."
   }
  }
 }

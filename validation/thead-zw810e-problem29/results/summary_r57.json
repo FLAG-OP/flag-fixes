@@ -4,7 +4,7 @@
  "base_commit": "9bf250be",
  "headlines": [
   "round-56's '-25.2 ms, 12/12 faster' tokenize prefetch is RETRACTED: it was a measurement-path artefact (experiment-only synchronize in compute). On the exact entry loop the faithful prefetch is SLOWER: 12/12, median +27.7 ms.",
-  "the round-56 / run-1 prefetch implementation was NOT numerically equivalent to the entry (loss re-implemented outside autocast): loss 0.928161 vs 0.927814, grad norm 9.9375 vs 9.5, 386/386 dense grads differ.",
+  "the round-56 / run-1 prefetch implementation was NOT numerically equivalent to the entry (loss re-implemented outside autocast): micro-0 loss 0.927814 vs 0.917383, 386/386 dense grads differ (max_abs 0.008789).",
   "forward gaps are now attributed with explicit markers: of the 28 forward gaps >= 2 ms in the profiled entry-loop trace (3 steps) 25 are tokenizer-dominated (94-98% of the gap); forward UNKNOWN is 0.76 ms in total (0.8%). What is left stays UNKNOWN.",
   "in the unprofiled entry the forward phase is device-bound: the pageable H2D copy is a full stream sync (host blocked 245 ms/step inside move_features) but removing it (pinned + non_blocking, bitwise-identical state) does not change the step time (-1.8 ms median, CI [-10.1, +8.1]).",
   "dW Python route: training state bitwise identical (386/386 dense grads, 391/391 params, optimizer state); on the entry loop diff-in-diff -9.0 ms, 95% CI [-17.5, -0.6], 13/14 processes negative; ~0.4% of a step, candidate only."
@@ -27,7 +27,7 @@
    "pairs": 3,
    "dense_tensors_identical_in_all_pairs": true,
    "pairs_with_embedding_table_diffs": 3,
-   "embedding_table_grad_max_abs": 0.00019646
+   "embedding_table_grad_max_abs": 0.00015545
   },
   "dense_param_tensors": 386,
   "candidates": {
@@ -140,34 +140,35 @@
     ]
    },
    "prefetch_loss_reimpl_run1": {
-    "verdict": "FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to 386 per pair, grad max_rel 95.2941, param max_abs 6.104e-05).",
+    "verdict": "FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to 386 per pair, grad max_rel 141.463, param max_abs 6.104e-05).",
     "candidate_pairs": 7,
     "dense_grad_tensors_differing_max_per_pair": 386,
-    "dense_grad_max_abs": 0.6875,
-    "dense_grad_max_rel": 95.294113,
-    "dense_param_tensors_differing_max_per_pair": 332,
+    "dense_grad_max_abs": 0.00878906,
+    "dense_grad_max_rel": 141.463425,
+    "dense_param_tensors_differing_max_per_pair": 296,
     "dense_param_max_abs": 6.104e-05,
-    "dense_optimizer_state_max_abs": 0.00717163,
+    "dense_optimizer_state_max_abs": 9.155e-05,
     "loss_equal_all_pairs": false,
-    "grad_norm_equal_all_pairs": false,
+    "grad_norm_equal_all_pairs": true,
     "param_sha256_dense_equal_all_pairs": false,
     "losses_micro0_native_then_candidate": [
-     0.928161,
-     0.928161,
-     0.928161,
+     0.917383,
+     0.917383,
+     0.917383,
      0.927814,
      0.927814
     ],
     "grad_norm_native_then_candidate": [
-     9.9375,
-     9.9375,
-     9.9375,
+     9.5,
+     9.5,
+     9.5,
      9.5,
      9.5
     ]
    }
   },
   "cross_process_warning": "a candidate run in ANOTHER process is not a valid comparison: models rebuilt from the same seed in different processes are not identical (acc_hit_step_r46_rebuild_check 0/72). The first r57 attempt compared across processes and showed fake grad max_rel 215 / loss0 0.95186 vs 0.94985; discarded.",
+  "invalid_first_version": "commit fc2a466e carried a prefetch_loss_reimpl_run1 comparison whose NATIVE baseline had been run WITHOUT autocast (script bug: the candidate's outer-autocast flag also applied to the native runs; native param sha256 509df944... instead of b133cb9f..., native loss 0.928161 instead of 0.917383). Its numbers (loss 0.928161 vs 0.927814, grad norm 9.9375 vs 9.5, grad max_abs 0.6875, optimizer-state max_abs 7.2e-3) were artefacts of that and are withdrawn. Corrected run: natives use the entry path.",
   "verdict": "overlap (prefetch_faithful) vs inline, same snapshot: PASS bitwise - every dense gradient / post-update parameter / optimizer-state tensor identical in all 7 candidate pairs, losses and grad norms equal, 0 non-finite; only the 3 index-accumulated embedding tables differ, and native-vs-native differs on the same tables. The round-56 / run-1 implementation (prefetch_loss_reimpl_run1) FAILS: it is a different computation, not a prefetch of the same one."
  },
  "item2_prefetch_not_a_measurement_artefact": {

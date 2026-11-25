@@ -11,7 +11,7 @@
 | 此前说法（round-55/56） | 现状 | 证据 |
 |---|---|---|
 | 分词预取 −25.2 ms、12/12 更快、候选可采纳 | **撤回**：测量路径伪影（诊断脚本在 `compute()` 内的实验专用 `synchronize`） | `tokenize_overlap_native_r57.json`：原始入口循环上 12/12 更慢，中位 +27.7 ms，95% CI [+21.8, +41.0] |
-| 预取"保持训练语义与精度" | **撤回**：r56 的实现在 autocast 外重写 loss（logits 矩阵乘 fp32），与原入口不等价 | `train_state_r57.json`：loss 0.928161 vs 0.927814，grad norm 9.9375 vs 9.5，386/386 稠密梯度不同 |
+| 预取"保持训练语义与精度" | **撤回**：r56 的实现在 autocast 外重写 loss（logits 矩阵乘 fp32），与原入口不等价 | `train_state_r57.json`：loss 0.927814 vs 0.917383，386/386 稠密梯度不同（max_abs 0.0088） |
 | 前向空隙 ~99% UNKNOWN | **已归因**：原始入口 28 个前向空隙中 25 个由 tokenizer 主导（占空隙中位 96.5%）| `gap_markers_r57.{entry,capture}.json` |
 | ≤56 轮的整步计时 | **循环保真度更正**：用的是 r36 采集循环（无 lookahead、无 `isfinite(loss)` 同步），比原始入口快 10–17 ms/步 | `host_stage_timeline_r57.{entry,capture}.json` |
 

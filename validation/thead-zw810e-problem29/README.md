@@ -764,7 +764,7 @@ native 有效 tokens/s：14,416 / 14,895 / 15,197（rep1）。
 
 **空隙归因（gap_v3）**：forward 最大 19.24 ms gap host 覆盖 1.504 / **UNKNOWN 17.737**；典型 3–5 ms gap 裁剪后 host 覆盖 **~0.05 ms（~99% UNKNOWN）**；无 tokenize cpu_op、无 H2D 相交。保留 UNKNOWN。 **[3c-12：加显式标记后，典型前向空隙的 94–98% 为 tokenizer；19.24 ms 空隙未复现]**
 
-**分词预取（修复后）——【已撤回，见 3c-12】** 本段原结论为「12/12 步全部更快、中位 −25.2 ms ≈ 1.2% 整步、候选可采纳」。**round-57 撤回**：该收益是测量路径伪影——诊断脚本在 `compute()` 内加入了原入口没有的实验专用 `torch.cuda.synchronize()`，它使 inline 模式每组 launch 后阻塞主机。在原始入口循环上复测（`tokenize_overlap_native_r57.json`）：忠实实现 **12/12 更慢，中位 +27.7 ms，95% CI [+21.8, +41.0]**。此外 r56 的预取实现把 loss 移到 autocast 之外重写，**与原入口数值不等价**（`train_state_r57.json`：loss 0.928161 vs 0.927814、grad norm 9.9375 vs 9.5、386/386 稠密梯度不同），当时的「输入哈希一致 + loss 偏差 0.0096 在波动带内」不足以发现。**候选关闭。** 原段落文字见 git 历史（`9bf250be`）。
+**分词预取（修复后）——【已撤回，见 3c-12】** 本段原结论为「12/12 步全部更快、中位 −25.2 ms ≈ 1.2% 整步、候选可采纳」。**round-57 撤回**：该收益是测量路径伪影——诊断脚本在 `compute()` 内加入了原入口没有的实验专用 `torch.cuda.synchronize()`，它使 inline 模式每组 launch 后阻塞主机。在原始入口循环上复测（`tokenize_overlap_native_r57.json`）：忠实实现 **12/12 更慢，中位 +27.7 ms，95% CI [+21.8, +41.0]**。此外 r56 的预取实现把 loss 移到 autocast 之外重写，**与原入口数值不等价**（`train_state_r57.json`：loss 0.927814 vs 0.917383、386/386 稠密梯度不同），当时的「输入哈希一致 + loss 偏差 0.0096 在波动带内」不足以发现。**候选关闭。** 原段落文字见 git 历史（`9bf250be`）。
 
 **下一步**：【已由 3c-12 取代】原计划「分词预取进入 FlagScale 主路径（整步 −25 ms）」取消；中档 GEMM（114 ms）> 长档（87 ms）的 headroom 排序不变；forward 空隙的 host 埋点已完成（3c-12）。
 
@@ -773,7 +773,7 @@ native 有效 tokens/s：14,416 / 14,895 / 15,197（rep1）。
 **先更正本 PR 自己的两条结论**
 
 1. **round-56 的「分词预取 −25.2 ms、12/12 更快、候选可采纳」撤回。** 原因是测量路径：诊断脚本在 `compute()` 内加入了原入口没有的实验专用 `torch.cuda.synchronize()`，它让 inline 模式每组 launch 后阻塞主机。在**原始入口循环**上（无实验同步、profiler 关）复测：忠实实现（同一个 `loss_for_batch`，仅把 tokenization 挪到工作线程）**12/12 更慢，中位 +27.7 ms，均值 +31.4 ms，95% CI [+21.8, +41.0]，范围 [+9.3, +57.9]**，与运行顺序无关。**候选关闭。**
-2. **round-56 的预取实现在数值上不等价于原入口。** 它把 normalize / logits 矩阵乘 / cross_entropy 挪到 autocast 之外重写，logits 矩阵乘因此是 fp32（原入口在 autocast 内是 bf16）。同进程同快照对照：loss **0.928161 vs 0.927814**、grad norm **9.9375 vs 9.5**、**386/386** 稠密梯度张量不同（max_abs 0.6875）。当时的「输入哈希一致 + loss 偏差 0.0096 在波动带内」发现不了这一点——两模式在不同进程，基线本身就不同。
+2. **round-56 的预取实现在数值上不等价于原入口。** 它把 normalize / logits 矩阵乘 / cross_entropy 挪到 autocast 之外重写，logits 矩阵乘因此是 fp32（原入口在 autocast 内是 bf16）。同进程同快照对照（native 走原入口路径）：loss **0.927814 vs 0.917383**（差 0.0104）、grad norm 相等（9.5）、**386/386** 稠密梯度张量不同（max_abs 0.0088），超过声明的 2% 门限。当时的「输入哈希一致 + loss 偏差 0.0096 在波动带内」发现不了这一点——两模式在不同进程，基线本身就不同。
 
 **循环保真度更正**：第 ≤56 轮的整步计时都用 r36 采集循环（无 lookahead、无 `isfinite(loss)` 同步）。原始入口（`train_retrieval.py:646-673`）每个 micro 在 forward 后有 `if not torch.isfinite(raw_loss)` 主机同步，并有跨步的一个 batch lookahead，比采集循环慢 **+17.2 / +14.6 / +10.1 ms**（三步）。r57 的全部计时改用原始入口循环；此前的整步绝对值因此偏小约 0.4–0.9%，配对差方向不受影响，但小于 ~10 ms 的效应在此前口径下无法分辨。
 
@@ -786,9 +786,9 @@ native 有效 tokens/s：14,416 / 14,895 / 15,197（rep1）。
 | overlap = `prefetch_faithful` | 7 | 逐位相同（max_abs 0） | 逐位相同 | 逐位相同 | 相等（micro0 loss 0.917383 / 9.5） | **PASS（逐位）** |
 | `h2d_nonblocking` | 7 | 逐位相同 | 逐位相同 | 逐位相同 | 相等 | **PASS（逐位）** |
 | dW Python 路由 | 7 | 逐位相同 | 逐位相同 | 逐位相同 | 相等 | **PASS（逐位）** |
-| r56 / run-1 的预取实现（autocast 外调用） | 7 | 386/386 不同 | 332 张量不同（max_abs 6.1e-05） | max_abs 7.2e-03 | 不等 | **FAIL（是另一个计算）** |
+| r56 / run-1 的预取实现（autocast 外调用） | 7 | 386/386 不同（max_abs 0.0088） | 296 张量不同（max_abs 6.1e-05） | max_abs 9.2e-05 | loss 不等（0.927814 vs 0.917383）/ grad norm 相等 | **FAIL（是另一个计算）** |
 
-dropout / 随机数状态 / 数据顺序：每次运行前从快照恢复 CPU 与 CUDA RNG 状态（dropout mask 相同）；4 个 micro-batch 深拷贝在快照内（数据顺序固定）；分词无随机性；预取工作线程不消耗 torch RNG。稠密参数 SHA-256 在各候选配对中相等。3 张 embedding 表（word / position / token_type）的梯度来自索引累加的反向，求和顺序在本设备上不可复现：**native-vs-native 的 3 个配对也都在且只在这 3 张表上不同**（max_abs 1.1e-4–3.1e-4），单列并排除在候选判定之外。跨进程对照无效：r57 的第一次尝试把候选放在另一进程，得到梯度 max_rel 215、loss0 0.95186 vs 0.94985——那是跨进程重建的模型本身不同（`acc_hit_step_r46_rebuild_check` 0/72），已弃用。
+dropout / 随机数状态 / 数据顺序：每次运行前从快照恢复 CPU 与 CUDA RNG 状态（dropout mask 相同）；4 个 micro-batch 深拷贝在快照内（数据顺序固定）；分词无随机性；预取工作线程不消耗 torch RNG。稠密参数 SHA-256 在各候选配对中相等。3 张 embedding 表（word / position / token_type）的梯度来自索引累加的反向，求和顺序在本设备上不可复现：**native-vs-native 的 3 个配对也都在且只在这 3 张表上不同**（max_abs 1.1e-4–3.1e-4），单列并排除在候选判定之外。跨进程对照无效：r57 的第一次尝试把候选放在另一进程，得到梯度 max_rel 215、loss0 0.95186 vs 0.94985——那是跨进程重建的模型本身不同（`acc_hit_step_r46_rebuild_check` 0/72），已弃用。r57 首个提交（`fc2a466e`）里 `prefetch_loss_reimpl_run1` 的对照另有一处脚本 bug：该进程的 native 基线被跑成了无 autocast（参数哈希 `509df944…`，与其它进程的 `b133cb9f…` 不同），由此得到的「loss 0.928161 vs 0.927814、grad norm 9.9375 vs 9.5、max_abs 0.6875」作废；本节数字来自修正后的运行（native 走原入口路径）。
 
 **2 · 整步收益不是测量路径伪影（复审项 2；`tokenize_overlap_native_r57.json` + `_run1.json` + `_run2/*.json`；`tokenize_overlap_native.py`）**
 
