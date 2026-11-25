@@ -33,7 +33,13 @@ def validate(ref, cand, label):
             if Rk[n].numel()!=Ck[n].numel(): probs.append(f"{label}:{kind}:{n} numel mismatch")
             if nonfinite(Ck[n])>0: probs.append(f"{label}:{kind}:{n} nonfinite={nonfinite(Ck[n])}")
     return probs
+# The expected key set below corresponds to the CURRENT BGE-M3 configuration:
+# XLM-RoBERTa-large backbone, 24 encoder layers, 3 target weight classes per
+# layer (intermediate.dense / output.dense / attention.output.dense) = 72 keys.
+# A different model config needs a different expected set (make N_LAYERS /
+# key templates configurable before reusing this script elsewhere).
 N_LAYERS=24
+EXPECTED_CONFIG="BGE-M3 (XLM-RoBERTa-large): 24 encoder layers x 3 target classes"
 def expected_keys():
     """Independent expected key set from the MODEL STRUCTURE (BGE-M3: 24 encoder
     layers x 3 target classes = 72). Not derived from the records - so a record
@@ -53,7 +59,7 @@ def file_sha(p):
 def run(RECF, OUT):
     R=pickle.load(open(RECF,"rb"))
     ref=R["native_run1"]; dw=R["dw_only"]
-    res={"record_file":RECF,"record_sha256":file_sha(RECF),"tol":TOL,
+    res={"record_file":RECF,"record_sha256":file_sha(RECF),"tol":TOL,"expected_config":EXPECTED_CONFIG,
          "grad_sampling":"CLIPPED grads: recorded after clip_grad_norm_ and before optimizer.step",
          "metric":"per-element |x-ref| / max(|ref|, 0.01*max|ref|, eps=1e-12), max over tensor; UNROUNDED",
          "dw_only_hits_this_step":dw.get("hit_total",0),
@@ -87,6 +93,9 @@ def run(RECF, OUT):
                 uneq+=int((pa!=pb).sum()); numel+=pa.numel()
             if n_t==0: structural.append(f"{cname}:{g}: no target tensors found for this group")
             per[g]={"tensors":n_t,"grad_rel_max_unrounded":(max(errs) if errs else None),
+                "per_target_unrounded":{n:elem_rel_max(C["pre_grads"][n], ref["pre_grads"][n]) for n in ref["pre_grads"] if grp(n)==g and n in C["pre_grads"]},
+                "per_target_param_bits_unequal":{n:int((C["post_params"][n].detach().contiguous().view(torch.int32)!=ref["post_params"][n].detach().contiguous().view(torch.int32)).sum()) for n in ref["post_params"] if grp(n)==g and n in C["post_params"]},
+                "per_target_nan_inf":{n:nonfinite(C["pre_grads"][n]) for n in ref["pre_grads"] if grp(n)==g and n in C["pre_grads"]},
                     "grad_rel_median_unrounded":(sorted(errs)[len(errs)//2] if errs else None),
                     "nan_inf_candidate":nf_c,"nan_inf_reference":nf_r,
                     "post_param_bits_unequal":uneq,"post_param_numel":numel,
