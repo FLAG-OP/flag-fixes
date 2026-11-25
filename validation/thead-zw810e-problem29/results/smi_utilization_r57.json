@@ -1,0 +1,1348 @@
+{
+ "field_version": "smi_utilization_v1",
+ "device": "PPU-ZW810E",
+ "tool": "nvidia-smi --query-gpu=timestamp,utilization.gpu,utilization.memory --format=csv,noheader,nounits -lms 100 -i 0",
+ "workload": "host_stage_timeline.py --loop entry (ORIGINAL entry loop, no profiler), 12 timed steps after 2 warmup steps",
+ "timed_steps": 12,
+ "timed_window_s": 26.01,
+ "step_ms": [
+  1890.83,
+  2133.72,
+  2349.69,
+  2538.45,
+  2262.48,
+  1931.86,
+  1892.01,
+  1938.82,
+  2261.24,
+  2317.87,
+  2502.51,
+  1968.29
+ ],
+ "n_samples": 259,
+ "utilization_gpu": {
+  "min": 88,
+  "p10": 94,
+  "median": 96,
+  "mean": 96.1,
+  "p90": 98,
+  "max": 100
+ },
+ "utilization_memory": {
+  "min": 21,
+  "median": 26,
+  "mean": 25.3,
+  "max": 26
+ },
+ "histogram_utilization_gpu_10pct_bins": {
+  "0-10": 0,
+  "10-20": 0,
+  "20-30": 0,
+  "30-40": 0,
+  "40-50": 0,
+  "50-60": 0,
+  "60-70": 0,
+  "70-80": 0,
+  "80-90": 1,
+  "90-100": 243,
+  "100-100": 15
+ },
+ "caveat": "utilization.gpu semantics are vendor-defined and not documented for this device; raw distribution only, not a busy-time measurement",
+ "samples": [
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 94,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 0.97,
+   "util_gpu": 94,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 94,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 94,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 94,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 94,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 96,
+   "util_mem": 21
+  },
+  {
+   "t_s": 1.97,
+   "util_gpu": 98,
+   "util_mem": 21
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 98,
+   "util_mem": 21
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 98,
+   "util_mem": 22
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 98,
+   "util_mem": 22
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 98,
+   "util_mem": 22
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 98,
+   "util_mem": 22
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 98,
+   "util_mem": 22
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 96,
+   "util_mem": 23
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 96,
+   "util_mem": 23
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 96,
+   "util_mem": 23
+  },
+  {
+   "t_s": 2.97,
+   "util_gpu": 96,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 98,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 96,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 96,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 23
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 24
+  },
+  {
+   "t_s": 3.97,
+   "util_gpu": 94,
+   "util_mem": 24
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 94,
+   "util_mem": 24
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 24
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 24
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 98,
+   "util_mem": 25
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 98,
+   "util_mem": 25
+  },
+  {
+   "t_s": 4.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 96,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 98,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 98,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 94,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 94,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 94,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 94,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 94,
+   "util_mem": 25
+  },
+  {
+   "t_s": 5.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 6.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 7.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 8.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 9.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 10.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 11.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 88,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 90,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 90,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 90,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 90,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 90,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 90,
+   "util_mem": 26
+  },
+  {
+   "t_s": 12.97,
+   "util_gpu": 92,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 92,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 92,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 13.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 14.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 15.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 16.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 17.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 18.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 19.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 20.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 21.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 22.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 23.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 92,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 24.97,
+   "util_gpu": 94,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 96,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 98,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  },
+  {
+   "t_s": 25.97,
+   "util_gpu": 100,
+   "util_mem": 26
+  }
+ ]
+}

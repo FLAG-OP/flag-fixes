@@ -738,9 +738,9 @@ native 有效 tokens/s：14,416 / 14,895 / 15,197（rep1）。
 - **原生转置视图专用路径不存在**：同乘积的 4 种原生写法（交换操作数 0.519、内部复制 0.637、matmul 0.520、往返 0.519 ms）均不快于 `gy.t()@x`（0.485 ms）
 - **库级 / C++ hook 本环境不可用**（FlagGems `mm` 是 Python 函数）——剩余 host 开销无法在此消除
 
-**对训练方案的影响**：dW Python 路由精度逐位一致（命中步重算 PASS），整步有小幅、方向基本一致的收益（中位 ~5.6 ms ≈ 0.26%），**但 6 步样本、幅度在步间波动内**——**不作为可部署项采纳**（`hardware_status=unverified`），记为**唯一方向为正且可复现的候选**。
+**对训练方案的影响**：dW Python 路由精度逐位一致（命中步重算 PASS），整步有小幅、方向基本一致的收益（中位 ~5.6 ms ≈ 0.26%），**但 6 步样本、幅度在步间波动内**——**不作为可部署项采纳**（`hardware_status=unverified`），记为**唯一方向为正且可复现的候选**。**[round-57：该 −5.6 ms 测于 r36 采集循环、每模式一个进程，低于本机进程间噪声；原始入口循环上的进程内配对复测见 3c-12（−9.0 ms，CI [−17.5, −0.6]，仍为候选）]**
 
-#### 3c-11. 软件 roofline + 分词预取（round-55 修正版，复审 BqpXfeg；`software_roofline_r49.json` / `gap_attribution_r53.json`（gap_v3）/ `tokenize_overlap_r55.json` / 一页结论 `software_roofline_r49_oneline.md`）
+#### 3c-11. 软件 roofline + 分词预取（round-55 修正版，复审 BqpXfeg；`software_roofline_r49.json` / `gap_attribution_r53.json`（gap_v3）/ `tokenize_overlap_r55.json` / 一页结论 `software_roofline_r49_oneline.md`）**——其中「分词预取稳定整步收益 / 候选可采纳」与「前向空隙 ~99% UNKNOWN」已被 3c-12 撤回 / 归因**
 
 **口径**：模型 FLOPs 与**逻辑字节率**推导，**非 HBM 实测**；`hardware_status=unverified`，HBM 字节/带宽利用率/矩阵单元 activity **BLOCKED**。
 
@@ -762,13 +762,105 @@ native 有效 tokens/s：14,416 / 14,895 / 15,197（rep1）。
 
 **修正**：**中档是最大 headroom（46%）**，长档次之——与上轮"长序列 58%"相反（上轮把 FFN 特征维 4096 误计为序列长度）。优先形状：S=512 两个 dW 各 ~17 ms（长档）；dX_attn_proj (1670–3740) 与 dW_ffn (3740)（中档）。
 
-**空隙归因（gap_v3）**：forward 最大 19.24 ms gap host 覆盖 1.504 / **UNKNOWN 17.737**；典型 3–5 ms gap 裁剪后 host 覆盖 **~0.05 ms（~99% UNKNOWN）**；无 tokenize cpu_op、无 H2D 相交。保留 UNKNOWN。
+**空隙归因（gap_v3）**：forward 最大 19.24 ms gap host 覆盖 1.504 / **UNKNOWN 17.737**；典型 3–5 ms gap 裁剪后 host 覆盖 **~0.05 ms（~99% UNKNOWN）**；无 tokenize cpu_op、无 H2D 相交。保留 UNKNOWN。 **[3c-12：加显式标记后，典型前向空隙的 94–98% 为 tokenizer；19.24 ms 空隙未复现]**
 
-**分词预取（修复后）—— 稳定整步收益**：上轮（round-54）结论**作废**——共享 FIFO 让先完成的负样本被当作 positive，loss 异常**不是** tokenizer 非线程安全而是代码 bug。修复后：**60 个张量/运行**的实际 `input_ids`+`attention_mask` 哈希**逐项一致**；loss 最大偏差 0.0096；**零异常**。**12/12 步全部更快**（4 次重复、A→B/B→A 交错、profiler 关）：**中位 −25.2 ms（−34.7…−8.7）≈ 1.2% 整步**，与运行顺序无关；tokens/s 13,810/14,415/14,677 → 14,046/14,552/14,880。**候选可采纳**（保持训练语义与精度、无需改 kernel）；`hardware_status=unverified` 维持。
+**分词预取（修复后）——【已撤回，见 3c-12】** 本段原结论为「12/12 步全部更快、中位 −25.2 ms ≈ 1.2% 整步、候选可采纳」。**round-57 撤回**：该收益是测量路径伪影——诊断脚本在 `compute()` 内加入了原入口没有的实验专用 `torch.cuda.synchronize()`，它使 inline 模式每组 launch 后阻塞主机。在原始入口循环上复测（`tokenize_overlap_native_r57.json`）：忠实实现 **12/12 更慢，中位 +27.7 ms，95% CI [+21.8, +41.0]**。此外 r56 的预取实现把 loss 移到 autocast 之外重写，**与原入口数值不等价**（`train_state_r57.json`：loss 0.928161 vs 0.927814、grad norm 9.9375 vs 9.5、386/386 稠密梯度不同），当时的「输入哈希一致 + loss 偏差 0.0096 在波动带内」不足以发现。**候选关闭。** 原段落文字见 git 历史（`9bf250be`）。
 
-**下一步**：分词预取进入 FlagScale 主路径（整步 −25 ms）；中档 GEMM（114 ms）> 长档（87 ms）；forward 空隙需 host 埋点。
+**下一步**：【已由 3c-12 取代】原计划「分词预取进入 FlagScale 主路径（整步 −25 ms）」取消；中档 GEMM（114 ms）> 长档（87 ms）的 headroom 排序不变；forward 空隙的 host 埋点已完成（3c-12）。
 
-#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）#### 4. F-2 最小 shape 隔离（单次触发）
+#### 3c-12. round-57：原始入口循环复测 + 训练状态一致性 + 前向空隙显式标记（复审 7166338004；全部数字由 `scripts/build_summary_r57.py` 从各结果文件汇入 `summary_r57.json`）
+
+**先更正本 PR 自己的两条结论**
+
+1. **round-56 的「分词预取 −25.2 ms、12/12 更快、候选可采纳」撤回。** 原因是测量路径：诊断脚本在 `compute()` 内加入了原入口没有的实验专用 `torch.cuda.synchronize()`，它让 inline 模式每组 launch 后阻塞主机。在**原始入口循环**上（无实验同步、profiler 关）复测：忠实实现（同一个 `loss_for_batch`，仅把 tokenization 挪到工作线程）**12/12 更慢，中位 +27.7 ms，均值 +31.4 ms，95% CI [+21.8, +41.0]，范围 [+9.3, +57.9]**，与运行顺序无关。**候选关闭。**
+2. **round-56 的预取实现在数值上不等价于原入口。** 它把 normalize / logits 矩阵乘 / cross_entropy 挪到 autocast 之外重写，logits 矩阵乘因此是 fp32（原入口在 autocast 内是 bf16）。同进程同快照对照：loss **0.928161 vs 0.927814**、grad norm **9.9375 vs 9.5**、**386/386** 稠密梯度张量不同（max_abs 0.6875）。当时的「输入哈希一致 + loss 偏差 0.0096 在波动带内」发现不了这一点——两模式在不同进程，基线本身就不同。
+
+**循环保真度更正**：第 ≤56 轮的整步计时都用 r36 采集循环（无 lookahead、无 `isfinite(loss)` 同步）。原始入口（`train_retrieval.py:646-673`）每个 micro 在 forward 后有 `if not torch.isfinite(raw_loss)` 主机同步，并有跨步的一个 batch lookahead，比采集循环慢 **+17.2 / +14.6 / +10.1 ms**（三步）。r57 的全部计时改用原始入口循环；此前的整步绝对值因此偏小约 0.4–0.9%，配对差方向不受影响，但小于 ~10 ms 的效应在此前口径下无法分辨。
+
+**1 · 训练状态一致性（复审项 1；`train_state_r57.json` + `train_state_r57.<candidate>.json`；`train_state_consistency.py`）**
+
+同一进程：2 步预热后取快照（模型、优化器状态、CPU+CUDA RNG、4 个 micro-batch），native×3 → 安装候选 → 候选×2，每次从同一快照跑一步原始入口循环（autocast 内的原始 `loss_for_batch`、`isfinite` 同步、backward、`clip_grad_norm_`、`optimizer.step`）。阈值事先声明：梯度与优化器状态 2% 相对误差（floor = 张量最大绝对值的 1%）、参数绝对误差 1e-3、非有限值 0；判定区分「逐位相同」与「门限内」。
+
+| 候选（对比同进程 native） | 配对数 | 稠密梯度（386 张量） | 更新后参数 | 优化器状态 | loss / grad norm | 判定 |
+|---|---:|---|---|---|---|---|
+| overlap = `prefetch_faithful` | 7 | 逐位相同（max_abs 0） | 逐位相同 | 逐位相同 | 相等（micro0 loss 0.917383 / 9.5） | **PASS（逐位）** |
+| `h2d_nonblocking` | 7 | 逐位相同 | 逐位相同 | 逐位相同 | 相等 | **PASS（逐位）** |
+| dW Python 路由 | 7 | 逐位相同 | 逐位相同 | 逐位相同 | 相等 | **PASS（逐位）** |
+| r56 / run-1 的预取实现（autocast 外调用） | 7 | 386/386 不同 | 332 张量不同（max_abs 6.1e-05） | max_abs 7.2e-03 | 不等 | **FAIL（是另一个计算）** |
+
+dropout / 随机数状态 / 数据顺序：每次运行前从快照恢复 CPU 与 CUDA RNG 状态（dropout mask 相同）；4 个 micro-batch 深拷贝在快照内（数据顺序固定）；分词无随机性；预取工作线程不消耗 torch RNG。稠密参数 SHA-256 在各候选配对中相等。3 张 embedding 表（word / position / token_type）的梯度来自索引累加的反向，求和顺序在本设备上不可复现：**native-vs-native 的 3 个配对也都在且只在这 3 张表上不同**（max_abs 1.1e-4–3.1e-4），单列并排除在候选判定之外。跨进程对照无效：r57 的第一次尝试把候选放在另一进程，得到梯度 max_rel 215、loss0 0.95186 vs 0.94985——那是跨进程重建的模型本身不同（`acc_hit_step_r46_rebuild_check` 0/72），已弃用。
+
+**2 · 整步收益不是测量路径伪影（复审项 2；`tokenize_overlap_native_r57.json` + `_run1.json` + `_run2/*.json`；`tokenize_overlap_native.py`）**
+
+原始入口循环、profiler 关、loss 路径内无实验同步（唯一新增同步是闭合计时窗的步末 `synchronize`，两模式相同）。每个 rep 一个 inline 进程 + 一个候选进程（seed 42、相同 batch 顺序），各 2 步预热 + 3 计时步；A→B / B→A 交错；配对 batch 文本哈希 0 不匹配。
+
+| 模式（候选 − inline，ms） | 更慢 | 中位 | 均值 | 均值 95% CI | 范围 | 有效 tokens/s（均值） |
+|---|---:|---:|---:|---|---|---:|
+| `prefetch_faithful`（run 2，12 对） | **12/12** | **+27.7** | +31.4 | [+21.8, +41.0] | [+9.3, +57.9] | inline 14,692 → 14,479 |
+| `prefetch_loss_reimpl`（run 1，12 对） | 10/12 | +16.6 | +16.9 | [+8.6, +25.3] | [−3.9, +48.4] | 未记录 |
+| `h2d_nb`（run 2，12 对） | 5/12 | −1.8 | −1.0 | [−10.1, +8.1] | [−30.6, +23.4] | 14,698 |
+
+每 rep 中位（`prefetch_faithful`）：+56.4 / +31.6 / +21.3 / +22.3。run-1 的文件曾写「11/12」，数据是 10/12，已记 erratum。**分辨率下限**：`h2d_nb`（训练状态与 inline 逐位相同的改动）配对差 sd 14.3 ms、范围 −30.6…+23.4——本机整步计时的进程间噪声即此量级。
+
+**为什么预取在原入口上没有可隐藏的时间**（无 profiler 的主机阶段计时，`host_stage_timeline_r57.entry_12steps.json`，12 步均值）：
+
+| 主机阶段 | ms/步 | 说明 |
+|---|---:|---|
+| 分词 `prepare_embedding_inputs`×20 | **65.7（3.0%）** | 纯 CPU |
+| H2D `move_features` | 252.4 | **分页内存 `.to(device)` = 整条 stream 同步**，主机在此等设备 |
+| 前向 launch | 268.2 | 每组 ≈13.4 ms |
+| `isfinite(loss)` 同步（入口自带） | 118.8 | 等前向完成 |
+| backward launch | 1425.7 | 主机被 launch 队列反压（设备受限） |
+| next_batch / clip / step / 步末等待 | 2.5 / 2.6 / 4.2 / 13.4 | |
+
+微测试：已入队 119.6 ms kernel 时，分页 H2D 阻塞主机 **117.9 ms**；`non_blocking=True` 仅 **0.02 ms**。逐组数据：主机先分词下一组（此时设备仍在执行上一组前向），随后在 H2D 里等上一组前向完成（约 6–36 ms）——**分词在原入口里本来就已与前一组前向重叠**。（预取为何更慢未进一步归因；关闭该候选不依赖这一归因。）
+
+**H2D 非阻塞化（pinned + non_blocking，r57 新候选）**：H2D 主机等待 244.8 → 1.9 ms/步，但前向 launch 268.7 → 507.7 ms/步（主机改在 launch 调用里等，即队列已满）；三步 1891.4 / 2129.6 / 2350.8 vs 1898.1 / 2127.1 / 2351.5；配对 **中位 −1.8 ms，CI [−10.1, +8.1]，无显著差异**；训练状态逐位 PASS。→ **原入口的前向阶段是设备受限的**；不采纳，作为证据保留。
+
+**3 · 前向空隙的显式标记（复审项 3；`gap_markers_r57.entry.json` / `gap_markers_r57.capture.json` + 各自 trace；`gap_markers.py`）**
+
+在 trace 时间轴上加显式 `record_function` 标记：`MK_tokenizer`（分词器调用本身）、`MK_prepare_embedding_inputs`、`MK_h2d`、`MK_next_batch`（入口循环）、`MK_loss_sync`（入口循环）、`MK_python_gc`；并读取同一 trace 的 CUDA runtime 调用：`launch_submit`（cudaLaunchKernel* / cuLaunchKernel* 调用时长）、`blocking_runtime`（*Synchronize / cudaMemcpy / cudaMalloc…）、`other_runtime`、`cpu_op`。对每个 ≥2 ms 的设备空隙：各类别区间**先裁剪到空隙、再取并集、再按优先级做成互斥分割**（相加即覆盖时间），余下为 UNKNOWN；同时报告空隙后的**下一 kernel** 及其 launch 调用相对空隙起点的时刻。不做邻近推断。2 步预热 + 3 步采集（steps 2–4，与 r36 同窗口）；r36 的 trace 无法回溯加标记，采集循环运行重复其循环与窗口。
+
+| 循环 | 设备 busy | 前向窗口空隙 ≥2 ms（3 步合计） | | | | 反向窗口空隙 ≥2 ms |
+|---|---:|---:|---:|---:|---:|---|
+| | | 空隙数 / 空闲 | tokenizer | 其它已解释 | **UNKNOWN** | 空闲 / UNKNOWN |
+| 原始入口 | 89.07% | 28 / 94.91 ms | 83.73 ms | 10.42 | **0.76 ms（0.8%）** | 10 个 / 32.44 ms，其中 UNKNOWN 32.05 |
+| r36 采集循环 | 89.99% | 27 / 96.20 ms | 89.46 ms | 4.24 | **2.50 ms（2.6%）** | 无 |
+
+- 逐空隙：入口循环 28 个前向空隙中 **25 个由 tokenizer 主导**（占空隙的中位 96.5%，最高 98.0%）；其余 3 个为 2 个由 `cpu_op`（aten op 分发，2.05 / 2.59 ms）覆盖的空隙和 1 个纯 H2D 停顿（3.01 ms）。单个空隙内 UNKNOWN 最大 0.124 ms。空隙后的下一 kernel 在 26/28 个空隙里是 `cudaMemcpyAsync`（H2D），其 launch 在分词结束后 0.05–0.19 ms 发出。采集循环 27 个前向空隙中 26 个由 tokenizer 主导，余下 1 个（2.68 ms）含 1.45 ms UNKNOWN。
+- 「其它已解释」主要是偶发的 ~2.0 ms 空隙，完整落在 `move_features` 内（分页 H2D + `cudaStreamSynchronize` 1.93–2.00 ms）。
+- **r36 的 19.24 ms 最大空隙未复现**（本次采集循环最大前向空隙 5.44 ms）。
+- **剩余 UNKNOWN**（原始入口循环）：反向窗口里几乎每个 micro 一次 2.0–10.2 ms 的停顿，前后都是 `vectorized_elementwise_kernel`，内部没有任何 cpu_op / runtime / GC 事件，下一 kernel 的 launch 恰在空隙末尾发出。已检验并排除 Python GC；其余**保留 UNKNOWN**，且仅出现在带 profiler 的 trace 中。
+- 全部空隙（含 <2 ms）3 步合计 749 ms，其中 `cpu_op` 410 ms + `launch_submit` 78.5 ms——profiler 抬高每次 launch 的主机开销所致；**带 profiler 的空隙毫秒数不外推到无 profiler 的整步**。
+
+**无 profiler 的设备利用率**（`smi_utilization_r57.json`，`nvidia-smi` 100 ms 周期采样，不向负载添加任何 instrumentation；12 步窗口 259 个样本）：`utilization.gpu` 最小 88 / p10 94 / **中位 96** / 均值 96.1 / p90 98 / 最大 100。该指标语义由厂商定义、本环境无文档，**仅报告原始分布，不当作忙碌时间测量**，更不替代 HBM / 矩阵单元计数器。
+
+**GC 假设检验（否定）**：`gc.callbacks` 统计每步 5 次回收、合计 0.35–0.44 ms、最大单次 0.18 ms；`gc.disable()` 后整步 1892.8 / 2123.5 / 2359.8 vs 默认 1890.7 / 2123.4 / 2348.7（不变）。带标记的 trace 中 `MK_python_gc` 对 ≥2 ms 空隙的覆盖为 0.00 ms。
+
+**4 · dW Python 路由在原始入口循环上的复测（`route_entry_ab_r57.json` + `route_entry_ab_r57/*.json` + `route_entry_ab_r57_batch1_console/*.json`；`route_entry_ab.py`）**
+
+r48 的 −5.6 ms（5/6）测于采集循环、每模式一个进程，低于上文量到的进程间噪声。r57 改为**进程内配对 + 差中差**：每进程阶段 1（native；新数据迭代器，2 预热 + 3 计时步）→ [注册 dW 路由] → 阶段 2（同 seed 新迭代器，batch 文本哈希逐项相同）；`--second native` 为对照（不注册，阶段差 = 纯顺序效应）。第二批 16 进程交错（8 py_route + 8 native）；第一批 12 进程仅有控制台记录（文件命名 bug 致数据文件丢失，已如实转录并标注来源）。
+
+| | 配对步数 | 阶段 2 − 阶段 1（ms） |
+|---|---:|---|
+| py_route（合并） | 42 | 中位 **−4.9**，42 步中 32 步更快 |
+| native 对照（合并） | 42 | 中位 +1.4，17/42 更快 |
+| **差中差（合并 28 进程）** | | **−9.04 ms，95% CI [−17.52, −0.55]** |
+| 按批 | | 第一批 −13.97 [−24.49, −3.46]；第二批 −5.33 [−18.74, +8.07] |
+
+进程级均值：py_route 14 个进程中 13 个为负，native 对照 14 个中 6 个（Fisher 双侧 p = 0.0128）；命中 12/12 形状（每进程阶段 2 共 1056 次）。**读法**：方向一致的**小幅**效应，点估计 ≈ 0.4% 整步，CI 上缘贴近 0，数据完整的第二批单独看并不显著，进程级离群值达 +40…+72 ms。训练状态逐位 PASS。**维持「候选、不可部署」**，不作为「稳定降低整步时间」的改动。
+
+**5 · 硬件效率与 records（复审项 4、5）**：无变化。PCM 仍被 `pg-exporter` 占用（`hbm_blocked_r46.md`），HBM 读写字节 / 带宽利用率 / 矩阵单元活跃度**未回答**，`hardware_status=unverified`；逻辑字节率是模型推导量。6.9 GB `records.pkl`（sha256 `7d00baa3…`）仍需仓库维护方托管。
+
+**对复审三个问题的当前回答**
+
+1. **哪个改动能稳定降低整步时间、降低多少**：**没有可部署的改动**。分词预取 +27.7 ms（更慢，关闭）；H2D 非阻塞 −1.8 ms（无显著差异）；dW Python 路由 −9.0 ms [−17.5, −0.6]（≈0.4%，训练状态逐位相同，候选）。
+2. **各部分占用多少、哪些仍未知**：反向 GEMM 772 ms/步（38%）、反向 attention 375 ms（18.5%）、前向 GEMM 330 ms（16.2%）、前向 attention 205 ms（10.1%）（r36 kernel 时间）；主机分词 65.7 ms/步（3.0%）；前向空隙（带 profiler）≈31.6 ms/步，其中 tokenizer ≈27.9 已归因，前向 UNKNOWN 0.25，反向 UNKNOWN ≈10.8（仅带 profiler）；分词预取不省时间。仍未知：无 profiler 运行中 ~4% 未利用时间的构成。
+3. **哪些硬件效率结论有计数器证据**：**没有**。HBM 带宽利用率与矩阵单元活跃度均受平台测量条件限制。
+
+`draft / deployable=false / hardware_status=unverified` 维持；vendor 白名单维持。
+
+#### 4. F-2 最小 shape 隔离（单次触发）
 
 最小 shape（M8 K256 N512，fp32，enable 下 mm backward）单次触发**仍挂起**（300s 超时，控制组通过）——F-2 与 shape 无关的普遍挂起，继续 blocked（`probe7_recheck_2026-11-13.json` 口径维持；本轮未重复触发已挂起路径之外的组合）。
 

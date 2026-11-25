@@ -1,0 +1,353 @@
+{
+ "field_version": "route_entry_ab_v2",
+ "time_unit": "ms",
+ "estimate": "diff-in-diff = mean(py_route: phase2-phase1) - mean(native control: phase2-phase1); negative = route faster",
+ "stats_by_batch_second": {
+  "batch1_console|native": {
+   "n": 18,
+   "mean_ms": 4.01,
+   "median_ms": 1.59,
+   "min_ms": -27.58,
+   "max_ms": 41.75,
+   "sd_ms": 17.93,
+   "mean_ci95_ms": [
+    -4.9,
+    12.93
+   ],
+   "n_slower": 12,
+   "n_faster": 6
+  },
+  "batch1_console|py_route": {
+   "n": 18,
+   "mean_ms": -9.96,
+   "median_ms": -11.08,
+   "min_ms": -26.05,
+   "max_ms": 18.7,
+   "sd_ms": 11.22,
+   "mean_ci95_ms": [
+    -15.54,
+    -4.38
+   ],
+   "n_slower": 2,
+   "n_faster": 16
+  },
+  "batch2|native": {
+   "n": 24,
+   "mean_ms": 7.13,
+   "median_ms": 1.42,
+   "min_ms": -30.61,
+   "max_ms": 71.49,
+   "sd_ms": 23.57,
+   "mean_ci95_ms": [
+    -2.82,
+    17.09
+   ],
+   "n_slower": 13,
+   "n_faster": 11
+  },
+  "batch2|py_route": {
+   "n": 24,
+   "mean_ms": 1.8,
+   "median_ms": -2.4,
+   "min_ms": -28.9,
+   "max_ms": 72.53,
+   "sd_ms": 21.25,
+   "mean_ci95_ms": [
+    -7.17,
+    10.78
+   ],
+   "n_slower": 8,
+   "n_faster": 16
+  }
+ },
+ "per_process_diffs": {
+  "batch1_console|native|run02": [
+   -2.89,
+   -4.56,
+   2.14
+  ],
+  "batch1_console|native|run04": [
+   8.51,
+   4.45,
+   -2.59
+  ],
+  "batch1_console|native|run06": [
+   -18.18,
+   11.14,
+   0.26
+  ],
+  "batch1_console|native|run08": [
+   -20.65,
+   38.25,
+   24.07
+  ],
+  "batch1_console|native|run10": [
+   -27.58,
+   1.04,
+   3.11
+  ],
+  "batch1_console|native|run12": [
+   13.48,
+   0.49,
+   41.75
+  ],
+  "batch1_console|py_route|run01": [
+   -26.05,
+   -20.81,
+   -22.51
+  ],
+  "batch1_console|py_route|run03": [
+   -14.63,
+   6.02,
+   -4.33
+  ],
+  "batch1_console|py_route|run05": [
+   -17.04,
+   -0.82,
+   -10.22
+  ],
+  "batch1_console|py_route|run07": [
+   -20.71,
+   -2.93,
+   -2.5
+  ],
+  "batch1_console|py_route|run09": [
+   -14.05,
+   -10.67,
+   -6.06
+  ],
+  "batch1_console|py_route|run11": [
+   18.7,
+   -19.17,
+   -11.49
+  ],
+  "batch2|native|run02": [
+   -6.12,
+   -9.56,
+   11.59
+  ],
+  "batch2|native|run03": [
+   4.28,
+   4.55,
+   1.32
+  ],
+  "batch2|native|run06": [
+   -7.56,
+   -30.61,
+   -11.08
+  ],
+  "batch2|native|run07": [
+   31.81,
+   3.28,
+   -6.77
+  ],
+  "batch2|native|run10": [
+   -0.25,
+   1.52,
+   37.35
+  ],
+  "batch2|native|run11": [
+   46.88,
+   71.49,
+   -12.46
+  ],
+  "batch2|native|run14": [
+   49.6,
+   3.34,
+   -2.88
+  ],
+  "batch2|native|run15": [
+   -10.88,
+   -3.94,
+   6.31
+  ],
+  "batch2|py_route|run01": [
+   0.85,
+   -1.67,
+   -11.24
+  ],
+  "batch2|py_route|run04": [
+   -7.28,
+   -5.13,
+   -4.93
+  ],
+  "batch2|py_route|run05": [
+   -5.78,
+   4.35,
+   -28.9
+  ],
+  "batch2|py_route|run08": [
+   -4.58,
+   -2.82,
+   -0.52
+  ],
+  "batch2|py_route|run09": [
+   40.74,
+   39.87,
+   72.53
+  ],
+  "batch2|py_route|run12": [
+   -10.06,
+   5.64,
+   4.4
+  ],
+  "batch2|py_route|run13": [
+   -4.88,
+   -0.9,
+   -17.32
+  ],
+  "batch2|py_route|run16": [
+   0.91,
+   -1.97,
+   -18.06
+  ]
+ },
+ "process_level_sign_test": {
+  "py_route": {
+   "processes": 14,
+   "negative_mean_diff": 13
+  },
+  "native": {
+   "processes": 14,
+   "negative_mean_diff": 6
+  },
+  "fisher_two_sided_p": 0.0128
+ },
+ "process_mean_diffs_ms": {
+  "native": [
+   -1.36,
+   3.38,
+   -16.42,
+   9.44,
+   12.87,
+   35.3,
+   16.69,
+   -2.84,
+   -1.77,
+   3.46,
+   -2.26,
+   13.89,
+   -7.81,
+   18.57
+  ],
+  "py_route": [
+   -4.02,
+   -5.78,
+   -10.11,
+   -2.64,
+   51.05,
+   -0.01,
+   -7.7,
+   -6.37,
+   -23.12,
+   -4.31,
+   -9.36,
+   -8.71,
+   -10.26,
+   -3.99
+  ]
+ },
+ "diff_in_diff_by_batch": {
+  "batch1_console": {
+   "mean_ms": -13.97,
+   "se_ms": 4.98,
+   "ci95_ms": [
+    -24.49,
+    -3.46
+   ],
+   "classification": "GAIN (faster)"
+  },
+  "batch2": {
+   "mean_ms": -5.33,
+   "se_ms": 6.48,
+   "ci95_ms": [
+    -18.74,
+    8.07
+   ],
+   "classification": "NO SIGNIFICANT DIFFERENCE"
+  }
+ },
+ "pooled": {
+  "n_native": 42,
+  "n_py_route": 42,
+  "native": {
+   "n": 42,
+   "mean_ms": 5.8,
+   "median_ms": 1.42,
+   "min_ms": -30.61,
+   "max_ms": 71.49,
+   "sd_ms": 21.15,
+   "mean_ci95_ms": [
+    -0.6,
+    12.19
+   ],
+   "n_slower": 25,
+   "n_faster": 17
+  },
+  "py_route": {
+   "n": 42,
+   "mean_ms": -3.24,
+   "median_ms": -4.9,
+   "min_ms": -28.9,
+   "max_ms": 72.53,
+   "sd_ms": 18.45,
+   "mean_ci95_ms": [
+    -8.82,
+    2.34
+   ],
+   "n_slower": 10,
+   "n_faster": 32
+  },
+  "diff_in_diff": {
+   "mean_ms": -9.04,
+   "se_ms": 4.33,
+   "ci95_ms": [
+    -17.52,
+    -0.55
+   ],
+   "classification": "GAIN (faster)"
+  }
+ },
+ "batch_hash_mismatch": 0,
+ "raw_files": [
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run01_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run02_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run03_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run04_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run05_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run06_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run07_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run08_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run09_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run10_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run11_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run12_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run13_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run14_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run15_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run16_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run01_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run02_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run03_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run04_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run05_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run06_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run07_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run08_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run09_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run10_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run11_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run12_native.json"
+ ],
+ "valid_tokens_per_s": {
+  "native": {
+   "p1": 14646.4,
+   "p2": 14596.3
+  },
+  "py_route": {
+   "p1": 14666.1,
+   "p2": 14654.1
+  }
+ },
+ "verdict": "POOLED GAIN (faster): dW Python route on the ORIGINAL entry loop: diff-in-diff -9.04 ms, 95% CI [-17.52, -0.55] (py_route phase2-phase1: median -4.9 ms, faster in 32/42; native control: median +1.4 ms, faster in 17/42) over 28 processes; by batch: batch1_console: -13.97 ms CI [-24.49, -3.46]; batch2: -5.33 ms CI [-18.74, +8.07]"
+}

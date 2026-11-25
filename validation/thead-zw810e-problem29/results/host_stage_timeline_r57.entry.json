@@ -1,0 +1,426 @@
+{
+ "field_version": "host_stage_timeline_v1",
+ "time_unit": "ms",
+ "loop": "entry",
+ "profiler": false,
+ "added_sync": "step-end boundary only",
+ "stage_definitions": {
+  "prepare_embedding_inputs_ms": "host time in the tokenizer + tensorization (20 groups per step)",
+  "h2d_ms": "host time blocked in move_features (.to(device), pageable, non_blocking=False)",
+  "forward_launch_ms": "host time for the model call to return (kernel issue)",
+  "next_batch_ms": "DataLoader fetch",
+  "loss_sync_ms": "the entry's isfinite(loss) host sync",
+  "backward_launch_ms": "host time for .backward() to return",
+  "clip_launch_ms": "clip_grad_norm_ call",
+  "optimizer_step_launch_ms": "optimizer.step() call",
+  "end_wait_ms": "step-end sync (measurement boundary)"
+ },
+ "steps": [
+  {
+   "step": 2,
+   "step_ms": 1898.07,
+   "next_batch_ms": 0.67,
+   "forward_call_ms": 513.3,
+   "loss_sync_ms": 109.95,
+   "backward_launch_ms": 1250.54,
+   "clip_launch_ms": 2.72,
+   "optimizer_step_launch_ms": 4.03,
+   "end_wait_ms": 13.53,
+   "host_accounted_ms": 1894.73,
+   "prepare_embedding_inputs_ms": 56.95,
+   "h2d_ms": 178.76,
+   "forward_launch_ms": 268.63,
+   "n_groups": 20,
+   "groups": [
+    {
+     "prepare_embedding_inputs_ms": 1.346,
+     "h2d_ms": 0.07,
+     "forward_launch_ms": 13.019
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.208,
+     "h2d_ms": 0.071,
+     "forward_launch_ms": 13.211
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.762,
+     "h2d_ms": 2.307,
+     "forward_launch_ms": 12.699
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.244,
+     "h2d_ms": 30.444,
+     "forward_launch_ms": 12.741
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.244,
+     "h2d_ms": 5.655,
+     "forward_launch_ms": 12.993
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.536,
+     "h2d_ms": 0.079,
+     "forward_launch_ms": 13.354
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.292,
+     "h2d_ms": 0.132,
+     "forward_launch_ms": 14.965
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.512,
+     "h2d_ms": 0.707,
+     "forward_launch_ms": 12.428
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.933,
+     "h2d_ms": 36.579,
+     "forward_launch_ms": 13.591
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.292,
+     "h2d_ms": 11.904,
+     "forward_launch_ms": 12.648
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.127,
+     "h2d_ms": 0.077,
+     "forward_launch_ms": 14.059
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.257,
+     "h2d_ms": 0.059,
+     "forward_launch_ms": 13.068
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.583,
+     "h2d_ms": 2.271,
+     "forward_launch_ms": 12.114
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.722,
+     "h2d_ms": 37.072,
+     "forward_launch_ms": 12.461
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.218,
+     "h2d_ms": 7.417,
+     "forward_launch_ms": 12.452
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.185,
+     "h2d_ms": 0.124,
+     "forward_launch_ms": 19.003
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.617,
+     "h2d_ms": 0.08,
+     "forward_launch_ms": 14.771
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.71,
+     "h2d_ms": 2.125,
+     "forward_launch_ms": 12.833
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.464,
+     "h2d_ms": 36.562,
+     "forward_launch_ms": 13.351
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.696,
+     "h2d_ms": 5.027,
+     "forward_launch_ms": 12.867
+    }
+   ]
+  },
+  {
+   "step": 3,
+   "step_ms": 2127.11,
+   "next_batch_ms": 0.69,
+   "forward_call_ms": 578.14,
+   "loss_sync_ms": 117.33,
+   "backward_launch_ms": 1407.71,
+   "clip_launch_ms": 2.59,
+   "optimizer_step_launch_ms": 4.14,
+   "end_wait_ms": 13.52,
+   "host_accounted_ms": 2124.12,
+   "prepare_embedding_inputs_ms": 62.71,
+   "h2d_ms": 236.08,
+   "forward_launch_ms": 269.01,
+   "n_groups": 20,
+   "groups": [
+    {
+     "prepare_embedding_inputs_ms": 1.531,
+     "h2d_ms": 0.124,
+     "forward_launch_ms": 18.391
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.748,
+     "h2d_ms": 0.077,
+     "forward_launch_ms": 14.112
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.754,
+     "h2d_ms": 3.436,
+     "forward_launch_ms": 12.374
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.831,
+     "h2d_ms": 36.643,
+     "forward_launch_ms": 12.437
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.109,
+     "h2d_ms": 12.005,
+     "forward_launch_ms": 12.865
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.379,
+     "h2d_ms": 0.082,
+     "forward_launch_ms": 12.649
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.424,
+     "h2d_ms": 0.074,
+     "forward_launch_ms": 12.68
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.58,
+     "h2d_ms": 4.898,
+     "forward_launch_ms": 11.745
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.872,
+     "h2d_ms": 36.33,
+     "forward_launch_ms": 12.363
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.137,
+     "h2d_ms": 31.473,
+     "forward_launch_ms": 19.457
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.177,
+     "h2d_ms": 0.074,
+     "forward_launch_ms": 12.974
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.178,
+     "h2d_ms": 0.088,
+     "forward_launch_ms": 13.336
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.101,
+     "h2d_ms": 12.581,
+     "forward_launch_ms": 12.408
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.582,
+     "h2d_ms": 16.558,
+     "forward_launch_ms": 12.23
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.164,
+     "h2d_ms": 35.44,
+     "forward_launch_ms": 12.619
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.366,
+     "h2d_ms": 0.066,
+     "forward_launch_ms": 13.309
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.934,
+     "h2d_ms": 0.083,
+     "forward_launch_ms": 13.15
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.106,
+     "h2d_ms": 12.347,
+     "forward_launch_ms": 12.724
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.676,
+     "h2d_ms": 26.132,
+     "forward_launch_ms": 12.399
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.064,
+     "h2d_ms": 7.572,
+     "forward_launch_ms": 14.789
+    }
+   ]
+  },
+  {
+   "step": 4,
+   "step_ms": 2351.47,
+   "next_batch_ms": 0.89,
+   "forward_call_ms": 669.01,
+   "loss_sync_ms": 109.5,
+   "backward_launch_ms": 1548.59,
+   "clip_launch_ms": 2.59,
+   "optimizer_step_launch_ms": 4.24,
+   "end_wait_ms": 13.38,
+   "host_accounted_ms": 2348.18,
+   "prepare_embedding_inputs_ms": 71.4,
+   "h2d_ms": 319.51,
+   "forward_launch_ms": 268.51,
+   "n_groups": 20,
+   "groups": [
+    {
+     "prepare_embedding_inputs_ms": 1.142,
+     "h2d_ms": 0.092,
+     "forward_launch_ms": 13.23
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.433,
+     "h2d_ms": 0.057,
+     "forward_launch_ms": 13.207
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.292,
+     "h2d_ms": 16.423,
+     "forward_launch_ms": 12.174
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.99,
+     "h2d_ms": 34.719,
+     "forward_launch_ms": 12.296
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.698,
+     "h2d_ms": 34.829,
+     "forward_launch_ms": 17.087
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.657,
+     "h2d_ms": 0.061,
+     "forward_launch_ms": 12.731
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.512,
+     "h2d_ms": 0.081,
+     "forward_launch_ms": 13.234
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.283,
+     "h2d_ms": 18.247,
+     "forward_launch_ms": 12.812
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.648,
+     "h2d_ms": 17.788,
+     "forward_launch_ms": 12.586
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.469,
+     "h2d_ms": 36.106,
+     "forward_launch_ms": 12.118
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.517,
+     "h2d_ms": 0.074,
+     "forward_launch_ms": 12.998
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.852,
+     "h2d_ms": 0.076,
+     "forward_launch_ms": 14.106
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.795,
+     "h2d_ms": 19.791,
+     "forward_launch_ms": 12.944
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.189,
+     "h2d_ms": 6.033,
+     "forward_launch_ms": 11.903
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.935,
+     "h2d_ms": 35.963,
+     "forward_launch_ms": 13.404
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.984,
+     "h2d_ms": 0.073,
+     "forward_launch_ms": 13.607
+    },
+    {
+     "prepare_embedding_inputs_ms": 5.082,
+     "h2d_ms": 0.086,
+     "forward_launch_ms": 13.873
+    },
+    {
+     "prepare_embedding_inputs_ms": 5.067,
+     "h2d_ms": 28.944,
+     "forward_launch_ms": 12.123
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.69,
+     "h2d_ms": 35.089,
+     "forward_launch_ms": 12.698
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.167,
+     "h2d_ms": 34.979,
+     "forward_launch_ms": 19.376
+    }
+   ]
+  }
+ ],
+ "mean_per_step": {
+  "step_ms": 2125.55,
+  "next_batch_ms": 0.75,
+  "forward_call_ms": 586.82,
+  "loss_sync_ms": 112.26,
+  "backward_launch_ms": 1402.28,
+  "clip_launch_ms": 2.63,
+  "optimizer_step_launch_ms": 4.14,
+  "end_wait_ms": 13.48,
+  "prepare_embedding_inputs_ms": 63.69,
+  "h2d_ms": 244.78,
+  "forward_launch_ms": 268.72
+ },
+ "tokenize_total_per_step_ms": 63.69,
+ "tokenize_pct_of_step": 3.0,
+ "h2d_probe": {
+  "mm_ms": 1.04,
+  "device_work_enqueued_ms": 119.6,
+  "shape": "[40,48] int64",
+  "pageable_to_device": {
+   "host_block_ms_median": 117.899,
+   "host_block_ms_all": [
+    118.046,
+    117.857,
+    117.899
+   ]
+  },
+  "pageable_to_device_non_blocking": {
+   "host_block_ms_median": 0.021,
+   "host_block_ms_all": [
+    0.021,
+    0.02,
+    0.033
+   ]
+  },
+  "pinned_non_blocking_to_device": {
+   "host_block_ms_median": 0.021,
+   "host_block_ms_all": [
+    0.024,
+    0.021,
+    0.016
+   ]
+  },
+  "device_scalar_item_D2H": {
+   "host_block_ms_median": 117.853,
+   "host_block_ms_all": [
+    117.853,
+    117.899,
+    117.827
+   ]
+  }
+ }
+}

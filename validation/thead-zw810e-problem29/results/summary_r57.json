@@ -1,0 +1,1184 @@
+{
+ "round": 57,
+ "review": "TruNcat3, PR #8 comment 7166338004 (2026-11-25T15:07:23Z)",
+ "base_commit": "9bf250be",
+ "headlines": [
+  "round-56's '-25.2 ms, 12/12 faster' tokenize prefetch is RETRACTED: it was a measurement-path artefact (experiment-only synchronize in compute). On the exact entry loop the faithful prefetch is SLOWER: 12/12, median +27.7 ms.",
+  "the round-56 / run-1 prefetch implementation was NOT numerically equivalent to the entry (loss re-implemented outside autocast): loss 0.928161 vs 0.927814, grad norm 9.9375 vs 9.5, 386/386 dense grads differ.",
+  "forward gaps are now attributed with explicit markers: of the 28 forward gaps >= 2 ms in the profiled entry-loop trace (3 steps) 25 are tokenizer-dominated (94-98% of the gap); forward UNKNOWN is 0.76 ms in total (0.8%). What is left stays UNKNOWN.",
+  "in the unprofiled entry the forward phase is device-bound: the pageable H2D copy is a full stream sync (host blocked 245 ms/step inside move_features) but removing it (pinned + non_blocking, bitwise-identical state) does not change the step time (-1.8 ms median, CI [-10.1, +8.1]).",
+  "dW Python route: training state bitwise identical (386/386 dense grads, 391/391 params, optimizer state); on the entry loop diff-in-diff -9.0 ms, 95% CI [-17.5, -0.6], 13/14 processes negative; ~0.4% of a step, candidate only."
+ ],
+ "item1_training_state_consistency": {
+  "file": "results/train_state_r57.json (+ results/train_state_r57.<candidate>.json)",
+  "script": "scripts/train_state_consistency.py",
+  "command": "for c in dw_route prefetch_faithful prefetch_loss_reimpl prefetch_loss_reimpl_run1 h2d_nonblocking; do python3 examples/retrieval/train_state_consistency.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --candidate $c --out results/train_state_r57.json; done; python3 examples/retrieval/train_state_consistency.py --merge --out results/train_state_r57.json",
+  "design": "ONE process per candidate: after 2 warmup optimizer steps one snapshot (model, optimizer state, CPU+CUDA RNG, the 4 micro-batches) is taken; native x3 from the snapshot, then the candidate is installed and run x2 from the same snapshot. Each run = one optimizer step of the ORIGINAL entry loop (loss under autocast via the untouched loss_for_batch, isfinite(loss) host sync, backward, clip_grad_norm_, optimizer.step).",
+  "rng_dropout_data_order": "CPU and CUDA RNG states are restored from the snapshot before every run (dropout masks identical); the 4 micro-batches are deep-copied in the snapshot (data order fixed); tokenization has no randomness; the prefetch worker thread consumes no torch RNG.",
+  "thresholds": {
+   "grad_rel_tol": 0.02,
+   "param_abs_tol": 0.001,
+   "state_rel_tol": 0.02,
+   "nonfinite_max": 0,
+   "basis": "2% relative error floored at 1% of the tensor's max |value| (bf16 mantissa); params by absolute error; the verdict distinguishes bitwise identity from within-threshold"
+  },
+  "embedding_tables": "word / position / token_type embedding gradients come from an index-accumulating backward whose summation order is not reproducible on this device: native-vs-native differs on exactly these tensors in every native pair. Reported separately, excluded from the candidate verdict.",
+  "native_band": {
+   "pairs": 3,
+   "dense_tensors_identical_in_all_pairs": true,
+   "pairs_with_embedding_table_diffs": 3,
+   "embedding_table_grad_max_abs": 0.00019646
+  },
+  "dense_param_tensors": 386,
+  "candidates": {
+   "dw_route": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors_differing_max_per_pair": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max_per_pair": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal_all_pairs": true,
+    "grad_norm_equal_all_pairs": true,
+    "param_sha256_dense_equal_all_pairs": true,
+    "losses_micro0_native_then_candidate": [
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383
+    ],
+    "grad_norm_native_then_candidate": [
+     9.5,
+     9.5,
+     9.5,
+     9.5,
+     9.5
+    ]
+   },
+   "h2d_nonblocking": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors_differing_max_per_pair": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max_per_pair": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal_all_pairs": true,
+    "grad_norm_equal_all_pairs": true,
+    "param_sha256_dense_equal_all_pairs": true,
+    "losses_micro0_native_then_candidate": [
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383
+    ],
+    "grad_norm_native_then_candidate": [
+     9.5,
+     9.5,
+     9.5,
+     9.5,
+     9.5
+    ]
+   },
+   "prefetch_faithful": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors_differing_max_per_pair": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max_per_pair": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal_all_pairs": true,
+    "grad_norm_equal_all_pairs": true,
+    "param_sha256_dense_equal_all_pairs": true,
+    "losses_micro0_native_then_candidate": [
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383
+    ],
+    "grad_norm_native_then_candidate": [
+     9.5,
+     9.5,
+     9.5,
+     9.5,
+     9.5
+    ]
+   },
+   "prefetch_loss_reimpl": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors_differing_max_per_pair": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max_per_pair": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal_all_pairs": true,
+    "grad_norm_equal_all_pairs": true,
+    "param_sha256_dense_equal_all_pairs": true,
+    "losses_micro0_native_then_candidate": [
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383,
+     0.917383
+    ],
+    "grad_norm_native_then_candidate": [
+     9.5,
+     9.5,
+     9.5,
+     9.5,
+     9.5
+    ]
+   },
+   "prefetch_loss_reimpl_run1": {
+    "verdict": "FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to 386 per pair, grad max_rel 95.2941, param max_abs 6.104e-05).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors_differing_max_per_pair": 386,
+    "dense_grad_max_abs": 0.6875,
+    "dense_grad_max_rel": 95.294113,
+    "dense_param_tensors_differing_max_per_pair": 332,
+    "dense_param_max_abs": 6.104e-05,
+    "dense_optimizer_state_max_abs": 0.00717163,
+    "loss_equal_all_pairs": false,
+    "grad_norm_equal_all_pairs": false,
+    "param_sha256_dense_equal_all_pairs": false,
+    "losses_micro0_native_then_candidate": [
+     0.928161,
+     0.928161,
+     0.928161,
+     0.927814,
+     0.927814
+    ],
+    "grad_norm_native_then_candidate": [
+     9.9375,
+     9.9375,
+     9.9375,
+     9.5,
+     9.5
+    ]
+   }
+  },
+  "cross_process_warning": "a candidate run in ANOTHER process is not a valid comparison: models rebuilt from the same seed in different processes are not identical (acc_hit_step_r46_rebuild_check 0/72). The first r57 attempt compared across processes and showed fake grad max_rel 215 / loss0 0.95186 vs 0.94985; discarded.",
+  "verdict": "overlap (prefetch_faithful) vs inline, same snapshot: PASS bitwise - every dense gradient / post-update parameter / optimizer-state tensor identical in all 7 candidate pairs, losses and grad norms equal, 0 non-finite; only the 3 index-accumulated embedding tables differ, and native-vs-native differs on the same tables. The round-56 / run-1 implementation (prefetch_loss_reimpl_run1) FAILS: it is a different computation, not a prefetch of the same one."
+ },
+ "item2_prefetch_not_a_measurement_artefact": {
+  "file": "results/tokenize_overlap_native_r57.json (+ results/tokenize_overlap_native_r57_run1.json, results/tokenize_overlap_native_r57_run2/*.json)",
+  "script": "scripts/tokenize_overlap_native.py",
+  "command": "python3 examples/retrieval/tokenize_overlap_native.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --mode {inline|prefetch_faithful|h2d_nb} --rep repN --out results/tokenize_overlap_native_r57_run2/repN_<mode>.json  (4 reps: inline->prefetch->h2d_nb, h2d_nb->prefetch->inline, ...)  then  --aggregate <12 files> --prior results/tokenize_overlap_native_r57_run1.json --out results/tokenize_overlap_native_r57.json",
+  "loop": "ORIGINAL entry loop: one-batch lookahead, autocast loss, isfinite(loss) host sync, backward, clip+step; profiler OFF; no experiment sync inside the loss path",
+  "protocol": "per rep: one inline process and one prefetch process (seed 42, same batch order), 2 warmup steps + 3 timed steps each; A->B / B->A alternated across reps",
+  "modes": {
+   "prefetch_faithful": "same loss_for_batch, only prepare_embedding_inputs + move_features on a worker thread",
+   "prefetch_loss_reimpl": "round-56 / run-1 implementation: logits matmul + cross_entropy re-implemented outside autocast",
+   "h2d_nb": "move_features via pinned buffers + non_blocking=True (same bytes, same kernels)"
+  },
+  "profiler": false,
+  "batch_hash_mismatch": 0,
+  "stats": {
+   "run1|prefetch_loss_reimpl": {
+    "n": 12,
+    "mean_ms": 16.93,
+    "median_ms": 16.65,
+    "min_ms": -3.9,
+    "max_ms": 48.4,
+    "sd_ms": 13.15,
+    "mean_ci95_ms": [
+     8.58,
+     25.29
+    ],
+    "n_slower": 10,
+    "n_faster": 2
+   },
+   "run2|h2d_nb": {
+    "n": 12,
+    "mean_ms": -1.02,
+    "median_ms": -1.81,
+    "min_ms": -30.56,
+    "max_ms": 23.4,
+    "sd_ms": 14.29,
+    "mean_ci95_ms": [
+     -10.1,
+     8.06
+    ],
+    "n_slower": 5,
+    "n_faster": 7
+   },
+   "run2|prefetch_faithful": {
+    "n": 12,
+    "mean_ms": 31.44,
+    "median_ms": 27.73,
+    "min_ms": 9.26,
+    "max_ms": 57.85,
+    "sd_ms": 15.1,
+    "mean_ci95_ms": [
+     21.84,
+     41.04
+    ],
+    "n_slower": 12,
+    "n_faster": 0
+   }
+  },
+  "classification": {
+   "run1|prefetch_loss_reimpl": "REGRESSION (slower)",
+   "run2|h2d_nb": "NO SIGNIFICANT DIFFERENCE",
+   "run2|prefetch_faithful": "REGRESSION (slower)"
+  },
+  "per_rep_median_ms": {
+   "run1|prefetch_loss_reimpl|rep1": 22.4,
+   "run1|prefetch_loss_reimpl|rep2": 16.8,
+   "run1|prefetch_loss_reimpl|rep3": -0.1,
+   "run1|prefetch_loss_reimpl|rep4": 16.5,
+   "run2|h2d_nb|rep1": -1.42,
+   "run2|h2d_nb|rep2": -2.2,
+   "run2|h2d_nb|rep3": 9.13,
+   "run2|h2d_nb|rep4": -14.7,
+   "run2|prefetch_faithful|rep1": 56.39,
+   "run2|prefetch_faithful|rep2": 31.59,
+   "run2|prefetch_faithful|rep3": 21.27,
+   "run2|prefetch_faithful|rep4": 22.3
+  },
+  "valid_tokens_per_s_run2": {
+   "inline": {
+    "n": 24,
+    "mean": 14692.1,
+    "median": 14780.7,
+    "min": 14218.4,
+    "max": 15109.5
+   },
+   "h2d_nb": {
+    "n": 12,
+    "mean": 14697.8,
+    "median": 14805.9,
+    "min": 14077.7,
+    "max": 15118.6
+   },
+   "prefetch_faithful": {
+    "n": 12,
+    "mean": 14478.8,
+    "median": 14569.0,
+    "min": 13930.2,
+    "max": 14881.7
+   }
+  },
+  "raw_inline_step_ms_by_step_index": [
+   [
+    1898.23,
+    1898.23,
+    1893.85,
+    1902.6
+   ],
+   [
+    2122.18,
+    2127.93,
+    2128.16,
+    2154.29
+   ],
+   [
+    2349.92,
+    2354.29,
+    2350.31,
+    2363.98
+   ]
+  ],
+  "run1_note": "run 1 = first r57 run (loop without lookahead, prefetch variant loss_reimpl): 10/12 slower, median +16.6 ms; its file said '11/12' (text error, erratum recorded)",
+  "verdict": "prefetch_faithful (run 2, exact entry loop): REGRESSION (slower) - slower in 12/12, median +27.7 ms, mean +31.4 ms, 95% CI of the mean [+21.8, +41.0], range [+9.3, +57.9]; prefetch_loss_reimpl (run 1): REGRESSION (slower) - slower in 10/12, median +16.6 ms, mean +16.9 ms, 95% CI of the mean [+8.6, +25.3], range [-3.9, +48.4]; the round-56 gain does not exist on the entry loop. Prefetch CLOSED."
+ },
+ "item2b_h2d_nonblocking": {
+  "file": "results/tokenize_overlap_native_r57.json (mode h2d_nb) + results/host_stage_timeline_r57.entry_h2d_nb.json",
+  "script": "scripts/tokenize_overlap_native.py, scripts/host_stage_timeline.py",
+  "what": "move_features through pinned buffers + non_blocking=True (same bytes, same kernels, same order)",
+  "stats": {
+   "n": 12,
+   "mean_ms": -1.02,
+   "median_ms": -1.81,
+   "min_ms": -30.56,
+   "max_ms": 23.4,
+   "sd_ms": 14.29,
+   "mean_ci95_ms": [
+    -10.1,
+    8.06
+   ],
+   "n_slower": 5,
+   "n_faster": 7
+  },
+  "classification": "NO SIGNIFICANT DIFFERENCE",
+  "valid_tokens_per_s": {
+   "n": 12,
+   "mean": 14697.8,
+   "median": 14805.9,
+   "min": 14077.7,
+   "max": 15118.6
+  },
+  "host_timeline_blocking_vs_nonblocking": {
+   "blocking": {
+    "step_ms": 2125.55,
+    "prepare_embedding_inputs_ms": 63.69,
+    "h2d_ms": 244.78,
+    "forward_launch_ms": 268.72,
+    "forward_call_ms": 586.82,
+    "loss_sync_ms": 112.26,
+    "backward_launch_ms": 1402.28,
+    "next_batch_ms": 0.75,
+    "clip_launch_ms": 2.63,
+    "optimizer_step_launch_ms": 4.14,
+    "end_wait_ms": 13.48
+   },
+   "nonblocking": {
+    "step_ms": 2123.94,
+    "prepare_embedding_inputs_ms": 63.31,
+    "h2d_ms": 1.88,
+    "forward_launch_ms": 507.66,
+    "forward_call_ms": 581.42,
+    "loss_sync_ms": 111.81,
+    "backward_launch_ms": 1406.79,
+    "next_batch_ms": 0.59,
+    "clip_launch_ms": 2.56,
+    "optimizer_step_launch_ms": 4.16,
+    "end_wait_ms": 13.45
+   },
+   "step_ms_blocking": [
+    1898.07,
+    2127.11,
+    2351.47
+   ],
+   "step_ms_nonblocking": [
+    1891.38,
+    2129.63,
+    2350.82
+   ]
+  },
+  "training_state": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism).",
+  "verdict": "h2d_nb (run 2, exact entry loop): NO SIGNIFICANT DIFFERENCE - slower in 5/12, median -1.8 ms, mean -1.0 ms, 95% CI of the mean [-10.1, +8.1], range [-30.6, +23.4] -> not adopted (no gain); kept as the evidence that the forward phase is device-bound"
+ },
+ "item3_forward_gap_markers": {
+  "files": "results/gap_markers_r57.entry.json(+.trace.json.gz), results/gap_markers_r57.capture.json(+.trace.json.gz)",
+  "script": "scripts/gap_markers.py",
+  "command": "python3 examples/retrieval/gap_markers.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --loop {entry|capture} --out results/gap_markers_r57.<loop>.json",
+  "method": "device gaps = union of kernel/gpu_memcpy/gpu_memset intervals per step; per gap every category interval is CLIPPED to the gap, then unioned, then made exclusive in priority order (tokenizer > prepare_embedding_inputs > h2d > next_batch > loss_sync > python_gc > launch_submit > blocking_runtime > other_runtime > cpu_op); UNKNOWN = gap - covered. next_kernel = first device event after the gap, with the host time of its launch call relative to the gap start. No neighbourhood attribution.",
+  "categories": {
+   "tokenizer": "MK_tokenizer: the tokenizer call",
+   "prepare_embedding_inputs_other": "MK_prepare_embedding_inputs minus tokenizer",
+   "h2d": "MK_h2d: move_features",
+   "next_batch": "MK_next_batch: DataLoader fetch (entry loop)",
+   "loss_sync": "MK_loss_sync: the entry's isfinite(loss) host sync (entry loop)",
+   "python_gc": "MK_python_gc: Python garbage-collection pauses (gc.callbacks)",
+   "launch_submit": "cudaLaunchKernel*/cuLaunchKernel* call duration",
+   "blocking_runtime": "*Synchronize / cudaMemcpy / cudaMalloc / cudaFree / cudaStreamQuery ... call duration",
+   "other_runtime": "other CUDA runtime call durations",
+   "cpu_op": "aten op dispatch intervals not inside the above"
+  },
+  "markers_found": [
+   "MK_h2d",
+   "MK_loss_sync",
+   "MK_next_batch",
+   "MK_prepare_embedding_inputs",
+   "MK_python_gc",
+   "MK_tokenizer"
+  ],
+  "min_gap_ms": 2.0,
+  "time_unit": "ms",
+  "entry_loop": {
+   "profiled_steps": [
+    2,
+    3,
+    4
+   ],
+   "device_busy_pct": 89.07,
+   "device_window_ms_per_step": 2284.03,
+   "gaps_ge_min_total": {
+    "n_gaps": 38,
+    "idle_ms": 127.35,
+    "forward_window": {
+     "n_gaps": 28,
+     "idle_ms": 94.91,
+     "tokenizer_ms": 83.73,
+     "other_explained_ms": 10.42,
+     "unknown_ms": 0.76,
+     "largest_gap_ms": 5.921,
+     "unknown_share_pct": 0.8,
+     "tokenizer_share_of_gap_pct": {
+      "min": 0.0,
+      "median": 96.5,
+      "max": 98.0
+     },
+     "gaps_tokenizer_dominated": 25,
+     "gaps_not_tokenizer_dominated": [
+      {
+       "gap_ms": 2.07,
+       "tokenizer_ms": 0.0,
+       "h2d_ms": 0.0,
+       "launch_submit_ms": 0.02,
+       "cpu_op_ms": 2.05,
+       "other_runtime_ms": 0.0,
+       "unknown_ms": 0.0
+      },
+      {
+       "gap_ms": 2.867,
+       "tokenizer_ms": 0.0,
+       "h2d_ms": 0.0,
+       "launch_submit_ms": 0.28,
+       "cpu_op_ms": 2.585,
+       "other_runtime_ms": 0.001,
+       "unknown_ms": 0.0
+      },
+      {
+       "gap_ms": 3.012,
+       "tokenizer_ms": 0.0,
+       "h2d_ms": 3.012,
+       "launch_submit_ms": 0.0,
+       "cpu_op_ms": 0.0,
+       "other_runtime_ms": 0.0,
+       "unknown_ms": 0.0
+      }
+     ],
+     "unknown_max_per_gap_ms": 0.124,
+     "next_kernel_launch_after_tokenize_end_ms": {
+      "min": 0.054,
+      "median": 0.074,
+      "max": 0.193
+     }
+    },
+    "backward_window": {
+     "n_gaps": 10,
+     "idle_ms": 32.44,
+     "unknown_ms": 32.05,
+     "largest_gap_ms": 10.202
+    },
+    "other_window": {
+     "n_gaps": 0,
+     "idle_ms": 0,
+     "unknown_ms": 0
+    }
+   },
+   "gaps_ge_min_per_step": {
+    "idle_ms": 31.64,
+    "tokenizer_ms": 27.91,
+    "other_explained_ms": 3.47,
+    "unknown_ms": 0.25,
+    "unknown_max_per_gap_ms": 0.04,
+    "forward_n_gaps": 9.3
+   },
+   "totals_gaps_ge_min_partition_ms": {
+    "tokenizer": 83.73,
+    "prepare_embedding_inputs_other": 0.79,
+    "h2d": 4.7,
+    "next_batch": 0.0,
+    "loss_sync": 0.0,
+    "python_gc": 0.0,
+    "launch_submit": 0.41,
+    "blocking_runtime": 0.0,
+    "other_runtime": 0.0,
+    "cpu_op": 4.91,
+    "unknown": 32.81
+   },
+   "totals_all_gaps_partition_ms": {
+    "tokenizer": 92.81,
+    "prepare_embedding_inputs_other": 0.91,
+    "h2d": 32.28,
+    "next_batch": 0.0,
+    "loss_sync": 3.27,
+    "python_gc": 0.02,
+    "launch_submit": 78.53,
+    "blocking_runtime": 3.18,
+    "other_runtime": 8.52,
+    "cpu_op": 410.0,
+    "unknown": 119.55
+   },
+   "largest_gap_ms": 10.202,
+   "backward_unknown_gaps": [
+    {
+     "step": "s2",
+     "gap_ms": 10.202,
+     "unknown_ms": 10.158,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 10.184,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.015
+      }
+     ]
+    },
+    {
+     "step": "s2",
+     "gap_ms": 2.369,
+     "unknown_ms": 2.328,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.353,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.013
+      }
+     ]
+    },
+    {
+     "step": "s2",
+     "gap_ms": 2.167,
+     "unknown_ms": 2.131,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.154,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.011
+      }
+     ]
+    },
+    {
+     "step": "s2",
+     "gap_ms": 2.476,
+     "unknown_ms": 2.444,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.465,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.009
+      }
+     ]
+    },
+    {
+     "step": "s3",
+     "gap_ms": 2.681,
+     "unknown_ms": 2.642,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.668,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.011
+      }
+     ]
+    },
+    {
+     "step": "s3",
+     "gap_ms": 2.166,
+     "unknown_ms": 2.134,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.155,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.009
+      }
+     ]
+    },
+    {
+     "step": "s3",
+     "gap_ms": 2.657,
+     "unknown_ms": 2.624,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.645,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.009
+      }
+     ]
+    },
+    {
+     "step": "s4",
+     "gap_ms": 2.762,
+     "unknown_ms": 2.719,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.747,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.013
+      }
+     ]
+    },
+    {
+     "step": "s4",
+     "gap_ms": 2.301,
+     "unknown_ms": 2.26,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.288,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.01
+      }
+     ]
+    },
+    {
+     "step": "s4",
+     "gap_ms": 2.658,
+     "unknown_ms": 2.613,
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native",
+     "next_kernel_launch_rel_gap_start_ms": 2.642,
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.014
+      }
+     ]
+    }
+   ]
+  },
+  "capture_loop": {
+   "profiled_steps": [
+    2,
+    3,
+    4
+   ],
+   "device_busy_pct": 89.99,
+   "device_window_ms_per_step": 2260.45,
+   "gaps_ge_min_total": {
+    "n_gaps": 27,
+    "idle_ms": 96.2,
+    "forward_window": {
+     "n_gaps": 27,
+     "idle_ms": 96.2,
+     "tokenizer_ms": 89.46,
+     "other_explained_ms": 4.24,
+     "unknown_ms": 2.5,
+     "largest_gap_ms": 5.444,
+     "unknown_share_pct": 2.6,
+     "tokenizer_share_of_gap_pct": {
+      "min": 0.0,
+      "median": 95.9,
+      "max": 97.4
+     },
+     "gaps_tokenizer_dominated": 26,
+     "gaps_not_tokenizer_dominated": [
+      {
+       "gap_ms": 2.679,
+       "tokenizer_ms": 0.0,
+       "h2d_ms": 0.0,
+       "launch_submit_ms": 0.009,
+       "cpu_op_ms": 1.224,
+       "other_runtime_ms": 0.0,
+       "unknown_ms": 1.446
+      }
+     ],
+     "unknown_max_per_gap_ms": 1.446,
+     "next_kernel_launch_after_tokenize_end_ms": {
+      "min": 0.052,
+      "median": 0.093,
+      "max": 0.236
+     }
+    },
+    "backward_window": {
+     "n_gaps": 0,
+     "idle_ms": 0,
+     "unknown_ms": 0,
+     "largest_gap_ms": 0
+    },
+    "other_window": {
+     "n_gaps": 0,
+     "idle_ms": 0,
+     "unknown_ms": 0
+    }
+   },
+   "gaps_ge_min_per_step": {
+    "idle_ms": 32.07,
+    "tokenizer_ms": 29.82,
+    "other_explained_ms": 1.41,
+    "unknown_ms": 0.83,
+    "unknown_max_per_gap_ms": 0.48,
+    "forward_n_gaps": 9.0
+   },
+   "totals_gaps_ge_min_partition_ms": {
+    "tokenizer": 89.46,
+    "prepare_embedding_inputs_other": 0.84,
+    "h2d": 2.17,
+    "next_batch": 0.0,
+    "loss_sync": 0.0,
+    "python_gc": 0.0,
+    "launch_submit": 0.01,
+    "blocking_runtime": 0.0,
+    "other_runtime": 0.0,
+    "cpu_op": 1.22,
+    "unknown": 2.5
+   },
+   "totals_all_gaps_partition_ms": {
+    "tokenizer": 98.95,
+    "prepare_embedding_inputs_other": 0.93,
+    "h2d": 29.53,
+    "next_batch": 0.0,
+    "loss_sync": 0.0,
+    "python_gc": 0.0,
+    "launch_submit": 66.35,
+    "blocking_runtime": 2.17,
+    "other_runtime": 8.0,
+    "cpu_op": 384.16,
+    "unknown": 88.57
+   },
+   "largest_gap_ms": 5.444,
+   "backward_unknown_gaps": [
+    null
+   ]
+  },
+  "r36_note": "the r36 trace itself cannot be marked retro-actively; the capture-loop run repeats its exact loop and window (steps 2-4) with the markers added. r36's largest gap (19.24 ms in s2) did not recur (largest forward gap here: 5.44 ms).",
+  "profiler_free_host_timeline": {
+   "script": "scripts/host_stage_timeline.py",
+   "command": "python3 examples/retrieval/host_stage_timeline.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --loop {entry|capture} [--h2d nonblocking] [--gc track|disabled] --out results/host_stage_timeline_r57.<tag>.json",
+   "stage_definitions": {
+    "prepare_embedding_inputs_ms": "host time in the tokenizer + tensorization (20 groups per step)",
+    "h2d_ms": "host time blocked in move_features (.to(device), pageable, non_blocking=False)",
+    "forward_launch_ms": "host time for the model call to return (kernel issue)",
+    "next_batch_ms": "DataLoader fetch",
+    "loss_sync_ms": "the entry's isfinite(loss) host sync",
+    "backward_launch_ms": "host time for .backward() to return",
+    "clip_launch_ms": "clip_grad_norm_ call",
+    "optimizer_step_launch_ms": "optimizer.step() call",
+    "end_wait_ms": "step-end sync (measurement boundary)"
+   },
+   "entry_3_steps": {
+    "step_ms": 2125.55,
+    "prepare_embedding_inputs_ms": 63.69,
+    "h2d_ms": 244.78,
+    "forward_launch_ms": 268.72,
+    "forward_call_ms": 586.82,
+    "loss_sync_ms": 112.26,
+    "backward_launch_ms": 1402.28,
+    "next_batch_ms": 0.75,
+    "clip_launch_ms": 2.63,
+    "optimizer_step_launch_ms": 4.14,
+    "end_wait_ms": 13.48
+   },
+   "entry_12_steps": {
+    "step_ms": 2165.65,
+    "prepare_embedding_inputs_ms": 65.67,
+    "h2d_ms": 252.44,
+    "forward_launch_ms": 268.21,
+    "forward_call_ms": 595.71,
+    "loss_sync_ms": 118.78,
+    "backward_launch_ms": 1425.68,
+    "next_batch_ms": 2.47,
+    "clip_launch_ms": 2.62,
+    "optimizer_step_launch_ms": 4.19,
+    "end_wait_ms": 13.41
+   },
+   "capture_loop_3_steps": {
+    "step_ms": 2111.6,
+    "prepare_embedding_inputs_ms": 65.55,
+    "h2d_ms": 246.23,
+    "forward_launch_ms": 264.14,
+    "forward_call_ms": 585.22,
+    "backward_launch_ms": 1504.66,
+    "next_batch_ms": 0.89,
+    "clip_launch_ms": 2.72,
+    "optimizer_step_launch_ms": 4.31,
+    "end_wait_ms": 13.29
+   },
+   "tokenize_total_per_step_ms": 65.67,
+   "tokenize_pct_of_step": 3.03,
+   "step_ms_entry": [
+    1898.07,
+    2127.11,
+    2351.47
+   ],
+   "step_ms_capture": [
+    1880.88,
+    2112.56,
+    2341.37
+   ],
+   "per_group_entry_last_step": [
+    {
+     "prepare_embedding_inputs_ms": 1.142,
+     "h2d_ms": 0.092,
+     "forward_launch_ms": 13.23
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.433,
+     "h2d_ms": 0.057,
+     "forward_launch_ms": 13.207
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.292,
+     "h2d_ms": 16.423,
+     "forward_launch_ms": 12.174
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.99,
+     "h2d_ms": 34.719,
+     "forward_launch_ms": 12.296
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.698,
+     "h2d_ms": 34.829,
+     "forward_launch_ms": 17.087
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.657,
+     "h2d_ms": 0.061,
+     "forward_launch_ms": 12.731
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.512,
+     "h2d_ms": 0.081,
+     "forward_launch_ms": 13.234
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.283,
+     "h2d_ms": 18.247,
+     "forward_launch_ms": 12.812
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.648,
+     "h2d_ms": 17.788,
+     "forward_launch_ms": 12.586
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.469,
+     "h2d_ms": 36.106,
+     "forward_launch_ms": 12.118
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.517,
+     "h2d_ms": 0.074,
+     "forward_launch_ms": 12.998
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.852,
+     "h2d_ms": 0.076,
+     "forward_launch_ms": 14.106
+    },
+    {
+     "prepare_embedding_inputs_ms": 2.795,
+     "h2d_ms": 19.791,
+     "forward_launch_ms": 12.944
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.189,
+     "h2d_ms": 6.033,
+     "forward_launch_ms": 11.903
+    },
+    {
+     "prepare_embedding_inputs_ms": 3.935,
+     "h2d_ms": 35.963,
+     "forward_launch_ms": 13.404
+    },
+    {
+     "prepare_embedding_inputs_ms": 1.984,
+     "h2d_ms": 0.073,
+     "forward_launch_ms": 13.607
+    },
+    {
+     "prepare_embedding_inputs_ms": 5.082,
+     "h2d_ms": 0.086,
+     "forward_launch_ms": 13.873
+    },
+    {
+     "prepare_embedding_inputs_ms": 5.067,
+     "h2d_ms": 28.944,
+     "forward_launch_ms": 12.123
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.69,
+     "h2d_ms": 35.089,
+     "forward_launch_ms": 12.698
+    },
+    {
+     "prepare_embedding_inputs_ms": 4.167,
+     "h2d_ms": 34.979,
+     "forward_launch_ms": 19.376
+    }
+   ]
+  },
+  "h2d_blocking_probe": {
+   "mm_ms": 1.04,
+   "device_work_enqueued_ms": 119.6,
+   "shape": "[40,48] int64",
+   "pageable_to_device": {
+    "host_block_ms_median": 117.899,
+    "host_block_ms_all": [
+     118.046,
+     117.857,
+     117.899
+    ]
+   },
+   "pageable_to_device_non_blocking": {
+    "host_block_ms_median": 0.021,
+    "host_block_ms_all": [
+     0.021,
+     0.02,
+     0.033
+    ]
+   },
+   "pinned_non_blocking_to_device": {
+    "host_block_ms_median": 0.021,
+    "host_block_ms_all": [
+     0.024,
+     0.021,
+     0.016
+    ]
+   },
+   "device_scalar_item_D2H": {
+    "host_block_ms_median": 117.853,
+    "host_block_ms_all": [
+     117.853,
+     117.899,
+     117.827
+    ]
+   }
+  },
+  "smi_utilization": {
+   "file": "results/smi_utilization_r57.json (+ results/host_stage_timeline_r57.entry_12steps.json.smi.csv)",
+   "tool": "nvidia-smi --query-gpu=timestamp,utilization.gpu,utilization.memory --format=csv,noheader,nounits -lms 100 -i 0",
+   "workload": "host_stage_timeline.py --loop entry (ORIGINAL entry loop, no profiler), 12 timed steps after 2 warmup steps",
+   "timed_window_s": 26.01,
+   "n_samples": 259,
+   "utilization_gpu": {
+    "min": 88,
+    "p10": 94,
+    "median": 96,
+    "mean": 96.1,
+    "p90": 98,
+    "max": 100
+   },
+   "utilization_memory": {
+    "min": 21,
+    "median": 26,
+    "mean": 25.3,
+    "max": 26
+   },
+   "histogram": {
+    "0-10": 0,
+    "10-20": 0,
+    "20-30": 0,
+    "30-40": 0,
+    "40-50": 0,
+    "50-60": 0,
+    "60-70": 0,
+    "70-80": 0,
+    "80-90": 1,
+    "90-100": 243,
+    "100-100": 15
+   },
+   "caveat": "utilization.gpu semantics are vendor-defined and not documented for this device; raw distribution only, not a busy-time measurement"
+  },
+  "gc_hypothesis_test": {
+   "files": "results/host_stage_timeline_r57.entry_gc_track.json, results/host_stage_timeline_r57.entry_gc_disabled.json",
+   "collections_per_step_mean": {
+    "collections": 5.0,
+    "total_ms": 0.39,
+    "max_pause_ms": 0.178
+   },
+   "step_ms_gc_default": [
+    1898.07,
+    2127.11,
+    2351.47
+   ],
+   "step_ms_gc_track": [
+    1890.68,
+    2123.44,
+    2348.73
+   ],
+   "step_ms_gc_disabled": [
+    1892.78,
+    2123.52,
+    2359.79
+   ],
+   "result": "REJECTED: Python GC is 5 collections / 0.4 ms per step (max pause 0.18 ms) and gc.disable() leaves the step time unchanged; the ~2-3.4 ms backward gaps of the profiled trace are not GC. They stay UNKNOWN."
+  }
+ },
+ "item4_hardware_counters": {
+  "status": "BLOCKED - unchanged",
+  "evidence": "results/hbm_blocked_r46.md (PCM held by pg-exporter, acu exit 101)",
+  "not_answered": [
+   "HBM bytes read/written",
+   "HBM bandwidth utilization",
+   "matrix-unit activity"
+  ],
+  "what_is_new": "SMI utilization sampling (100 ms, vendor-defined semantics, raw distribution only) is NOT a counter measurement of the above and is not used as one",
+  "hardware_status": "unverified"
+ },
+ "item5_records": {
+  "status": "needs maintainer hosting - unchanged",
+  "records_pkl_sha256_prefix": "7d00baa3",
+  "committed": "72-item summary + 576 per-tensor hashes + scripts/recompute_dw_accuracy.py",
+  "missing": "accessible 6.9 GB artifact, split/rejoin instructions, clean-checkout recompute"
+ },
+ "dW_route_on_entry_loop": {
+  "file": "results/route_entry_ab_r57.json (+ results/route_entry_ab_r57/*.json, results/route_entry_ab_r57_batch1_console/*.json)",
+  "script": "scripts/route_entry_ab.py",
+  "command": "python3 examples/retrieval/route_entry_ab.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --second {py_route|native} --run runNN --out results/route_entry_ab_r57/runNN_<second>.json  (16 processes interleaved)  then  --aggregate <28 files> --out results/route_entry_ab_r57.json",
+  "estimate": "diff-in-diff = mean(py_route: phase2-phase1) - mean(native control: phase2-phase1); negative = route faster",
+  "pooled": {
+   "n_native": 42,
+   "n_py_route": 42,
+   "native": {
+    "n": 42,
+    "mean_ms": 5.8,
+    "median_ms": 1.42,
+    "min_ms": -30.61,
+    "max_ms": 71.49,
+    "sd_ms": 21.15,
+    "mean_ci95_ms": [
+     -0.6,
+     12.19
+    ],
+    "n_slower": 25,
+    "n_faster": 17
+   },
+   "py_route": {
+    "n": 42,
+    "mean_ms": -3.24,
+    "median_ms": -4.9,
+    "min_ms": -28.9,
+    "max_ms": 72.53,
+    "sd_ms": 18.45,
+    "mean_ci95_ms": [
+     -8.82,
+     2.34
+    ],
+    "n_slower": 10,
+    "n_faster": 32
+   },
+   "diff_in_diff": {
+    "mean_ms": -9.04,
+    "se_ms": 4.33,
+    "ci95_ms": [
+     -17.52,
+     -0.55
+    ],
+    "classification": "GAIN (faster)"
+   }
+  },
+  "diff_in_diff_by_batch": {
+   "batch1_console": {
+    "mean_ms": -13.97,
+    "se_ms": 4.98,
+    "ci95_ms": [
+     -24.49,
+     -3.46
+    ],
+    "classification": "GAIN (faster)"
+   },
+   "batch2": {
+    "mean_ms": -5.33,
+    "se_ms": 6.48,
+    "ci95_ms": [
+     -18.74,
+     8.07
+    ],
+    "classification": "NO SIGNIFICANT DIFFERENCE"
+   }
+  },
+  "stats_by_batch_second": {
+   "batch1_console|native": {
+    "n": 18,
+    "mean_ms": 4.01,
+    "median_ms": 1.59,
+    "min_ms": -27.58,
+    "max_ms": 41.75,
+    "sd_ms": 17.93,
+    "mean_ci95_ms": [
+     -4.9,
+     12.93
+    ],
+    "n_slower": 12,
+    "n_faster": 6
+   },
+   "batch1_console|py_route": {
+    "n": 18,
+    "mean_ms": -9.96,
+    "median_ms": -11.08,
+    "min_ms": -26.05,
+    "max_ms": 18.7,
+    "sd_ms": 11.22,
+    "mean_ci95_ms": [
+     -15.54,
+     -4.38
+    ],
+    "n_slower": 2,
+    "n_faster": 16
+   },
+   "batch2|native": {
+    "n": 24,
+    "mean_ms": 7.13,
+    "median_ms": 1.42,
+    "min_ms": -30.61,
+    "max_ms": 71.49,
+    "sd_ms": 23.57,
+    "mean_ci95_ms": [
+     -2.82,
+     17.09
+    ],
+    "n_slower": 13,
+    "n_faster": 11
+   },
+   "batch2|py_route": {
+    "n": 24,
+    "mean_ms": 1.8,
+    "median_ms": -2.4,
+    "min_ms": -28.9,
+    "max_ms": 72.53,
+    "sd_ms": 21.25,
+    "mean_ci95_ms": [
+     -7.17,
+     10.78
+    ],
+    "n_slower": 8,
+    "n_faster": 16
+   }
+  },
+  "process_level_sign_test": {
+   "py_route": {
+    "processes": 14,
+    "negative_mean_diff": 13
+   },
+   "native": {
+    "processes": 14,
+    "negative_mean_diff": 6
+   },
+   "fisher_two_sided_p": 0.0128
+  },
+  "batch_hash_mismatch": 0,
+  "valid_tokens_per_s": {
+   "native": {
+    "p1": 14646.4,
+    "p2": 14596.3
+   },
+   "py_route": {
+    "p1": 14666.1,
+    "p2": 14654.1
+   }
+  },
+  "verdict": "diff-in-diff -9.04 ms, 95% CI [-17.52, -0.55]; py_route phase2-phase1 median -4.9 ms, faster in 32/42; native control median +1.4 ms; process-level means negative in 13/14 py_route vs 6/14 native processes (Fisher two-sided p=0.0128). Point estimate ~0.4% of a step, batch 2 alone is not significant -> candidate only, NOT deployable.",
+  "training_state": "PASS (bitwise): in all 7 candidate pairs every dense gradient / post-update parameter / optimizer-state tensor is bitwise identical to the same-process native runs; losses and grad norms equal; 0 non-finite. Only the 3 embedding tables differ, and native-vs-native differs on the same tables (device accumulation-order non-determinism)."
+ },
+ "loop_fidelity_disclosure": {
+  "note": "rounds <= 56 timed whole steps on the r36 capture loop (no lookahead, no isfinite(loss) sync). The ORIGINAL entry loop is slower by the amounts below; all r57 timing uses the entry loop.",
+  "capture_loop_step_ms": [
+   1880.88,
+   2112.56,
+   2341.37
+  ],
+  "entry_loop_step_ms": [
+   1898.07,
+   2127.11,
+   2351.47
+  ],
+  "loss_sync_ms_per_step_entry": 112.26
+ },
+ "answers": {
+  "stable_gain": "NONE that is deployable. Prefetch: +27.7 ms (slower). H2D non-blocking: -1.8 ms (no significant difference). dW Python route: -9.0 ms [-17.5, -0.6] on 42+42 paired steps, bitwise-identical training state, candidate only (~0.4%).",
+  "time_breakdown": "per step (entry loop, median step 2127.11 ms of steps 2-4: 1898.07 / 2127.11 / 2351.47): backward GEMM 772 ms device (38% of kernel time), backward attention 375 ms (18.5%), forward GEMM 330 ms (16.2%), forward attention 205 ms (10.1%) [r36 kernel times]; host over 12 steps: tokenize 65.67 ms (3.03% of step), H2D block 252.44 ms (waiting for the device), loss sync 118.78 ms (waiting for the device), backward launch 1425.68 ms (host held by the launch queue). Forward gaps in the profiled entry-loop trace: ~42.4 ms/step in gaps >= 2 ms, of which tokenizer ~27.9 ms/step; UNKNOWN ~0.3 ms/step (forward) + ~10.7 ms/step (backward, profiled only). Unprofiled device utilization (SMI): median 96%.",
+  "counter_backed": "none for HBM / matrix units (PCM blocked). The only device-side measurement added in r57 is SMI utilization sampling (vendor-defined semantics, median 96%, raw distribution reported)."
+ }
+}

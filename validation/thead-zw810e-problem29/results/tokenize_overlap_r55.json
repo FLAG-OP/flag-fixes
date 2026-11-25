@@ -245,5 +245,6 @@
   "performance": "CONSISTENT GAIN: 12/12 paired steps faster with prefetch; median -25.2 ms (range -8.7 .. -34.7) = ~1.20% of a ~2.1 s step; direction independent of run order (A->B and B->A both negative)",
   "mechanism": "~11-12 ms/step of host tokenize is genuinely hidden (measured overlap 32-36 ms per 3-step run), and unlike round-54 the hidden time now translates into whole-step savings",
   "training_impact": "Candidate for adoption: preserves training semantics and precision, stable whole-step gain, no kernel change needed. Still hardware_status=unverified; needs the remaining sign-off (records artifact, PCM) before deployable."
- }
+ },
+ "RETRACTED": "Superseded by tokenize_overlap_native_r57.json: the -25.2 ms / 12-12 result came from a script with an experiment-only torch.cuda.synchronize() in compute(); on the original entry without that sync the prefetch is SLOWER (10/12, median +16.6 ms). Candidate CLOSED."
 }
