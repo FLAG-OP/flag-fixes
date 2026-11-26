@@ -1,0 +1,83 @@
+{
+ "field_version": "route_from_step0_v3",
+ "mode": "route_from_start",
+ "route_enabled": "route",
+ "copy_grads": "none",
+ "pid": 3672856,
+ "started_unix": 1795673356.6063821,
+ "finished_unix": 1795673369.3108773,
+ "config": "bge_m3_ppu.yaml, seed 42, FL_ADAMW_FUSED=0, fresh process; warmup 2 steps on a fresh iterator, hit step on batches 8-11 of a new iterator",
+ "initial_param_sha256_dense": "6eb4982f9e4e53928300b1af38454139c93443740c3757b2aad0b9dbb6dbeb97",
+ "steps": [
+  {
+   "losses": [
+    1.1659667491912842,
+    1.851904273033142,
+    1.2880859375,
+    0.695605456829071
+   ],
+   "batch_hashes": [
+    "230e6090a50da609",
+    "c56ecd82e9207b65",
+    "038db01d997e1076",
+    "474b324c4b11b2c3"
+   ],
+   "calls": {
+    "whitelist_match": 0,
+    "flag_gems_mm": 0,
+    "native_fallback": 5776
+   },
+   "grad_norm": 15.75
+  },
+  {
+   "losses": [
+    1.239843726158142,
+    0.9618164300918579,
+    0.522167980670929,
+    0.90625
+   ],
+   "batch_hashes": [
+    "ee6faadec6f0ea86",
+    "919b2722bb9857dd",
+    "fee28506b0fb4962",
+    "77b99dea70c62477"
+   ],
+   "calls": {
+    "whitelist_match": 96,
+    "flag_gems_mm": 96,
+    "native_fallback": 5680
+   },
+   "grad_norm": 13.875
+  }
+ ],
+ "params_dense_sha256_after_warmup": "9ac053624976fa6a70233c4563a4a2d5a798dbd32b098bb2e201878a49811ce5",
+ "state_dense_sha256_after_warmup": "34b1fec4d2ece2f22a18298af65c4a1c4b19fedaa719e22f071684b85caf722f",
+ "hit_step": {
+  "losses": [
+   0.943066418170929,
+   0.595385730266571,
+   0.43195801973342896,
+   0.73291015625
+  ],
+  "batch_hashes": [
+   "7a23d6bbb8fcaf11",
+   "288503503a6302c1",
+   "873051929d240157",
+   "8606eac50a5afca1"
+  ],
+  "calls": {
+   "whitelist_match": 432,
+   "flag_gems_mm": 432,
+   "native_fallback": 5344
+  },
+  "grad_norm": 10.625
+ },
+ "call_counts_total": {
+  "whitelist_match": 528,
+  "flag_gems_mm": 528,
+  "native_fallback": 16800
+ },
+ "grads_saved": false,
+ "flag_gems_mm_source": "/tmp/opencode/FlagGems-base/src/flag_gems/ops/mm.py",
+ "flag_gems_mm_first_line": 572
+}

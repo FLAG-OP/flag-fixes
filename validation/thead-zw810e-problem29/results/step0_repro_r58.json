@@ -1,0 +1,673 @@
+{
+ "field_version": "step0_repro_v1",
+ "design": "Why does the FIRST optimizer update of the entry loop give different parameters in different\nprocesses? (follow-up to review 7182886976 item 2; round-58 diagnostic)\n\nObservation it explains: route_from_step0_consistency.py shows identical step-0 losses and RNG\nstates in every process, but different dense-parameter hashes right after the first update.\n\nEach process (native path, entry-loop step, NO host access to the gradients before clip):\n  1 step on batches 0-3; after optimizer.step() copy to the host: the clipped gradients (exactly\n  what AdamW consumed), the parameters, the optimizer state.\n--compare <dir> : load the saved tensors of all processes in <dir> and compare them pairwise.\n",
+ "files": [
+  "p1.pt",
+  "p2.pt",
+  "p3.pt"
+ ],
+ "n_processes": 3,
+ "meta_first_process": {
+  "tag": "p1",
+  "pid": 3707595,
+  "started_unix": 1795674121.7980537,
+  "dtypes": {
+   "param": "torch.bfloat16",
+   "grad": "torch.bfloat16",
+   "exp_avg": "torch.bfloat16",
+   "exp_avg_sq": "torch.bfloat16"
+  },
+  "optimizer": "AdamW",
+  "param_sha256_dense": "e9d51c11cfe4a618"
+ },
+ "step0_losses_per_process": [
+  [
+   1.1659667491912842,
+   1.851904273033142,
+   1.2880859375,
+   0.695605456829071
+  ],
+  [
+   1.1659667491912842,
+   1.851904273033142,
+   1.2880859375,
+   0.695605456829071
+  ],
+  [
+   1.1659667491912842,
+   1.851904273033142,
+   1.2880859375,
+   0.695605456829071
+  ]
+ ],
+ "step0_grad_norm_per_process": [
+  15.75,
+  15.75,
+  15.75
+ ],
+ "dense_param_sha256_after_step0_per_process": [
+  "e9d51c11cfe4a618",
+  "f6118ae51334a76e",
+  "8d0c53b2f635c19b"
+ ],
+ "pairs": [
+  {
+   "a": "p1.pt",
+   "b": "p2.pt",
+   "sections": {
+    "grads_clipped": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 801487,
+      "sign_flips": 267,
+      "n_rel_gt_10pct": 24467
+     },
+     "tensors": 386,
+     "tensors_with_differences": 316,
+     "max_abs": 0.0001220703125,
+     "max_rel": 9.685754809157054e+23,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 18932,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 18807,
+       "sign_flips": 0,
+       "max_rel": 6.0535967557231586e+22
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 17997,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 17395,
+       "sign_flips": 7,
+       "max_rel": 6.0535967557231586e+22
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 17180,
+       "sign_flips": 7,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 16328,
+       "sign_flips": 5,
+       "max_rel": 6.0535967557231586e+22
+      }
+     ]
+    },
+    "params": {
+     "dense_totals": {
+      "numel": 303361024,
+      "differing": 2018,
+      "sign_flips": 0,
+      "n_rel_gt_10pct": 21
+     },
+     "tensors": 388,
+     "tensors_with_differences": 121,
+     "max_abs": 6.103515625e-05,
+     "max_rel": 0.5258620977401733,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 55,
+       "sign_flips": 0,
+       "max_rel": 0.0982
+      },
+      {
+       "name": "backbone.encoder.layer.13.output.dense.weight",
+       "differing": 54,
+       "sign_flips": 0,
+       "max_rel": 0.0667
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 51,
+       "sign_flips": 0,
+       "max_rel": 0.0128
+      },
+      {
+       "name": "backbone.encoder.layer.15.output.dense.weight",
+       "differing": 45,
+       "sign_flips": 0,
+       "max_rel": 0.0493
+      },
+      {
+       "name": "backbone.encoder.layer.14.output.dense.weight",
+       "differing": 44,
+       "sign_flips": 0,
+       "max_rel": 0.1454
+      },
+      {
+       "name": "backbone.encoder.layer.8.output.dense.weight",
+       "differing": 41,
+       "sign_flips": 0,
+       "max_rel": 0.1719
+      }
+     ]
+    },
+    "exp_avg": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 741386,
+      "sign_flips": 267,
+      "n_rel_gt_10pct": 22872
+     },
+     "tensors": 386,
+     "tensors_with_differences": 314,
+     "max_abs": 7.62939453125e-06,
+     "max_rel": 9.685754809157054e+22,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 17404,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 17271,
+       "sign_flips": 0,
+       "max_rel": 6.053596755723159e+21
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 16497,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 15963,
+       "sign_flips": 7,
+       "max_rel": 6.053596755723159e+21
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 15734,
+       "sign_flips": 7,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 14879,
+       "sign_flips": 5,
+       "max_rel": 6.053596755723159e+21
+      }
+     ]
+    },
+    "exp_avg_sq": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 801278,
+      "sign_flips": 0,
+      "n_rel_gt_10pct": 46757
+     },
+     "tensors": 386,
+     "tensors_with_differences": 316,
+     "max_abs": 2.7939677238464355e-09,
+     "max_rel": 936750687977472.0,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 18928,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 18807,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 17991,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 17391,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 17174,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 16325,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "a": "p1.pt",
+   "b": "p3.pt",
+   "sections": {
+    "grads_clipped": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 800032,
+      "sign_flips": 263,
+      "n_rel_gt_10pct": 24257
+     },
+     "tensors": 386,
+     "tensors_with_differences": 309,
+     "max_abs": 0.0001220703125,
+     "max_rel": 9.685754809157054e+23,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 19299,
+       "sign_flips": 10,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 19226,
+       "sign_flips": 1,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 18149,
+       "sign_flips": 4,
+       "max_rel": 6.0535967557231586e+22
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 17566,
+       "sign_flips": 5,
+       "max_rel": 2.4214387022892634e+23
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 17458,
+       "sign_flips": 3,
+       "max_rel": 6.0535967557231586e+22
+      },
+      {
+       "name": "backbone.encoder.layer.13.intermediate.dense.weight",
+       "differing": 16403,
+       "sign_flips": 1,
+       "max_rel": 2.4214387022892634e+23
+      }
+     ]
+    },
+    "params": {
+     "dense_totals": {
+      "numel": 303361024,
+      "differing": 2095,
+      "sign_flips": 1,
+      "n_rel_gt_10pct": 18
+     },
+     "tensors": 388,
+     "tensors_with_differences": 120,
+     "max_abs": 6.103515625e-05,
+     "max_rel": 13.150288581848145,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.13.output.dense.weight",
+       "differing": 60,
+       "sign_flips": 0,
+       "max_rel": 0.0625
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 56,
+       "sign_flips": 0,
+       "max_rel": 0.088
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 56,
+       "sign_flips": 0,
+       "max_rel": 0.066
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 49,
+       "sign_flips": 0,
+       "max_rel": 0.0311
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 48,
+       "sign_flips": 0,
+       "max_rel": 13.1503
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 46,
+       "sign_flips": 0,
+       "max_rel": 0.0517
+      }
+     ]
+    },
+    "exp_avg": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 740044,
+      "sign_flips": 263,
+      "n_rel_gt_10pct": 22619
+     },
+     "tensors": 386,
+     "tensors_with_differences": 308,
+     "max_abs": 7.62939453125e-06,
+     "max_rel": 9.685754809157054e+22,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 17699,
+       "sign_flips": 10,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 17682,
+       "sign_flips": 1,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 16636,
+       "sign_flips": 4,
+       "max_rel": 6.053596755723159e+21
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 16120,
+       "sign_flips": 5,
+       "max_rel": 2.4214387022892634e+22
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 16024,
+       "sign_flips": 3,
+       "max_rel": 6.053596755723159e+21
+      },
+      {
+       "name": "backbone.encoder.layer.13.intermediate.dense.weight",
+       "differing": 14957,
+       "sign_flips": 1,
+       "max_rel": 2.4214387022892634e+22
+      }
+     ]
+    },
+    "exp_avg_sq": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 799829,
+      "sign_flips": 0,
+      "n_rel_gt_10pct": 46442
+     },
+     "tensors": 386,
+     "tensors_with_differences": 309,
+     "max_abs": 2.7939677238464355e-09,
+     "max_rel": 936750687977472.0,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 19290,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 19225,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 18145,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 17562,
+       "sign_flips": 0,
+       "max_rel": 58546917998592.0
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 17455,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      },
+      {
+       "name": "backbone.encoder.layer.13.intermediate.dense.weight",
+       "differing": 16402,
+       "sign_flips": 0,
+       "max_rel": 58546917998592.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "a": "p2.pt",
+   "b": "p3.pt",
+   "sections": {
+    "grads_clipped": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 743414,
+      "sign_flips": 268,
+      "n_rel_gt_10pct": 22648
+     },
+     "tensors": 386,
+     "tensors_with_differences": 314,
+     "max_abs": 6.103515625e-05,
+     "max_rel": 9.685754809157054e+23,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 18298,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 17965,
+       "sign_flips": 1,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 16951,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+23
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 16534,
+       "sign_flips": 2,
+       "max_rel": 2.4214387022892634e+23
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 16316,
+       "sign_flips": 6,
+       "max_rel": 6.0535967557231586e+22
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 15187,
+       "sign_flips": 3,
+       "max_rel": 6.0535967557231586e+22
+      }
+     ]
+    },
+    "params": {
+     "dense_totals": {
+      "numel": 303361024,
+      "differing": 1899,
+      "sign_flips": 1,
+      "n_rel_gt_10pct": 19
+     },
+     "tensors": 388,
+     "tensors_with_differences": 121,
+     "max_abs": 6.103515625e-05,
+     "max_rel": 13.150288581848145,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 55,
+       "sign_flips": 0,
+       "max_rel": 0.088
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 47,
+       "sign_flips": 0,
+       "max_rel": 0.0982
+      },
+      {
+       "name": "backbone.encoder.layer.9.output.dense.weight",
+       "differing": 47,
+       "sign_flips": 0,
+       "max_rel": 0.0769
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 46,
+       "sign_flips": 0,
+       "max_rel": 0.0861
+      },
+      {
+       "name": "backbone.encoder.layer.3.output.dense.weight",
+       "differing": 40,
+       "sign_flips": 0,
+       "max_rel": 0.1154
+      },
+      {
+       "name": "backbone.encoder.layer.15.output.dense.weight",
+       "differing": 40,
+       "sign_flips": 0,
+       "max_rel": 0.0301
+      }
+     ]
+    },
+    "exp_avg": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 687232,
+      "sign_flips": 268,
+      "n_rel_gt_10pct": 21111
+     },
+     "tensors": 386,
+     "tensors_with_differences": 313,
+     "max_abs": 7.62939453125e-06,
+     "max_rel": 9.685754809157054e+22,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 16736,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 16479,
+       "sign_flips": 1,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 15573,
+       "sign_flips": 6,
+       "max_rel": 1.2107193511446317e+22
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 15175,
+       "sign_flips": 2,
+       "max_rel": 2.4214387022892634e+22
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 15027,
+       "sign_flips": 6,
+       "max_rel": 6.053596755723159e+21
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 13939,
+       "sign_flips": 3,
+       "max_rel": 6.053596755723159e+21
+      }
+     ]
+    },
+    "exp_avg_sq": {
+     "dense_totals": {
+      "numel": 302311424,
+      "differing": 743199,
+      "sign_flips": 0,
+      "n_rel_gt_10pct": 43196
+     },
+     "tensors": 386,
+     "tensors_with_differences": 314,
+     "max_abs": 1.862645149230957e-09,
+     "max_rel": 936750687977472.0,
+     "top_differing": [
+      {
+       "name": "backbone.encoder.layer.11.intermediate.dense.weight",
+       "differing": 18293,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.10.intermediate.dense.weight",
+       "differing": 17964,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.12.intermediate.dense.weight",
+       "differing": 16945,
+       "sign_flips": 0,
+       "max_rel": 14636729499648.0
+      },
+      {
+       "name": "backbone.encoder.layer.11.output.dense.weight",
+       "differing": 16532,
+       "sign_flips": 0,
+       "max_rel": 58546917998592.0
+      },
+      {
+       "name": "backbone.encoder.layer.10.output.dense.weight",
+       "differing": 16313,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      },
+      {
+       "name": "backbone.encoder.layer.12.output.dense.weight",
+       "differing": 15185,
+       "sign_flips": 0,
+       "max_rel": 3659182374912.0
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

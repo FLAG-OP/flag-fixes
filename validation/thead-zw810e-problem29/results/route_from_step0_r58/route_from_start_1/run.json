@@ -1,0 +1,86 @@
+{
+ "field_version": "route_from_step0_v3",
+ "mode": "route_from_start",
+ "route_enabled": "route",
+ "copy_grads": "host",
+ "pid": 3641783,
+ "started_unix": 1795672726.6277678,
+ "finished_unix": 1795672741.3181973,
+ "config": "bge_m3_ppu.yaml, seed 42, FL_ADAMW_FUSED=0, fresh process; warmup 2 steps on a fresh iterator, hit step on batches 8-11 of a new iterator",
+ "initial_param_sha256_dense": "6eb4982f9e4e53928300b1af38454139c93443740c3757b2aad0b9dbb6dbeb97",
+ "steps": [
+  {
+   "losses": [
+    1.1659667491912842,
+    1.851904273033142,
+    1.2880859375,
+    0.695605456829071
+   ],
+   "batch_hashes": [
+    "230e6090a50da609",
+    "c56ecd82e9207b65",
+    "038db01d997e1076",
+    "474b324c4b11b2c3"
+   ],
+   "dense_grad_sha256": "b2ff81a2191abe2292b2a3e2c817f7812e7926876cb12f36f03ad6199320fb0f",
+   "calls": {
+    "whitelist_match": 0,
+    "flag_gems_mm": 0,
+    "native_fallback": 5776
+   },
+   "grad_norm": 15.75
+  },
+  {
+   "losses": [
+    1.236230492591858,
+    0.95263671875,
+    0.5198730230331421,
+    0.8941406011581421
+   ],
+   "batch_hashes": [
+    "ee6faadec6f0ea86",
+    "919b2722bb9857dd",
+    "fee28506b0fb4962",
+    "77b99dea70c62477"
+   ],
+   "dense_grad_sha256": "50d8d66d0bfb98ac4eaf223ca009e345e1b118c770d811062f5dfc239af2bd01",
+   "calls": {
+    "whitelist_match": 96,
+    "flag_gems_mm": 96,
+    "native_fallback": 5680
+   },
+   "grad_norm": 12.25
+  }
+ ],
+ "params_dense_sha256_after_warmup": "d24448af73f6315d3cf8dc9873d0736cf6459aa534fef39c64eef71b1b7c6729",
+ "state_dense_sha256_after_warmup": "ef663dd50b761d60dce53829eea33e86247ee82ad9cadbe5ed6faf02ea59052f",
+ "hit_step": {
+  "losses": [
+   0.946728527545929,
+   0.5923095941543579,
+   0.4327148497104645,
+   0.728808581829071
+  ],
+  "batch_hashes": [
+   "7a23d6bbb8fcaf11",
+   "288503503a6302c1",
+   "873051929d240157",
+   "8606eac50a5afca1"
+  ],
+  "dense_grad_sha256": "9d14d76152a0d6bc43fe0778bccdaa89b24f66abeea8ea6addeb3df3240dbd35",
+  "calls": {
+   "whitelist_match": 432,
+   "flag_gems_mm": 432,
+   "native_fallback": 5344
+  },
+  "grad_norm": 9.4375
+ },
+ "call_counts_total": {
+  "whitelist_match": 528,
+  "flag_gems_mm": 528,
+  "native_fallback": 16800
+ },
+ "grads_saved": true,
+ "flag_gems_mm_source": "/tmp/opencode/FlagGems-base/src/flag_gems/ops/mm.py",
+ "flag_gems_mm_first_line": 572
+}

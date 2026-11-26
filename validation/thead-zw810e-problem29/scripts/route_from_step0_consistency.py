@@ -1,36 +1,112 @@
-"""Decomposition of a discrepancy found in round 57: is the dW Python route numerically
-identical to the entry when it is ACTIVE FROM STEP 0 (i.e. during the warmup steps too)?
+"""Is the dW Python route numerically identical to the entry when it is ACTIVE FROM STEP 0, and is
+it reproducible across processes? (review 7182886976 item 2)
 
-Why this test exists
-  * same-snapshot single-step test (train_state_consistency.py): dw_route vs native is
-    bitwise identical for all 386 dense gradient tensors.
-  * but with the route registered BEFORE the warmup, the state after 2 warmup steps differed
-    from the native warmup (323/388 dense parameter tensors, max_abs 6.1e-05), and two
-    independent processes gave different hit-step losses (0.945996 vs 0.950732).
-  * five native processes reproduced the native warmup state (dense sha256 b133cb9f...).
+Round-57 bug fixed here: in the previous version the "route_from_start" mode set the enable flag
+as a FUNCTION-LOCAL variable, so the override kept reading the module-level flag (False) and every
+whitelisted call fell through to the native mm.out. The three route_from_start processes of
+round 57 therefore never executed flag_gems.mm and their numbers say nothing about FlagGems.
+In this version the switch is a module-level global that is only ever assigned at module level or
+through an explicit `global` statement, three counters are kept separately
+(whitelist matches / actual flag_gems.mm calls / native fallbacks), and a run that requests the
+route but never reaches flag_gems.mm exits with code 3 and writes nothing.
 
---mode native_from_start / route_from_start (fresh process, one arm): 2 warmup steps, then the hit step on
-batches 8-11; run several processes to see whether the state after the warmup is reproducible.
+Modes (one fresh process each; run several processes per mode and compare with --aggregate):
+  native_from_start    no override                       (entry path)
+  fallback_from_start  aten::mm override, whitelisted shapes ALSO go to mm.out (no flag_gems)
+  route_from_start     whitelisted dW shapes -> flag_gems.mm, everything else -> mm.out
+Every process: same seed, 2 warmup steps on batches 0-7 (fresh data iterator), then the hit step
+on batches 8-11 (new iterator, same order). Per step the batch hashes, the micro losses and the
+three call counters are recorded; after the warmup the dense parameter / optimizer-state hashes.
 
-Design (decompose) - ONE process, five arms, every arm starts from the same initial snapshot S0 (model,
-optimizer state, CPU+CUDA RNG) and consumes the same batches:
-  A native            entry path
-  B native again      determinism band of the entry path itself
-  C fallback only     aten::mm override active, whitelisted shapes also go to mm.out (no flag_gems)
-  D route             whitelisted dW shapes -> flag_gems.mm, everything else -> mm.out
-  E route again       repeatability of D inside one process
-Per warmup step the accumulated dense gradients (before clip) are compared, and after the two
-steps the dense parameters and optimizer state. The three embedding tables are excluded
-(index-accumulated gradient, not reproducible on this device: reported separately).
-Registration is permanent in a process, so A and B run first and D/E are switched on by a flag.
+--copy-grads host|none : "host" copies the accumulated dense gradients to the host before clip
+(hashes them, optionally saves them); "none" does not touch the gradients before clip. The two
+differ only in host synchronization around the step and are used to test whether that alone
+changes run-to-run reproducibility.
+
+--aggregate <glob> : loads the per-process JSON files (and the saved gradients when present),
+compares every pair of processes per step (dense gradients) and summarizes by pair class
+(native vs native = the self-comparison band of the entry path, route vs native, fallback vs
+native, ...), plus the per-group distributions of hit-step loss and grad norm.
 """
-import argparse, copy, hashlib, json, os, sys
+import argparse, collections, copy, glob, hashlib, json, math, os, statistics, sys, time
 import torch
 ap=argparse.ArgumentParser()
-ap.add_argument("--conf",required=True); ap.add_argument("--out",required=True); ap.add_argument("--steps",type=int,default=2)
-ap.add_argument("--mode",default="decompose",choices=["decompose","native_from_start","route_from_start"],
-                help="native_from_start / route_from_start: fresh process, 2 warmup steps, then the hit step (batches 8-11) - run several processes and compare")
+ap.add_argument("--conf"); ap.add_argument("--out"); ap.add_argument("--steps",type=int,default=2)
+ap.add_argument("--mode",default="native_from_start",choices=["native_from_start","fallback_from_start","route_from_start"])
+ap.add_argument("--copy-grads",default="host",choices=["host","none"]); ap.add_argument("--save-grads",default=None)
+ap.add_argument("--aggregate",default=None,help="glob of per-process json files -> cross-process comparison json (no device needed)")
 a=ap.parse_args()
+ORDER=["native_from_start","fallback_from_start","route_from_start"]
+def cmpD(Da,Db):
+    n=diff=nf=over=0; ma=mr=0.0; top=[]
+    for k in sorted(Da):
+        x,y=Da[k],Db[k]; n+=1
+        if x.dtype==y.dtype and x.shape==y.shape and torch.equal(x,y): continue
+        diff+=1; p=x.float(); q=y.float(); e=(p-q).abs(); fl=0.01*float(q.abs().max())
+        r=float((e/torch.clamp(q.abs(),min=fl)).max()) if q.numel() else 0.0; m=float(e.max())
+        ma=max(ma,m); mr=max(mr,r); over+=(r>0.02); nf+=int((~torch.isfinite(p)).sum())+int((~torch.isfinite(q)).sum()); top.append((m,r,k))
+    top.sort(reverse=True)
+    return {"tensors":n,"bitwise_identical":n-diff,"n_differing":diff,"max_abs":ma,"max_rel":mr,"over_2pct":over,"nonfinite":nf,"top_differing":[k for _,_,k in top[:3]]}
+def d3(v): v=sorted(v); return {"min":round(v[0],6),"median":round(statistics.median(v),6),"max":round(v[-1],6)} if v else None
+def aggregate(pattern,out):
+    """cross-process comparison. Pair classes are summarized PER STEP: step 0 starts from the identical
+    initial model / batches / RNG in every process (forward identical), later steps also carry the
+    divergence accumulated in the preceding steps."""
+    files=sorted(glob.glob(pattern)); R=[json.load(open(f)) for f in files]
+    def saved(i,s): return os.path.exists(os.path.join(os.path.dirname(files[i]),f"grads_step{s}.pt"))
+    hit=a.steps; steps=sorted({s for i in range(len(R)) for s in list(range(a.steps))+[hit] if saved(i,s)})
+    short=lambda m:m.replace("_from_start","")
+    acc=collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(list))); detail=collections.defaultdict(lambda: collections.defaultdict(list))
+    for s in steps:
+        G={i:torch.load(os.path.join(os.path.dirname(files[i]),f"grads_step{s}.pt")) for i in range(len(R)) if saved(i,s)}
+        keys=sorted(G)
+        for ii in range(len(keys)):
+            for jj in range(ii+1,len(keys)):
+                i,j=keys[ii],keys[jj]; mi,mj=R[i]["mode"],R[j]["mode"]
+                if ORDER.index(mi)>ORDER.index(mj): i,j,mi,mj=j,i,mj,mi
+                c=cmpD(G[i],G[j]); cls=f"{short(mi)}_vs_{short(mj)}"
+                for k in ("n_differing","max_abs","max_rel","over_2pct"): acc[cls][str(s)][k].append(c[k])
+                detail[cls][str(s)].append({"a":os.path.basename(files[i]),"b":os.path.basename(files[j]),"n_differing":c["n_differing"],"max_abs":round(c["max_abs"],8),"max_rel":round(c["max_rel"],5),"over_2pct":c["over_2pct"]})
+        del G
+    summ={cls:{st:({k:d3(v) for k,v in d.items()}|{"n_pairs":len(d["n_differing"])}) for st,d in steps_d.items()} for cls,steps_d in acc.items()}
+    grp={}
+    for m in ORDER:
+        rs=[r for r in R if r["mode"]==m]
+        if not rs: continue
+        gn=[r["hit_step"]["grad_norm"] for r in rs]
+        grp[m]={"n_processes":len(rs),"distinct_initial_param_sha256":len({r["initial_param_sha256_dense"] for r in rs}),
+                "step0_micro0_losses":sorted({round(r["steps"][0]["losses"][0],9) for r in rs}),
+                "step0_losses_identical_across_processes":len({json.dumps(r["steps"][0]["losses"]) for r in rs})==1,
+                "step_batch_hashes_first_process":[x for s_ in rs[0]["steps"] for x in s_["batch_hashes"]]+rs[0]["hit_step"]["batch_hashes"],
+                "distinct_warmup_param_sha256":len({r["params_dense_sha256_after_warmup"] for r in rs}),"distinct_warmup_state_sha256":len({r["state_dense_sha256_after_warmup"] for r in rs}),
+                "hit_step_micro0_loss":sorted(round(r["hit_step"]["losses"][0],6) for r in rs),"hit_step_grad_norm":sorted(gn),
+                "hit_step_grad_norm_range":[min(gn),max(gn)],
+                "call_counts_total":{k:sum(s_["calls"][k] for r in rs for s_ in r["steps"])+sum(r["hit_step"]["calls"][k] for r in rs) for k in ("whitelist_match","flag_gems_mm","native_fallback")},
+                "per_step_calls_first_process":[s_["calls"] for s_ in rs[0]["steps"]]+[rs[0]["hit_step"]["calls"]]}
+    res={"field_version":"route_from_step0_v3","n_processes":len(R),"copy_grads":sorted({r["copy_grads"] for r in R}),"files":[os.path.basename(f) for f in files],
+         "steps_compared":steps,"step_labels":{str(s):("hit step" if s==hit else f"warmup step {s}") for s in steps},"groups":grp,"pair_classes_by_step":summ,"pair_detail":detail}
+    if summ:
+        parts=[]
+        for s in steps:
+            row=lambda cls: summ.get(cls,{}).get(str(s))
+            nv,fb,rv=row("native_vs_native"),row("native_vs_fallback"),row("native_vs_route")
+            fmt=lambda X:(f"tensors differing {X['n_differing']['min']}-{X['n_differing']['max']} (median {X['n_differing']['median']}/386), max_abs {X['max_abs']['min']:.2g}-{X['max_abs']['max']:.2g}" if X else "n/a")
+            parts.append(f"{res['step_labels'][str(s)]}: native-vs-native [{fmt(nv)}] ; fallback-vs-native [{fmt(fb)}] ; route-vs-native [{fmt(rv)}]")
+            if s==0 and nv and rv:
+                res["step0_native_vs_route_within_native_range"]=bool(rv["n_differing"]["min"]>=nv["n_differing"]["min"]*0.95 and rv["n_differing"]["max"]<=nv["n_differing"]["max"]*1.05 and rv["max_abs"]["max"]<=max(nv["max_abs"]["max"]*1.5,1e-6))
+        res["reading"]=("dense accumulated gradients of two processes, per step. Step 0 starts from the identical initial model / batches / RNG in every process (forward identical). "+ " | ".join(parts))
+        def ranks(a,b):   # Mann-Whitney one-sided P(all a < all b) when the ranges do not overlap
+            lo_a,hi_a=min(a),max(a); lo_b,hi_b=min(b),max(b)
+            return {"a_range":[lo_a,hi_a],"b_range":[lo_b,hi_b],"ranges_overlap":not (hi_a<lo_b or hi_b<lo_a)}
+        if "native_from_start" in grp and "route_from_start" in grp:
+            res["hit_step_grad_norm_ranges"]={"route":ranks(grp["route_from_start"]["hit_step_grad_norm"],grp["native_from_start"]["hit_step_grad_norm"]),
+                                              "fallback":ranks(grp["fallback_from_start"]["hit_step_grad_norm"],grp["native_from_start"]["hit_step_grad_norm"]) if "fallback_from_start" in grp else None}
+    json.dump(res,open(out,"w"),indent=1)
+    for m,g in grp.items(): print(f"{m:<22} n {g['n_processes']} | distinct init sha {g['distinct_initial_param_sha256']} | step0 losses identical {g['step0_losses_identical_across_processes']} | distinct warmup param sha {g['distinct_warmup_param_sha256']} | hit gn {g['hit_step_grad_norm']} | calls {g['call_counts_total']}")
+    for cls,st in summ.items():
+        for s,X in st.items(): print(f"  {cls:<22} {res['step_labels'][s]:<13} pairs {X['n_pairs']:>3} | n_differing {X['n_differing']['min']}-{X['n_differing']['max']} med {X['n_differing']['median']} | max_abs {X['max_abs']['min']:.2g}-{X['max_abs']['max']:.2g} | over2% {X['over_2pct']['min']}-{X['over_2pct']['max']}")
+    if "reading" in res: print(res["reading"][:1500]); print("step0 route-vs-native within native range:",res.get("step0_route_vs_native_within_native_range"))
+if a.aggregate: aggregate(a.aggregate,a.out); sys.exit(0)
 import random
 random.seed(42); torch.manual_seed(42)
 os.environ.setdefault("FLAGSCALE_DEVICE","cuda"); os.environ["FL_ADAMW_FUSED"]="0"
@@ -44,13 +120,20 @@ MM_OUT=torch.ops.aten.mm.out; FG=flag_gems.mm
 N_MK=[(4096,5120,1024),(1024,5120,4096),(4096,4430,1024),(1024,4430,4096),(4096,4310,1024),(1024,4310,4096),
       (4096,3740,1024),(1024,3740,4096),(4096,3290,1024),(1024,3290,4096),(4096,2990,1024),(1024,2990,4096)]
 DW={((N,M),(M,K)) for (N,M,K) in N_MK}
-USE_FG=False; HITS={}
+MODE="native"                     # module-level ONLY: "native" | "fallback" | "route"
+CNT={"whitelist_match":0,"flag_gems_mm":0,"native_fallback":0}
 def route(self,other):
     k=(tuple(self.shape),tuple(other.shape))
     if k in DW:
-        HITS[str(k)]=HITS.get(str(k),0)+1
-        if USE_FG: return FG(self,other)
+        CNT["whitelist_match"]+=1
+        if MODE=="route":
+            CNT["flag_gems_mm"]+=1; return FG(self,other)
+    CNT["native_fallback"]+=1
     return MM_OUT(self,other,out=torch.empty(self.shape[0],other.shape[1],device=self.device,dtype=self.dtype))
+MODE={"native_from_start":"native","fallback_from_start":"fallback","route_from_start":"route"}[a.mode]
+_R=None
+if MODE!="native":
+    _R=torch.library.Library("aten","IMPL"); _R.impl("mm",route,"CUDA")       # object kept alive: a garbage-collected Library silently drops the registration
 cfg=OmegaConf.load(a.conf); accum=int(cfg.gradient_accumulation_steps)
 TEMP=float(cfg.temperature); GN=float(cfg.optimizer.get("max_grad_norm",1.0))
 _r,_w,dev,_p=init_distributed(OmegaConf.create({"device_type":"cuda"}))
@@ -59,86 +142,55 @@ trainable=[p for p in model.parameters() if p.requires_grad]
 optimizer=build_optimizer(cfg.optimizer,trainable)
 loaders=build_split_loaders(str(cfg.task),cfg.data,int(cfg.batch_size),pin_memory=True,seed=42)
 EMB=set(n for n,_ in model.named_parameters() if n.endswith(("word_embeddings.weight","position_embeddings.weight","token_type_embeddings.weight")))
-def micro_step(b):
-    with autocast_context(dev,"bf16"):
-        raw=loss_for_batch(model,processor,str(cfg.task),b,dev,TEMP); loss=raw/accum
-    if not torch.isfinite(raw): raise FloatingPointError("Non-finite training loss")
-    loss.backward(); return float(raw.detach())
-def snap(): return {"model":copy.deepcopy(model.state_dict()),"opt":copy.deepcopy(optimizer.state_dict()),
-                    "rng_cpu":torch.get_rng_state(),"rng_cuda":torch.cuda.get_rng_state()}
-def restore(s):
-    model.load_state_dict(copy.deepcopy(s["model"])); optimizer.load_state_dict(copy.deepcopy(s["opt"]))
-    torch.set_rng_state(s["rng_cpu"]); torch.cuda.set_rng_state(s["rng_cuda"])
 def to_cpu(t): return t.detach().to("cpu")
-def arm(nsteps):
-    restored_param_sha=digest({n:to_cpu(p) for n,p in model.named_parameters() if n not in EMB})
-    stream=iter(loaders[0]); grads=[]; losses=[]; emb_bad=0
-    for _ in range(nsteps):
-        optimizer.zero_grad(set_to_none=True)
-        batches=[next(stream) for _ in range(accum)]; losses.append([micro_step(b) for b in batches])
-        g={n:to_cpu(p.grad) for n,p in model.named_parameters() if p.grad is not None and n not in EMB}
-        emb_bad+=sum(int((~p.grad.detach().float().isfinite()).sum()) for n,p in model.named_parameters() if p.grad is not None and n in EMB)
-        grads.append(g); torch.nn.utils.clip_grad_norm_(trainable,GN); optimizer.step()
-    params={n:to_cpu(p) for n,p in model.named_parameters() if n not in EMB}
-    state={n+"."+k:(to_cpu(v) if torch.is_tensor(v) else v) for n,p in model.named_parameters() if n not in EMB for k,v in optimizer.state.get(p,{}).items()}
-    return {"grads":grads,"losses":losses,"params":params,"state":state,"emb_grad_nonfinite":emb_bad,"restored_param_sha":restored_param_sha,
-            "first_batch_sha":hashlib.sha256("|".join("|".join(batches[0][k]) for k in sorted(batches[0])).encode()).hexdigest()[:16]}
-def cmp(Da,Db):
-    ma=mr=0.0; nf=0; n=diff=0; nt=0; names=[]
-    for k in sorted(Da):
-        x,y=Da[k],Db[k]
-        if torch.is_tensor(x) and torch.is_tensor(y):
-            n+=1
-            if not (x.dtype==y.dtype and torch.equal(x,y)):
-                diff+=1; e=(x.float()-y.float()).abs(); fl=0.01*float(y.float().abs().max())
-                r=float((e/torch.clamp(y.float().abs(),min=fl)).max()) if y.numel() else 0.0
-                ma=max(ma,float(e.max())); mr=max(mr,r); names.append((round(r,4),k))
-            nf+=int((~torch.isfinite(x.float())).sum())+int((~torch.isfinite(y.float())).sum())
-        elif x!=y: nt+=1
-    names.sort(reverse=True)
-    return {"tensors":n,"bitwise_identical":n-diff,"differing":diff,"max_abs":ma,"max_rel_floored":mr,"over_2pct":sum(r>0.02 for r,_ in names),
-            "nonfinite":nf,"nontensor_mismatch":nt,"top_differing":[k for _,k in names[:5]]}
 def digest(D):
     h=hashlib.sha256()
     for k in sorted(D):
         v=D[k]; h.update(k.encode()); h.update(v.detach().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes() if torch.is_tensor(v) else str(v).encode())
     return h.hexdigest()
-def single(mode):
-    if mode=="route_from_start":
-        USE_FG=True; lib=torch.library.Library("aten","IMPL"); lib.impl("mm",route,"CUDA")
-    wl=arm(a.steps); P=wl["params"]; S=wl["state"]
-    stream=iter(loaders[0]); [next(stream) for _ in range(a.steps*accum)]; optimizer.zero_grad(set_to_none=True)
-    hl=[micro_step(next(stream)) for _ in range(accum)]; gn=float(torch.nn.utils.clip_grad_norm_(trainable,GN))
-    g={n:to_cpu(p.grad) for n,p in model.named_parameters() if p.grad is not None and n not in EMB}
-    out={"field_version":"route_from_step0_v2","mode":mode,"warmup_steps":a.steps,"config":"bge_m3_ppu.yaml, seed 42, FL_ADAMW_FUSED=0, fresh process",
-         "warmup_losses":wl["losses"],"params_dense_sha256_after_warmup":digest(P),"optimizer_state_dense_sha256_after_warmup":digest(S),
-         "hit_step_micro_losses":hl,"hit_step_grad_norm":gn,"route_hits":dict(HITS),"hit_step_dense_grad_sha256":digest(g)}
-    json.dump(out,open(a.out,"w"),indent=1)
-    print(mode,"-> warmup sha",out["params_dense_sha256_after_warmup"][:12],"| hit step loss0 %.6f"%hl[0],"| grad norm",gn,"| hits",sum(HITS.values()))
-if a.mode!="decompose": single(a.mode); sys.exit(0)
-S0=snap(); R={}; HITS_PER_ARM={}
-def run_arm(name):
-    if R: restore(S0)
-    HITS.clear(); R[name]=arm(a.steps); HITS_PER_ARM[name]=dict(HITS)
-run_arm("A_native"); run_arm("B_native_again")
-_LIB=torch.library.Library("aten","IMPL"); _LIB.impl("mm",route,"CUDA"); USE_FG=False
-run_arm("C_fallback_only")
-USE_FG=True
-run_arm("D_route"); run_arm("E_route_again")
-for name in R: assert R[name]["restored_param_sha"]==R["A_native"]["restored_param_sha"], "restore failed"
-def pair(X,Y):
-    x,y=R[X],R[Y]
-    return {"losses_equal_per_step":[lx==ly for lx,ly in zip(x["losses"],y["losses"])],
-            "loss_max_abs_per_step":[max(abs(p-q) for p,q in zip(lx,ly)) for lx,ly in zip(x["losses"],y["losses"])],
-            "grads_dense_per_step":[cmp(x["grads"][i],y["grads"][i]) for i in range(a.steps)],
-            "params_dense":cmp(x["params"],y["params"]),"optimizer_state_dense":cmp(x["state"],y["state"]),
-            "params_dense_sha_equal":digest(x["params"])==digest(y["params"]),"optimizer_state_sha_equal":digest(x["state"])==digest(y["state"])}
-res={"field_version":"route_from_step0_v2","design":__doc__,"warmup_steps":a.steps,"config":"bge_m3_ppu.yaml, seed 42, FL_ADAMW_FUSED=0",
-     "hits_per_arm":HITS_PER_ARM,
-     "arms":{k:{"losses":v["losses"],"first_batch_sha":v["first_batch_sha"],"restored_param_sha":v["restored_param_sha"],"params_dense_sha256":digest(v["params"]),"optimizer_state_dense_sha256":digest(v["state"]),"emb_grad_nonfinite":v["emb_grad_nonfinite"]} for k,v in R.items()},
-     "pairs":{p:pair(*p.split("_vs_")) for p in ("A_native_vs_B_native_again","A_native_vs_C_fallback_only","A_native_vs_D_route","A_native_vs_E_route_again","D_route_vs_E_route_again","C_fallback_only_vs_D_route")},
-     "flag_gems_source":os.path.abspath(flag_gems.__file__),"mm_source":getattr(FG,"__code__",None) and FG.__code__.co_filename,"mm_first_line":getattr(FG,"__code__",None) and FG.__code__.co_firstlineno}
+def bhash(b): return hashlib.sha256("|".join("|".join(b[k]) for k in sorted(b)).encode()).hexdigest()[:16]
+def micro_step(b):
+    with autocast_context(dev,"bf16"):
+        raw=loss_for_batch(model,processor,str(cfg.task),b,dev,TEMP); loss=raw/accum
+    if not torch.isfinite(raw): raise FloatingPointError("Non-finite training loss")
+    loss.backward(); return float(raw.detach())
+def reset_cnt(): CNT.update(whitelist_match=0,flag_gems_mm=0,native_fallback=0)
+def dense_grads(): return {n:to_cpu(p.grad) for n,p in model.named_parameters() if p.grad is not None and n not in EMB}
+def run_step(batches,step_tag):
+    reset_cnt(); optimizer.zero_grad(set_to_none=True)
+    losses=[micro_step(b) for b in batches]
+    rec={"losses":losses,"batch_hashes":[bhash(b) for b in batches]}
+    if a.copy_grads=="host":
+        g=dense_grads(); rec["dense_grad_sha256"]=digest(g)
+        if a.save_grads: torch.save(g,os.path.join(a.save_grads,f"grads_{step_tag}.pt"))
+        del g
+    rec["calls"]=dict(CNT)
+    gn=float(torch.nn.utils.clip_grad_norm_(trainable,GN)); optimizer.step(); rec["grad_norm"]=gn
+    rec["after_step_params_sha256_all"]=digest({n:to_cpu(p) for n,p in model.named_parameters()})
+    rec["after_step_params_sha256_dense"]=digest({n:to_cpu(p) for n,p in model.named_parameters() if n not in EMB})
+    rec["after_step_rng_cuda_sha256"]=hashlib.sha256(torch.cuda.get_rng_state().numpy().tobytes()).hexdigest()[:16]
+    rec["after_step_rng_cpu_sha256"]=hashlib.sha256(torch.get_rng_state().numpy().tobytes()).hexdigest()[:16]
+    return rec
+started=time.time()
+initial=digest({n:to_cpu(p) for n,p in model.named_parameters() if n not in EMB})
+steps=[]; stream=iter(loaders[0])
+for s in range(a.steps):
+    b=[next(stream) for _ in range(accum)]; steps.append(run_step(b,f"step{s}"))
+P={n:to_cpu(p) for n,p in model.named_parameters() if n not in EMB}
+S={n+"."+k:to_cpu(v) for n,p in model.named_parameters() if n not in EMB for k,v in optimizer.state.get(p,{}).items() if torch.is_tensor(v)}
+pw,sw=digest(P),digest(S); del P,S
+stream=iter(loaders[0]); [next(stream) for _ in range(a.steps*accum)]
+hit=run_step([next(stream) for _ in range(accum)],f"step{a.steps}")
+tot={k:sum(s["calls"][k] for s in steps)+hit["calls"][k] for k in CNT}
+res={"field_version":"route_from_step0_v3","mode":a.mode,"route_enabled":MODE,"copy_grads":a.copy_grads,"pid":os.getpid(),"started_unix":started,"finished_unix":time.time(),
+     "config":"bge_m3_ppu.yaml, seed 42, FL_ADAMW_FUSED=0, fresh process; warmup %d steps on a fresh iterator, hit step on batches %d-%d of a new iterator"%(a.steps,a.steps*accum,a.steps*accum+accum-1),
+     "initial_param_sha256_dense":initial,"steps":steps,"params_dense_sha256_after_warmup":pw,"state_dense_sha256_after_warmup":sw,
+     "hit_step":{k:hit[k] for k in ("losses","batch_hashes","calls","grad_norm","after_step_params_sha256_all","after_step_params_sha256_dense","after_step_rng_cuda_sha256","after_step_rng_cpu_sha256") if k in hit}|({"dense_grad_sha256":hit["dense_grad_sha256"]} if "dense_grad_sha256" in hit else {}),"call_counts_total":tot,
+     "grads_saved":bool(a.save_grads),"flag_gems_mm_source":FG.__code__.co_filename,"flag_gems_mm_first_line":FG.__code__.co_firstlineno}
+if MODE=="route" and tot["flag_gems_mm"]==0:
+    print("ROUTE REQUESTED BUT flag_gems.mm WAS NEVER CALLED",tot); sys.exit(3)
+if MODE!="route": assert tot["flag_gems_mm"]==0,tot
+if MODE=="route": assert tot["flag_gems_mm"]==tot["whitelist_match"],tot
+if MODE=="fallback": assert tot["flag_gems_mm"]==0 and tot["whitelist_match"]>0,tot
 json.dump(res,open(a.out,"w"),indent=1)
-for k,v in res["arms"].items(): print(f"ARM {k:<18} first batch {v['first_batch_sha']} restored sha {v['restored_param_sha'][:12]} loss(step0,micro0)={v['losses'][0][0]:.6f} loss(step1,micro0)={v['losses'][1][0]:.6f} params_sha={v['params_dense_sha256'][:12]} state_sha={v['optimizer_state_dense_sha256'][:12]}")
-for k,p in res["pairs"].items():
-    print(f"{k:<32} step0 grads: identical {p['grads_dense_per_step'][0]['bitwise_identical']}/{p['grads_dense_per_step'][0]['tensors']} max_abs {p['grads_dense_per_step'][0]['max_abs']:.3g} | step1 grads: identical {p['grads_dense_per_step'][1]['bitwise_identical']}/{p['grads_dense_per_step'][1]['tensors']} max_abs {p['grads_dense_per_step'][1]['max_abs']:.3g} | params identical {p['params_dense']['bitwise_identical']}/{p['params_dense']['tensors']} max_abs {p['params_dense']['max_abs']:.3g} | state max_abs {p['optimizer_state_dense']['max_abs']:.3g} | losses equal {p['losses_equal_per_step']}")
+print(a.mode,"-> calls",tot,"| warmup param sha",pw[:12],"state sha",sw[:12],"| hit loss0 %.6f"%hit["losses"][0],"| grad norm",hit["grad_norm"],"| per-step calls",[s["calls"] for s in steps+[hit]])

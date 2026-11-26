@@ -1,0 +1,314 @@
+{
+ "field_version": "route_from_step0_r58_pooled_v1",
+ "source": "results/route_from_step0_r58/*/run.json (batch 1, gradients saved) + results/route_from_step0_r58_b2/*/run.json (batch 2), identical run pattern (--copy-grads host)",
+ "n_per_group": {
+  "fallback_from_start": 10,
+  "native_from_start": 10,
+  "route_from_start": 10
+ },
+ "groups": {
+  "fallback_from_start": {
+   "hit_step_grad_norm": [
+    9.5,
+    9.625,
+    9.8125,
+    9.875,
+    10.0,
+    10.1875,
+    10.25,
+    10.4375,
+    11.9375,
+    18.625
+   ],
+   "hit_step_micro0_loss": [
+    0.940869,
+    0.941162,
+    0.944971,
+    0.945166,
+    0.945312,
+    0.945898,
+    0.946582,
+    0.947607,
+    0.949072,
+    0.949951
+   ],
+   "warmup_step1_micro0_loss": [
+    1.22998,
+    1.230664,
+    1.230762,
+    1.234277,
+    1.23584,
+    1.23584,
+    1.236621,
+    1.238477,
+    1.238672,
+    1.238965
+   ],
+   "distinct_warmup_param_sha256": 10,
+   "call_counts_total": {
+    "whitelist_match": 5280,
+    "flag_gems_mm": 0,
+    "native_fallback": 173280
+   }
+  },
+  "native_from_start": {
+   "hit_step_grad_norm": [
+    10.1875,
+    10.3125,
+    10.375,
+    10.75,
+    10.875,
+    11.25,
+    11.375,
+    12.0,
+    12.4375,
+    16.25
+   ],
+   "hit_step_micro0_loss": [
+    0.940625,
+    0.941162,
+    0.942627,
+    0.945166,
+    0.945264,
+    0.945752,
+    0.94585,
+    0.947266,
+    0.947412,
+    0.950781
+   ],
+   "warmup_step1_micro0_loss": [
+    1.226367,
+    1.227246,
+    1.232227,
+    1.233301,
+    1.234277,
+    1.234961,
+    1.235742,
+    1.23584,
+    1.236719,
+    1.237402
+   ],
+   "distinct_warmup_param_sha256": 10,
+   "call_counts_total": {
+    "whitelist_match": 0,
+    "flag_gems_mm": 0,
+    "native_fallback": 0
+   }
+  },
+  "route_from_start": {
+   "hit_step_grad_norm": [
+    9.4375,
+    9.5,
+    9.6875,
+    10.0,
+    10.125,
+    10.125,
+    10.25,
+    10.375,
+    10.75,
+    11.5
+   ],
+   "hit_step_micro0_loss": [
+    0.941309,
+    0.942187,
+    0.944482,
+    0.945166,
+    0.945312,
+    0.946729,
+    0.947363,
+    0.9479,
+    0.94834,
+    0.948633
+   ],
+   "warmup_step1_micro0_loss": [
+    1.232617,
+    1.232617,
+    1.234668,
+    1.23584,
+    1.23584,
+    1.23584,
+    1.23623,
+    1.237793,
+    1.238965,
+    1.240039
+   ],
+   "distinct_warmup_param_sha256": 10,
+   "call_counts_total": {
+    "whitelist_match": 5280,
+    "flag_gems_mm": 5280,
+    "native_fallback": 168000
+   }
+  }
+ },
+ "mann_whitney_normal_approx": {
+  "hit_step_grad_norm": {
+   "route_vs_native": {
+    "U": 14.0,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": -2.721,
+    "p_two_sided_normal_approx": 0.0065,
+    "median_native": 11.25,
+    "median_other": 10.125,
+    "range_native": [
+     10.1875,
+     16.25
+    ],
+    "range_other": [
+     9.4375,
+     11.5
+    ],
+    "ranges_overlap": true
+   },
+   "fallback_vs_native": {
+    "U": 21.5,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": -2.154,
+    "p_two_sided_normal_approx": 0.0312,
+    "median_native": 11.25,
+    "median_other": 10.1875,
+    "range_native": [
+     10.1875,
+     16.25
+    ],
+    "range_other": [
+     9.5,
+     18.625
+    ],
+    "ranges_overlap": true
+   },
+   "route_vs_fallback": {
+    "U": 46.5,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": -0.265,
+    "p_two_sided_normal_approx": 0.7913,
+    "median_native": 10.1875,
+    "median_other": 10.125,
+    "range_native": [
+     9.5,
+     18.625
+    ],
+    "range_other": [
+     9.4375,
+     11.5
+    ],
+    "ranges_overlap": true
+   }
+  },
+  "hit_loss0": {
+   "route_vs_native": {
+    "U": 57.5,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": 0.567,
+    "p_two_sided_normal_approx": 0.5708,
+    "median_native": 0.945751965045929,
+    "median_other": 0.946728527545929,
+    "range_native": [
+     0.940625011920929,
+     0.9507812261581421
+    ],
+    "range_other": [
+     0.9413086175918579,
+     0.9486328363418579
+    ],
+    "ranges_overlap": true
+   },
+   "fallback_vs_native": {
+    "U": 55.0,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": 0.378,
+    "p_two_sided_normal_approx": 0.7055,
+    "median_native": 0.945751965045929,
+    "median_other": 0.9458984136581421,
+    "range_native": [
+     0.940625011920929,
+     0.9507812261581421
+    ],
+    "range_other": [
+     0.940869152545929,
+     0.949951171875
+    ],
+    "ranges_overlap": true
+   },
+   "route_vs_fallback": {
+    "U": 52.0,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": 0.151,
+    "p_two_sided_normal_approx": 0.8798,
+    "median_native": 0.9458984136581421,
+    "median_other": 0.946728527545929,
+    "range_native": [
+     0.940869152545929,
+     0.949951171875
+    ],
+    "range_other": [
+     0.9413086175918579,
+     0.9486328363418579
+    ],
+    "ranges_overlap": true
+   }
+  },
+  "step1_loss0": {
+   "route_vs_native": {
+    "U": 71.5,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": 1.625,
+    "p_two_sided_normal_approx": 0.1041,
+    "median_native": 1.234960913658142,
+    "median_other": 1.23583984375,
+    "range_native": [
+     1.2263672351837158,
+     1.237402319908142
+    ],
+    "range_other": [
+     1.2326171398162842,
+     1.2400391101837158
+    ],
+    "ranges_overlap": true
+   },
+   "fallback_vs_native": {
+    "U": 63.5,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": 1.021,
+    "p_two_sided_normal_approx": 0.3075,
+    "median_native": 1.234960913658142,
+    "median_other": 1.23583984375,
+    "range_native": [
+     1.2263672351837158,
+     1.237402319908142
+    ],
+    "range_other": [
+     1.22998046875,
+     1.2389647960662842
+    ],
+    "ranges_overlap": true
+   },
+   "route_vs_fallback": {
+    "U": 57.5,
+    "n_native": 10,
+    "n_route_or_fallback": 10,
+    "z": 0.567,
+    "p_two_sided_normal_approx": 0.5708,
+    "median_native": 1.23583984375,
+    "median_other": 1.23583984375,
+    "range_native": [
+     1.22998046875,
+     1.2389647960662842
+    ],
+    "range_other": [
+     1.2326171398162842,
+     1.2400391101837158
+    ],
+    "ranges_overlap": true
+   }
+  }
+ },
+ "reading": "The hit-step grad norm / loss after a 2-step warmup is dominated by the warmup's run-to-run divergence (see step0_repro_r58.json and state_transfer_r58): the fallback-only group, which never calls flag_gems.mm, differs from native by p=0.031 while route vs native is p=0.006. The statistic therefore cannot separate a route effect from the native band; it only shows that the route's spread is of the same nature and size as native's."
+}

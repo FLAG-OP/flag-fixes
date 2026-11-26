@@ -1,0 +1,172 @@
+{
+ "field_version": "records_delivery_v1",
+ "built_utc": "2026-11-26T10:39:43Z",
+ "original_file": {
+  "name": "acc_hit_step_r44.json.records.pkl",
+  "sha256": "7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3",
+  "bytes": 7247960317
+ },
+ "split": {
+  "part_size_bytes": 1992294400,
+  "n_parts": 4,
+  "parts": [
+   {
+    "name": "records.part.00",
+    "sha256": "b917d5a7056e56bdf3ccb49b3fccc67c980d9c83069459ab4c25e52b8ac14b44",
+    "bytes": 1992294400
+   },
+   {
+    "name": "records.part.01",
+    "sha256": "d1d864385ffac0c3482028574176c6ac8262064bc75a4e2a80dcbf80db8cc81e",
+    "bytes": 1992294400
+   },
+   {
+    "name": "records.part.02",
+    "sha256": "f76ebe8a9dcd9c9ffcb520aec0a635d18a76b3a8690d4ca241f86aade1958305",
+    "bytes": 1992294400
+   },
+   {
+    "name": "records.part.03",
+    "sha256": "0460c4cad3a8be7c4a6ede78d38268e54649e207cbc67201517731788738153e",
+    "bytes": 1271077117
+   }
+  ],
+  "reason": "GitHub limits one release asset to 2 GiB",
+  "rejoin": "cat records.part.00 records.part.01 records.part.02 records.part.03 > acc_hit_step_r44.json.records.pkl",
+  "rejoin_sha256_verified_locally": true,
+  "rejoin_check_output": "rejoin check: 7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3  -"
+ },
+ "release": {
+  "repo": "FLAG-OP/flag-fixes",
+  "tag": "problem29-dw-records-r44",
+  "id": 459020982,
+  "draft": true,
+  "url": "https://github.com/FLAG-OP/flag-fixes/releases/tag/untagged-b6f7f4d0d7006f9adeac",
+  "target_commitish": "issue7-zw810e-opt-round1",
+  "assets": [
+   {
+    "name": "RELEASE_NOTES.md",
+    "bytes": 1245,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T06:03:59Z",
+    "matches_local_bytes": null
+   },
+   {
+    "name": "SHA256SUMS",
+    "bytes": 100,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T06:04:09Z",
+    "matches_local_bytes": null
+   },
+   {
+    "name": "SHA256SUMS.parts",
+    "bytes": 328,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T06:04:25Z",
+    "matches_local_bytes": null
+   },
+   {
+    "name": "records.part.00",
+    "bytes": 1992294400,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T09:59:22Z",
+    "matches_local_bytes": true
+   },
+   {
+    "name": "records.part.01",
+    "bytes": 1992294400,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T06:32:32Z",
+    "matches_local_bytes": true
+   },
+   {
+    "name": "records.part.02",
+    "bytes": 1992294400,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T06:32:32Z",
+    "matches_local_bytes": true
+   },
+   {
+    "name": "records.part.03",
+    "bytes": 1271077117,
+    "state": "uploaded",
+    "uploaded_at": "2026-11-26T06:04:44Z",
+    "matches_local_bytes": true
+   }
+  ],
+  "all_parts_uploaded": true,
+  "access": "DRAFT release: visible to users with write access to the repository. Download: gh release download problem29-dw-records-r44 --repo FLAG-OP/flag-fixes --dir <dir>. Publishing it (or not) is the maintainers' decision.",
+  "upload_throughput_note": "the measurement host uploads at ~0.95 MB/s per stream (1.27 GB part: 1344 s; 1.99 GB parts: ~4800 s each with 3 streams in parallel); one 1.99 GB part failed with HTTP 408 and was re-uploaded"
+ },
+ "clean_copy_recompute": {
+  "command": "python3 scripts/recompute_dw_accuracy.py <records.pkl> <out.json>",
+  "clean_copy_how": "git transport to github.com (clone) and tarball downloads are reset / stall from this environment; the script and the committed recompute result were fetched through the Git data API by blob SHA and verified against the tree of commit 59346831",
+  "script_blob_sha256_of_content": "68085b857be303ea8bc474d78a20395fc3a05712f17e895aa8fb547d11f9ce3f",
+  "script_git_blob_sha": "4fbddb4f158e005c321a5dffbd351f7d97c9e8c3",
+  "matches_committed_blob": true,
+  "committed_result_blob_matches": true,
+  "exit_reason": 0,
+  "verdict": "dw-only PASS at 2% per-element floored-rel gate (unrounded recomputation); native self-comparison valid",
+  "record_sha256": "7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3",
+  "dw_only_hits_this_step": 432,
+  "native_self_comparison_valid": true,
+  "candidate_vs_native_pass": true,
+  "comparisons": {
+   "A_native_run2_vs_native_run1": {
+    "FFN_up": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    },
+    "FFN_down": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    },
+    "attn_out_proj": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    }
+   },
+   "B_wrapped_stock_vs_native_run1": {
+    "FFN_up": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    },
+    "FFN_down": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    },
+    "attn_out_proj": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    }
+   },
+   "C_dw_only_vs_native_run1": {
+    "FFN_up": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    },
+    "FFN_down": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    },
+    "attn_out_proj": {
+     "grad_rel_max_unrounded": 0.0,
+     "PASS": true,
+     "post_param_bits_unequal": 0
+    }
+   }
+  },
+  "identical_to_committed_result_except_record_file": true
+ },
+ "download_back_verification": [
+  "download-back verification stopped 10:07:41Z: ~9 KB/s from this host (1.65 MB in ~3 min), a 1.27 GB part is not feasible"
+ ]
+}

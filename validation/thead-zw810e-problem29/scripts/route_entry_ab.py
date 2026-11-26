@@ -33,42 +33,66 @@ def stats(xs):
     half=(T_CRIT.get(n,1.96) if n>1 else float("nan"))*sd/math.sqrt(n) if n>1 else float("nan")
     return {"n":n,"mean_ms":round(mean,2),"median_ms":round(med,2),"min_ms":s[0],"max_ms":s[-1],"sd_ms":round(sd,2),
             "mean_ci95_ms":[round(mean-half,2),round(mean+half,2)],"n_slower":sum(x>0 for x in s),"n_faster":sum(x<0 for x in s)}
+def t_crit(df):
+    """two-sided 95% critical value of Student's t for (possibly fractional) df: linear interpolation in 1/df between table entries"""
+    ks=sorted(T_CRIT)
+    if df>=ks[-1]: return T_CRIT[ks[-1]] if df<ks[-1]*1.5 else 1.96
+    if df<=ks[0]: return T_CRIT[ks[0]]
+    lo=max(k for k in ks if k<=df); hi=min(k for k in ks if k>=df); w=(1/df-1/lo)/(1/hi-1/lo)
+    return T_CRIT[lo]*(1-w)+T_CRIT[hi]*w
+def welch(A,B):
+    """Welch 95% CI of mean(B)-mean(A); A = native control, B = py_route. The unit is whatever the caller passes
+    (paired steps, or one mean per process)."""
+    nA,nB=len(A),len(B); mA=sum(A)/nA; mB=sum(B)/nB
+    vA=sum((x-mA)**2 for x in A)/(nA-1); vB=sum((x-mB)**2 for x in B)/(nB-1)
+    se=math.sqrt(vA/nA+vB/nB); df=(vA/nA+vB/nB)**2/((vA/nA)**2/(nA-1)+(vB/nB)**2/(nB-1)); tc=t_crit(df)
+    lo,hi=mB-mA-tc*se,mB-mA+tc*se
+    return {"unit":None,"n_native":nA,"n_py_route":nB,"native_mean_ms":round(mA,2),"py_route_mean_ms":round(mB,2),"diff_ms":round(mB-mA,2),
+            "native_sd_ms":round(math.sqrt(vA),2),"py_route_sd_ms":round(math.sqrt(vB),2),"se_ms":round(se,2),"welch_df":round(df,1),"t_crit":round(tc,3),
+            "ci95_ms":[round(lo,2),round(hi,2)],"ci_excludes_zero":bool(lo>0 or hi<0),
+            "process_means_negative":{"py_route":sum(x<0 for x in B),"native":sum(x<0 for x in A)} if nA==len(set(A)) or True else None}
 def aggregate(files,out):
     runs=[json.load(open(f)) for f in files]
-    by=collections.defaultdict(list); per=collections.defaultdict(list); mismatch=0
+    by=collections.defaultdict(list); per=collections.defaultdict(list); pm=collections.defaultdict(dict); mismatch=0
     for r in runs:
         batch=r.get("batch","batch2")
         for a,b in zip(r["phase1"]["rounds"],r["phase2"]["rounds"]):
             if "n/a" not in a["input_hash"] and a["input_hash"]!=b["input_hash"]: mismatch+=1
             by[(batch,r["second"])].append(round(b["step_ms"]-a["step_ms"],2)); per[(batch,r["second"],r["run"])].append(round(b["step_ms"]-a["step_ms"],2))
-    def did(A,B):
-        mA=sum(A)/len(A); mB=sum(B)/len(B)
-        vA=sum((x-mA)**2 for x in A)/(len(A)-1); vB=sum((x-mB)**2 for x in B)/(len(B)-1)
-        se=math.sqrt(vA/len(A)+vB/len(B)); tc=T_CRIT.get(min(len(A),len(B)),1.96)
-        lo,hi=mB-mA-tc*se,mB-mA+tc*se
-        return {"mean_ms":round(mB-mA,2),"se_ms":round(se,2),"ci95_ms":[round(lo,2),round(hi,2)],
-                "classification":"REGRESSION (slower)" if lo>0 else ("GAIN (faster)" if hi<0 else "NO SIGNIFICANT DIFFERENCE")}
-    pm=collections.defaultdict(list)
-    for (batch,second,run),v in per.items(): pm[second].append(sum(v)/len(v))
-    neg={k:sum(x<0 for x in v) for k,v in pm.items()}
-    sign={"py_route":{"processes":len(pm["py_route"]),"negative_mean_diff":neg["py_route"]},"native":{"processes":len(pm["native"]),"negative_mean_diff":neg["native"]},
-          "fisher_two_sided_p":round(fisher_two_sided(neg["py_route"],len(pm["py_route"])-neg["py_route"],neg["native"],len(pm["native"])-neg["native"]),4)}
-    batches=sorted({k[0] for k in by})
-    dd={b:did(by[(b,"native")],by[(b,"py_route")]) for b in batches}
-    A=[x for k,v in by.items() if k[1]=="native" for x in v]; B=[x for k,v in by.items() if k[1]=="py_route" for x in v]
-    d=did(A,B); lo,hi=d["ci95_ms"]; cls=d["classification"]
-    res={"field_version":"route_entry_ab_v2","time_unit":"ms",
-         "estimate":"diff-in-diff = mean(py_route: phase2-phase1) - mean(native control: phase2-phase1); negative = route faster",
-         "stats_by_batch_second":{f"{k[0]}|{k[1]}":stats(v) for k,v in sorted(by.items())},
-         "per_process_diffs":{f"{k[0]}|{k[1]}|{k[2]}":v for k,v in sorted(per.items())},
-         "process_level_sign_test":sign,"process_mean_diffs_ms":{k:[round(x,2) for x in v] for k,v in sorted(pm.items())},
-         "diff_in_diff_by_batch":dd,"pooled":{"n_native":len(A),"n_py_route":len(B),"native":stats(A),"py_route":stats(B),"diff_in_diff":d},
+        pm[(batch,r["second"])][r["run"]]=round(sum(per[(batch,r["second"],r["run"])])/len(per[(batch,r["second"],r["run"])]),2)
+    def std(xs):
+        n=len(xs); m=sum(xs)/n
+        return {"n":n,"mean_ms":round(m,2),"median_ms":round(sorted(xs)[n//2] if n%2 else (sorted(xs)[n//2-1]+sorted(xs)[n//2])/2,2),"n_negative":sum(x<0 for x in xs),
+                "min_ms":min(xs),"max_ms":max(xs)}
+    def sel(batches): return [b for b in ("batch2","batch1_console") if b in batches]
+    PROV={"batch2":"16 processes (8 py_route + 8 native control), per-run JSON files committed (results/route_entry_ab_r57/*.json)",
+          "batch1_console":"12 processes (6 + 6); per-run JSON files were lost to a shell file-naming bug, step times transcribed from the console and committed as results/route_entry_ab_r57_batch1_console/*.json - NOT independent raw records"}
+    levels={}
+    for name,batches in (("all",("batch2","batch1_console")),("batch2_only",("batch2",)),("batch1_console_only",("batch1_console",))):
+        if not all((b,"py_route") in pm for b in batches): continue
+        sA=[x for b in batches for x in by[(b,"native")]]; sB=[x for b in batches for x in by[(b,"py_route")]]
+        pA=[x for b in batches for x in pm[(b,"native")].values()]; pB=[x for b in batches for x in pm[(b,"py_route")].values()]
+        levels[name]={"batches":list(batches),"provenance":{b:PROV[b] for b in batches},
+            "step_level":{"native":std(sA),"py_route":std(sB),"welch":dict(welch(sA,sB),unit="paired step (phase2 - phase1)")},
+            "process_level":{"native":std(pA),"py_route":std(pB),"welch":dict(welch(pA,pB),unit="process (mean of its 3 paired steps)")}}
+    A=pm[("batch2","native")]; B=pm[("batch2","py_route")]
+    for b in ("batch1_console",):
+        if (b,"native") in pm: A={**A,**{k+"@b1":v for k,v in pm[(b,"native")].items()}}; B={**B,**{k+"@b1":v for k,v in pm[(b,"py_route")].items()}}
+    neg={"py_route":sum(x<0 for x in B.values()),"n_py_route":len(B),"native":sum(x<0 for x in A.values()),"n_native":len(A)}
+    sign={"process_mean_negative":neg,"fisher_two_sided_p":round(fisher_two_sided(neg["py_route"],neg["n_py_route"]-neg["py_route"],neg["native"],neg["n_native"]-neg["native"]),4)}
+    pl=levels["all"]["process_level"]["welch"]; lo,hi=pl["ci95_ms"]
+    cls="REGRESSION (slower)" if lo>0 else ("GAIN (faster)" if hi<0 else "CI SPANS ZERO")
+    res={"field_version":"route_entry_ab_v3","time_unit":"ms",
+         "estimate":"phase2 - phase1 per process (py_route registered between the phases; --second native = control without registration); effect = py_route minus native control. Reported at two levels: paired STEPS (treats the 3 steps of a process as independent) and PROCESSES (one mean per process) - the three steps of a process share the run environment, so the process level is the conservative one.",
+         "unit_note":"the process level is the primary result; the step level is kept for comparison with round-57 (which pooled steps)",
+         "levels":levels,"process_level_sign_test":sign,"process_mean_diffs_ms":{f"{k[0]}|{k[1]}":dict(sorted(v.items())) for k,v in sorted(pm.items())},
          "batch_hash_mismatch":mismatch,"raw_files":files,
-         "valid_tokens_per_s":{k:{p:round(sum(x for r in runs if r["second"]==k for x in r["tokens_per_s_"+p])/max(1,sum(len(r["tokens_per_s_"+p]) for r in runs if r["second"]==k)),1) for p in ("p1","p2")} for k in ("native","py_route")}}
-    res["verdict"]=(f"POOLED {cls}: dW Python route on the ORIGINAL entry loop: diff-in-diff {d['mean_ms']:+.2f} ms, 95% CI [{lo:+.2f}, {hi:+.2f}] "
-                    f"(py_route phase2-phase1: median {stats(B)['median_ms']:+.1f} ms, faster in {stats(B)['n_faster']}/{len(B)}; "
-                    f"native control: median {stats(A)['median_ms']:+.1f} ms, faster in {stats(A)['n_faster']}/{len(A)}) over {len(runs)} processes; "
-                    +"by batch: "+"; ".join(f"{b}: {v['mean_ms']:+.2f} ms CI [{v['ci95_ms'][0]:+.2f}, {v['ci95_ms'][1]:+.2f}]" for b,v in dd.items()))
+         "valid_tokens_per_s":{k:{p:round(sum(x for r in runs if r["second"]==k and r.get("batch","batch2")=="batch2" for x in r["tokens_per_s_"+p])/max(1,sum(len(r["tokens_per_s_"+p]) for r in runs if r["second"]==k and r.get("batch","batch2")=="batch2")),1) for p in ("p1","p2")} for k in ("native","py_route")}}
+    res["verdict"]=(f"PROCESS LEVEL (primary), all 28 processes: diff {pl['diff_ms']:+.2f} ms, Welch 95% CI [{lo:+.2f}, {hi:+.2f}] -> {cls}; "
+                    f"batch 2 only (complete raw records, 16 processes): diff {levels['batch2_only']['process_level']['welch']['diff_ms']:+.2f} ms, CI {levels['batch2_only']['process_level']['welch']['ci95_ms']}; "
+                    f"batch 1 only (console transcription, 12 processes): diff {levels['batch1_console_only']['process_level']['welch']['diff_ms']:+.2f} ms, CI {levels['batch1_console_only']['process_level']['welch']['ci95_ms']}; "
+                    f"process means negative in {neg['py_route']}/{neg['n_py_route']} py_route vs {neg['native']}/{neg['n_native']} native processes. "
+                    + ("The interval spans zero: there is a small indication of a gain, not enough to deploy." if cls=="CI SPANS ZERO" else ""))
     json.dump(res,open(out,"w"),indent=1); print(res["verdict"]); return
 ap=argparse.ArgumentParser()
 ap.add_argument("--conf"); ap.add_argument("--second",choices=["native","py_route"]); ap.add_argument("--run",default="run1")

@@ -1,5 +1,5 @@
 {
- "field_version": "roofline_v1",
+ "field_version": "roofline_v2",
  "time_unit": "ms",
  "dtype_bytes": 2,
  "peak_reference_tflops": 139.2,
@@ -15,7 +15,8 @@
   "probe9_gemm_sdpa.json": "215578b07fb262285f613431a6341bf1e0adb2488cdaf7820277e580c890978a"
  },
  "headroom_by_shape": {
-  "method": "per-shape ideal time = FLOPs/(139.2e12) [ms]; headroom = device_ms - ideal_ms (clamped >=0); summed over ALL backward dW/dX rows",
+  "method": "per-shape ideal time = FLOPs/(139.2e12) [ms]; headroom = device_ms - ideal_ms (clamped >=0); summed over the backward dW/dX rows of each tier",
+  "window": "SINGLE-STEP window: the per-shape rows come from ONE training step (kernel_efficiency_r36, step 2). Every device_ms / headroom_ms in this block is per step-2 window; 772.12 ms is the 3-step mean backward-GEMM time and is a different window.",
   "n_rows": 100,
   "covered_device_ms_per_step": 718.73,
   "covered_headroom_ms_per_step": 248.73,
@@ -28,18 +29,19 @@
   "retraction": "The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED. per-shape headroom = device_ms - FLOPs/peak is the ideal-device-time gap UNDER THE 139.2 REFERENCE ASSUMPTION; it is NOT an end-to-end ceiling.",
   "by_group": [
    {
-    "group": "long (token dim >= 4000)",
-    "n": 18,
-    "device_ms": 311.11,
-    "headroom_ms": 87.16,
+    "group": "long (flattened tokens >= 4000)",
+    "n": 20,
+    "device_ms": 353.48,
+    "headroom_ms": 99.91,
     "kinds": {
      "dW_ffn_up": 5,
      "dW_ffn_down": 3,
      "dX_ffn_down": 3,
      "dX_ffn_up": 3,
+     "dX_other": 2,
      "dX_attn_proj": 4
     },
-    "calls": 1344,
+    "calls": 1728,
     "top_shapes": [
      {
       "kind": "dW_ffn_up",
@@ -48,6 +50,7 @@
        5120,
        1024
       ],
+      "token_dim": 5120,
       "count": 96,
       "device_ms": 46.8,
       "headroom_ms_vs_peak": 17.179
@@ -59,9 +62,22 @@
        5120,
        4096
       ],
+      "token_dim": 5120,
       "count": 96,
       "device_ms": 46.71,
       "headroom_ms_vs_peak": 17.089
+     },
+     {
+      "kind": "dX_other",
+      "shape": [
+       1024,
+       5120,
+       1024
+      ],
+      "token_dim": 5120,
+      "count": 288,
+      "device_ms": 31.77,
+      "headroom_ms_vs_peak": 9.554
      },
      {
       "kind": "dX_attn_proj",
@@ -70,6 +86,7 @@
        1024,
        1024
       ],
+      "token_dim": 5120,
       "count": 288,
       "device_ms": 28.37,
       "headroom_ms_vs_peak": 6.154
@@ -81,25 +98,15 @@
        1024,
        4096
       ],
+      "token_dim": 5120,
       "count": 96,
       "device_ms": 34.56,
       "headroom_ms_vs_peak": 4.939
-     },
-     {
-      "kind": "dW_ffn_up",
-      "shape": [
-       4096,
-       4430,
-       1024
-      ],
-      "count": 24,
-      "device_ms": 10.32,
-      "headroom_ms_vs_peak": 3.913
      }
     ]
    },
    {
-    "group": "mid (1400 <= token dim < 4000)",
+    "group": "mid (1400 <= flattened tokens < 4000)",
     "n": 60,
     "device_ms": 324.79,
     "headroom_ms": 113.91,
@@ -121,6 +128,7 @@
        1024,
        1024
       ],
+      "token_dim": 1670,
       "count": 96,
       "device_ms": 5.9,
       "headroom_ms_vs_peak": 3.485
@@ -132,6 +140,7 @@
        3740,
        4096
       ],
+      "token_dim": 3740,
       "count": 24,
       "device_ms": 8.69,
       "headroom_ms_vs_peak": 3.281
@@ -143,6 +152,7 @@
        3740,
        1024
       ],
+      "token_dim": 3740,
       "count": 24,
       "device_ms": 8.67,
       "headroom_ms_vs_peak": 3.261
@@ -154,6 +164,7 @@
        3290,
        1024
       ],
+      "token_dim": 3290,
       "count": 24,
       "device_ms": 7.89,
       "headroom_ms_vs_peak": 3.131
@@ -165,6 +176,7 @@
        1024,
        1024
       ],
+      "token_dim": 1740,
       "count": 96,
       "device_ms": 5.63,
       "headroom_ms_vs_peak": 3.113
@@ -172,31 +184,19 @@
     ]
    },
    {
-    "group": "short (token dim < 1400)",
-    "n": 22,
-    "device_ms": 82.83,
-    "headroom_ms": 47.65,
+    "group": "short (flattened tokens < 1400)",
+    "n": 18,
+    "device_ms": 40.23,
+    "headroom_ms": 34.67,
     "kinds": {
-     "dX_other": 3,
      "dX_attn_proj": 3,
      "dW_attn_proj": 3,
-     "dW_other": 7,
+     "dW_other": 6,
      "dX_ffn_down": 3,
      "dX_ffn_up": 3
     },
-    "calls": 1544,
+    "calls": 1152,
     "top_shapes": [
-     {
-      "kind": "dX_other",
-      "shape": [
-       1024,
-       5120,
-       1024
-      ],
-      "count": 288,
-      "device_ms": 31.77,
-      "headroom_ms_vs_peak": 9.554
-     },
      {
       "kind": "dX_attn_proj",
       "shape": [
@@ -204,6 +204,7 @@
        1024,
        1024
       ],
+      "token_dim": 160,
       "count": 192,
       "device_ms": 6.72,
       "headroom_ms_vs_peak": 6.257
@@ -215,20 +216,10 @@
        160,
        1024
       ],
+      "token_dim": 160,
       "count": 192,
       "device_ms": 5.25,
       "headroom_ms_vs_peak": 4.787
-     },
-     {
-      "kind": "dX_other",
-      "shape": [
-       1024,
-       5120,
-       1024
-      ],
-      "count": 96,
-      "device_ms": 10.6,
-      "headroom_ms_vs_peak": 3.195
      },
      {
       "kind": "dX_attn_proj",
@@ -237,14 +228,71 @@
        1024,
        1024
       ],
+      "token_dim": 180,
       "count": 96,
       "device_ms": 3.41,
       "headroom_ms_vs_peak": 3.15
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       140,
+       1024,
+       1024
+      ],
+      "token_dim": 140,
+      "count": 96,
+      "device_ms": 2.97,
+      "headroom_ms_vs_peak": 2.767
+     },
+     {
+      "kind": "dW_attn_proj",
+      "shape": [
+       1024,
+       180,
+       1024
+      ],
+      "token_dim": 180,
+      "count": 96,
+      "device_ms": 2.57,
+      "headroom_ms_vs_peak": 2.31
      }
     ]
    }
   ],
-  "token_dim_rule": "dW: reduction dim K (= A[1], the token dim of x) ; dX: output row dim M (= A[0]) ; loss matmul: listed separately. The old max(M,K) rule counted the fixed FFN feature dim 4096 as a long sequence (review BqpXfeg item 4).",
+  "loss_matmul_separate": {
+   "n": 2,
+   "device_ms": 0.23,
+   "headroom_ms": 0.23,
+   "rows": [
+    {
+     "kind": "dW_other",
+     "shape": [
+      40,
+      10,
+      1024
+     ],
+     "token_dim": null,
+     "count": 4,
+     "device_ms": 0.14,
+     "headroom_ms_vs_peak": 0.14
+    },
+    {
+     "kind": "dX_other",
+     "shape": [
+      10,
+      40,
+      1024
+     ],
+     "token_dim": null,
+     "count": 4,
+     "device_ms": 0.09,
+     "headroom_ms_vs_peak": 0.09
+    }
+   ]
+  },
+  "regroup_note": "round-58 (review 7182886976 item 3): the two [1024,5120,1024] rows move from the short tier to the long tier (5120 flattened tokens); the two loss matmuls ([40,10,1024] dW and [10,40,1024] dX) are listed separately. Previous values: mid 113.91 / long 87.16 / short 47.65 ms.",
+  "token_dim_rule": "flattened-token dim = the operand dimension of [M,K,N] that is NOT a fixed model dimension (1024 / 4096): [4096,5120,1024] -> 5120 (K), [5120,1024,1024] -> 5120 (M), [1024,5120,1024] -> 5120 (K, was 1024 under the previous dX-takes-M rule). Rows with neither M nor K a model dimension are the loss matmuls (listed separately). Both model dims -> dW takes K, dX takes M. The old max(M,K) rule counted the fixed FFN feature dim 4096 as a long sequence (review BqpXfeg item 4).",
   "rows": [
    {
     "kind": "dW_ffn_up",
@@ -285,7 +333,7 @@
      5120,
      1024
     ],
-    "token_dim": 1024,
+    "token_dim": 5120,
     "count": 288,
     "device_ms": 31.77,
     "flops_tflop": 3.0924,
@@ -293,22 +341,6 @@
     "ideal_ms_at_peak": 22.216,
     "headroom_ms_vs_peak": 9.554,
     "headroom_pct_of_shape_time": 30.1
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     160,
-     1024,
-     1024
-    ],
-    "token_dim": 160,
-    "count": 192,
-    "device_ms": 6.72,
-    "flops_tflop": 0.0644,
-    "effective_tflops": 9.59,
-    "ideal_ms_at_peak": 0.463,
-    "headroom_ms_vs_peak": 6.257,
-    "headroom_pct_of_shape_time": 93.1
    },
    {
     "kind": "dX_attn_proj",
@@ -343,20 +375,52 @@
     "headroom_pct_of_shape_time": 14.3
    },
    {
-    "kind": "dW_attn_proj",
+    "kind": "dX_other",
     "shape": [
      1024,
-     160,
+     5120,
      1024
     ],
-    "token_dim": 160,
-    "count": 192,
-    "device_ms": 5.25,
-    "flops_tflop": 0.0644,
-    "effective_tflops": 12.27,
-    "ideal_ms_at_peak": 0.463,
-    "headroom_ms_vs_peak": 4.787,
-    "headroom_pct_of_shape_time": 91.2
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 10.6,
+    "flops_tflop": 1.0308,
+    "effective_tflops": 97.24,
+    "ideal_ms_at_peak": 7.405,
+    "headroom_ms_vs_peak": 3.195,
+    "headroom_pct_of_shape_time": 30.1
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     5120,
+     4096,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 31.9,
+    "flops_tflop": 4.1232,
+    "effective_tflops": 129.25,
+    "ideal_ms_at_peak": 29.621,
+    "headroom_ms_vs_peak": 2.279,
+    "headroom_pct_of_shape_time": 7.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     5120,
+     1024,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 9.45,
+    "flops_tflop": 1.0308,
+    "effective_tflops": 109.08,
+    "ideal_ms_at_peak": 7.405,
+    "headroom_ms_vs_peak": 2.045,
+    "headroom_pct_of_shape_time": 21.6
    },
    {
     "kind": "dW_ffn_up",
@@ -409,6 +473,54 @@
    {
     "kind": "dW_ffn_up",
     "shape": [
+     1024,
+     4430,
+     1024
+    ],
+    "token_dim": 4430,
+    "count": 96,
+    "device_ms": 9.43,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 94.58,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 3.023,
+    "headroom_pct_of_shape_time": 32.1
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     4430,
+     1024,
+     4096
+    ],
+    "token_dim": 4430,
+    "count": 24,
+    "device_ms": 9.34,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 95.49,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 2.933,
+    "headroom_pct_of_shape_time": 31.4
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     4430,
+     4096,
+     1024
+    ],
+    "token_dim": 4430,
+    "count": 24,
+    "device_ms": 9.11,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 97.9,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 2.703,
+    "headroom_pct_of_shape_time": 29.7
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
      4096,
      4310,
      1024
@@ -441,22 +553,6 @@
    {
     "kind": "dX_attn_proj",
     "shape": [
-     1670,
-     1024,
-     1024
-    ],
-    "token_dim": 1670,
-    "count": 96,
-    "device_ms": 5.9,
-    "flops_tflop": 0.3362,
-    "effective_tflops": 56.99,
-    "ideal_ms_at_peak": 2.415,
-    "headroom_ms_vs_peak": 3.485,
-    "headroom_pct_of_shape_time": 59.1
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
      4310,
      1024,
      1024
@@ -469,6 +565,54 @@
     "ideal_ms_at_peak": 6.233,
     "headroom_ms_vs_peak": 3.437,
     "headroom_pct_of_shape_time": 35.5
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     1024,
+     4310,
+     1024
+    ],
+    "token_dim": 4310,
+    "count": 96,
+    "device_ms": 9.07,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 95.67,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 2.837,
+    "headroom_pct_of_shape_time": 31.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     4310,
+     4096,
+     1024
+    ],
+    "token_dim": 4310,
+    "count": 24,
+    "device_ms": 8.64,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 100.43,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 2.407,
+    "headroom_pct_of_shape_time": 27.9
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     4310,
+     1024,
+     4096
+    ],
+    "token_dim": 4310,
+    "count": 24,
+    "device_ms": 7.37,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 117.74,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 1.137,
+    "headroom_pct_of_shape_time": 15.4
    },
    {
     "kind": "dW_ffn_down",
@@ -503,36 +647,68 @@
     "headroom_pct_of_shape_time": 37.6
    },
    {
-    "kind": "dX_other",
+    "kind": "dW_ffn_up",
     "shape": [
      1024,
-     5120,
+     3740,
      1024
     ],
-    "token_dim": 1024,
+    "token_dim": 3740,
     "count": 96,
-    "device_ms": 10.6,
-    "flops_tflop": 1.0308,
-    "effective_tflops": 97.24,
-    "ideal_ms_at_peak": 7.405,
-    "headroom_ms_vs_peak": 3.195,
-    "headroom_pct_of_shape_time": 30.1
+    "device_ms": 7.97,
+    "flops_tflop": 0.753,
+    "effective_tflops": 94.47,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 2.561,
+    "headroom_pct_of_shape_time": 32.1
    },
    {
     "kind": "dX_attn_proj",
     "shape": [
-     180,
+     3740,
      1024,
      1024
     ],
-    "token_dim": 180,
+    "token_dim": 3740,
     "count": 96,
-    "device_ms": 3.41,
-    "flops_tflop": 0.0362,
-    "effective_tflops": 10.63,
-    "ideal_ms_at_peak": 0.26,
-    "headroom_ms_vs_peak": 3.15,
-    "headroom_pct_of_shape_time": 92.4
+    "device_ms": 7.15,
+    "flops_tflop": 0.753,
+    "effective_tflops": 105.31,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 1.741,
+    "headroom_pct_of_shape_time": 24.3
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     3740,
+     1024,
+     4096
+    ],
+    "token_dim": 3740,
+    "count": 24,
+    "device_ms": 6.62,
+    "flops_tflop": 0.753,
+    "effective_tflops": 113.74,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 1.211,
+    "headroom_pct_of_shape_time": 18.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     3740,
+     4096,
+     1024
+    ],
+    "token_dim": 3740,
+    "count": 24,
+    "device_ms": 6.01,
+    "flops_tflop": 0.753,
+    "effective_tflops": 125.28,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 0.601,
+    "headroom_pct_of_shape_time": 10.0
    },
    {
     "kind": "dW_ffn_up",
@@ -549,22 +725,6 @@
     "ideal_ms_at_peak": 4.759,
     "headroom_ms_vs_peak": 3.131,
     "headroom_pct_of_shape_time": 39.7
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     1740,
-     1024,
-     1024
-    ],
-    "token_dim": 1740,
-    "count": 96,
-    "device_ms": 5.63,
-    "flops_tflop": 0.3503,
-    "effective_tflops": 62.22,
-    "ideal_ms_at_peak": 2.517,
-    "headroom_ms_vs_peak": 3.113,
-    "headroom_pct_of_shape_time": 55.3
    },
    {
     "kind": "dW_ffn_down",
@@ -586,49 +746,65 @@
     "kind": "dW_ffn_up",
     "shape": [
      1024,
-     4430,
+     3290,
      1024
     ],
-    "token_dim": 4430,
+    "token_dim": 3290,
     "count": 96,
-    "device_ms": 9.43,
-    "flops_tflop": 0.8919,
-    "effective_tflops": 94.58,
-    "ideal_ms_at_peak": 6.407,
-    "headroom_ms_vs_peak": 3.023,
-    "headroom_pct_of_shape_time": 32.1
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     4430,
-     1024,
-     4096
-    ],
-    "token_dim": 4430,
-    "count": 24,
-    "device_ms": 9.34,
-    "flops_tflop": 0.8919,
-    "effective_tflops": 95.49,
-    "ideal_ms_at_peak": 6.407,
-    "headroom_ms_vs_peak": 2.933,
-    "headroom_pct_of_shape_time": 31.4
+    "device_ms": 7.11,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 93.16,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 2.351,
+    "headroom_pct_of_shape_time": 33.1
    },
    {
     "kind": "dX_attn_proj",
     "shape": [
-     1910,
+     3290,
      1024,
      1024
     ],
-    "token_dim": 1910,
+    "token_dim": 3290,
     "count": 96,
-    "device_ms": 5.66,
-    "flops_tflop": 0.3845,
-    "effective_tflops": 67.94,
-    "ideal_ms_at_peak": 2.762,
-    "headroom_ms_vs_peak": 2.898,
-    "headroom_pct_of_shape_time": 51.2
+    "device_ms": 6.84,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 96.84,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 2.081,
+    "headroom_pct_of_shape_time": 30.4
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     3290,
+     4096,
+     1024
+    ],
+    "token_dim": 3290,
+    "count": 24,
+    "device_ms": 5.99,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 110.58,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 1.231,
+    "headroom_pct_of_shape_time": 20.6
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     3290,
+     1024,
+     4096
+    ],
+    "token_dim": 3290,
+    "count": 24,
+    "device_ms": 5.76,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 114.99,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 1.001,
+    "headroom_pct_of_shape_time": 17.4
    },
    {
     "kind": "dX_attn_proj",
@@ -649,54 +825,6 @@
    {
     "kind": "dW_ffn_up",
     "shape": [
-     1024,
-     4310,
-     1024
-    ],
-    "token_dim": 4310,
-    "count": 96,
-    "device_ms": 9.07,
-    "flops_tflop": 0.8677,
-    "effective_tflops": 95.67,
-    "ideal_ms_at_peak": 6.233,
-    "headroom_ms_vs_peak": 2.837,
-    "headroom_pct_of_shape_time": 31.3
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     140,
-     1024,
-     1024
-    ],
-    "token_dim": 140,
-    "count": 96,
-    "device_ms": 2.97,
-    "flops_tflop": 0.0282,
-    "effective_tflops": 9.49,
-    "ideal_ms_at_peak": 0.203,
-    "headroom_ms_vs_peak": 2.767,
-    "headroom_pct_of_shape_time": 93.2
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     4430,
-     4096,
-     1024
-    ],
-    "token_dim": 4430,
-    "count": 24,
-    "device_ms": 9.11,
-    "flops_tflop": 0.8919,
-    "effective_tflops": 97.9,
-    "ideal_ms_at_peak": 6.407,
-    "headroom_ms_vs_peak": 2.703,
-    "headroom_pct_of_shape_time": 29.7
-   },
-   {
-    "kind": "dW_ffn_up",
-    "shape": [
      4096,
      2990,
      1024
@@ -709,22 +837,6 @@
     "ideal_ms_at_peak": 4.325,
     "headroom_ms_vs_peak": 2.675,
     "headroom_pct_of_shape_time": 38.2
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     2100,
-     1024,
-     1024
-    ],
-    "token_dim": 2100,
-    "count": 96,
-    "device_ms": 5.7,
-    "flops_tflop": 0.4228,
-    "effective_tflops": 74.17,
-    "ideal_ms_at_peak": 3.037,
-    "headroom_ms_vs_peak": 2.663,
-    "headroom_pct_of_shape_time": 46.7
    },
    {
     "kind": "dW_ffn_down",
@@ -743,132 +855,52 @@
     "headroom_pct_of_shape_time": 38.0
    },
    {
-    "kind": "dX_attn_proj",
-    "shape": [
-     2140,
-     1024,
-     1024
-    ],
-    "token_dim": 2140,
-    "count": 96,
-    "device_ms": 5.69,
-    "flops_tflop": 0.4308,
-    "effective_tflops": 75.72,
-    "ideal_ms_at_peak": 3.095,
-    "headroom_ms_vs_peak": 2.595,
-    "headroom_pct_of_shape_time": 45.6
-   },
-   {
     "kind": "dW_ffn_up",
     "shape": [
      1024,
-     3740,
+     2990,
      1024
     ],
-    "token_dim": 3740,
+    "token_dim": 2990,
     "count": 96,
-    "device_ms": 7.97,
-    "flops_tflop": 0.753,
-    "effective_tflops": 94.47,
-    "ideal_ms_at_peak": 5.409,
-    "headroom_ms_vs_peak": 2.561,
-    "headroom_pct_of_shape_time": 32.1
+    "device_ms": 6.49,
+    "flops_tflop": 0.602,
+    "effective_tflops": 92.75,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 2.165,
+    "headroom_pct_of_shape_time": 33.4
    },
    {
     "kind": "dX_ffn_up",
     "shape": [
-     1670,
+     2990,
      4096,
      1024
     ],
-    "token_dim": 1670,
+    "token_dim": 2990,
     "count": 24,
-    "device_ms": 4.89,
-    "flops_tflop": 0.3362,
-    "effective_tflops": 68.76,
-    "ideal_ms_at_peak": 2.415,
-    "headroom_ms_vs_peak": 2.475,
-    "headroom_pct_of_shape_time": 50.6
+    "device_ms": 6.31,
+    "flops_tflop": 0.602,
+    "effective_tflops": 95.4,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 1.985,
+    "headroom_pct_of_shape_time": 31.5
    },
    {
-    "kind": "dX_ffn_up",
+    "kind": "dX_ffn_down",
     "shape": [
-     4310,
-     4096,
-     1024
-    ],
-    "token_dim": 4310,
-    "count": 24,
-    "device_ms": 8.64,
-    "flops_tflop": 0.8677,
-    "effective_tflops": 100.43,
-    "ideal_ms_at_peak": 6.233,
-    "headroom_ms_vs_peak": 2.407,
-    "headroom_pct_of_shape_time": 27.9
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     1740,
-     4096,
-     1024
-    ],
-    "token_dim": 1740,
-    "count": 24,
-    "device_ms": 4.89,
-    "flops_tflop": 0.3503,
-    "effective_tflops": 71.64,
-    "ideal_ms_at_peak": 2.517,
-    "headroom_ms_vs_peak": 2.373,
-    "headroom_pct_of_shape_time": 48.5
-   },
-   {
-    "kind": "dW_ffn_up",
-    "shape": [
+     2990,
      1024,
-     3290,
-     1024
+     4096
     ],
-    "token_dim": 3290,
-    "count": 96,
-    "device_ms": 7.11,
-    "flops_tflop": 0.6624,
-    "effective_tflops": 93.16,
-    "ideal_ms_at_peak": 4.759,
-    "headroom_ms_vs_peak": 2.351,
-    "headroom_pct_of_shape_time": 33.1
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     180,
-     1024
-    ],
-    "token_dim": 180,
-    "count": 96,
-    "device_ms": 2.57,
-    "flops_tflop": 0.0362,
-    "effective_tflops": 14.1,
-    "ideal_ms_at_peak": 0.26,
-    "headroom_ms_vs_peak": 2.31,
-    "headroom_pct_of_shape_time": 89.9
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     5120,
-     4096,
-     1024
-    ],
-    "token_dim": 5120,
-    "count": 96,
-    "device_ms": 31.9,
-    "flops_tflop": 4.1232,
-    "effective_tflops": 129.25,
-    "ideal_ms_at_peak": 29.621,
-    "headroom_ms_vs_peak": 2.279,
-    "headroom_pct_of_shape_time": 7.1
+    "token_dim": 2990,
+    "count": 24,
+    "device_ms": 5.31,
+    "flops_tflop": 0.602,
+    "effective_tflops": 113.36,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 0.985,
+    "headroom_pct_of_shape_time": 18.5
    },
    {
     "kind": "dW_other",
@@ -903,52 +935,68 @@
     "headroom_pct_of_shape_time": 38.4
    },
    {
-    "kind": "dW_ffn_up",
-    "shape": [
-     1024,
-     2990,
-     1024
-    ],
-    "token_dim": 2990,
-    "count": 96,
-    "device_ms": 6.49,
-    "flops_tflop": 0.602,
-    "effective_tflops": 92.75,
-    "ideal_ms_at_peak": 4.325,
-    "headroom_ms_vs_peak": 2.165,
-    "headroom_pct_of_shape_time": 33.4
-   },
-   {
     "kind": "dW_attn_proj",
     "shape": [
      1024,
-     140,
+     2490,
      1024
     ],
-    "token_dim": 140,
+    "token_dim": 2490,
     "count": 96,
-    "device_ms": 2.36,
-    "flops_tflop": 0.0282,
-    "effective_tflops": 11.94,
-    "ideal_ms_at_peak": 0.203,
-    "headroom_ms_vs_peak": 2.157,
-    "headroom_pct_of_shape_time": 91.4
+    "device_ms": 5.47,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 91.65,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 1.869,
+    "headroom_pct_of_shape_time": 34.2
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2490,
+     1024,
+     1024
+    ],
+    "token_dim": 2490,
+    "count": 96,
+    "device_ms": 4.89,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 102.52,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 1.289,
+    "headroom_pct_of_shape_time": 26.4
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2490,
+     1024,
+     4096
+    ],
+    "token_dim": 2490,
+    "count": 24,
+    "device_ms": 4.52,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 110.91,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 0.919,
+    "headroom_pct_of_shape_time": 20.3
    },
    {
     "kind": "dX_ffn_up",
     "shape": [
-     1910,
+     2490,
      4096,
      1024
     ],
-    "token_dim": 1910,
+    "token_dim": 2490,
     "count": 24,
-    "device_ms": 4.9,
-    "flops_tflop": 0.3845,
-    "effective_tflops": 78.48,
-    "ideal_ms_at_peak": 2.762,
-    "headroom_ms_vs_peak": 2.138,
-    "headroom_pct_of_shape_time": 43.6
+    "device_ms": 4.01,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 125.01,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 0.409,
+    "headroom_pct_of_shape_time": 10.2
    },
    {
     "kind": "dW_other",
@@ -969,38 +1017,6 @@
    {
     "kind": "dW_other",
     "shape": [
-     4096,
-     2140,
-     1024
-    ],
-    "token_dim": 2140,
-    "count": 24,
-    "device_ms": 5.18,
-    "flops_tflop": 0.4308,
-    "effective_tflops": 83.17,
-    "ideal_ms_at_peak": 3.095,
-    "headroom_ms_vs_peak": 2.085,
-    "headroom_pct_of_shape_time": 40.3
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     3290,
-     1024,
-     1024
-    ],
-    "token_dim": 3290,
-    "count": 96,
-    "device_ms": 6.84,
-    "flops_tflop": 0.6624,
-    "effective_tflops": 96.84,
-    "ideal_ms_at_peak": 4.759,
-    "headroom_ms_vs_peak": 2.081,
-    "headroom_pct_of_shape_time": 30.4
-   },
-   {
-    "kind": "dW_other",
-    "shape": [
      1024,
      2230,
      4096
@@ -1015,20 +1031,100 @@
     "headroom_pct_of_shape_time": 39.1
    },
    {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     2230,
+     1024
+    ],
+    "token_dim": 2230,
+    "count": 96,
+    "device_ms": 4.99,
+    "flops_tflop": 0.449,
+    "effective_tflops": 89.97,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 1.764,
+    "headroom_pct_of_shape_time": 35.4
+   },
+   {
     "kind": "dX_attn_proj",
     "shape": [
-     5120,
+     2230,
      1024,
      1024
     ],
-    "token_dim": 5120,
+    "token_dim": 2230,
     "count": 96,
-    "device_ms": 9.45,
-    "flops_tflop": 1.0308,
-    "effective_tflops": 109.08,
-    "ideal_ms_at_peak": 7.405,
-    "headroom_ms_vs_peak": 2.045,
-    "headroom_pct_of_shape_time": 21.6
+    "device_ms": 4.86,
+    "flops_tflop": 0.449,
+    "effective_tflops": 92.38,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 1.634,
+    "headroom_pct_of_shape_time": 33.6
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2230,
+     1024,
+     4096
+    ],
+    "token_dim": 2230,
+    "count": 24,
+    "device_ms": 4.07,
+    "flops_tflop": 0.449,
+    "effective_tflops": 110.31,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 0.844,
+    "headroom_pct_of_shape_time": 20.7
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2230,
+     4096,
+     1024
+    ],
+    "token_dim": 2230,
+    "count": 24,
+    "device_ms": 4.01,
+    "flops_tflop": 0.449,
+    "effective_tflops": 111.96,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 0.784,
+    "headroom_pct_of_shape_time": 19.6
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2140,
+     1024,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 96,
+    "device_ms": 5.69,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 75.72,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 2.595,
+    "headroom_pct_of_shape_time": 45.6
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     2140,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 5.18,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 83.17,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 2.085,
+    "headroom_pct_of_shape_time": 40.3
    },
    {
     "kind": "dW_other",
@@ -1047,6 +1143,70 @@
     "headroom_pct_of_shape_time": 39.8
    },
    {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2140,
+     4096,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 4.97,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 86.69,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 1.875,
+    "headroom_pct_of_shape_time": 37.7
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     2140,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 96,
+    "device_ms": 4.84,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 89.02,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 1.745,
+    "headroom_pct_of_shape_time": 36.1
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2140,
+     1024,
+     4096
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 3.8,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 113.38,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 0.705,
+    "headroom_pct_of_shape_time": 18.6
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2100,
+     1024,
+     1024
+    ],
+    "token_dim": 2100,
+    "count": 96,
+    "device_ms": 5.7,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 74.17,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 2.663,
+    "headroom_pct_of_shape_time": 46.7
+   },
+   {
     "kind": "dW_other",
     "shape": [
      4096,
@@ -1061,22 +1221,6 @@
     "ideal_ms_at_peak": 3.037,
     "headroom_ms_vs_peak": 2.003,
     "headroom_pct_of_shape_time": 39.7
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     2990,
-     4096,
-     1024
-    ],
-    "token_dim": 2990,
-    "count": 24,
-    "device_ms": 6.31,
-    "flops_tflop": 0.602,
-    "effective_tflops": 95.4,
-    "ideal_ms_at_peak": 4.325,
-    "headroom_ms_vs_peak": 1.985,
-    "headroom_pct_of_shape_time": 31.5
    },
    {
     "kind": "dW_other",
@@ -1111,36 +1255,68 @@
     "headroom_pct_of_shape_time": 38.6
    },
    {
-    "kind": "dX_ffn_up",
-    "shape": [
-     2140,
-     4096,
-     1024
-    ],
-    "token_dim": 2140,
-    "count": 24,
-    "device_ms": 4.97,
-    "flops_tflop": 0.4308,
-    "effective_tflops": 86.69,
-    "ideal_ms_at_peak": 3.095,
-    "headroom_ms_vs_peak": 1.875,
-    "headroom_pct_of_shape_time": 37.7
-   },
-   {
     "kind": "dW_attn_proj",
     "shape": [
      1024,
-     2490,
+     2100,
      1024
     ],
-    "token_dim": 2490,
+    "token_dim": 2100,
     "count": 96,
-    "device_ms": 5.47,
-    "flops_tflop": 0.5013,
-    "effective_tflops": 91.65,
-    "ideal_ms_at_peak": 3.601,
-    "headroom_ms_vs_peak": 1.869,
-    "headroom_pct_of_shape_time": 34.2
+    "device_ms": 4.74,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 89.2,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 1.703,
+    "headroom_pct_of_shape_time": 35.9
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2100,
+     1024,
+     4096
+    ],
+    "token_dim": 2100,
+    "count": 24,
+    "device_ms": 3.82,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 110.68,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 0.783,
+    "headroom_pct_of_shape_time": 20.5
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     1910,
+     1024,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 96,
+    "device_ms": 5.66,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 67.94,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 2.898,
+    "headroom_pct_of_shape_time": 51.2
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     1910,
+     4096,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 24,
+    "device_ms": 4.9,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 78.48,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 2.138,
+    "headroom_pct_of_shape_time": 43.6
    },
    {
     "kind": "dW_other",
@@ -1175,6 +1351,70 @@
     "headroom_pct_of_shape_time": 39.6
    },
    {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     1910,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 96,
+    "device_ms": 4.35,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 88.4,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 1.588,
+    "headroom_pct_of_shape_time": 36.5
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     1910,
+     1024,
+     4096
+    ],
+    "token_dim": 1910,
+    "count": 24,
+    "device_ms": 3.53,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 108.93,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 0.768,
+    "headroom_pct_of_shape_time": 21.8
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     1740,
+     1024,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 96,
+    "device_ms": 5.63,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 62.22,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 3.113,
+    "headroom_pct_of_shape_time": 55.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     1740,
+     4096,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 4.89,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 71.64,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 2.373,
+    "headroom_pct_of_shape_time": 48.5
+   },
+   {
     "kind": "dW_other",
     "shape": [
      4096,
@@ -1189,6 +1429,278 @@
     "ideal_ms_at_peak": 2.517,
     "headroom_ms_vs_peak": 1.803,
     "headroom_pct_of_shape_time": 41.7
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     1740,
+     4096
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 4.31,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 81.28,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 1.793,
+    "headroom_pct_of_shape_time": 41.6
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     1740,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 96,
+    "device_ms": 4.11,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 85.23,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 1.593,
+    "headroom_pct_of_shape_time": 38.8
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     1740,
+     1024,
+     4096
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 3.25,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 107.79,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 0.733,
+    "headroom_pct_of_shape_time": 22.6
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     1670,
+     1024,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 96,
+    "device_ms": 5.9,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 56.99,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 3.485,
+    "headroom_pct_of_shape_time": 59.1
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     1670,
+     4096,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 4.89,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 68.76,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 2.475,
+    "headroom_pct_of_shape_time": 50.6
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     1670,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 4.18,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 80.43,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.765,
+    "headroom_pct_of_shape_time": 42.2
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     1670,
+     4096
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 4.16,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 80.82,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.745,
+    "headroom_pct_of_shape_time": 41.9
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     1670,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 96,
+    "device_ms": 4.02,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 83.64,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.605,
+    "headroom_pct_of_shape_time": 39.9
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     1670,
+     1024,
+     4096
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 3.61,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 93.13,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.195,
+    "headroom_pct_of_shape_time": 33.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     180,
+     1024,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 96,
+    "device_ms": 3.41,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 10.63,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 3.15,
+    "headroom_pct_of_shape_time": 92.4
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     180,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 96,
+    "device_ms": 2.57,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 14.1,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 2.31,
+    "headroom_pct_of_shape_time": 89.9
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     180,
+     4096
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 1.12,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 32.36,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.86,
+    "headroom_pct_of_shape_time": 76.8
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     180,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 1.12,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 32.36,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.86,
+    "headroom_pct_of_shape_time": 76.8
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     180,
+     1024,
+     4096
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 1.06,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 34.19,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.8,
+    "headroom_pct_of_shape_time": 75.5
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     180,
+     4096,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 0.99,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 36.6,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.73,
+    "headroom_pct_of_shape_time": 73.7
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     160,
+     1024,
+     1024
+    ],
+    "token_dim": 160,
+    "count": 192,
+    "device_ms": 6.72,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 9.59,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 6.257,
+    "headroom_pct_of_shape_time": 93.1
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     160,
+     1024
+    ],
+    "token_dim": 160,
+    "count": 192,
+    "device_ms": 5.25,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 12.27,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 4.787,
+    "headroom_pct_of_shape_time": 91.2
    },
    {
     "kind": "dW_other",
@@ -1209,22 +1721,6 @@
    {
     "kind": "dW_other",
     "shape": [
-     1024,
-     1740,
-     4096
-    ],
-    "token_dim": 1740,
-    "count": 24,
-    "device_ms": 4.31,
-    "flops_tflop": 0.3503,
-    "effective_tflops": 81.28,
-    "ideal_ms_at_peak": 2.517,
-    "headroom_ms_vs_peak": 1.793,
-    "headroom_pct_of_shape_time": 41.6
-   },
-   {
-    "kind": "dW_other",
-    "shape": [
      4096,
      160,
      1024
@@ -1237,102 +1733,6 @@
     "ideal_ms_at_peak": 0.463,
     "headroom_ms_vs_peak": 1.767,
     "headroom_pct_of_shape_time": 79.2
-   },
-   {
-    "kind": "dW_other",
-    "shape": [
-     4096,
-     1670,
-     1024
-    ],
-    "token_dim": 1670,
-    "count": 24,
-    "device_ms": 4.18,
-    "flops_tflop": 0.3362,
-    "effective_tflops": 80.43,
-    "ideal_ms_at_peak": 2.415,
-    "headroom_ms_vs_peak": 1.765,
-    "headroom_pct_of_shape_time": 42.2
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     2230,
-     1024
-    ],
-    "token_dim": 2230,
-    "count": 96,
-    "device_ms": 4.99,
-    "flops_tflop": 0.449,
-    "effective_tflops": 89.97,
-    "ideal_ms_at_peak": 3.226,
-    "headroom_ms_vs_peak": 1.764,
-    "headroom_pct_of_shape_time": 35.4
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     2140,
-     1024
-    ],
-    "token_dim": 2140,
-    "count": 96,
-    "device_ms": 4.84,
-    "flops_tflop": 0.4308,
-    "effective_tflops": 89.02,
-    "ideal_ms_at_peak": 3.095,
-    "headroom_ms_vs_peak": 1.745,
-    "headroom_pct_of_shape_time": 36.1
-   },
-   {
-    "kind": "dW_other",
-    "shape": [
-     1024,
-     1670,
-     4096
-    ],
-    "token_dim": 1670,
-    "count": 24,
-    "device_ms": 4.16,
-    "flops_tflop": 0.3362,
-    "effective_tflops": 80.82,
-    "ideal_ms_at_peak": 2.415,
-    "headroom_ms_vs_peak": 1.745,
-    "headroom_pct_of_shape_time": 41.9
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     3740,
-     1024,
-     1024
-    ],
-    "token_dim": 3740,
-    "count": 96,
-    "device_ms": 7.15,
-    "flops_tflop": 0.753,
-    "effective_tflops": 105.31,
-    "ideal_ms_at_peak": 5.409,
-    "headroom_ms_vs_peak": 1.741,
-    "headroom_pct_of_shape_time": 24.3
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     2100,
-     1024
-    ],
-    "token_dim": 2100,
-    "count": 96,
-    "device_ms": 4.74,
-    "flops_tflop": 0.4228,
-    "effective_tflops": 89.2,
-    "ideal_ms_at_peak": 3.037,
-    "headroom_ms_vs_peak": 1.703,
-    "headroom_pct_of_shape_time": 35.9
    },
    {
     "kind": "dX_ffn_down",
@@ -1349,70 +1749,6 @@
     "ideal_ms_at_peak": 0.463,
     "headroom_ms_vs_peak": 1.637,
     "headroom_pct_of_shape_time": 78.0
-   },
-   {
-    "kind": "dX_attn_proj",
-    "shape": [
-     2230,
-     1024,
-     1024
-    ],
-    "token_dim": 2230,
-    "count": 96,
-    "device_ms": 4.86,
-    "flops_tflop": 0.449,
-    "effective_tflops": 92.38,
-    "ideal_ms_at_peak": 3.226,
-    "headroom_ms_vs_peak": 1.634,
-    "headroom_pct_of_shape_time": 33.6
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     1670,
-     1024
-    ],
-    "token_dim": 1670,
-    "count": 96,
-    "device_ms": 4.02,
-    "flops_tflop": 0.3362,
-    "effective_tflops": 83.64,
-    "ideal_ms_at_peak": 2.415,
-    "headroom_ms_vs_peak": 1.605,
-    "headroom_pct_of_shape_time": 39.9
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     1740,
-     1024
-    ],
-    "token_dim": 1740,
-    "count": 96,
-    "device_ms": 4.11,
-    "flops_tflop": 0.3503,
-    "effective_tflops": 85.23,
-    "ideal_ms_at_peak": 2.517,
-    "headroom_ms_vs_peak": 1.593,
-    "headroom_pct_of_shape_time": 38.8
-   },
-   {
-    "kind": "dW_attn_proj",
-    "shape": [
-     1024,
-     1910,
-     1024
-    ],
-    "token_dim": 1910,
-    "count": 96,
-    "device_ms": 4.35,
-    "flops_tflop": 0.3845,
-    "effective_tflops": 88.4,
-    "ideal_ms_at_peak": 2.762,
-    "headroom_ms_vs_peak": 1.588,
-    "headroom_pct_of_shape_time": 36.5
    },
    {
     "kind": "dX_ffn_up",
@@ -1433,130 +1769,34 @@
    {
     "kind": "dX_attn_proj",
     "shape": [
-     2490,
+     140,
      1024,
      1024
     ],
-    "token_dim": 2490,
+    "token_dim": 140,
     "count": 96,
-    "device_ms": 4.89,
-    "flops_tflop": 0.5013,
-    "effective_tflops": 102.52,
-    "ideal_ms_at_peak": 3.601,
-    "headroom_ms_vs_peak": 1.289,
-    "headroom_pct_of_shape_time": 26.4
+    "device_ms": 2.97,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 9.49,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 2.767,
+    "headroom_pct_of_shape_time": 93.2
    },
    {
-    "kind": "dX_ffn_up",
+    "kind": "dW_attn_proj",
     "shape": [
-     3290,
-     4096,
+     1024,
+     140,
      1024
     ],
-    "token_dim": 3290,
-    "count": 24,
-    "device_ms": 5.99,
-    "flops_tflop": 0.6624,
-    "effective_tflops": 110.58,
-    "ideal_ms_at_peak": 4.759,
-    "headroom_ms_vs_peak": 1.231,
-    "headroom_pct_of_shape_time": 20.6
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     3740,
-     1024,
-     4096
-    ],
-    "token_dim": 3740,
-    "count": 24,
-    "device_ms": 6.62,
-    "flops_tflop": 0.753,
-    "effective_tflops": 113.74,
-    "ideal_ms_at_peak": 5.409,
-    "headroom_ms_vs_peak": 1.211,
-    "headroom_pct_of_shape_time": 18.3
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     1670,
-     1024,
-     4096
-    ],
-    "token_dim": 1670,
-    "count": 24,
-    "device_ms": 3.61,
-    "flops_tflop": 0.3362,
-    "effective_tflops": 93.13,
-    "ideal_ms_at_peak": 2.415,
-    "headroom_ms_vs_peak": 1.195,
-    "headroom_pct_of_shape_time": 33.1
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     4310,
-     1024,
-     4096
-    ],
-    "token_dim": 4310,
-    "count": 24,
-    "device_ms": 7.37,
-    "flops_tflop": 0.8677,
-    "effective_tflops": 117.74,
-    "ideal_ms_at_peak": 6.233,
-    "headroom_ms_vs_peak": 1.137,
-    "headroom_pct_of_shape_time": 15.4
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     3290,
-     1024,
-     4096
-    ],
-    "token_dim": 3290,
-    "count": 24,
-    "device_ms": 5.76,
-    "flops_tflop": 0.6624,
-    "effective_tflops": 114.99,
-    "ideal_ms_at_peak": 4.759,
-    "headroom_ms_vs_peak": 1.001,
-    "headroom_pct_of_shape_time": 17.4
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     2990,
-     1024,
-     4096
-    ],
-    "token_dim": 2990,
-    "count": 24,
-    "device_ms": 5.31,
-    "flops_tflop": 0.602,
-    "effective_tflops": 113.36,
-    "ideal_ms_at_peak": 4.325,
-    "headroom_ms_vs_peak": 0.985,
-    "headroom_pct_of_shape_time": 18.5
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     2490,
-     1024,
-     4096
-    ],
-    "token_dim": 2490,
-    "count": 24,
-    "device_ms": 4.52,
-    "flops_tflop": 0.5013,
-    "effective_tflops": 110.91,
-    "ideal_ms_at_peak": 3.601,
-    "headroom_ms_vs_peak": 0.919,
-    "headroom_pct_of_shape_time": 20.3
+    "token_dim": 140,
+    "count": 96,
+    "device_ms": 2.36,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 11.94,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 2.157,
+    "headroom_pct_of_shape_time": 91.4
    },
    {
     "kind": "dW_other",
@@ -1577,38 +1817,6 @@
    {
     "kind": "dW_other",
     "shape": [
-     1024,
-     180,
-     4096
-    ],
-    "token_dim": 180,
-    "count": 24,
-    "device_ms": 1.12,
-    "flops_tflop": 0.0362,
-    "effective_tflops": 32.36,
-    "ideal_ms_at_peak": 0.26,
-    "headroom_ms_vs_peak": 0.86,
-    "headroom_pct_of_shape_time": 76.8
-   },
-   {
-    "kind": "dW_other",
-    "shape": [
-     4096,
-     180,
-     1024
-    ],
-    "token_dim": 180,
-    "count": 24,
-    "device_ms": 1.12,
-    "flops_tflop": 0.0362,
-    "effective_tflops": 32.36,
-    "ideal_ms_at_peak": 0.26,
-    "headroom_ms_vs_peak": 0.86,
-    "headroom_pct_of_shape_time": 76.8
-   },
-   {
-    "kind": "dW_other",
-    "shape": [
      4096,
      140,
      1024
@@ -1621,38 +1829,6 @@
     "ideal_ms_at_peak": 0.203,
     "headroom_ms_vs_peak": 0.847,
     "headroom_pct_of_shape_time": 80.7
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     2230,
-     1024,
-     4096
-    ],
-    "token_dim": 2230,
-    "count": 24,
-    "device_ms": 4.07,
-    "flops_tflop": 0.449,
-    "effective_tflops": 110.31,
-    "ideal_ms_at_peak": 3.226,
-    "headroom_ms_vs_peak": 0.844,
-    "headroom_pct_of_shape_time": 20.7
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     180,
-     1024,
-     4096
-    ],
-    "token_dim": 180,
-    "count": 24,
-    "device_ms": 1.06,
-    "flops_tflop": 0.0362,
-    "effective_tflops": 34.19,
-    "ideal_ms_at_peak": 0.26,
-    "headroom_ms_vs_peak": 0.8,
-    "headroom_pct_of_shape_time": 75.5
    },
    {
     "kind": "dX_ffn_down",
@@ -1673,54 +1849,6 @@
    {
     "kind": "dX_ffn_up",
     "shape": [
-     2230,
-     4096,
-     1024
-    ],
-    "token_dim": 2230,
-    "count": 24,
-    "device_ms": 4.01,
-    "flops_tflop": 0.449,
-    "effective_tflops": 111.96,
-    "ideal_ms_at_peak": 3.226,
-    "headroom_ms_vs_peak": 0.784,
-    "headroom_pct_of_shape_time": 19.6
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     2100,
-     1024,
-     4096
-    ],
-    "token_dim": 2100,
-    "count": 24,
-    "device_ms": 3.82,
-    "flops_tflop": 0.4228,
-    "effective_tflops": 110.68,
-    "ideal_ms_at_peak": 3.037,
-    "headroom_ms_vs_peak": 0.783,
-    "headroom_pct_of_shape_time": 20.5
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     1910,
-     1024,
-     4096
-    ],
-    "token_dim": 1910,
-    "count": 24,
-    "device_ms": 3.53,
-    "flops_tflop": 0.3845,
-    "effective_tflops": 108.93,
-    "ideal_ms_at_peak": 2.762,
-    "headroom_ms_vs_peak": 0.768,
-    "headroom_pct_of_shape_time": 21.8
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
      140,
      4096,
      1024
@@ -1735,93 +1863,13 @@
     "headroom_pct_of_shape_time": 78.4
    },
    {
-    "kind": "dX_ffn_down",
-    "shape": [
-     1740,
-     1024,
-     4096
-    ],
-    "token_dim": 1740,
-    "count": 24,
-    "device_ms": 3.25,
-    "flops_tflop": 0.3503,
-    "effective_tflops": 107.79,
-    "ideal_ms_at_peak": 2.517,
-    "headroom_ms_vs_peak": 0.733,
-    "headroom_pct_of_shape_time": 22.6
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     180,
-     4096,
-     1024
-    ],
-    "token_dim": 180,
-    "count": 24,
-    "device_ms": 0.99,
-    "flops_tflop": 0.0362,
-    "effective_tflops": 36.6,
-    "ideal_ms_at_peak": 0.26,
-    "headroom_ms_vs_peak": 0.73,
-    "headroom_pct_of_shape_time": 73.7
-   },
-   {
-    "kind": "dX_ffn_down",
-    "shape": [
-     2140,
-     1024,
-     4096
-    ],
-    "token_dim": 2140,
-    "count": 24,
-    "device_ms": 3.8,
-    "flops_tflop": 0.4308,
-    "effective_tflops": 113.38,
-    "ideal_ms_at_peak": 3.095,
-    "headroom_ms_vs_peak": 0.705,
-    "headroom_pct_of_shape_time": 18.6
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     3740,
-     4096,
-     1024
-    ],
-    "token_dim": 3740,
-    "count": 24,
-    "device_ms": 6.01,
-    "flops_tflop": 0.753,
-    "effective_tflops": 125.28,
-    "ideal_ms_at_peak": 5.409,
-    "headroom_ms_vs_peak": 0.601,
-    "headroom_pct_of_shape_time": 10.0
-   },
-   {
-    "kind": "dX_ffn_up",
-    "shape": [
-     2490,
-     4096,
-     1024
-    ],
-    "token_dim": 2490,
-    "count": 24,
-    "device_ms": 4.01,
-    "flops_tflop": 0.5013,
-    "effective_tflops": 125.01,
-    "ideal_ms_at_peak": 3.601,
-    "headroom_ms_vs_peak": 0.409,
-    "headroom_pct_of_shape_time": 10.2
-   },
-   {
     "kind": "dW_other",
     "shape": [
      40,
      10,
      1024
     ],
-    "token_dim": 10,
+    "token_dim": null,
     "count": 4,
     "device_ms": 0.14,
     "flops_tflop": 0.0,
@@ -1837,7 +1885,7 @@
      40,
      1024
     ],
-    "token_dim": 10,
+    "token_dim": null,
     "count": 4,
     "device_ms": 0.09,
     "flops_tflop": 0.0,
@@ -2102,7 +2150,7 @@
    "bw_lb_gbps": 209.1,
    "arithmetic_intensity": 465.45,
    "per_call_ms": 0.11031,
-   "token_dim": 1024,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 22.216,
    "headroom_ms_vs_peak": 9.554,
    "headroom_pct_of_shape_time": 30.1
@@ -2150,7 +2198,7 @@
    "bw_lb_gbps": 208.9,
    "arithmetic_intensity": 465.45,
    "per_call_ms": 0.11042,
-   "token_dim": 1024,
+   "token_dim": 5120,
    "ideal_ms_at_peak": 7.405,
    "headroom_ms_vs_peak": 3.195,
    "headroom_pct_of_shape_time": 30.1
@@ -4358,7 +4406,7 @@
    "bw_lb_gbps": 2.9,
    "arithmetic_intensity": 7.94,
    "per_call_ms": 0.035,
-   "token_dim": 10,
+   "token_dim": null,
    "ideal_ms_at_peak": 0.0,
    "headroom_ms_vs_peak": 0.14,
    "headroom_pct_of_shape_time": 100.0
@@ -4382,7 +4430,7 @@
    "bw_lb_gbps": 4.6,
    "arithmetic_intensity": 7.94,
    "per_call_ms": 0.0225,
-   "token_dim": 10,
+   "token_dim": null,
    "ideal_ms_at_peak": 0.0,
    "headroom_ms_vs_peak": 0.09,
    "headroom_pct_of_shape_time": 100.0
@@ -5258,7 +5306,7 @@
   ]
  },
  "conclusion": {
-  "situation_1_compute_efficiency": "6 hot backward-GEMM shapes run at 88.1-129.25 TFLOP/s = 63%-93% of the 139.2 reference. Per-shape headroom (device_ms - FLOPs/139.2e12, the ideal-device-time gap under that reference, NOT an end-to-end ceiling) over 100 backward dW/dX rows of step 2 = 248.73 ms; by token-dim group: long (token dim >= 4000): 87.16 ms over 311.11 ms device (18 rows); mid (1400 <= token dim < 4000): 113.91 ms over 324.79 ms device (60 rows); short (token dim < 1400): 47.65 ms over 82.83 ms device (22 rows). The 3-step mean backward GEMM (772.12 ms) is a different window and is not divided by these single-step rows. The earlier 'up to 285 ms/step' extrapolation is RETRACTED.",
+  "situation_1_compute_efficiency": "6 hot backward-GEMM shapes run at 88.1-129.25 TFLOP/s = 63%-93% of the 139.2 reference. Per-shape headroom (device_ms - FLOPs/139.2e12, the ideal-device-time gap under that reference, NOT an end-to-end ceiling) over 100 backward dW/dX rows of step 2 = 248.73 ms; by token-dim group: long (flattened tokens >= 4000): 99.91 ms over 353.48 ms device (20 rows); mid (1400 <= flattened tokens < 4000): 113.91 ms over 324.79 ms device (60 rows); short (flattened tokens < 1400): 34.67 ms over 40.23 ms device (18 rows). The 3-step mean backward GEMM (772.12 ms) is a different window and is not divided by these single-step rows. The earlier 'up to 285 ms/step' extrapolation is RETRACTED.",
   "situation_2_logical_traffic": "dW arithmetic intensity 656-706 FLOP/byte; logical byte rate (each operand read/written once) 124-126 GB/s on the S=512 shapes. Whether the GEMMs are compute-bound is a HYPOTHESIS TO VERIFY: it needs real HBM counters (BLOCKED) because cache reuse and repeated reads change the actual traffic. No 'strongly compute-bound' claim is made.",
   "situation_2_contiguous_copy": "the .contiguous() copy FlagGems mm performs on a transposed A adds 8053.06 MB (S=512 dW-up) and 2013.27 MB (S=512 dW-down) of extra read+write per shape per step - a real extra traffic item, counted SEPARATELY from the GEMM body; it is why native+contiguous() loses (+32.4 ms median) while FlagGems still gains (its Triton kernel is faster on the contiguous operand by more than the copy costs)",
   "situation_3_idle_large": "per-step idle 211-250 ms (87.9-91.5% busy) - idle is 8%-12% of the step and is NOT attributable without a host swimlane (needs counters/platform)",
