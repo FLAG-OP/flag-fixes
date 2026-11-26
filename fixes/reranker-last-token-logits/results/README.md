@@ -16,17 +16,17 @@ torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份�
 | `repro-{base,fixed}-2026-11-26.{json,log}` | `tests/repro_reranker_logits_alloc.py`（单卡，61 GiB 常驻 + 34 GiB 碎片堆）：基线 `Tried to allocate 11.57 GiB … 20.63 GiB is free` exit 1；修复 exit 0 |
 | `equivalence-{base,fixed}-2026-11-26.{json,log}` | `tests/test_reranker_scores_equivalence.py`：分数与梯度对基线公式 max\|diff\| = 0.0（两棵树 exit 0） |
 | `bench-{base,fixed}-2026-11-26.{json,log}` | `tests/bench_reranker_step.py`：batch 16/32 前向/反向耗时与峰值显存 |
-| `e2e-1card-{base,fixed}-2026-11-27.{json,log,train.log}` | 真实 trainer + 真实权重 + T2Ranking，单卡 bf16 DDP，batch 16，5 步：逐 step allocated/reserved 与 loss（JSON 的 `loss_log`），`train.log` 为过滤路径后的 trainer 日志 |
+| `e2e-1card-{base,fixed}-2026-11-27.{json,log,train.log}` | 真实 trainer + 真实权重 + T2Ranking，单卡 bf16 DDP，batch 16，5 步：逐 step allocated/reserved 与 loss（JSON 的 `loss_log`），两棵树均 exit 0 |
 | `e2e-fsdp2-2card-base-b32-longdoc-2026-11-26.{json,log,train.log}` | **平台形态的自然复现**：2 卡 FSDP2、fp32 master、batch 32、真实权重、长文档子集。基线第 3 步反向在两个 rank 同时 OOM（`Tried to allocate 11.57 GiB … 20.77 GiB is free … 71.66 GiB is allocated by PyTorch`） |
-| `e2e-fsdp2-2card-fixed-b32-longdoc-attempt{1,2,3}-blocked-*.{json,log}` | 修复树在同一数据上的 3 次尝试，分别停在第 2、3、1 步（XCCL watchdog） |
+| `e2e-fsdp2-2card-fixed-b32-longdoc-attempt1-blocked-2026-11-26.{json,log,train.log}`、`…attempt{2,3}-blocked-2026-11-27.{json,log,train.log}` | 修复树在同一数据上的 3 次尝试：分别停在第 2、3、1 步（XCCL watchdog / launcher 超时）。attempt 3 的 `train.log` 省略了收尾阶段重复的 4500 余行 TCPStore/HeartbeatMonitor 回溯，并注明 |
 | `e2e-fsdp2-2card-{base,fixed}-2026-11-26.{json,log,train.log}` | 常规数据、真实权重、batch 32：基线走完 2 步、修复树走完 3 步 + validation，均被 XCCL watchdog 终止 |
-| `e2e-fsdp2-2card-{base,fixed}-randominit-2026-11-26.{json,log}`、`e2e-fsdp2-2card-fixed-b16-randominit-2026-11-26.{json,log}` | 常规数据、随机权重的早期尝试（基线停在第 2 步、修复停在第 3 步；batch 16 第 1 步遇设备 kernel exception） |
-| `allocator-probe-2026-11-27.{json,log}` | `tests/probe_p800_allocator.py`：`expandable_segments` 不被支持；不等大空洞交还设备后 11.57 GiB 请求在 72 GiB 空闲时失败 |
-| `verify-2026-11-27.json`、`verify-2026-11-27.stderr.log` | 干净提交树上的 `flag-fixes verify`（修复树，6 个声明命令） |
+| `e2e-fsdp2-2card-{base,fixed}-randominit-2026-11-26.{json,train.log}`、`e2e-fsdp2-2card-fixed-b16-randominit-2026-11-26.{json,train.log}` | 常规数据、随机权重的早期尝试（基线停在第 2 步、修复停在第 3 步；batch 16 第 1 步遇设备 kernel exception）。这几次没有单独保存 launcher 输出，摘要都在 JSON 里 |
+| `allocator-probe-2026-11-27.{json,log}` | `tests/probe_p800_allocator.py`：不等大空洞交还设备后 11.57 GiB 请求在 72.84 GiB 空闲时失败、1.25 GiB 成功；`expandable_segments` 在两种环境变量拼写下都不生效 |
+| `verify-2026-11-27.json`、`verify-2026-11-27.stderr.log` | 干净提交 `57e2c756` 上的 `flag-fixes verify`（修复树，6 个声明命令，passed、`source_dirty=false`；stderr 为空） |
 
 e2e 的 `.log` 是 launcher 输出（JSON 摘要），`.train.log` 是 trainer 的 `train.log`
-（仅把解释器与脚本的本机前缀改写为相对路径，内容未删减）；被 watchdog 终止的运行没有
-per-rank memory 记录，只有日志。
+（只把解释器与脚本的本机前缀改写为相对路径，内容未删减，attempt 3 除外）；被 watchdog
+终止的运行没有 per-rank memory 记录，只有日志。
 
 ## 判定
 
@@ -37,8 +37,8 @@ per-rank memory 记录，只有日志。
 | 数值回归（分数与梯度对基线公式，bf16 / fp32） | ✅ 逐位相同（fixed exit 0） |
 | dispatch（CPU、FSDP2 CPU、FSDP2 2 卡） | ✅ 基线 exit 1 → 修复 exit 0 |
 | 真实 trainer 单卡 bf16 batch 16 | ✅ 两棵树 exit 0；loss 逐位相同；reserved 峰值 92.76 → 79.64 GiB |
-| 真实 trainer 2 卡 FSDP2 修复后完整跑通 | ❌ 未得到：本机 XCCL 集合通信间歇性卡死（F-P800-1），修复树 6 次尝试中 1 次走完 3 步 + validation 后卡在收尾 |
-| `flag-fixes verify`（修复树，6 个声明命令） | 见 `verify-2026-11-27.json` |
+| 真实 trainer 2 卡 FSDP2 修复后完整跑通 | ❌ 未得到：本机 XCCL 集合通信间歇性卡死（F-P800-1），修复树 6 次 trainer 尝试中 1 次走完 3 步 + validation 后卡在收尾 |
+| `flag-fixes verify`（修复树，6 个声明命令） | ✅ passed，6/6 rc=0（干净提交，`source_dirty=false`） |
 | 平台整模型验收 | ❌ not-run，`hardware_status=unverified` |
 
 ## 口径说明

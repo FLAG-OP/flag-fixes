@@ -144,8 +144,17 @@ segments）在两种拼写下都不生效。修复后的步骤最大单次请求
   （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply reranker-last-token-logits --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <基线树>`：clean；对已打补丁的树 `check` 报 `Baseline checksum differs`（exit 2）
-- `flag-fixes verify reranker-last-token-logits --target <修复树>`：在本提交之后的干净树上运行，结果与原始 JSON 随下一个提交补入 `../results/verify-2026-11-27.json`
+- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，6/6 rc=0**，在干净提交
+  `57e2c756`（`source_dirty=false`）上运行，2026-11-27；原始输出 `../results/verify-2026-11-27.json`（stderr 为空）
+  - reranker-lmhead-dispatch（dispatch）：rc=0
+  - reranker-fsdp2-step-cpu（dispatch）：rc=0
+  - reranker-logits-alloc-repro（repro）：rc=0
+  - reranker-scores-equivalence（regression）：rc=0
+  - reranker-step-benchmark（benchmark）：rc=0
+  - reranker-trainer-single-card（e2e）：rc=0
 - 仓库测试 `python -m pytest -q`：26 passed, 3 subtests passed；`python -m compileall -q fixes`：exit 0
+
+verify 只输出 JSON 测试结果，不提升 `hardware_status`；上面的设备结论仍以平台验收为准。
 
 ## not-run（未验证清单，不记为通过）
 

@@ -71,6 +71,8 @@ validation:
     后停在收尾——均被 XCCL 集合通信卡死终止（已登记的平台阻断 F-P800-1，不是 OOM）。本机
     2 卡共触发 13 次、两棵树都中招；修复对照的干净结果来自单卡构造堆与真实 apply_fsdp2 的
     2 卡单元测试（修复树通过一次）。修复后 batch 32 在 2 卡上完整跑通这件事未验证。
+  - 2026-11-27 在干净提交 57e2c756 上重跑 flag-fixes verify（修复树）：passed=true、6/6 rc=0、
+    source_dirty=false，results/verify-2026-11-27.json。
   - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、
     owner=null。
   commands:

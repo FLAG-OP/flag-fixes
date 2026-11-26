@@ -86,6 +86,7 @@ tests/e2e_reranker_train.py              # 原始 trainer + 真实 checkpoint + 
 | 原始 trainer 单卡 bf16，batch 16，5 步 reserved 峰值 | 92.76 GiB | 79.64 GiB |
 | 分数 / 梯度对基线公式（bf16 与 fp32，5 例） | — | max\|Δ\| = 0.0 |
 | 真实 trainer 5 步 loss、validation、test loss | 0.539403 / 0.461096 / 0.329392 | 逐位相同 |
+| `flag-fixes verify`（修复树，6 个声明命令，干净提交 `57e2c756`） | — | passed，6/6 rc=0 |
 
 ## 边界
 
