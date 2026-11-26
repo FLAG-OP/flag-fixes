@@ -1,0 +1,498 @@
+{
+  "device": "cuda",
+  "nproc": 2,
+  "layers": 4,
+  "hidden": 4096,
+  "returncode": 1,
+  "timed_out": false,
+  "elapsed_s": 328.6,
+  "log": "/tmp/opencode/scratch/fsdp2-cuda-base.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=2 /tmp/opencode/fixwork/tests/_fsdp2_worker.py --device cuda --steps 2 --rows 8 --json /tmp/opencode/scratch/fsdp2-cuda-base.json --layers 4 --hidden 4096",
+  "ranks": [
+    {
+      "rank": 0,
+      "world_size": 2,
+      "device": "cuda",
+      "backend": "nccl",
+      "layers": 4,
+      "hidden": 4096,
+      "rows": 8,
+      "max_length": 128,
+      "steps": 2,
+      "losses": [
+        0.805798,
+        17.0
+      ],
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            4,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            4,
+            258,
+            151669
+          ],
+          "output_bytes": 313044816
+        }
+      ],
+      "peak_allocated_gib": 24.961,
+      "checks": {
+        "lm_head_sharded": {
+          "pass": true,
+          "detail": "placements=(Shard(dim=0),)"
+        },
+        "block_sharded": {
+          "pass": true,
+          "detail": "first block q_proj is a Shard DTensor"
+        },
+        "lm_head_has_fsdp_hooks": {
+          "pass": true,
+          "detail": {
+            "pre_hooks_with_kwargs": 1,
+            "post_hooks": 1
+          }
+        },
+        "grads_present_finite_step0": {
+          "pass": true,
+          "detail": {
+            "missing": [],
+            "nonfinite": [],
+            "grad_norms": {
+              "backbone.model.embed_tokens.weight": 42.02689,
+              "backbone.model.layers.0.self_attn.q_proj.weight": 27.91301,
+              "backbone.model.norm.weight": 0.291086,
+              "backbone.lm_head.weight": 20.373699
+            },
+            "rank_owns_yes_no_rows": true
+          }
+        },
+        "optimizer_updates_lm_head_step0": {
+          "pass": true,
+          "detail": "lm_head local shard changed"
+        },
+        "grads_present_finite_step1": {
+          "pass": true,
+          "detail": {
+            "missing": [],
+            "nonfinite": [],
+            "grad_norms": {
+              "backbone.model.embed_tokens.weight": 65.30442,
+              "backbone.model.layers.0.self_attn.q_proj.weight": 47.250221,
+              "backbone.model.norm.weight": 0.683758,
+              "backbone.lm_head.weight": 45.271614
+            },
+            "rank_owns_yes_no_rows": true
+          }
+        },
+        "optimizer_updates_lm_head_step1": {
+          "pass": true,
+          "detail": "lm_head local shard changed"
+        },
+        "scores_match_full_logit_reference": {
+          "pass": true,
+          "detail": {
+            "max_abs_diff": 0.0,
+            "tolerance": 0.05,
+            "shape": [
+              4
+            ],
+            "note": "baseline passes trivially (it is the reference); this guards the fix"
+          }
+        },
+        "lm_head_called_once_per_forward": {
+          "pass": true,
+          "detail": {
+            "calls": 5,
+            "expected": 5
+          }
+        },
+        "lm_head_projects_scored_rows_only": {
+          "pass": false,
+          "detail": {
+            "calls": [
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  4,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  4,
+                  258,
+                  151669
+                ],
+                "output_bytes": 313044816
+              }
+            ],
+            "note": "baseline feeds [rows, seq, hidden] (full-sequence logits); the fix feeds [rows, hidden]"
+          }
+        },
+        "gradient_sync_toggle_available": {
+          "pass": true,
+          "detail": "FSDP2 set_requires_gradient_sync present"
+        }
+      },
+      "passed": false
+    },
+    {
+      "rank": 1,
+      "world_size": 2,
+      "device": "cuda",
+      "backend": "nccl",
+      "layers": 4,
+      "hidden": 4096,
+      "rows": 8,
+      "max_length": 128,
+      "steps": 2,
+      "losses": [
+        0.805798,
+        17.0
+      ],
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            16,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            16,
+            258,
+            151669
+          ],
+          "output_bytes": 1252179264
+        },
+        {
+          "input_shape": [
+            4,
+            258,
+            4096
+          ],
+          "input_dim": 3,
+          "output_shape": [
+            4,
+            258,
+            151669
+          ],
+          "output_bytes": 313044816
+        }
+      ],
+      "peak_allocated_gib": 24.961,
+      "checks": {
+        "lm_head_sharded": {
+          "pass": true,
+          "detail": "placements=(Shard(dim=0),)"
+        },
+        "block_sharded": {
+          "pass": true,
+          "detail": "first block q_proj is a Shard DTensor"
+        },
+        "lm_head_has_fsdp_hooks": {
+          "pass": true,
+          "detail": {
+            "pre_hooks_with_kwargs": 1,
+            "post_hooks": 1
+          }
+        },
+        "grads_present_finite_step0": {
+          "pass": true,
+          "detail": {
+            "missing": [],
+            "nonfinite": [],
+            "grad_norms": {
+              "backbone.model.embed_tokens.weight": 56.911987,
+              "backbone.model.layers.0.self_attn.q_proj.weight": 28.183306,
+              "backbone.model.norm.weight": 0.286798,
+              "backbone.lm_head.weight": 0.0
+            },
+            "rank_owns_yes_no_rows": false
+          }
+        },
+        "optimizer_updates_lm_head_step0": {
+          "pass": true,
+          "detail": "lm_head local shard changed"
+        },
+        "grads_present_finite_step1": {
+          "pass": true,
+          "detail": {
+            "missing": [],
+            "nonfinite": [],
+            "grad_norms": {
+              "backbone.model.embed_tokens.weight": 83.768135,
+              "backbone.model.layers.0.self_attn.q_proj.weight": 38.029278,
+              "backbone.model.norm.weight": 0.689953,
+              "backbone.lm_head.weight": 0.0
+            },
+            "rank_owns_yes_no_rows": false
+          }
+        },
+        "optimizer_updates_lm_head_step1": {
+          "pass": true,
+          "detail": "lm_head local shard changed"
+        },
+        "scores_match_full_logit_reference": {
+          "pass": true,
+          "detail": {
+            "max_abs_diff": 0.0,
+            "tolerance": 0.05,
+            "shape": [
+              4
+            ],
+            "note": "baseline passes trivially (it is the reference); this guards the fix"
+          }
+        },
+        "lm_head_called_once_per_forward": {
+          "pass": true,
+          "detail": {
+            "calls": 5,
+            "expected": 5
+          }
+        },
+        "lm_head_projects_scored_rows_only": {
+          "pass": false,
+          "detail": {
+            "calls": [
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  16,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  16,
+                  258,
+                  151669
+                ],
+                "output_bytes": 1252179264
+              },
+              {
+                "input_shape": [
+                  4,
+                  258,
+                  4096
+                ],
+                "input_dim": 3,
+                "output_shape": [
+                  4,
+                  258,
+                  151669
+                ],
+                "output_bytes": 313044816
+              }
+            ],
+            "note": "baseline feeds [rows, seq, hidden] (full-sequence logits); the fix feeds [rows, hidden]"
+          }
+        },
+        "gradient_sync_toggle_available": {
+          "pass": true,
+          "detail": "FSDP2 set_requires_gradient_sync present"
+        }
+      },
+      "passed": false
+    }
+  ],
+  "passed": false
+}

@@ -1,0 +1,74 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+coalesced all-gather shim installed on ProcessGroupXCCL, ProcessGroupGloo: per-tensor _allgather_base fallback
+funcol.all_gather_tensor overridden (per-tensor fallback for this backend)
+  oversized leaf: backbone.model.embed_tokens gathers 1185 MiB in torch.bfloat16
+  oversized leaf: backbone.lm_head gathers 1185 MiB in torch.bfloat16
+FSDP2 sharded 4 transformer blocks, 2 oversized leaf module(s) and the root over 2 rank(s); compute dtype torch.bfloat16, reduce dtype torch.bfloat16, max param group 1024 MiB
+FSDP2 applied over 2 rank(s); lm_head weight is a DTensor
+[22:31:11][VM-20-4-ubuntu][33960:33960][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+[22:31:11][VM-20-4-ubuntu][33961:33961][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+[rank1]:[W1126 22:42:11.432724668 ProcessGroupXCCL.cpp:575] Warning: ProcessGroupXCCL.WorkXCCL.handleException (function operator())
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 1] Process group watchdog thread terminated with exception: [Rank 1] Watchdog caught collective operation timeout: WorkXCCL(SeqNum=3, OpType=_ALLGATHER_BASE, NumelIn=96473216, NumelOut=192946432, Timeout(ms)=600000) ran for 600023 milliseconds before timing out.
+Exception raised from checkTimeout at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:529 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x731f1917cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: torch_xmlir::kccl::ProcessGroupXCCL::WorkXCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2d4 (0x731de4871ab4 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #2: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::runLoop() + 0xa5a (0x731de48862ea in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #3: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0x1db (0x731de4884c0b in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #4: <unknown function> + 0xdc253 (0x731f1bd9b253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #5: <unknown function> + 0x94ac3 (0x731f1cb1cac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x1268c0 (0x731f1cbae8c0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from run at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:1612 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x731f1917cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0xc53 (0x731de4885683 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #2: <unknown function> + 0xdc253 (0x731f1bd9b253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x731f1cb1cac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x1268c0 (0x731f1cbae8c0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank0]:[W1126 22:42:12.498987901 ProcessGroupXCCL.cpp:575] Warning: ProcessGroupXCCL.WorkXCCL.handleException (function operator())
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 0] Process group watchdog thread terminated with exception: [Rank 0] Watchdog caught collective operation timeout: WorkXCCL(SeqNum=3, OpType=_ALLGATHER_BASE, NumelIn=96473216, NumelOut=192946432, Timeout(ms)=600000) ran for 600084 milliseconds before timing out.
+Exception raised from checkTimeout at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:529 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x73aee177cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: torch_xmlir::kccl::ProcessGroupXCCL::WorkXCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2d4 (0x73adace71ab4 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #2: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::runLoop() + 0xa5a (0x73adace862ea in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #3: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0x1db (0x73adace84c0b in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #4: <unknown function> + 0xdc253 (0x73aee443b253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #5: <unknown function> + 0x94ac3 (0x73aee51bcac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #6: <unknown function> + 0x1268c0 (0x73aee524e8c0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from run at /home/agent/xpytorch/workspace/d70b21d9-c373-41eb-b662-6b8b1f5d3ad0/XMLIR/python/torch_xmlir/csrc/xccl/ProcessGroupXCCL.cpp:1612 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x73aee177cb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: torch_xmlir::kccl::ProcessGroupXCCL::Watchdog::run() + 0xc53 (0x73adace85683 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #2: <unknown function> + 0xdc253 (0x73aee443b253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #3: <unknown function> + 0x94ac3 (0x73aee51bcac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #4: <unknown function> + 0x1268c0 (0x73aee524e8c0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called recursively
+terminate called recursively
+XX: (pid 33960,tid 127195004680000)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 1049290, status= 702
+XX: (pid 33960,tid 127195004680000)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 33960,tid 127195004680000)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 1049290, status= 702
+XX: (pid 33960,tid 127195004680000)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 33960,tid 127195004680000)cuda/src/cui/cuistream.cc:1067:cuiStreamSynchronize cuiStreamSynchronize() failed in ctxMarkerWait, Failed to ctxMarkerWait, status= 702
+XX: (pid 33960,tid 127195004680000)cuda/src/api/apilaunch.cc:964:cuapi_xpu_wait cuapi_xpu_wait() failed in cuiStreamUserSync, status= 702
+terminate called recursively
+terminate called recursively
+XX: (pid 33961,tid 126577461966656)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 1049290, status= 702
+XX: (pid 33961,tid 126577461966656)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 33961,tid 126577461966656)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 1049290, status= 702
+XX: (pid 33961,tid 126577461966656)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 33961,tid 126577461966656)cuda/src/cui/cuistream.cc:1067:cuiStreamSynchronize cuiStreamSynchronize() failed in ctxMarkerWait, Failed to ctxMarkerWait, status= 702
+XX: (pid 33961,tid 126577461966656)cuda/src/api/apilaunch.cc:964:cuapi_xpu_wait cuapi_xpu_wait() failed in cuiStreamUserSync, status= 702

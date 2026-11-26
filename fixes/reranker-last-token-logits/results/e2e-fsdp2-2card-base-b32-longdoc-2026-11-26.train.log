@@ -1,0 +1,119 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+reproducibility: seed=42 per_rank=42 deterministic=False world_size=2 platform=cuda
+loading weights directly in master dtype fp32
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:03<00:14,  3.69s/it]Loading checkpoint shards:  20%|██        | 1/5 [00:04<00:16,  4.05s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:07<00:11,  3.74s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:07<00:11,  3.91s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:11<00:07,  3.73s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:11<00:07,  3.84s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:13<00:03,  3.34s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:14<00:03,  3.42s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  2.55s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  3.02s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  2.61s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  3.11s/it]
+gradient checkpointing enabled
+coalesced all-gather shim installed on ProcessGroupXCCL, ProcessGroupGloo: per-tensor _allgather_base fallback
+funcol.all_gather_tensor overridden (per-tensor fallback for this backend)
+  oversized leaf: backbone.model.embed_tokens gathers 1185 MiB in torch.bfloat16
+  oversized leaf: backbone.lm_head gathers 1185 MiB in torch.bfloat16
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+FSDP2 sharded 36 transformer blocks, 2 oversized leaf module(s) and the root over 2 rank(s); compute dtype torch.bfloat16, reduce dtype torch.bfloat16, max param group 1024 MiB
+moved FSDP2 shards to cuda:0 in master dtype fp32
+parallelism=fsdp2 master_dtype=fp32 compute_dtype=bf16
+lr schedule: cosine 1e-05 -> 1e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[23:51:23][VM-20-4-ubuntu][51204:51204][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+[23:51:23][VM-20-4-ubuntu][51205:51205][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+[e2e-mem] after optimizer step 1: allocated=61.01 GiB reserved=92.06 GiB step_peak_allocated=76.26 GiB step_peak_reserved=92.06 GiB
+epoch=1 optimizer_step=1 running_loss=0.392380 window_loss=0.392380 lr=1.000e-07
+[e2e-mem] after optimizer step 2: allocated=61.01 GiB reserved=92.27 GiB step_peak_allocated=87.02 GiB step_peak_reserved=95.13 GiB
+epoch=1 optimizer_step=2 running_loss=0.377111 window_loss=0.361841 lr=1.500e-07
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "tests/_e2e_trainer_entry.py", line 86, in main
+    train_retrieval.main()
+  File "tests/_e2e_trainer_entry.py", line 86, in main
+    train_retrieval.main()
+  File "/tmp/opencode/FlagScale-base/tree/flagscale/train/train_retrieval.py", line 1321, in main
+    train(config)
+  File "/tmp/opencode/FlagScale-base/tree/flagscale/train/train_retrieval.py", line 1321, in main
+    train(config)
+  File "/tmp/opencode/FlagScale-base/tree/flagscale/train/train_retrieval.py", line 1205, in train
+    train_loss = train_epoch(
+  File "/tmp/opencode/FlagScale-base/tree/flagscale/train/train_retrieval.py", line 1205, in train
+    train_loss = train_epoch(
+  File "/tmp/opencode/FlagScale-base/tree/flagscale/train/train_retrieval.py", line 631, in train_epoch
+    loss.backward()
+  File "/tmp/opencode/FlagScale-base/tree/flagscale/train/train_retrieval.py", line 631, in train_epoch
+    loss.backward()
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/_tensor.py", line 625, in backward
+    torch.autograd.backward(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/_tensor.py", line 625, in backward
+    torch.autograd.backward(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/__init__.py", line 354, in backward
+    _engine_run_backward(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/__init__.py", line 354, in backward
+    _engine_run_backward(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/graph.py", line 841, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/graph.py", line 841, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/function.py", line 315, in apply
+    return user_fn(self, *args)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/autograd/function.py", line 315, in apply
+    return user_fn(self, *args)
+  File "hydrax/xaccelerator/linear/_linear.py", line 140, in hydrax.xaccelerator.linear._linear.LinearFunction.backward
+  File "hydrax/xaccelerator/linear/_linear.py", line 140, in hydrax.xaccelerator.linear._linear.LinearFunction.backward
+  File "hydrax/xaccelerator/linear/_linear.py", line 143, in hydrax.xaccelerator.linear._linear.LinearFunction.backward
+  File "hydrax/xaccelerator/linear/_linear.py", line 143, in hydrax.xaccelerator.linear._linear.LinearFunction.backward
+  File "hydrax/xaccelerator/linear/_linear.py", line 144, in hydrax.xaccelerator.linear._linear.LinearFunction.backward
+  File "hydrax/xaccelerator/linear/_linear.py", line 144, in hydrax.xaccelerator.linear._linear.LinearFunction.backward
+  File "hydrax/xaccelerator/linear/_utils.py", line 96, in hydrax.xaccelerator.linear._utils.linear_bwd_dgrad
+  File "hydrax/xaccelerator/linear/_utils.py", line 96, in hydrax.xaccelerator.linear._utils.linear_bwd_dgrad
+  File "hydrax/xaccelerator/linear/_utils.py", line 46, in hydrax.xaccelerator.linear._utils.fc_fusion_wrapper
+  File "hydrax/xaccelerator/linear/_utils.py", line 46, in hydrax.xaccelerator.linear._utils.fc_fusion_wrapper
+  File "hydrax/xaccelerator/fc_fusion.py", line 365, in hydrax.xaccelerator.fc_fusion.fc_fusion
+  File "hydrax/xaccelerator/fc_fusion.py", line 365, in hydrax.xaccelerator.fc_fusion.fc_fusion
+  File "hydrax/xaccelerator/stateful.py", line 85, in hydrax.xaccelerator.stateful.TensorViewState.value
+  File "hydrax/xaccelerator/stateful.py", line 85, in hydrax.xaccelerator.stateful.TensorViewState.value
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 11.57 GiB. GPU 0 has a total capacity of 96.00 GiB of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 11.57 GiB. GPU 1 has a total capacity of 96.00 GiB of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]:[W1126 23:51:59.366568277 ProcessGroupXCCL.cpp:1152] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank0]:[W1126 23:52:00.684297400 XCCLUtils.cpp:21] Warning: WARNING: XCCL communicator hasn't been destroyed. This may cause memory leaks. To avoid the risk, you can call `destroy_process_group` during normal exit or `_abort_process_group` when handling failures. (function operator())
+[rank1]:[W1126 23:52:00.741247763 XCCLUtils.cpp:21] Warning: WARNING: XCCL communicator hasn't been destroyed. This may cause memory leaks. To avoid the risk, you can call `destroy_process_group` during normal exit or `_abort_process_group` when handling failures. (function operator())
+W1126 23:52:00.578000 51199 site-packages/torch/distributed/elastic/multiprocessing/api.py:908] Sending process 51205 closing signal SIGTERM
+E1126 23:52:00.610000 51199 site-packages/torch/distributed/elastic/multiprocessing/api.py:882] failed (exitcode: 1) local_rank: 0 (pid: 51204) of binary: python3
+Traceback (most recent call last):
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 940, in <module>
+    main()
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 936, in main
+    run(args)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 927, in run
+    elastic_launch(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 156, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 293, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+tests/_e2e_trainer_entry.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-11-26_23:52:00
+  host      : VM-20-4-ubuntu
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 51204)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

@@ -1,0 +1,86 @@
+{
+  "torch": "2.9.0+cu129",
+  "device": "GPU",
+  "patterns": {
+    "A_fresh": {
+      "before": {
+        "device_free_gib": 95.97,
+        "allocated_gib": 0.0,
+        "reserved_gib": 0.0,
+        "segments": 0,
+        "alloc_retries": 0
+      },
+      "result": {
+        "request_gib": 11.6,
+        "ok": true
+      }
+    },
+    "B_uniform_holes_released": {
+      "layout": "82 x 1 GiB, every other released",
+      "before": {
+        "device_free_gib": 54.97,
+        "allocated_gib": 41.0,
+        "reserved_gib": 41.0,
+        "segments": 41,
+        "alloc_retries": 0
+      },
+      "result": {
+        "request_gib": 11.6,
+        "ok": true
+      }
+    },
+    "C_uniform_holes_cached": {
+      "layout": "82 x 1 GiB, every other freed into the cache",
+      "before": {
+        "device_free_gib": 13.97,
+        "allocated_gib": 41.0,
+        "reserved_gib": 82.0,
+        "segments": 82,
+        "alloc_retries": 0
+      },
+      "result": {
+        "request_gib": 11.6,
+        "ok": true
+      }
+    },
+    "D_uneven_holes_released": {
+      "layout": "221 blocks of 64 MiB - 1 GiB, 2/3 released",
+      "before": {
+        "device_free_gib": 72.84,
+        "allocated_gib": 23.12,
+        "reserved_gib": 23.12,
+        "segments": 75,
+        "alloc_retries": 1
+      },
+      "result_11_57_gib": {
+        "request_gib": 11.6,
+        "ok": false,
+        "message": "CUDA out of memory. Tried to allocate 11.60 GiB. GPU 0 has a total capacity of 96.00 GiB of which 72.84 GiB is free. Of the allocated memory 23.12 GiB is allocated by PyTorch, and 0 bytes is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+      },
+      "result_1_25_gib": {
+        "request_gib": 1.25,
+        "ok": true
+      }
+    },
+    "E_expandable_segments_requested": {
+      "PYTORCH_ALLOC_CONF": {
+        "returncode": 0,
+        "device_free_gib": 72.75,
+        "request_11_57_gib_ok": false,
+        "honoured": false,
+        "warnings": [],
+        "note": "same default-allocator OOM as pattern D"
+      },
+      "PYTORCH_CUDA_ALLOC_CONF": {
+        "returncode": 0,
+        "device_free_gib": 72.75,
+        "request_11_57_gib_ok": false,
+        "honoured": false,
+        "warnings": [
+          "/tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/probe_p800_allocator.py:64: UserWarning: expandable_segments not supported on this platform (Triggered internally at /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/include/c10/cuda/CUDAAllocatorCo"
+        ],
+        "note": "same default-allocator OOM as pattern D"
+      }
+    }
+  }
+}

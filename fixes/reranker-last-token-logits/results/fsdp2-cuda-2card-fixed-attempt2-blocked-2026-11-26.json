@@ -1,0 +1,14 @@
+{
+  "device": "cuda",
+  "nproc": 2,
+  "layers": 4,
+  "hidden": 4096,
+  "returncode": 1,
+  "timed_out": false,
+  "elapsed_s": 688.6,
+  "log": "/tmp/opencode/scratch/fsdp2-cuda-fixed-r2.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=2 /tmp/opencode/fixwork/tests/_fsdp2_worker.py --device cuda --steps 2 --rows 8 --json /tmp/opencode/scratch/fsdp2-cuda-fixed-r2.json --layers 4 --hidden 4096",
+  "ranks": [],
+  "passed": false,
+  "blocked": true
+}

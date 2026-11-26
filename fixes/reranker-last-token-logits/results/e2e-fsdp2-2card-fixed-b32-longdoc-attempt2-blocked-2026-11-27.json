@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "returncode": 1,
+  "timed_out": false,
+  "elapsed_s": 730.0,
+  "batch": 32,
+  "parallel": "fsdp2",
+  "master_dtype": "fp32",
+  "nproc": 2,
+  "min_steps": 3,
+  "steps_done": 2,
+  "training_steps_complete": false,
+  "loss_log": [
+    "epoch=1 optimizer_step=1 running_loss=0.392380 window_loss=0.392380 lr=1.000e-07",
+    "epoch=1 optimizer_step=2 running_loss=0.377111 window_loss=0.361841 lr=1.500e-07"
+  ],
+  "oom": false,
+  "oom_allocate_requests_gib": [],
+  "first_oom_line": null,
+  "max_memory_allocated_gib": null,
+  "per_rank": [],
+  "log": "/tmp/opencode/reranker-e2e-real/fsdp2-fp32-b32-n2-20261127-000753/train.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=2 /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py --config-file /tmp/opencode/reranker-e2e-real/fsdp2-fp32-b32-n2-20261127-000753/config.yaml --mem-out /tmp/opencode/reranker-e2e-real/fsdp2-fp32-b32-n2-20261127-000753/memory.json"
+}

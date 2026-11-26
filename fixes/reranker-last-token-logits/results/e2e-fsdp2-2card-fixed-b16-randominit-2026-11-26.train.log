@@ -1,0 +1,79 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+reproducibility: seed=42 per_rank=42 deterministic=False world_size=2 platform=cuda
+loading weights directly in master dtype fp32
+The tokenizer you are loading from '/tmp/opencode/models/Qwen3-Reranker-8B-randominit' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+`torch_dtype` is deprecated! Use `dtype` instead!
+The tokenizer you are loading from '/tmp/opencode/models/Qwen3-Reranker-8B-randominit' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:04<00:12,  4.07s/it]Loading checkpoint shards:  25%|██▌       | 1/4 [00:04<00:12,  4.15s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:08<00:08,  4.08s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:08<00:08,  4.17s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:12<00:04,  4.11s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:12<00:04,  4.18s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:13<00:00,  3.00s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:13<00:00,  3.40s/it]
+gradient checkpointing enabled
+coalesced all-gather shim installed on ProcessGroupXCCL, ProcessGroupGloo: per-tensor _allgather_base fallback
+funcol.all_gather_tensor overridden (per-tensor fallback for this backend)
+Loading checkpoint shards: 100%|██████████| 4/4 [00:13<00:00,  3.05s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:13<00:00,  3.46s/it]
+  oversized leaf: backbone.model.embed_tokens gathers 1185 MiB in torch.bfloat16
+  oversized leaf: backbone.lm_head gathers 1185 MiB in torch.bfloat16
+FSDP2 sharded 36 transformer blocks, 2 oversized leaf module(s) and the root over 2 rank(s); compute dtype torch.bfloat16, reduce dtype torch.bfloat16, max param group 1024 MiB
+moved FSDP2 shards to cuda:0 in master dtype fp32
+parallelism=fsdp2 master_dtype=fp32 compute_dtype=bf16
+lr schedule: cosine 1e-05 -> 1e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[20:49:14][VM-20-4-ubuntu][14466:14466][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[20:49:15][VM-20-4-ubuntu][14467:14467][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+XX: (pid 14466,tid 138691343456064)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 1049290, status= 702
+XX: (pid 14466,tid 138691343456064)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+XX: (pid 14466,tid 138691343456064)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:183:kl3ChannelCheckErrors kl3ChannelCheckErrors failed, error set to 1049290, status= 702
+XX: (pid 14466,tid 138691343456064)cuda/src/cui/hal/kl3/kl3_gpfifo.cc:184:kl3ChannelCheckErrors A kernel exception has occurred, please check dmesg for details.
+[21:09:15][VM-20-4-ubuntu][14466:14466][WARN][XCCL][kl3_init.cpp:4666] xpu_free error code=-714
+XX: (pid 14466,tid 138691343456064)cuda/src/api/apimem.cc:72:cuapiMemAlloc_common cuapiMemAlloc() failed in cuiInitCheckEx, status= 702
+[21:09:15][VM-20-4-ubuntu][14466:14466][WARN][XCCL][kl3_init.cpp:2861] xlink_ring_init xpu_malloc fail, expected 0, error code=-714
+[21:09:15][VM-20-4-ubuntu][14466:14466][WARN][XCCL][kl3_init.cpp:4677] kl3_xlink_ring_init failed, expected 0, error code=1
+[21:09:15][VM-20-4-ubuntu][14466:14466][WARN][XCCL][init.cpp:965] init kl3 device param failed
+[21:09:15][VM-20-4-ubuntu][14466:14466][WARN][XCCL][init.cpp:1212] init_bkcl_context failed, expected 0, error code=2
+XX: (pid 14466,tid 138691343456064)cuda/src/api/apilaunch.cc:952:cuapi_xpu_wait cuapi_xpu_wait() failed in cuiInitCheckEx, status= 702
+XX: (pid 14466,tid 138691343456064)cuda/src/api/apimem.cc:302:cuapiMemFree_common cuapiMemFree() failed in cuiInitCheckCtx, Incompatible context or Context error, status= 702
+[21:09:16][VM-20-4-ubuntu][14467:14467][WARN][XCCL][net_socket.cpp:509] NET/Socket : recv data size 0 errno 11
+[21:09:16][VM-20-4-ubuntu][14467:14467][WARN][XCCL][init_common.cpp:48] rank 1 net_socket_recv failed,             please check log in rank[0], host 10.20.20.4, expected 0, error code=2
+[21:09:16][VM-20-4-ubuntu][14467:14467][WARN][XCCL][init.cpp:1403] net_socket_all_gather failed, expected 0, error code=2
+W1126 21:09:16.223000 14461 site-packages/torch/distributed/elastic/multiprocessing/api.py:908] Sending process 14467 closing signal SIGTERM
+E1126 21:09:16.439000 14461 site-packages/torch/distributed/elastic/multiprocessing/api.py:882] failed (exitcode: 1) local_rank: 0 (pid: 14466) of binary: python3
+Traceback (most recent call last):
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 940, in <module>
+    main()
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 936, in main
+    run(args)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 927, in run
+    elastic_launch(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 156, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 293, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+tests/_e2e_trainer_entry.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-11-26_21:09:16
+  host      : VM-20-4-ubuntu
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 14466)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
