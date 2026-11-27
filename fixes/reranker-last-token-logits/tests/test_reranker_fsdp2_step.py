@@ -28,13 +28,14 @@ import argparse
 import json
 import os
 import re
-import signal
 import subprocess
 import sys
-import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from _torchrun_job import limit_visible_devices, run_job  # noqa: E402
+
 BLOCKER = re.compile(r"Watchdog caught collective operation timeout|kl3ChannelCheckErrors|kernel exception", re.I)
 
 
@@ -89,11 +90,10 @@ def main() -> int:
     log_path = out.with_suffix(".log")
 
     env = dict(os.environ)
+    # an explicit CUDA_VISIBLE_DEVICES is cut to the rank count and mirrored to XPU; with the
+    # default visibility or an XPU-only list nothing is touched (see limit_visible_devices)
+    visible = limit_visible_devices(env, nproc) if args.device == "cuda" else None
     if args.device == "cuda":
-        visible = env.get("CUDA_VISIBLE_DEVICES", "")
-        if "," in visible and nproc > 1:
-            env["CUDA_VISIBLE_DEVICES"] = ",".join(visible.split(",")[:nproc])
-        env.setdefault("XPU_VISIBLE_DEVICES", env["CUDA_VISIBLE_DEVICES"])
         env.setdefault("XMLIR_BMM_DISPATCH_VALUE", "0")
     command = [
         sys.executable, "-m", "torch.distributed.run", "--standalone", f"--nproc_per_node={nproc}",
@@ -105,29 +105,28 @@ def main() -> int:
     command += ["--layers", str(layers), "--hidden", str(hidden)]
     command += extra
 
-    started = time.time()
-    timed_out = False
-    with log_path.open("w", encoding="utf-8") as log:
-        process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, env=env, cwd=str(HERE),
-                                   start_new_session=True)
-        try:
-            returncode = process.wait(timeout=args.timeout)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            os.killpg(process.pid, signal.SIGKILL)
-            returncode = process.wait()
-            # torchrun starts each worker in its own session: a stuck worker
-            # survives the group kill, so remove the workers by their entry point
-            subprocess.run(["pkill", "-KILL", "-f", str(HERE / "_fsdp2_worker.py")], capture_output=True)
-    elapsed = time.time() - started
+    # own session per job; a timeout ends the agent and the processes carrying this job's id
+    job = run_job(command, env, log_path, args.timeout, cwd=str(HERE))
+    returncode, timed_out, elapsed = job["returncode"], job["timed_out"], job["elapsed_s"]
+    if timed_out:
+        cleanup = job["cleanup"]
+        ended = [item["pid"] for item in cleanup["signalled"]]
+        print(f"launcher timeout after {args.timeout} s: torchrun agent ended, job {job['job_id']} "
+              f"processes signalled {ended}, survived {cleanup['survived']}")
 
     text = log_path.read_text(errors="replace")
     records = [json.loads(p.read_text()) for p in sorted(out.parent.glob(out.name + ".rank*"))]
     summary = {
         "device": args.device, "nproc": nproc, "layers": layers, "hidden": hidden,
         "returncode": returncode, "timed_out": timed_out,
-        "elapsed_s": round(elapsed, 1),
+        "elapsed_s": elapsed,
         "ranks": records,
+        # which processes belonged to this run: the id every process of the job carried, what
+        # the timeout cleanup signalled (None unless the timeout fired), and how the
+        # visible-device variables were handled (None on the CPU)
+        "job_id": job["job_id"],
+        "timeout_cleanup": job["cleanup"],
+        "visible_devices": visible,
     }
     summary["log"] = display(log_path)
     summary["command"] = " ".join(display(part) for part in command)

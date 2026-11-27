@@ -5,11 +5,14 @@
 集合通信卡死（F-P800-1）反复打断，没有一次干净退出，详见"2 卡 FSDP2"一节。
 `hardware_status` 保持 `unverified`。
 
+审阅修订（PR #11 评论 7210838015，2026-11-27）：两个 launcher、等价性脚本有改动并新增 launcher 自测，受影响的
+脚本都已重跑；改动、理由与证据见文末"审阅修订"一节。
+
 ## 环境与源码
 
 | 项 | 值 |
 |---|---|
-| 执行日期 | 2026-11-26 20:22 – 2026-11-27 08:44（本机时间） |
+| 执行日期 | 首轮 2026-11-26 20:22 – 2026-11-27 08:44；审阅修订后的重跑 2026-11-27 13:50 起（本机时间） |
 | 执行者 | AI 代理自动执行，没有人工复核；全部命令与原始输出都在 `../results/` |
 | 机器 | KunlunXin P800 OAM ×8 节点，本验证用可见的 2 张卡（每卡 96 GiB）；同节点卡 3、4 上始终有其他进程的负载（非本验证） |
 | 驱动 / 运行时 | XPU-SMI 5.0.21.47 / XPU-RT 5.13.0；分配器后端 `xpu native` |
@@ -43,16 +46,25 @@ omegaconf 不在共享环境里，本机以 `pip install --target` 装到独立�
 | 项目 | 精确命令 | 判定标准 | 修复前 | 修复后 | 证据 |
 | --- | --- | --- | --- | --- | --- |
 | 最小复现（单卡碎片堆） | `PYTHONPATH=<树> python3 tests/repro_reranker_logits_alloc.py` | 修复前一步内 OOM；修复后同一步跑通且 lm_head 只输出 `[rows, vocab]` | exit **1**：`Tried to allocate 11.57 GiB … 20.63 GiB is free … 73.51 GiB is allocated by PyTorch` | exit **0**，峰值 +25.36 GiB | `repro-{base,fixed}-2026-11-26.{json,log}` |
-| 最小复现（平台形态，2 卡） | `RERANKER_DATA=<长文档 parquet> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 2 --parallel fsdp2 --master-dtype fp32 --batch 32 --min-steps 3 --no-save` | 基线出现平台记录的报错；修复后走完 3 步 | exit 1，**step 3 反向 OOM**，与平台记录逐项吻合 | 4 次尝试：第 4 次 step 1–3 走完（`training_steps_complete=true`），停在 validation，`passed=false` | `e2e-fsdp2-2card-{base,fixed}-b32-longdoc-*` |
+| 最小复现（平台形态，2 卡） | `RERANKER_DATA=<长文档 parquet> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 2 --parallel fsdp2 --master-dtype fp32 --batch 32 --min-steps 3 --no-save` | 基线出现平台记录的报错；修复后走完 3 步 | exit 1，**step 3 反向 OOM**，与平台记录逐项吻合 | 4 次尝试：第 4 次越过基线 OOM 的第 3 步（step 1–3 走完，`training_steps_complete=true`），停在 validation，`passed=false` | `e2e-fsdp2-2card-{base,fixed}-b32-longdoc-*` |
 | dispatch（CPU） | `PYTHONPATH=<树> python3 tests/test_reranker_lmhead_dispatch.py` | lm_head 只收到 `[rows, hidden]`，分数对基线公式 ≤ 1e-4，梯度到达各层 | exit **1**（6/25 例失败：lm_head 收到 `[rows, seq, hidden]`） | exit **0**（25/25） | `dispatch-{base,fixed}-2026-11-26.{json,log}` |
 | dispatch（真实 FSDP2，CPU/gloo） | `PYTHONPATH=<树> python3 tests/test_reranker_fsdp2_step.py --device cpu --nproc 1 --steps 2` | lm_head 是分片的 FSDP 模块且钩子照常；每步两个 micro-batch；梯度与 optimizer 更新正常 | exit **1**（lm_head 输出 `[16, 258, 151669]`） | exit **0**（`[16, 151669]`） | `fsdp2-cpu-{base,fixed}-2026-11-26.{json,log}` |
 | dispatch（真实 FSDP2，P800 ×2） | `PYTHONPATH=<树> python3 tests/test_reranker_fsdp2_step.py --device cuda --nproc 2 --steps 2` | 同上，bf16 autocast | exit **1**（328.6 s 跑完，仅 lm_head 投影判据失败） | exit **0**（26.3 s，两 rank 全过）；此前两次被 XCCL watchdog 阻断 | `fsdp2-cuda-2card-*` |
-| 回归 / 边界 | `PYTHONPATH=<树> python3 tests/test_reranker_scores_equivalence.py` | 分数在参考最大 logit 的 2 个 bf16 ulp 内，梯度相对差 ≤ 3%；fp32 下 1e-4 / 0.1% | exit 0（基线即参考，平凡通过） | exit **0**（5 例 max\|diff\| 都是 0.0） | `equivalence-{base,fixed}-2026-11-26.{json,log}` |
+| 回归 / 边界 | `PYTHONPATH=<树> python3 tests/test_reranker_scores_equivalence.py` | 两侧各 9 个预期梯度、逐张量有限；分数在参考最大 logit 的 2 个 bf16 ulp 内，梯度相对差 ≤ 3%（bf16 权重）；fp32 权重下 1e-4 / 1e-3；7 个比较器自检用例全部按预期 | exit 0（基线即参考，平凡通过） | exit **0**（14/14：bf16 权重 5 例 max\|diff\| = 0.0；fp32 权重 2 例分数 2.4e-7、梯度相对差 2.0e-4；比较器 7 例） | `equivalence-{base,fixed}-2026-11-27.{json,log}`（审阅修订后重跑；11-26 的 5 例旧版记录保留） |
 | 性能 / 精度 | `PYTHONPATH=<树> python3 tests/bench_reranker_step.py --iters 5` | 记录前后耗时与峰值显存（见 `../benchmarks/README.md`） | exit 0 | exit 0 | `bench-{base,fixed}-2026-11-26.{json,log}` |
-| e2e（真实 trainer） | `RERANKER_MODEL=<checkpoint> RERANKER_DATA=<triplet-15> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save` | 两棵树都跑完 5 步；loss 一致 | exit 0 | exit 0；loss 逐位相同 | `e2e-1card-{base,fixed}-2026-11-27.{json,log,train.log}` |
+| e2e（真实 trainer） | `RERANKER_MODEL=<checkpoint> RERANKER_DATA=<triplet-15> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save` | 两棵树都跑完 5 步；loss 一致 | exit 0 | exit 0；5 步 loss、validation、test loss 在日志记录精度（6 位小数）下一致 | `e2e-1card-{base,fixed}-2026-11-27.{json,log,train.log}` |
+| launcher 自测（CPU） | `python3 tests/test_reranker_launchers.py` | 两个共用同一 worker 脚本路径的 torchrun 作业（各 2 rank）：超时那组自己的 rank 与子进程在 launcher 返回时全部退出；另一组未被信号，每个 rank 在超时前启动、超时后结束，exit 0。可见设备 7 种输入 | 旧清理方式（`--cleanup legacy`）：另一组在 60.2 s 被杀（返回码 -9），超时那组留下 2 个子进程；3/14 项失败，exit **1** | exit **0**（17/17） | `launcher-selftest-{scoped,legacy}-2026-11-27.{json,log}` |
+| launcher 启动路径（真实 trainer，修复树） | `env -u CUDA_VISIBLE_DEVICES -u XPU_VISIBLE_DEVICES RERANKER_MODEL=<checkpoint> RERANKER_DATA=<triplet-15> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save`；另两种环境：`CUDA_VISIBLE_DEVICES=1,2`；仅 `XPU_VISIBLE_DEVICES=1,2` | launcher 不因可见设备变量崩溃，trainer 被启动 | `c6f73493` 的 launcher：默认可见与仅 XPU 列表都是 `KeyError: 'CUDA_VISIBLE_DEVICES'`，exit 1，trainer 未启动 | 默认可见：exit 0（5 步）；显式选卡：exit 0（5 步）；仅 XPU 列表：launcher 透传并启动，trainer 在厂商栈 import 阶段失败（exit 1，0 步） | `launcher-visible-devices-before-c6f73493-2026-11-27.log`、`e2e-1card-fixed-{defaultvis,explicitvis,xpuonly}-2026-11-27.{json,log}` |
 | 安装 / 回滚 | `python3 -m flag_fixes --root <本仓库> check / plan / apply / status reranker-last-token-logits --target <树>` | 基线 hash 命中、patch 可干净应用、结果与快照一致；未获部署资格时 `apply` 拒绝 | — | `check`/`plan` exit 0；`apply` exit 2（`deployable=false`）；`status` clean | 本页"工具链校验"一节 |
 
 判定：只有退出码 0 算通过；缺设备或缺 checkpoint/数据时脚本退出码 2（跳过，不算通过）。
+
+仅 XPU 列表那次 trainer 的失败（`e2e-1card-fixed-xpuonly-2026-11-27.train.log`）：`import torch` 之后的第一次
+CUDA 调用（FlagScale 注册平台时导入 flag_gems → `torch.cuda.get_device_name()`）报
+`device >= 0 && device < num_gpus INTERNAL ASSERT FAILED … device=2, num_gpus=2`。同一环境下的独立探针：
+`torch.cuda.device_count()` 返回 8，逐卡 `get_device_name` 到第 3 张失败——Python 侧仍按 8 张卡枚举，运行时侧
+只给了 XPU 列表里的 2 张。这是本机 torch_xmlir 栈对"只设 `XPU_VISIBLE_DEVICES`"的处理，不在本修复范围；
+launcher 的责任（不崩溃、不替用户发明 CUDA 列表、如实透传）已经满足，但这一种情况**不算跑通**。
 
 ### 证据的采集时间与脚本版本
 
@@ -65,8 +77,13 @@ omegaconf 不在共享环境里，本机以 `pip install --target` 装到独立�
   输出目录为空的问题并补了 loss 记录；FSDP2 测试后来把"lm_head 梯度非零"的判据改为只对拥有
   "yes"/"no" 两行的分片成立。这两处都不影响这些文件记录的事实（报错文本、显存数字、卡死签名、
   lm_head 收到的形状）。
-- `verify-2026-11-27.json` 是干净提交 `c2aef972` 上的重跑（`source_dirty=false`，6/6 rc=0）；
-  其后的提交只改文档与结果索引。
+- `verify-2026-11-27.json` 是干净提交 `c2aef972` 上的重跑（`source_dirty=false`，6/6 rc=0），对应审阅修订前的脚本。
+- 审阅修订（PR #11 评论 7210838015）改了两个 launcher（超时清理按作业限定、可见设备映射）、等价性脚本（按实际
+  dtype 命名、补 fp32 权重对照、梯度比较器）并新增 launcher 自测。受影响的都在修订后重跑：
+  `equivalence-{base,fixed}-2026-11-27.*`、`launcher-selftest-*`、`fsdp2-cuda-2card-fixed-rerun-*`、
+  `e2e-1card-fixed-{defaultvis,explicitvis,xpuonly}-*`。`repro`、`bench`、CPU dispatch 与 FSDP2 worker 的判据没有
+  改动，11-26 的记录仍对应现版脚本。
+- `verify-2026-11-27-r2.json` 是修订提交上的重跑（7 个命令，`source_dirty=false`），取代上一条。
 - 工具与脚本的原始输出含本机绝对路径，未做脱敏或改写。
 
 ## 关键数据
@@ -83,7 +100,7 @@ omegaconf 不在共享环境里，本机以 `pip install --target` 装到独立�
 
 ### 真实 trainer，单卡 bf16，真实权重，batch 16，5 步（`e2e-1card-*-2026-11-27.json`）
 
-| step | 基线 allocated / reserved（GiB） | 修复 allocated / reserved（GiB） | window_loss（两棵树相同） |
+| step | 基线 allocated / reserved（GiB） | 修复 allocated / reserved（GiB） | window_loss（两棵树在日志记录精度下一致） |
 |---|---|---|---|
 | 1 | 61.019 / 77.285 | 61.024 / 77.322 | 0.627536 |
 | 2 | 61.012 / 84.217 | 61.012 / 77.326 | 0.466457 |
@@ -91,8 +108,9 @@ omegaconf 不在共享环境里，本机以 `pip install --target` 装到独立�
 | 4 | 61.014 / 92.762 | 61.015 / 79.641 | 0.639762 |
 | 5 | 61.021 / 87.084 | 61.019 / 79.641 | 0.592430 |
 
-train_loss 0.539403、validation_loss 0.461096、test_loss 0.329392 两棵树逐位相同。
-每步 allocated 峰值 76.27 GiB 两棵树相同——它来自厂商 AdamW 的 15.25 GiB 临时张量
+train_loss 0.539403、validation_loss 0.461096、test_loss 0.329392 两棵树在日志记录精度下一致：trainer 的 loss 行
+只打印 6 位小数，JSON 里保存的就是这些日志行，没有更高精度的值可比。
+每步 allocated 峰值 76.27 GiB 两棵树在记录精度（0.001 GiB）下相同——它来自厂商 AdamW 的 15.25 GiB 临时张量
 （61.02 + 15.25），高于 batch 16 的反向峰值，所以差异体现在 reserved 上。
 
 ## 2 卡 FSDP2（平台形态）
@@ -105,15 +123,30 @@ train_loss 0.539403、validation_loss 0.461096、test_loss 0.329392 两棵树逐
 
 子集里每对的正、负样本 prompt 都 ≥ 592 token，全部被截断到 640——即平台报错时的 padded 形状。
 
-| 树 | 结果 | 文件 |
-|---|---|---|
-| 基线 | step 1（allocated 61.01 / reserved 92.06 GiB）、step 2（step 峰值 allocated 87.02 / reserved 95.13）完成；**step 3 反向在两个 rank 同时 OOM**：`Tried to allocate 11.57 GiB … of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated`；traceback 落在 `train_epoch → loss.backward() → hydrax LinearFunction.backward → linear_bwd_dgrad → fc_fusion → TensorViewState.value`，即 lm_head 反向对整序列 logits 梯度的物化 | `e2e-fsdp2-2card-base-b32-longdoc-2026-11-26.{json,log,train.log}` |
-| 修复 第 1 次尝试 | step 1 完成（61.01 / 92.20 GiB，loss 0.392380 与基线相同）后停在第 2 步，XCCL watchdog | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt1-blocked-2026-11-26.*` |
-| 修复 第 2 次尝试 | step 1（allocated 61.01 / reserved 92.20 GiB）、step 2（step 峰值 allocated 84.41 / reserved 95.02）完成，loss 与基线相同（0.392380、0.377111 / 0.361841）；停在第 3 步——基线 OOM 的那一步——XCCL watchdog | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt2-blocked-2026-11-27.*` |
-| 修复 第 3 次尝试 | 模型加载与 FSDP2 分片完成后停在第 1 步的前向，900 s 内 watchdog 也未触发，由 launcher 超时终止（0 步） | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt3-blocked-2026-11-27.*` |
-| 修复 第 4 次尝试 | **step 1–3 全部完成**（step 3 峰值 allocated 84.41 / reserved 94.32 GiB，loss 0.454597 / 0.609568）——即基线 OOM 的那一步通过；随后停在 validation 的首个集合通信，420 s 后由 launcher 超时终止（`training_steps_complete=true`，`passed=false`） | `e2e-fsdp2-2card-fixed-b32-longdoc-plain4-2026-11-27.*` |
+逐 step 对照。两边的数字各自实测，两个 rank 相同：基线来自 `memory.json.rank*` 与 trainer 日志；修复树的几次
+尝试被 XCCL 终止、没有 per-rank 记录，数字来自 trainer 日志的 `[e2e-mem]` 行。
 
-平台记录（11.57 GiB / 20.90 GiB free / 71.68 GiB allocated）与本机基线（11.57 / 20.77 / 71.66）逐项吻合。
+| step | 基线：step 后 allocated / reserved，step 峰值 allocated / reserved（GiB） | 修复：同（GiB） | loss（running / window，trainer 保留 6 位小数） |
+|---|---|---|---|
+| 1 | 61.01 / 92.06，76.26 / 92.06 | 61.01 / 92.20，76.26 / 92.20 | 基线 0.392380 / 0.392380；修复 0.392380 / 0.392380 |
+| 2 | 61.01 / 92.27，87.02 / 95.13 | 61.01 / 90.34，84.41 / 95.02 | 基线 0.377111 / 0.361841；修复 0.377111 / 0.361841 |
+| 3 | **反向 OOM**：请求 11.57 GiB 时设备空闲 20.77、PyTorch 已分配 71.66、reserved 未用 2.98；没有 step 3 的 loss，也没有 step 后的显存 | 61.01 / 90.34，84.41 / 94.32；loss 0.454597 / 0.609568 | 只有修复树有记录：**修复版越过了基线的 OOM 点**；基线没有可比的 step 3 |
+
+- 可比的 loss 只有前两步，它们在日志记录精度下一致；第 3 步只有修复树的数字，不能写成"与基线相同"。
+- 基线的失败点：`Tried to allocate 11.57 GiB … of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is
+  allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated`；traceback 落在
+  `train_epoch → loss.backward() → hydrax LinearFunction.backward → linear_bwd_dgrad → fc_fusion → TensorViewState.value`，
+  即 lm_head 反向对整序列 logits 梯度的物化。
+- 平台记录（11.57 GiB / 20.90 GiB free / 71.68 GiB allocated）与本机基线（11.57 / 20.77 / 71.66）逐项吻合。
+
+修复树的 4 次尝试（同一数据、同一配置）：
+
+| 尝试 | 走到 | 终止方式 | 文件 |
+|---|---|---|---|
+| 第 1 次 | step 1（61.01 / 92.20 GiB） | 停在第 2 步，XCCL watchdog | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt1-blocked-2026-11-26.*` |
+| 第 2 次 | step 1–2（step 2 峰值 allocated 84.41 / reserved 95.02） | 停在第 3 步——基线 OOM 的那一步——XCCL watchdog | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt2-blocked-2026-11-27.*` |
+| 第 3 次 | 0 步：模型加载与 FSDP2 分片完成后停在第 1 步的前向，900 s 内 watchdog 也未触发 | launcher 超时终止 | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt3-blocked-2026-11-27.*` |
+| 第 4 次 | **step 1–3 完成**（step 3：61.01 / 90.34，峰值 84.41 / 94.32）——越过基线 OOM 点；随后停在 validation 的首个集合通信 | 420 s 后 launcher 超时终止（`training_steps_complete=true`，`passed=false`） | `e2e-fsdp2-2card-fixed-b32-longdoc-plain4-2026-11-27.*` |
 
 ### 常规数据
 
@@ -123,7 +156,7 @@ train_loss 0.539403、validation_loss 0.461096、test_loss 0.329392 两棵树逐
 | 随机 | 修复 | 32 | step 1–2（step 2 峰值 allocated 80.28 = 61.02 + 19.26，reserved 95.19） | 第 3 步，同样 watchdog，`SeqNum=379` | `e2e-fsdp2-2card-fixed-randominit-2026-11-26.*` |
 | 随机 | 修复 | 16 | 0 | 第 1 步内 `kl3ChannelCheckErrors failed … A kernel exception has occurred`（status 702），20 分钟后 `xpu_free error code=-714` | `e2e-fsdp2-2card-fixed-b16-randominit-2026-11-26.*` |
 | 真实 | 修复 | 32 | step 1–3 + validation（train_loss 0.450768，validation_loss 0.512823；step 3 峰值 allocated 83.20） | 训练循环结束后的收尾集合通信，watchdog `SeqNum=609` | `e2e-fsdp2-2card-fixed-2026-11-26.*` |
-| 真实 | 基线 | 32 | step 1–2（loss 与修复树相同） | 第 3 步，watchdog | `e2e-fsdp2-2card-base-2026-11-26.*` |
+| 真实 | 基线 | 32 | step 1–2（loss 在日志记录精度下与修复树一致） | 第 3 步，watchdog | `e2e-fsdp2-2card-base-2026-11-26.*` |
 
 常规数据下 batch 长度随窗口变化，前几步较短，基线没有触发 11.57 GiB 的请求；自然 OOM 要在
 长 batch 上才出现（上一节）。
@@ -134,8 +167,9 @@ train_loss 0.539403、validation_loss 0.461096、test_loss 0.329392 两棵树逐
 投影判据失败）；修复树 3 次尝试——前两次分别停在 `SeqNum=3`（块 all-gather）与 `SeqNum=22`
 （norm all-gather）的 XCCL watchdog，第三次 26.3 s 两 rank 全过：lm_head 是 `Shard(0)` DTensor
 且带 FSDP pre/post hook，输入 `[16, 4096]`、输出 `[16, 151669]`（基线 `[16, 258, 151669]`，
-1.25 GB/次），分数对整序列参考 max\|Δ\| = 0.0，两 rank 的 loss 与基线树逐位相同
-（`[0.805798, 17.0]`）。梯度：拥有 "yes"/"no" 两行的 rank 0 上 lm_head 梯度范数 20.37，
+1.25 GB/次），分数对整序列参考 max\|Δ\| = 0.0，两 rank 的 loss 与基线树在记录精度下一致
+（`[0.805798, 17.0]`，worker 只保留 6 位小数）。审阅修订后经新 launcher 在 2 卡上重跑一次：26.4 s，两 rank 全过，
+exit 0（`fsdp2-cuda-2card-fixed-rerun-2026-11-27.{json,log}`）。梯度：拥有 "yes"/"no" 两行的 rank 0 上 lm_head 梯度范数 20.37，
 rank 1 上为 0——lm_head 沿词表分片，只有这两行有梯度，基线同样如此。
 
 ### 阻断统计
@@ -147,7 +181,8 @@ rank 1 上为 0——lm_head 沿词表分片，只有这两行有梯度，基线
 两棵树都中招。终止点与 payload 大小无关（SeqNum=3/22/190/379/609，`_ALLGATHER_BASE`），
 与已登记的平台阻断 **F-P800-1**（`validation/kunlunxin-p800-real-bge-m3/README.md` §E.3）同一签名。
 因此**"修复后 batch 32 在 2 卡 FSDP2 上完整跑通"没有拿到干净结果**；已得到的是：同一数据上
-基线第 3 步 OOM，修复树走过了这一步，每一步的 allocated/reserved 与 loss 都有记录且与基线相同。
+基线第 3 步 OOM，修复版越过了这一步。前两步两边都有 loss 与显存记录（loss 在日志记录精度下一致，显存各自列在
+上面的逐 step 表里），第 3 步只有修复树有记录。
 
 ### 对阻断本身的探索（非本修复范围，供运行时层参考）
 
@@ -188,8 +223,11 @@ PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口
   （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply reranker-last-token-logits --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <基线树>`：clean；对已打补丁的树 `check` 报 `Baseline checksum differs`（exit 2）
-- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，6/6 rc=0**，在干净提交
-  `c2aef972`（`source_dirty=false`）上运行，2026-11-27；原始输出 `../results/verify-2026-11-27.json`（stderr 为空）
+- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在审阅修订后的干净提交上
+  运行（`source_dirty=false`，提交哈希记在结果文件的 `source_commit`），2026-11-27；原始输出
+  `../results/verify-2026-11-27-r2.json`（stderr 为空）。声明命令比首轮多一个 launcher 自测
+- 首轮记录 `../results/verify-2026-11-27.json`（干净提交 `c2aef972`，6/6 rc=0）对应修订前的脚本，已被上一条取代；
+  首轮的 6 个命令：
   - reranker-lmhead-dispatch（dispatch）：rc=0
   - reranker-fsdp2-step-cpu（dispatch）：rc=0
   - reranker-logits-alloc-repro（repro）：rc=0
@@ -200,6 +238,19 @@ PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口
 
 verify 只输出 JSON 测试结果，不提升 `hardware_status`；上面的设备结论仍以平台验收为准。
 
+## 审阅修订（PR #11 评论 7210838015，2026-11-27）
+
+审阅对象是 `c6f73493`。四项意见都成立，逐项修改如下；受影响的测试结果已并入上面对应的章节。
+
+| # | 意见 | 修改 | 证据 |
+|---|---|---|---|
+| 1 | 两个 launcher 超时后按入口脚本路径 `pkill -KILL -f`，会终止同一 checkout 下并行作业的 worker | 新增 `tests/_torchrun_job.py`：启动前生成作业 id 放进 torchrun agent 的环境，worker 及其子进程继承；超时后结束 agent 的进程组，再只对环境里带该 id 的进程发 SIGKILL 并等待退出。launcher 的 JSON 记录 `job_id`、`timeout_cleanup`（被信号的进程、残留）；worker 在日志里公告自己的 pid 与作业 id。新增自测 `tests/test_reranker_launchers.py`，并声明为 verify 命令 | `launcher-selftest-scoped-2026-11-27.json`：17/17，exit 0——超时那组的 2 个 rank 与 2 个子进程在 launcher 返回时全部结束；另一组未被信号，60 s 超时时刻活着、91.9 s 正常结束。`launcher-selftest-legacy-2026-11-27.json`：旧清理方式下另一组 60.2 s 被杀（返回码 -9），超时那组留下 2 个子进程，3/14 项失败，exit 1（预期） |
+| 2 | 模型始终用 bf16 权重构造，名为 `fp32_no_autocast` 的两例名不副实；梯度比较会漏过两侧同时缺梯度与 NaN 差值 | 用例按实际 dtype 命名（`bf16_weights:…` / `fp32_weights:…`），每例记录权重 dtype、是否 autocast、分数 dtype；补真正的 fp32 权重对照（分数、梯度各一例）。梯度比较器先验结构（两侧各 9 个预期梯度），再逐张量检查参考值、候选值、差值有限，最后才计算相对误差；新增 7 个 `comparator_*` 自检用例 | `equivalence-{base,fixed}-2026-11-27.json`：两棵树 14/14。修复树 bf16 权重 5 例 max\|diff\| = 0.0；fp32 权重分数 2.4e-7（阈值 1e-4）、梯度相对差 2.0e-4（阈值 1e-3）——**fp32 下不是逐位相同**，此前文档里的"fp32 下 max diff = 0.0"是 bf16 权重关 autocast 的结果。一次性并排核对（未入库）：旧比较器放过"候选含 NaN""参考含 NaN""两侧同时缺一个""差值为 NaN"四种情况，"单侧缺失"直接 KeyError；新比较器六种破坏全部拒绝 |
+| 3 | `env.setdefault("XPU_VISIBLE_DEVICES", env["CUDA_VISIBLE_DEVICES"])` 在没设 CUDA 列表时 `KeyError` | 映射收进 `limit_visible_devices`：只在有显式 `CUDA_VISIBLE_DEVICES` 时截断并镜像；默认可见与仅 XPU 列表原样透传。自测覆盖 7 种输入；真实 trainer 在三种环境下各启动一次 | 修复前：`launcher-visible-devices-before-c6f73493-2026-11-27.log`（默认可见、仅 XPU 列表都是 KeyError）。修复后：`e2e-1card-fixed-defaultvis-*`、`e2e-1card-fixed-explicitvis-*` exit 0（各 5 步，loss 与首轮相同）；`e2e-1card-fixed-xpuonly-*` launcher 透传并启动，trainer 在厂商栈 import 阶段失败（见"命令与结果"里 launcher 启动路径一行之后的说明） |
+| 4 | trainer 的 loss 只保存 6 位小数，不能说"逐位相同"；2 卡只有前两步有双方可比的 loss，第 3 步应写"修复版越过基线 OOM 点"并分别列两边实测的显存；`WORKFLOW.md` 里"AdamW 切碎缓存导致第 2 步失败"与实际第 3 步 OOM 冲突；缺模板第 8 行 | 凡是 loss 对照一律改为"日志记录精度下一致"（README、WORKFLOW、fix.yaml、两份报告、results 索引）；2 卡一节改为逐 step 对照表，两边显存分列；WORKFLOW 第 4 行改为"触发步次取决于分配器缓存历史，机制未逐事件确认"；补第 8 行"上游：not-run" | 本页"2 卡 FSDP2"一节；`WORKFLOW.md` 第 4、6、8 行 |
+
+修订没有改动补丁本身（patch sha256 不变），也没有改变 `deployable=false` / `hardware_status=unverified`。
+
 ## not-run（未验证清单，不记为通过）
 
 | 项 | 原因 |
@@ -208,4 +259,5 @@ verify 只输出 JSON 测试结果，不提升 `hardware_status`；上面的设�
 | P800 配置回到 batch 32 或 accum=2 的余量评估 | 同上；需平台环境实测后再改 `qwen3_reranker_p800.yaml` |
 | A100 / PPU / 昇腾上的显存收益 | 无设备 |
 | 评测入口 `evaluate_retrieval.py` 的推理显存 | 未测 |
+| 只设 `XPU_VISIBLE_DEVICES`（不设 CUDA 列表）时 trainer 的启动 | 本机 torch_xmlir 栈在 import 阶段失败（Python 侧 `device_count()` = 8、运行时侧 2 张卡），是厂商栈的行为；launcher 只保证不崩溃、如实透传。未在本修复处理 |
 | 厂商 `clip_grad_norm_`（bf16 梯度约 35 GiB 临时张量）与 AdamW step（15.25 GiB 临时张量） | 不在本修复范围，仅记录 |

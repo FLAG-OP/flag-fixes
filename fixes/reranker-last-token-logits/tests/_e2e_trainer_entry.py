@@ -15,8 +15,12 @@ import os
 import sys
 import threading
 import traceback
+from pathlib import Path
 
 import torch
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _torchrun_job import announce_worker  # noqa: E402
 
 RANK = int(os.environ.get("RANK", "0"))
 
@@ -30,6 +34,7 @@ def main() -> int:
     parser.add_argument("--config-file", required=True)
     parser.add_argument("--mem-out", required=True)
     args, _ = parser.parse_known_args()
+    announce_worker("e2e-trainer")  # names this worker's pid and job in the launcher's log
     sys.argv = [sys.argv[0], "--config-file", args.config_file]
 
     peak = {"allocated": 0, "reserved": 0}

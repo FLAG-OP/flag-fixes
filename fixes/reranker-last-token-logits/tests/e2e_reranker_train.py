@@ -23,7 +23,6 @@ import argparse
 import json
 import os
 import re
-import signal
 import subprocess
 import sys
 import time
@@ -32,6 +31,8 @@ from pathlib import Path
 import yaml
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from _torchrun_job import limit_visible_devices, run_job  # noqa: E402
 
 GIB = 2**30
 OOM_PATTERN = re.compile(
@@ -165,10 +166,9 @@ def main() -> int:
     config_path.write_text(yaml.safe_dump(config, sort_keys=False, allow_unicode=True), encoding="utf-8")
 
     env = dict(os.environ)
-    visible = env.get("CUDA_VISIBLE_DEVICES", "")
-    if "," in visible and args.nproc > 1:
-        env["CUDA_VISIBLE_DEVICES"] = ",".join(visible.split(",")[: args.nproc])
-    env.setdefault("XPU_VISIBLE_DEVICES", env["CUDA_VISIBLE_DEVICES"])
+    # an explicit CUDA_VISIBLE_DEVICES is cut to the rank count and mirrored to XPU; with the
+    # default visibility or an XPU-only list nothing is touched (see limit_visible_devices)
+    visible = limit_visible_devices(env, args.nproc)
     env.update(
         {
             "FLAGSCALE_DEVICE": "cuda",
@@ -193,23 +193,14 @@ def main() -> int:
         f"--nproc_per_node={args.nproc}", str(HERE / "_e2e_trainer_entry.py"),
         "--config-file", str(config_path), "--mem-out", str(mem_out),
     ]
-    started = time.time()
-    timed_out = False
-    with (out / "train.log").open("w", encoding="utf-8") as log:
-        # own process group, so a timeout also removes the trainer processes
-        process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, env=env, cwd=str(HERE),
-                                   start_new_session=True)
-        try:
-            returncode = process.wait(timeout=args.timeout)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            os.killpg(process.pid, signal.SIGKILL)
-            returncode = process.wait()
-            # torchrun starts each worker in its own session: a stuck worker
-            # survives the group kill, so remove the workers by their entry point
-            subprocess.run(["pkill", "-KILL", "-f", str(HERE / "_e2e_trainer_entry.py")],
-                           capture_output=True)
-    elapsed = time.time() - started
+    # own session per job; a timeout ends the agent and the processes carrying this job's id
+    job = run_job(command, env, out / "train.log", args.timeout, cwd=str(HERE))
+    returncode, timed_out, elapsed = job["returncode"], job["timed_out"], job["elapsed_s"]
+    if timed_out:
+        cleanup = job["cleanup"]
+        ended = [item["pid"] for item in cleanup["signalled"]]
+        print(f"launcher timeout after {args.timeout} s: torchrun agent ended, job {job['job_id']} "
+              f"processes signalled {ended}, survived {cleanup['survived']}")
 
     text = (out / "train.log").read_text(errors="replace")
     oom_lines = [line.strip() for line in text.splitlines() if OOM_PATTERN.search(line)]
@@ -247,6 +238,12 @@ def main() -> int:
         "per_rank": memories,
         "log": str(out / "train.log"),
         "command": " ".join(command),
+        # which processes belonged to this run: the id every process of the job carried, what
+        # the timeout cleanup signalled (None unless the timeout fired), and how the
+        # visible-device variables were handled
+        "job_id": job["job_id"],
+        "timeout_cleanup": job["cleanup"],
+        "visible_devices": visible,
     }
     if args.json:
         Path(args.json).parent.mkdir(parents=True, exist_ok=True)

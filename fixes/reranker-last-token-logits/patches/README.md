@@ -23,4 +23,4 @@ git diff -- flagscale/models/retrieval/qwen3_reranker.py \
 patch 路径与仓库路径一致。
 
 补丁不新增配置开关，也没有关闭路径：它不改变打分语义（同一位置、同一权重，
-见 `../reports/validation.md` 的逐位一致对照），因此没有保留"整序列 logits"的必要。
+见 `../reports/validation.md` 的数值对照：bf16 下逐位相同，fp32 下在 1e-4 / 1e-3 以内），因此没有保留"整序列 logits"的必要。

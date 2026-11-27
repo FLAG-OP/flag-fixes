@@ -18,6 +18,7 @@ import torch.distributed as dist
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _reranker_common import REAL_CONFIG, StubTokenizer, lm_head_probe, random_texts  # noqa: E402
+from _torchrun_job import announce_worker  # noqa: E402
 
 RANK = int(os.environ.get("RANK", "0"))
 LOCAL_RANK = int(os.environ.get("LOCAL_RANK", "0"))
@@ -42,6 +43,7 @@ def main() -> int:
     parser.add_argument("--steps", type=int, default=2)
     parser.add_argument("--json", required=True)
     args = parser.parse_args()
+    announce_worker("fsdp2-worker")  # names this worker's pid and job in the launcher's log
 
     on_cuda = args.device == "cuda"
     device = torch.device("cuda", LOCAL_RANK) if on_cuda else torch.device("cpu")

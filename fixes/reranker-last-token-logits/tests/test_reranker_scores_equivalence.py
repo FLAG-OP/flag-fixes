@@ -1,26 +1,39 @@
 #!/usr/bin/env python3
 """Regression: the two-call forward scores the same positions as the full-logit formula.
 
-Real Qwen3-Reranker-8B shapes (hidden 4096, vocabulary 151,669), random bf16
-weights, bf16 autocast and gradient checkpointing as in the trainer.  For each
-batch the adapter's ``scores`` and its parameter gradients are compared with
-the baseline formula (materialise ``[batch, seq, vocab]`` logits, keep the last
-non-pad row) on the same weights and the same tokenised batch.
+Real Qwen3-Reranker-8B shapes (hidden 4096, vocabulary 151,669), random weights, gradient
+checkpointing as in the trainer.  For each batch the adapter's ``scores`` and its parameter
+gradients are compared with the baseline formula (materialise ``[batch, seq, vocab]`` logits,
+keep the last non-pad row) on the same weights and the same tokenised batch.
 
-Tolerances are rounding units of the compared quantity: scores within two bf16
-ulp of the largest reference logit under autocast (1e-4 in fp32), gradients
-within 3 % of the largest reference gradient under autocast (0.1 % in fp32).
-The baseline tree passes this trivially -- its forward *is* the reference --
-so the test guards the fix.
+Every case records the dtype that actually computed: the weight dtype, and whether autocast
+was on.  Tolerances follow that dtype:
 
-Exit 0  every case within tolerance
-Exit 1  a case is out of tolerance
+    bf16 weights, autocast on or off   scores within two bf16 ulp of the largest reference
+                                       logit; gradients within 3 % of the largest reference
+                                       gradient
+    fp32 weights, no autocast           scores 1e-4; gradients 0.1 %
+
+The baseline tree passes this trivially -- its forward *is* the reference -- so the test
+guards the fix.
+
+The gradient comparison asserts the structure before it measures an error: both sides must
+hold exactly the expected tensors (nine for the default 36 layers: lm_head, embedding, the
+final norm and, on the first and the last block, input norm / o_proj / down_proj), and every
+reference tensor, candidate tensor and their difference must be finite.  Only then is the
+error computed.  The ``comparator_*`` cases feed corrupted copies of a real result to the
+comparator and require it to reject them: a NaN gradient, the same expected gradient missing
+on both sides, a gradient missing on one side, a non-finite difference.
+
+Exit 0  every case within tolerance, every corrupted pair rejected
+Exit 1  otherwise
 Exit 2  precondition missing (accelerator / dependencies) -- SKIP, not a pass
 """
 from __future__ import annotations
 
 import argparse
 import contextlib
+import gc
 import json
 import math
 import sys
@@ -31,14 +44,15 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _reranker_common import (  # noqa: E402
-    EXIT_FAIL, EXIT_PASS, REAL_CONFIG, QWEN3_CONFIG_KWARGS, Skip, StubTokenizer, lm_head_probe, require_device,
+    EXIT_FAIL, EXIT_PASS, QWEN3_CONFIG_KWARGS, Skip, StubTokenizer, lm_head_probe, require_device,
 )
 
 TRUE_ID, FALSE_ID = 9693, 2152  # "yes" / "no"
 GIB = 2**30
+DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
 
 
-def build(layers: int, device: torch.device, seed: int = 0):
+def build(layers: int, device: torch.device, weights_dtype, seed: int = 0):
     import transformers
 
     from flagscale.models.retrieval.qwen3_reranker import DEFAULT_INSTRUCTION, Qwen3RerankerModel
@@ -47,7 +61,7 @@ def build(layers: int, device: torch.device, seed: int = 0):
     config.num_hidden_layers = layers
     torch.manual_seed(seed)
     with torch.device(device):
-        backbone = transformers.AutoModelForCausalLM.from_config(config, dtype=torch.bfloat16)
+        backbone = transformers.AutoModelForCausalLM.from_config(config, dtype=weights_dtype)
     model = Qwen3RerankerModel(backbone, StubTokenizer(vocab=config.vocab_size), 640, TRUE_ID, FALSE_ID,
                                False, DEFAULT_INSTRUCTION)
     model.enable_gradient_checkpointing()
@@ -107,8 +121,64 @@ def watched_names(layers: int) -> list[str]:
 
 def watched_grads(model, layers: int) -> dict[str, torch.Tensor]:
     wanted = set(watched_names(layers))
-    return {name: parameter.grad.detach().float() for name, parameter in model.named_parameters()
+    return {name: parameter.grad.detach().float().clone() for name, parameter in model.named_parameters()
             if name in wanted and parameter.grad is not None}
+
+
+def compare_gradients(reference: dict[str, torch.Tensor], candidate: dict[str, torch.Tensor],
+                      expected: list[str]) -> dict:
+    """Compare two sets of gradients.  Structure first, finiteness next, error last.
+
+    ``complete``: both sides hold exactly the expected tensors.  ``finite``: every reference
+    tensor, candidate tensor and their difference is finite.  The error is only meaningful
+    when both hold; tensors that fail the finiteness check are left out of it.
+    """
+    outcome = {
+        "expected": len(expected),
+        "missing_reference": sorted(set(expected) - set(reference)),
+        "missing_candidate": sorted(set(expected) - set(candidate)),
+        "unexpected_reference": sorted(set(reference) - set(expected)),
+        "unexpected_candidate": sorted(set(candidate) - set(expected)),
+        "nonfinite_reference": [], "nonfinite_candidate": [], "nonfinite_difference": [],
+    }
+    worst_rel, worst_abs, worst_name = 0.0, 0.0, None
+    for name in expected:
+        if name not in reference or name not in candidate:
+            continue
+        ref, cand = reference[name].float(), candidate[name].float()
+        reference_finite = bool(torch.isfinite(ref).all())
+        candidate_finite = bool(torch.isfinite(cand).all())
+        if not reference_finite:
+            outcome["nonfinite_reference"].append(name)
+        if not candidate_finite:
+            outcome["nonfinite_candidate"].append(name)
+        difference = cand - ref
+        if not (reference_finite and candidate_finite and bool(torch.isfinite(difference).all())):
+            outcome["nonfinite_difference"].append(name)
+            continue
+        absolute = float(difference.abs().max())
+        relative = absolute / max(float(ref.abs().max()), 1e-30)
+        if relative > worst_rel:
+            worst_rel, worst_name = relative, name
+        worst_abs = max(worst_abs, absolute)
+    outcome["complete"] = not any(outcome[key] for key in (
+        "missing_reference", "missing_candidate", "unexpected_reference", "unexpected_candidate"))
+    outcome["finite"] = not any(outcome[key] for key in (
+        "nonfinite_reference", "nonfinite_candidate", "nonfinite_difference"))
+    outcome.update(worst_relative_diff=worst_rel, worst_abs_diff=worst_abs, worst_tensor=worst_name,
+                   compared=len(expected))
+    return outcome
+
+
+def gradients_match(outcome: dict, tolerance: float) -> bool:
+    return outcome["complete"] and outcome["finite"] and outcome["worst_relative_diff"] <= tolerance
+
+
+def score_tolerance(largest: float, fp32_compute: bool) -> float:
+    if fp32_compute:
+        return 1e-4
+    # two bf16 ulp of the largest reference logit (bf16 keeps 7 explicit mantissa bits)
+    return 2.0 * 2.0 ** (math.floor(math.log2(max(largest, 1e-30))) - 7)
 
 
 def main() -> int:
@@ -124,7 +194,7 @@ def main() -> int:
         print(f"SKIP: {skip}; exit 2")
         return 2
 
-    model = build(args.layers, device)
+    expected = watched_names(args.layers)
     results: list[dict] = []
 
     def record(name, ok, **detail):
@@ -133,12 +203,16 @@ def main() -> int:
     def autocast(on: bool):
         return torch.autocast("cuda", dtype=torch.bfloat16) if on else torch.autocast("cuda", enabled=False)
 
-    def compare_scores(name, rows, seed, use_autocast, full_length):
+    def compare_scores(label, model, rows, seed, use_autocast, full_length):
+        # fp32 weights without autocast are the only configuration that computes in fp32
+        fp32_compute = next(model.parameters()).dtype is torch.float32 and not use_autocast
         features = features_of(model, make_batch(rows, seed, full_length), device)
         model.eval()
         with torch.no_grad(), autocast(use_autocast):
             with lm_head_probe(model) as calls:
-                scores = model(features)["scores"].float()
+                output = model(features)["scores"]
+            score_dtype = str(output.dtype)
+            scores = output.float()
             adapter_calls = list(calls)
             with baseline_adapter(model) as baseline:
                 reference = baseline(features)["scores"].float()
@@ -148,12 +222,17 @@ def main() -> int:
             ]
             largest = float(final.abs().max())
         max_abs = float((scores - reference).abs().max())
-        tolerance = 2.0 * 2.0 ** (math.floor(math.log2(largest)) - 7) if use_autocast else 1e-4
-        record(name, scores.shape == reference.shape and max_abs <= tolerance, max_abs_diff=max_abs,
-               tolerance=tolerance, largest_reference_logit=largest, lm_head_calls=adapter_calls,
+        tolerance = score_tolerance(largest, fp32_compute)
+        record(label, scores.shape == reference.shape and torch.isfinite(scores).all()
+               and torch.isfinite(reference).all() and max_abs <= tolerance,
+               weights_dtype=str(next(model.parameters()).dtype), autocast=use_autocast,
+               score_dtype=score_dtype, max_abs_diff=max_abs, tolerance=tolerance,
+               largest_reference_logit=largest, lm_head_calls=adapter_calls,
                pairs=2 * rows, padded_length=int(features["input_ids"].shape[1]))
+        return features
 
-    def compare_grads(name, rows, seed, use_autocast):
+    def compare_grads(label, model, rows, seed, use_autocast):
+        fp32_compute = next(model.parameters()).dtype is torch.float32 and not use_autocast
         features = features_of(model, make_batch(rows, seed, True), device)
         labels = torch.cat([torch.ones(rows), torch.zeros(rows)]).to(device)
         model.train()
@@ -166,27 +245,84 @@ def main() -> int:
                 torch.nn.functional.binary_cross_entropy_with_logits(
                     baseline(features)["scores"].float(), labels).backward()
             reference_grads = watched_grads(model, args.layers)
-        worst_rel, worst_abs = 0.0, 0.0
-        for key, reference in reference_grads.items():
-            diff = (adapter_grads[key] - reference).abs()
-            worst_abs = max(worst_abs, float(diff.max()))
-            worst_rel = max(worst_rel, float(diff.max()) / max(float(reference.abs().max()), 1e-30))
-        tolerance = 0.03 if use_autocast else 1e-3
-        record(name, adapter_grads.keys() == reference_grads.keys() and worst_rel <= tolerance,
-               worst_relative_diff=worst_rel, worst_abs_diff=worst_abs, tolerance=tolerance,
-               compared=sorted(reference_grads), pairs=2 * rows)
+        model.zero_grad(set_to_none=True)
+        outcome = compare_gradients(reference_grads, adapter_grads, expected)
+        tolerance = 1e-3 if fp32_compute else 0.03
+        record(label, gradients_match(outcome, tolerance), weights_dtype=str(next(model.parameters()).dtype),
+               autocast=use_autocast, tolerance=tolerance, **outcome)
+        return reference_grads, adapter_grads, tolerance
 
-    compare_scores("bf16_autocast:padded_mixed_length:16rows", 16, 1, True, False)
-    compare_scores("bf16_autocast:full_length_640:32rows", 32, 2, True, True)
-    compare_scores("fp32_no_autocast:padded_mixed_length:4rows", 4, 3, False, False)
-    compare_grads("bf16_autocast:gradients:16rows", 16, 4, True)
-    compare_grads("fp32_no_autocast:gradients:2rows", 2, 5, False)
+    def comparator_cases(reference, candidate, tolerance):
+        """Corrupted copies of a real result must be rejected; the uncorrupted copy accepted."""
+        target = expected[3]  # a block tensor, not one of the three global ones
+
+        def run(name, should_pass, edit):
+            ref = {key: value.clone() for key, value in reference.items()}
+            cand = {key: value.clone() for key, value in candidate.items()}
+            edit(ref, cand)
+            outcome = compare_gradients(ref, cand, expected)
+            accepted = gradients_match(outcome, tolerance)
+            record(name, accepted == should_pass, comparator_accepted=accepted,
+                   corrupted_tensor=None if should_pass else target,
+                   missing_reference=outcome["missing_reference"], missing_candidate=outcome["missing_candidate"],
+                   nonfinite_reference=outcome["nonfinite_reference"], nonfinite_candidate=outcome["nonfinite_candidate"],
+                   nonfinite_difference=outcome["nonfinite_difference"])
+
+        def nan_in_candidate(ref, cand):
+            cand[target].flatten()[0].fill_(float("nan"))
+
+        def nan_in_reference(ref, cand):
+            ref[target].flatten()[0].fill_(float("nan"))
+
+        def missing_on_both_sides(ref, cand):
+            ref.pop(target)
+            cand.pop(target)
+
+        def missing_on_candidate_side(ref, cand):
+            cand.pop(target)
+
+        def difference_overflows(ref, cand):  # both sides finite, fp32 difference infinite
+            ref[target].fill_(3.0e38)
+            cand[target].fill_(-3.0e38)
+
+        def both_infinite(ref, cand):  # both sides +inf, difference NaN
+            ref[target].fill_(float("inf"))
+            cand[target].fill_(float("inf"))
+
+        run("comparator_accepts:uncorrupted_pair", True, lambda ref, cand: None)
+        run("comparator_rejects:nan_gradient", False, nan_in_candidate)
+        run("comparator_rejects:nan_in_reference", False, nan_in_reference)
+        run("comparator_rejects:both_sides_missing_one_expected_gradient", False, missing_on_both_sides)
+        run("comparator_rejects:missing_on_one_side", False, missing_on_candidate_side)
+        run("comparator_rejects:difference_overflows", False, difference_overflows)
+        run("comparator_rejects:nan_difference_from_infinite_sides", False, both_infinite)
+
+    weights_gib = {}
+    for name, weights_dtype in DTYPES.items():
+        model = build(args.layers, device, weights_dtype)
+        weights_gib[name] = round(sum(p.numel() * p.element_size() for p in model.parameters()) / GIB, 3)
+        prefix = f"{name}_weights"
+        if name == "bf16":
+            compare_scores(f"{prefix}:bf16_autocast:scores:padded_mixed_length:16rows", model, 16, 1, True, False)
+            compare_scores(f"{prefix}:bf16_autocast:scores:full_length_640:32rows", model, 32, 2, True, True)
+            compare_scores(f"{prefix}:no_autocast:scores:padded_mixed_length:4rows", model, 4, 3, False, False)
+            reference, candidate, tolerance = compare_grads(f"{prefix}:bf16_autocast:gradients:16rows", model, 16, 4, True)
+            comparator_cases(reference, candidate, tolerance)
+            del reference, candidate
+            compare_grads(f"{prefix}:no_autocast:gradients:2rows", model, 2, 5, False)
+        else:
+            compare_scores(f"{prefix}:no_autocast:scores:padded_mixed_length:4rows", model, 4, 3, False, False)
+            compare_grads(f"{prefix}:no_autocast:gradients:2rows", model, 2, 5, False)
+        del model
+        gc.collect()
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
 
     failed = [r for r in results if not r["pass"]]
     summary = {
         "passed": not failed, "layers": args.layers, "cases": len(results),
         "failed": [r["case"] for r in failed], "results": results, "torch": torch.__version__,
-        "weights_gib": round(sum(p.numel() * p.element_size() for p in model.parameters()) / GIB, 3),
+        "weights_gib": weights_gib, "expected_gradients": len(expected),
     }
     print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
     if args.json:
@@ -198,7 +334,7 @@ def main() -> int:
     if failed:
         print(f"score equivalence FAILED: {len(failed)}/{len(results)} cases; exit 1")
         return EXIT_FAIL
-    print(f"score equivalence OK: {len(results)} cases within tolerance; exit 0")
+    print(f"score equivalence OK: {len(results)} cases (scores, gradients, comparator self-checks); exit 0")
     return EXIT_PASS
 
 

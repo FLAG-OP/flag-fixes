@@ -137,7 +137,7 @@ AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）�
 
 ### 3.4 单卡构造堆上的复现
 
-2 卡实跑依赖 XCCL，本机的集合通信又间歇性卡死（§7）。为了得到不依赖多卡的稳定复现，
+2 卡实跑依赖 XCCL，本机的集合通信又间歇性卡死（§8）。为了得到不依赖多卡的稳定复现，
 `tests/repro_reranker_logits_alloc.py` 在单卡上构造同样的堆：bf16 权重加每参数 3 个替身
 （梯度 + AdamW 两阶矩）= 61.0 GiB 常驻，与上面实跑的 61.01 GiB 相同；余下 34 GiB 切成
 9 块（最大 6 GiB）后释放。随后的一步：
@@ -188,9 +188,12 @@ AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）�
 
 - 只改 `flagscale/models/retrieval/qwen3_reranker.py` 的非 score-head 分支；score-head
   分支、Megatron 路径（`qwen3_reranker_megatron.py`）、训练循环都不动。
-- 数值：同位置、同权重、同 GEMM，bf16 autocast 与 fp32 下分数和梯度与基线公式**逐位相同**
-  （`results/equivalence-fixed-*.json`，5 例 max diff 均为 0.0）；真实 trainer 上两棵树
-  5 步 loss、validation、test loss 逐位相同。
+- 数值：同位置、同权重、同 GEMM 的输入行。bf16 权重（autocast 开或关）下分数和梯度与基线公式**逐位相同**
+  （`results/equivalence-fixed-2026-11-27.json`，5 例 max diff 均为 0.0）。fp32 权重、无 autocast 下不是逐位相同：
+  分数 max\|Δ\| = 2.4e-7（约 1 个 fp32 ulp），梯度相对差 2.0e-4（最差的是第 0 块的 input_layernorm），
+  在声明的阈值 1e-4 / 1e-3 以内；差异只能来自 lm_head 在 `[8, 4096]` 与 `[8, seq, 4096]` 两种输入形状下的
+  fp32 舍入（解码器路径两边相同），具体 kernel 选择没有追踪。真实 trainer 上两棵树的 5 步 loss、validation、
+  test loss 在日志记录精度（6 位小数）下一致。
 - 代码路径与厂商无关；设备证据只来自 KunlunXin P800（见 `validation.md`）。评测入口
   `evaluate_retrieval.py` 走同一个 forward，推理侧同样少一次全序列投影（未实测）。
 
@@ -209,7 +212,8 @@ AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）�
 
 - **修复树在平台形态下没有完整跑通**。基线失败已自然复现（§3.3）；同一数据上修复树的 4 次
   2 卡尝试里，前三次分别停在第 2、3、1 步，第 4 次走完了 3 步——包括基线 OOM 的那一步，
-  step 3 峰值 allocated 84.41 GiB——然后停在 validation。卡住的不是 OOM，而是本机的 XCCL
+  step 3 峰值 allocated 84.41 GiB——然后停在 validation。可比的 loss 只有前两步（日志记录精度下
+  与基线一致）；基线没有 step 3 的记录，所以第 3 步只能说修复版越过了 OOM 点。卡住的不是 OOM，而是本机的 XCCL
   集合通信（已登记的 F-P800-1：`Watchdog caught collective operation timeout`，终止点与
   payload 无关）。常规数据上修复树走完 3 步 + validation（step 3 峰值 allocated 83.20 GiB）
   后同样卡在收尾。因此"修复后 batch 32 在 2 卡上完整跑通"**未验证**；修复对照的干净结果
@@ -223,5 +227,8 @@ AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）�
   这两项与 logits 无关、本修复不覆盖，e2e 的单卡命令以 `max_grad_norm=0` 绕开前者。
 - 平台配置的 batch 16 / GA 1 是为这次 OOM 设的；修复后是否有余量回到 32 或 accum=2，
   需在平台 2 卡环境实测后再改配置。
-- 上游：未向 `wxj630/FlagScale` 提 PR；平台配置注释里"11.57 GiB 是 lm_head all-gather"
-  的归因可在上游一并更正。
+- 上游：未向 `wxj630/FlagScale` 提 PR（`WORKFLOW.md` 第 8 行 not-run）；平台配置注释里"11.57 GiB 是
+  lm_head all-gather"的归因可在上游一并更正。
+- 验证入口自身的两处平台相关边界（不在补丁范围）：只设 `XPU_VISIBLE_DEVICES` 时本机 torch_xmlir 栈的
+  device 枚举不一致、trainer 起不来，launcher 只保证不崩溃并如实透传；launcher 的超时清理按作业 id 限定，
+  但 launcher 自身被外部终止时不做清理。

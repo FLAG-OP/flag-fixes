@@ -14,7 +14,8 @@
   （`Tried to allocate 11.57 GiB ... 20.90 GiB free`）。这块显存是适配器让因果 LM
   对**每个位置**算出的词表 logits（64 对 × 640 token × 151,669 词表 × bf16），而适配器
   每条序列只用最后 1 行。修复后 LM head 只投影被打分的那一行：
-  输出 11.57 GiB → 18.5 MiB，同一位置、同一权重，分数与梯度与原公式**逐位相同**。
+  输出 11.57 GiB → 18.5 MiB；同一位置、同一权重，bf16（autocast 开或关）下分数与梯度与原公式
+  **逐位相同**，fp32 权重下分数差 2.4e-7、梯度相对差 2.0e-4（阈值 1e-4 / 1e-3）。
 
 ## 一句话版本
 
@@ -109,12 +110,17 @@ PYTHONPATH="$TARGET" python3 tests/test_reranker_fsdp2_step.py                 #
 PYTHONPATH="$TARGET" python3 tests/repro_reranker_logits_alloc.py              # 需一张 ≥ 90 GiB 的空闲卡
 PYTHONPATH="$TARGET" python3 tests/test_reranker_scores_equivalence.py         # 需设备
 PYTHONPATH="$TARGET" python3 tests/bench_reranker_step.py --iters 5           # 需设备
-# 端到端另需真实 checkpoint 与 T2Ranking triplet-15 parquet：
+# 端到端另需真实 checkpoint 与 T2Ranking triplet-15 parquet。launcher 只在显式设置了
+# CUDA_VISIBLE_DEVICES 时把它截到 rank 数并镜像到 XPU_VISIBLE_DEVICES；默认可见时不用设，
+# 直接跑（在这台机器上选卡用 CUDA_VISIBLE_DEVICES，不要只设 XPU 列表）
 RERANKER_MODEL=/path/to/Qwen3-Reranker-8B RERANKER_DATA=/path/to/triplet-15 \
   PYTHONPATH="$TARGET" python3 tests/e2e_reranker_train.py \
   --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save
 
-# 或由管理工具一次跑完 6 个声明命令（要求目标已是修复后内容；同样需要上面两个环境变量）
+# launcher 自测（CPU，约 95 秒；与 FlagScale 树无关）：超时清理只作用于本作业、可见设备三种情况
+python3 tests/test_reranker_launchers.py
+
+# 或由管理工具一次跑完 7 个声明命令（要求目标已是修复后内容；同样需要上面两个环境变量）
 PYTHONPATH="$MANAGER/src" python3 -m flag_fixes --root "$MANAGER" \
   verify reranker-last-token-logits --target "$TARGET" --python python3
 
@@ -136,12 +142,14 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
 ├── src/flagscale/models/retrieval/qwen3_reranker.py   # 修复后完整文件快照，与 patch 结果逐字节一致
 ├── tests/
 │   ├── _reranker_common.py            #   共享工具（随机权重、桩分词器、lm_head 探针）
+│   ├── _torchrun_job.py               #   launcher 共用：按作业限定的超时清理、可见设备映射
 │   ├── test_reranker_lmhead_dispatch.py        #   lm_head 只收到 [rows, hidden]（level: dispatch，CPU）
 │   ├── test_reranker_fsdp2_step.py + _fsdp2_worker.py   # 真实 apply_fsdp2 下的分片、钩子、梯度（level: dispatch）
 │   ├── repro_reranker_logits_alloc.py          #   61 GiB 常驻 + 碎片堆上的一步（level: repro，基线必 OOM）
-│   ├── test_reranker_scores_equivalence.py     #   分数与梯度对原公式（level: regression）
+│   ├── test_reranker_scores_equivalence.py     #   分数与梯度对原公式，bf16 与 fp32 权重（level: regression）
 │   ├── bench_reranker_step.py                  #   前后耗时与峰值显存（level: benchmark）
 │   ├── e2e_reranker_train.py + _e2e_trainer_entry.py   # 原始 trainer（level: e2e，需真实权重与数据）
+│   ├── test_reranker_launchers.py + _launcher_worker.py   # launcher 自测：清理作用范围、可见设备（level: regression，CPU）
 │   ├── build_long_parquet.py          #   构造长文档子集（2 卡自然复现用）
 │   ├── probe_p800_allocator.py        #   诊断：分配器性质（非验证命令）
 │   ├── probe_xccl_timing.py           #   诊断：集合通信卡死的时序探索（非验证命令）
@@ -155,22 +163,24 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
 
 ## 验证结果摘要
 
-设备数据 2026-11-26/27 采于本机 P800 OAM（torch 2.9.0+cu129，transformers 4.57.6），
-逐命令的精确命令行与证据文件见 [验证记录](reports/validation.md)。
+设备数据采于本机 P800 OAM（torch 2.9.0+cu129，transformers 4.57.6）：11-26/27 首轮；11-27 审阅修订后
+重跑了受影响的脚本（等价性、两个 launcher、launcher 自测），逐项见 [验证记录](reports/validation.md)
+的"审阅修订"一节。逐命令的精确命令行与证据文件也都在验证记录里。
 
 | 项目 | 修复前 | 修复后 |
 | --- | --- | --- |
 | `test_reranker_lmhead_dispatch.py`（CPU，25 例） | exit 1，6 例失败：lm_head 收到 `[rows, seq, hidden]` | exit 0，25/25 |
 | `test_reranker_fsdp2_step.py`（真实 `apply_fsdp2`，CPU/gloo） | exit 1：lm_head 输出 `[16, 258, 151669]` | exit 0：`[16, 151669]`，分片与钩子正常 |
 | `repro_reranker_logits_alloc.py`（单卡碎片堆上的一步） | exit 1：`Tried to allocate 11.57 GiB … 20.63 GiB is free` | exit 0，峰值 +25.36 GiB |
-| `test_reranker_scores_equivalence.py`（真实架构，bf16 / fp32） | exit 0（基线即参考） | exit 0，5 例 max\|diff\| = 0.0 |
+| `test_reranker_scores_equivalence.py`（真实架构，14 例） | exit 0（基线即参考） | exit 0，14/14：bf16 权重（autocast 开/关）5 例分数与梯度 max\|diff\| = 0.0；fp32 权重 2 例分数 2.4e-7、梯度相对差 2.0e-4（阈值 1e-4 / 1e-3）；比较器自检 7 例 |
 | batch 32 前向 / 反向峰值 allocated（权重 15.25 GiB） | 40.80 / 54.99 GiB | 29.94 / 40.61 GiB |
 | batch 32 前向 / 反向耗时 | 3.459 / 10.129 s | 3.247 / 9.760 s |
 | 真实 trainer 单卡 bf16 batch 16，reserved 峰值 | 92.76 GiB | 79.64 GiB |
-| 同上，5 步 loss / validation / test loss | 0.539403 / 0.461096 / 0.329392 | 逐位相同 |
-| 真实 trainer 2 卡 FSDP2、batch 32、长文档 | 第 3 步反向 OOM（与平台记录逐项吻合） | 第 4 次尝试走完 3 步，**没有一次干净退出**（XCCL 卡死） |
+| 同上，5 步 loss / validation / test loss | 0.539403 / 0.461096 / 0.329392 | 日志记录精度（6 位小数）下一致 |
+| launcher（`test_reranker_launchers.py`，CPU，17 项） | 旧清理方式下，超时作业会把另一组的进程一起杀掉（`--cleanup legacy`，exit 1）；默认可见或只设 XPU 列表时 launcher `KeyError`，trainer 不启动 | exit 0：超时清理只作用于本作业；三种可见设备情况 launcher 都能启动 trainer |
+| 真实 trainer 2 卡 FSDP2、batch 32、长文档 | 第 3 步反向 OOM（与平台记录逐项吻合） | 第 4 次尝试越过基线 OOM 点（step 3 峰值 allocated 84.41 GiB），**没有一次干净退出**（XCCL 卡死） |
 | `flag-fixes validate` / `check` / `plan` | — | exit 0 |
-| `flag-fixes verify`（修复树，6 个声明命令） | — | passed，6/6 rc=0（干净提交 `c2aef972`） |
+| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（修订后的干净提交，哈希记在结果文件的 `source_commit`） |
 
 判定与覆盖边界：脚本只有退出码 0 才算通过，缺设备或缺 checkpoint/数据一律退出码 2。
 普通 CI（无设备 runner）只执行 `flag-fixes validate`、`python -m pytest -q` 和本地 fix 脚本的
@@ -186,16 +196,28 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
   `Tried to allocate 11.57 GiB … 20.77 GiB is free … 71.66 GiB is allocated by PyTorch`
   （平台记录 11.57 / 20.90 / 71.68）。
 - **修复树在同一配置下没有一次干净退出**：本机 XCCL 集合通信间歇性卡死（已登记的 F-P800-1）。
-  长文档子集上 4 次尝试：3 次分别停在第 2、3、1 步，第 4 次走完 3 步——包括基线 OOM 的那一步——
-  后停在 validation；走完的 step 与基线 loss 逐位相同。常规数据上走完 3 步 + validation 后卡在
-  收尾的集合通信。修复对照的干净结果来自单卡构造堆（repro：基线 OOM → 修复跑通）与真实
-  `apply_fsdp2` 的 2 卡单元测试（修复树通过一次）。
+  长文档子集上 4 次尝试：3 次分别停在第 2、3、1 步，第 4 次走完 3 步——越过了基线 OOM 的那一步——
+  后停在 validation。**可比的 loss 只有前两步**（日志记录精度下与基线一致），两边的显存逐步分开
+  列在验证记录里；基线没有 step 3 的记录，所以第 3 步只能说"修复版越过了基线 OOM 点"。常规数据上
+  走完 3 步 + validation 后卡在收尾的集合通信。修复对照的干净结果来自单卡构造堆（repro：基线 OOM →
+  修复跑通）与真实 `apply_fsdp2` 的 2 卡单元测试（修复树通过两次：11-26 一次，审阅修订后一次）。
+- **fp32 下不是逐位相同**：fp32 权重、无 autocast 时分数 max\|Δ\| = 2.4e-7、梯度相对差 2.0e-4，
+  在声明的阈值（1e-4 / 1e-3）以内；差异来自 lm_head 在 `[8, 4096]` 与 `[8, seq, 4096]` 两种输入
+  形状下的 fp32 舍入，具体 kernel 选择没有追踪。训练形态（bf16 权重 + bf16 autocast）是逐位相同。
+- **launcher 只保证不替用户发明可见设备列表**：只设 `XPU_VISIBLE_DEVICES` 时原样透传；在本机的
+  torch_xmlir 栈上这样启动的 trainer 在 import 阶段就失败（Python 侧 `device_count()` = 8、运行时侧
+  只有 2 张卡），是厂商栈的行为，不在本修复范围。超时清理按作业 id 限定；launcher 自身被外部终止时
+  不做清理。
 - **平台配置的 batch 16 / GA 1 是为这次 OOM 设的**：修复后是否有余量回到 32 或 accum=2，
   需在平台 2 卡环境实测后再改配置；平台注释里"11.57 GiB 是 lm_head all-gather"的归因待更正。
 - **只改了适配层一处分支**：厂商 `clip_grad_norm_` 对 bf16 梯度会物化约 35 GiB 临时张量，
   AdamW step 有 15.25 GiB 临时张量——这两项与本修复无关，只记录未修。A100 / PPU / 昇腾上的
   显存收益、评测入口 `evaluate_retrieval.py` 的推理显存均未测。
-- **证据文件的来源与可追溯性**：逐命令的 JSON / 日志采集时修复目录尚未提交；当时的脚本与提交
+- **基线为什么在第 3 步而不是更早失败没有确认**：代码侧的根因（整序列 logits）是确认的；具体在
+  哪一步触发取决于分配器的缓存历史，本机没有逐事件追踪，见 [诊断报告](reports/diagnosis.md) §3.3。
+- **证据文件的来源与可追溯性**：首轮逐命令的 JSON / 日志采集时修复目录尚未提交；当时的脚本与提交
   版本逻辑相同，只多两个后来删掉的未使用辅助函数（复现脚本另有一处说明文字后来改过）。
-  `results/verify-2026-11-27.json` 是干净提交 `c2aef972` 上的重跑结果（`source_dirty=false`），
-  其后的提交只改文档与结果索引。工具原始输出含本机绝对路径，未做脱敏或改写。
+  `results/verify-2026-11-27.json` 是干净提交 `c2aef972` 上的重跑（6 个命令）。审阅修订
+  （PR #11 评论 7210838015）改了两个 launcher、等价性脚本并新增 launcher 自测，受影响的脚本全部
+  重跑，记录是 `results/` 里 2026-11-27 的第二批次文件；修订后的 `flag-fixes verify`（7 个命令）
+  记录在 `results/verify-2026-11-27-r2.json`。工具原始输出含本机绝对路径，未做脱敏或改写。

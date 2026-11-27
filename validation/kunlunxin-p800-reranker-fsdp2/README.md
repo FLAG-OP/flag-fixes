@@ -86,6 +86,15 @@ segments 建立在 CUDA 驱动的虚拟内存管理接口上；本机构建的 `
 原始数据：`f-p800-1-sync-ab-2026-11-27.json`、`f-p800-1-timing-probe-2026-11-27.json`（均在 fix 的 results）。
 这些试验用的 harness 开关都已移除，仓库里的脚本只跑 plain 运行。
 
+## 其他平台观察（非本修复范围，供参考）
+
+只设 `XPU_VISIBLE_DEVICES=1,2`、不设 `CUDA_VISIBLE_DEVICES` 时，本机 torch_xmlir 栈的 device 枚举不一致：新进程里
+`torch.cuda.device_count()` 返回 8，逐卡 `torch.cuda.get_device_name(i)` 到第 3 张报
+`device >= 0 && device < num_gpus INTERNAL ASSERT FAILED … device=2, num_gpus=2`——Python 侧仍按 8 张卡枚举，
+运行时侧只给了 XPU 列表里的 2 张。因此这样启动的 trainer 在 import 阶段（flag_gems 注册时）就失败。
+显式 `CUDA_VISIBLE_DEVICES=1,2` 或两个变量都不设时没有这个问题。记录见
+[fix 的 results](../../fixes/reranker-last-token-logits/results/)（`e2e-1card-fixed-xpuonly-2026-11-27.train.log`）。
+
 ## 已知边界（不装完美）
 
 - **样本小**：每个变体 3 次；探针结论是观察，不是根因。

@@ -46,12 +46,15 @@ validation:
     "Tried to allocate 11.57 GiB ... of which 20.63 GiB is free. Of the allocated memory
     73.51 GiB is allocated by PyTorch"；修复后 exit 0，同一步跑通，峰值 +25.36 GiB。
     常驻量与真实 trainer step 1 之后实测的 61.02 GiB 一致。
-  - 数值：真实架构（36 层、词表 151,669）随机 bf16 权重，bf16 autocast 与 fp32 下分数、
-    BCE 反向梯度对基线公式 5 例 max|diff| 均为 0.0（tests/test_reranker_scores_equivalence.py，
-    两棵树 exit 0）。真实 trainer + Qwen3-Reranker-8B revision 77d193c7 + T2Ranking
-    triplet-15 单卡 bf16 batch 16：两棵树 5 步 loss（0.627536/0.466457/0.370828/
-    0.639762/0.592430）、train_loss 0.539403、validation_loss 0.461096、
-    test_loss 0.329392 逐位相同。
+  - 数值（tests/test_reranker_scores_equivalence.py，审阅修订后 14 例，两棵树 exit 0）：真实架构
+    （36 层、词表 151,669）随机权重，每例记录权重 dtype 与是否 autocast。bf16 权重（autocast
+    开或关）5 例分数与 BCE 反向梯度对基线公式 max|diff| 均为 0.0；fp32 权重、无 autocast
+    2 例分数 max|diff| 2.4e-7、梯度相对差 2.0e-4（阈值 1e-4 / 1e-3）——fp32 下不是逐位相同。
+    梯度比较先验结构（两侧各 9 个预期梯度）并逐张量检查有限，再算误差；7 个 comparator 自检
+    用例确认 NaN 梯度、两侧同时缺一个等会被拒绝。真实 trainer + Qwen3-Reranker-8B revision
+    77d193c7 + T2Ranking triplet-15 单卡 bf16 batch 16：两棵树 5 步 loss（0.627536/0.466457/
+    0.370828/0.639762/0.592430）、train_loss 0.539403、validation_loss 0.461096、test_loss
+    0.329392 在日志记录精度（6 位小数）下一致。
   - 分派：CPU 2 层随机 Qwen3 上 lm_head 只收到 [rows, hidden]、每条序列取最后非 pad 位、
     梯度到达 lm_head/embedding/norm/块（25 例，基线 6 例失败 exit 1，修复 exit 0）；
     真实 parallel_utils.apply_fsdp2（CPU/gloo 单 rank）上 lm_head 是 Shard(0) DTensor、
@@ -68,13 +71,20 @@ validation:
     is allocated by PyTorch"，traceback 落在 lm_head 反向对整序列 logits 梯度的物化；与平台
     记录（11.57 / 20.90 / 71.68）逐项吻合。
   - 修复树在同一数据上 4 次 2 卡尝试——前三次分别停在第 2、3、1 步，第 4 次走完 3 步
-    （含基线 OOM 的那一步，step 3 峰值 allocated 84.41 GiB）后停在 validation；常规数据上
-    走完 3 步 + validation 后停在收尾。均被 XCCL 集合通信卡死终止（已登记的平台阻断
+    （越过基线 OOM 的那一步，step 3 峰值 allocated 84.41 GiB）后停在 validation；可比的 loss
+    只有前两步（日志记录精度下与基线一致），第 3 步只有修复树有记录，两边的显存逐步分列于
+    reports/validation.md。常规数据上走完 3 步 + validation 后停在收尾。均被 XCCL 集合通信卡死终止（已登记的平台阻断
     F-P800-1，不是 OOM）。本机 2 卡主干触发 14 次、两棵树都中招；修复对照的干净结果来自
     单卡构造堆与真实 apply_fsdp2 的 2 卡单元测试（修复树通过一次）。修复后 batch 32 在
     2 卡上完整跑通这件事未验证。
   - 2026-11-27 在干净提交 c2aef972 上重跑 flag-fixes verify（修复树）：passed=true、6/6 rc=0、
-    source_dirty=false，results/verify-2026-11-27.json。
+    source_dirty=false，results/verify-2026-11-27.json（对应审阅修订前的脚本）。
+  - 审阅修订（flag-fixes PR 11 的评论 7210838015）：launcher 的超时清理改为按作业 id 限定（此前按入口脚本
+    路径 pkill -f，会杀同一 checkout 下并行作业的 worker），可见设备只在有显式 CUDA 列表时映射
+    （此前默认可见或只设 XPU 列表时 KeyError）。launcher 自测 17 项 exit 0，旧清理方式下同一
+    自测 3/14 失败（exit 1，预期）；真实 trainer 在默认可见与显式选卡下各跑完 5 步，只设 XPU
+    列表时 launcher 能启动 trainer 但 trainer 在本机厂商栈 import 阶段失败（不在本修复范围）。
+    修订后在干净提交上重跑 flag-fixes verify：7 个声明命令，记录于 results/verify-2026-11-27-r2.json。
   - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、
     owner=null。
   commands:
@@ -97,6 +107,10 @@ validation:
     timeout_seconds: 1800
     env:
       PYTHONPATH: '{target}'
+  - name: reranker-launcher-selftest
+    script: tests/test_reranker_launchers.py
+    level: regression
+    timeout_seconds: 900
   - name: reranker-logits-alloc-repro
     script: tests/repro_reranker_logits_alloc.py
     level: repro
@@ -145,18 +159,22 @@ notes:
 - 目标包是 flagscale（同 adamw-fused / flaggems-selective-enable），基线同一 commit
   89f342e6；FlagScale 仓库布局是根下 flagscale/ 包（无 src/ 顶层），verify 预置的
   PYTHONPATH=<target>/src 不存在但无害，命令 env 里用 PYTHONPATH={target}。
-- 修复不改打分语义：同一位置、同一权重，bf16/fp32 下分数与梯度逐位相同，因此没有
-  配置开关，也没有保留整序列 logits 的路径。
+- 修复不改打分语义：同一位置、同一权重，bf16 下分数与梯度逐位相同，fp32 权重下在
+  1e-4 / 1e-3 以内，因此没有配置开关，也没有保留整序列 logits 的路径。
 - 代码路径与厂商无关；设备证据只覆盖 KunlunXin P800 单卡，backends 只登记 kunlunxin。
   A100/PPU/昇腾上的显存收益与行为未实测。
 - 除 e2e 外的脚本自包含：按发布版 config.json 在设备上随机初始化同架构权重，
-  不依赖 16 GB checkpoint；随机权重的 loss 数值本身无意义，两棵树逐位相同才是检验点。
+  不依赖 16 GB checkpoint；随机权重的 loss 数值本身无意义，两棵树在日志记录精度下一致
+  才是检验点（loss 只保留 6 位小数）。
   repro 的碎片堆是构造的，用于在同一张卡上稳定复现"大请求 + 碎片"。
 - e2e 需要环境提供 RERANKER_MODEL（checkpoint 目录）与 RERANKER_DATA（T2Ranking
   triplet-15 parquet），缺失时 exit 2。声明的是单卡 bf16 DDP 形态并以 max_grad_norm=0
   绕开厂商 clip_grad_norm_ 的约 35 GiB 临时张量；2 卡 FSDP2 形态在本机被 F-P800-1
   阻断，未列为命令，尝试记录见 results/e2e-fsdp2-2card-*。
 - 复现与等价性脚本需要一张 >= 90 GiB 的空闲卡；设备缺失时退出码 2，跳过不算通过。
+- launcher（_torchrun_job.py）：超时清理只对环境里带本作业 id 的进程发 SIGKILL，launcher 自身被
+  外部终止时不做清理；可见设备只在有显式 CUDA_VISIBLE_DEVICES 时截断并镜像到 XPU_VISIBLE_DEVICES，
+  默认可见或只设 XPU 列表原样透传。只设 XPU 列表时本机 torch_xmlir 栈上 trainer 起不来（厂商栈行为）。
 - 未覆盖（已记录）：厂商 clip_grad_norm_ 对 bf16 梯度的临时张量、AdamW step 的
   15.25 GiB 临时张量、平台 batch/accum 配置的回退评估。
 installation_status: source-checked

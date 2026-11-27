@@ -1,0 +1,22 @@
+### launcher as of c6f73493 (tests/e2e_reranker_train.py L167-171), run 1: default visibility (CUDA_VISIBLE_DEVICES and XPU_VISIBLE_DEVICES unset)
+### command: python3 e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save --out <scratch>
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+Traceback (most recent call last):
+  File "/tmp/opencode/scratch/old_e2e_launcher.py", line 264, in <module>
+    raise SystemExit(main())
+  File "/tmp/opencode/scratch/old_e2e_launcher.py", line 171, in main
+    env.setdefault("XPU_VISIBLE_DEVICES", env["CUDA_VISIBLE_DEVICES"])
+KeyError: 'CUDA_VISIBLE_DEVICES'
+### exit=1
+
+### run 2: XPU_VISIBLE_DEVICES=1,2 only (CUDA_VISIBLE_DEVICES unset); same command
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+Traceback (most recent call last):
+  File "/tmp/opencode/scratch/old_e2e_launcher.py", line 264, in <module>
+    raise SystemExit(main())
+  File "/tmp/opencode/scratch/old_e2e_launcher.py", line 171, in main
+    env.setdefault("XPU_VISIBLE_DEVICES", env["CUDA_VISIBLE_DEVICES"])
+KeyError: 'CUDA_VISIBLE_DEVICES'
+### exit=1
