@@ -86,6 +86,7 @@ train_loss 0.539403、validation_loss 0.461096、test_loss 0.329392 两棵树逐
 | 修复 第 1 次尝试 | step 1 完成（61.01 / 92.20 GiB，loss 0.392380 与基线相同）后停在第 2 步，XCCL watchdog | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt1-blocked-2026-11-26.*` |
 | 修复 第 2 次尝试 | step 1（allocated 61.01 / reserved 92.20 GiB）、step 2（step 峰值 allocated 84.41 / reserved 95.02）完成，loss 与基线相同（0.392380、0.377111 / 0.361841）；停在第 3 步——基线 OOM 的那一步——XCCL watchdog | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt2-blocked-2026-11-27.*` |
 | 修复 第 3 次尝试 | 模型加载与 FSDP2 分片完成后停在第 1 步的前向，900 s 内 watchdog 也未触发，由 launcher 超时终止（0 步） | `e2e-fsdp2-2card-fixed-b32-longdoc-attempt3-blocked-2026-11-27.*` |
+| 修复 第 4 次尝试 | **step 1–3 全部完成**（step 3 峰值 allocated 84.41 / reserved 94.32 GiB，loss 0.454597 / 0.609568）——即基线 OOM 的那一步通过；随后停在 validation 的首个集合通信，420 s 后由 launcher 超时终止（`training_steps_complete=true`，`passed=false`） | `e2e-fsdp2-2card-fixed-b32-longdoc-plain4-2026-11-27.*` |
 
 平台记录（11.57 GiB / 20.90 GiB free / 71.68 GiB allocated）与本机基线（11.57 / 20.77 / 71.66）逐项吻合。
 
@@ -114,14 +115,26 @@ rank 1 上为 0——lm_head 沿词表分片，只有这两行有梯度，基线
 
 ### 阻断统计
 
-本机 2 卡触发 **13 次**（trainer 9 次：基线 3 次、修复树 6 次；FSDP2 测试 4 次：基线 1 次、修复树 3 次）。
-按各自目标跑完的 3 次——基线自然 OOM（长文档）、基线 FSDP2 测试、修复树 FSDP2 测试；
-修复树在常规数据上 1 次走完 3 个 optimizer step + validation 后卡在收尾；其余 9 次被 XCCL 集合
-通信超时或设备异常提前终止。两棵树都中招。终止点与 payload 大小无关（SeqNum=3/22/190/379/609，`_ALLGATHER_BASE`），
+本机 2 卡的主干触发 **14 次**（trainer 10 次：基线 3 次、修复树 7 次；FSDP2 测试 4 次：基线 1 次、
+修复树 3 次）。按各自目标跑完的 3 次——基线自然 OOM（长文档）、基线 FSDP2 测试、修复树 FSDP2
+测试；修复树另有 2 次走完 3 个 optimizer step（常规数据那次含 validation，长文档 plain4 那次
+正好走过基线 OOM 的第 3 步）后卡住；其余 9 次被 XCCL 集合通信超时或设备异常提前终止。
+两棵树都中招。终止点与 payload 大小无关（SeqNum=3/22/190/379/609，`_ALLGATHER_BASE`），
 与已登记的平台阻断 **F-P800-1**（`validation/kunlunxin-p800-real-bge-m3/README.md` §E.3）同一签名。
 因此**"修复后 batch 32 在 2 卡 FSDP2 上完整跑通"没有拿到干净结果**；已得到的是：同一数据上
-基线第 3 步 OOM，修复树两次走到第 2–3 步、常规数据上走完 3 步 + validation，
-每一步的 allocated/reserved 与 loss 都有记录。
+基线第 3 步 OOM，修复树走过了这一步，每一步的 allocated/reserved 与 loss 都有记录且与基线相同。
+
+### 对阻断本身的探索（非本修复范围，供运行时层参考）
+
+| 探针 | 做法 | 结果 | 文件 |
+|---|---|---|---|
+| 步骤边界主机同步 | 2 rank FSDP2 测试，交错 3+3 次：plain / 每次前向前与每个 optimizer step 后 `torch.cuda.synchronize()` | plain 1/3、sync 2/3 通过——不显著，开关已从 harness 移除 | `f-p800-1-sync-ab-2026-11-27.json` |
+| 主机时序（`tests/probe_xccl_timing.py`） | 2 层小模型走真实 `apply_fsdp2`，4 步，交错 3 轮 × 4 变体 | plain **0/3**（都停在第 0 步前向）、rank 1 单边睡 3 s **0/3**（停在第 0/2/3 步）、`barrier` 1/3、**两 rank 都睡 3 s 3/3 干净退出** | `f-p800-1-timing-probe-2026-11-27.json` |
+| 把 3 s 空闲搬进 trainer | 修复树、长文档、batch 32，每次前向前所有 rank 睡 3 s（带标注的诊断运行） | step 1–2 完成后仍停在第 3 步——没有带过来 | `e2e-fsdp2-2card-fixed-b32-longdoc-idlegap-2026-11-27.train.log` |
+
+样本都很小，只作为观察记录：小模型上"所有 rank 前向前有一段空闲"与不卡死相关，但单边延迟和
+barrier 都不行，而且这个现象在 8B trainer 上没有复现出可用的规避办法。两处试验用的 harness 开关
+都已移除，仓库里的脚本只跑 plain 运行。
 
 ### 分配器探针（`probe_p800_allocator.py`，`allocator-probe-*.json`）
 

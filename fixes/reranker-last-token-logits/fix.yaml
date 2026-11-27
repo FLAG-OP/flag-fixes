@@ -67,10 +67,12 @@ validation:
     "Tried to allocate 11.57 GiB … of which 20.77 GiB is free. Of the allocated memory 71.66 GiB
     is allocated by PyTorch"，traceback 落在 lm_head 反向对整序列 logits 梯度的物化；与平台
     记录（11.57 / 20.90 / 71.68）逐项吻合。
-  - 修复树在同一数据上 3 次 2 卡尝试分别停在第 2、3、1 步，常规数据上走完 3 步 + validation
-    后停在收尾——均被 XCCL 集合通信卡死终止（已登记的平台阻断 F-P800-1，不是 OOM）。本机
-    2 卡共触发 13 次、两棵树都中招；修复对照的干净结果来自单卡构造堆与真实 apply_fsdp2 的
-    2 卡单元测试（修复树通过一次）。修复后 batch 32 在 2 卡上完整跑通这件事未验证。
+  - 修复树在同一数据上 4 次 2 卡尝试——前三次分别停在第 2、3、1 步，第 4 次走完 3 步
+    （含基线 OOM 的那一步，step 3 峰值 allocated 84.41 GiB）后停在 validation；常规数据上
+    走完 3 步 + validation 后停在收尾。均被 XCCL 集合通信卡死终止（已登记的平台阻断
+    F-P800-1，不是 OOM）。本机 2 卡主干触发 14 次、两棵树都中招；修复对照的干净结果来自
+    单卡构造堆与真实 apply_fsdp2 的 2 卡单元测试（修复树通过一次）。修复后 batch 32 在
+    2 卡上完整跑通这件事未验证。
   - 2026-11-27 在干净提交 57e2c756 上重跑 flag-fixes verify（修复树）：passed=true、6/6 rc=0、
     source_dirty=false，results/verify-2026-11-27.json。
   - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、

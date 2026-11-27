@@ -1,0 +1,48 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[e2e-idle] diagnostic pre-forward idle gap of 3 s on every rank
+reproducibility: seed=42 per_rank=42 deterministic=False world_size=2 platform=cuda
+loading weights directly in master dtype fp32
+[e2e-idle] diagnostic pre-forward idle gap of 3 s on every rank
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading checkpoint shards:  20%|██        | 1/5 [00:03<00:15,  3.97s/it]
+Loading checkpoint shards:  20%|██        | 1/5 [00:04<00:16,  4.13s/it]
+Loading checkpoint shards:  40%|████      | 2/5 [00:07<00:11,  3.84s/it]
+Loading checkpoint shards:  40%|████      | 2/5 [00:07<00:11,  3.93s/it]
+Loading checkpoint shards:  60%|██████    | 3/5 [00:11<00:07,  3.76s/it]
+Loading checkpoint shards:  60%|██████    | 3/5 [00:11<00:07,  3.85s/it]
+Loading checkpoint shards:  80%|████████  | 4/5 [00:14<00:03,  3.35s/it]
+Loading checkpoint shards:  80%|████████  | 4/5 [00:14<00:03,  3.42s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  2.55s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  3.05s/it]
+gradient checkpointing enabled
+coalesced all-gather shim installed on ProcessGroupXCCL, ProcessGroupGloo: per-tensor _allgather_base fallback
+funcol.all_gather_tensor overridden (per-tensor fallback for this backend)
+
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  2.60s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  3.12s/it]
+  oversized leaf: backbone.model.embed_tokens gathers 1185 MiB in torch.bfloat16
+  oversized leaf: backbone.lm_head gathers 1185 MiB in torch.bfloat16
+FSDP2 sharded 36 transformer blocks, 2 oversized leaf module(s) and the root over 2 rank(s); compute dtype torch.bfloat16, reduce dtype torch.bfloat16, max param group 1024 MiB
+moved FSDP2 shards to cuda:0 in master dtype fp32
+parallelism=fsdp2 master_dtype=fp32 compute_dtype=bf16
+lr schedule: cosine 1e-05 -> 1e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[08:39:31][VM-20-4-ubuntu][79474:79474][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[08:39:31][VM-20-4-ubuntu][79475:79475][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+[e2e-mem] after optimizer step 1: allocated=61.01 GiB reserved=92.20 GiB step_peak_allocated=76.26 GiB step_peak_reserved=92.20 GiB
+epoch=1 optimizer_step=1 running_loss=0.392380 window_loss=0.392380 lr=1.000e-07
+[e2e-mem] after optimizer step 2: allocated=61.01 GiB reserved=90.34 GiB step_peak_allocated=84.41 GiB step_peak_reserved=95.02 GiB
+epoch=1 optimizer_step=2 running_loss=0.377111 window_loss=0.361841 lr=1.500e-07
+[results note] launcher was stopped by hand after the run showed no progress for >2 min in step 3 (a plain attempt needs ~25 s per step); no JSON summary was written for this run

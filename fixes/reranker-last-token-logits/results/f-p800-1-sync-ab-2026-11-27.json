@@ -1,0 +1,73 @@
+{
+  "what": "A/B probe for platform blocker F-P800-1 (XCCL _ALLGATHER_BASE hangs) on 2 x P800: does a host-side torch.cuda.synchronize() at step boundaries (before each forward, after each optimizer step) make the 2-rank FSDP2 test reliable?",
+  "date": "2026-11-27 07:45-08:02",
+  "test": "tests/test_reranker_fsdp2_step.py --device cuda --nproc 2 --steps 2 --timeout 300 (fixed tree)",
+  "sync_implementation": "diagnostic env switch in the harness (removed afterwards; not part of the fix)",
+  "attempts": [
+    {
+      "name": "fsdp2-2card-plain-r1",
+      "mode": "plain",
+      "returncode": 0,
+      "elapsed_s": 26.6,
+      "passed": true,
+      "blocked": false,
+      "steps_logged": 0,
+      "hang_seqnums": []
+    },
+    {
+      "name": "fsdp2-2card-sync-r1",
+      "mode": "sync",
+      "returncode": 0,
+      "elapsed_s": 27.2,
+      "passed": true,
+      "blocked": false,
+      "steps_logged": 0,
+      "hang_seqnums": []
+    },
+    {
+      "name": "fsdp2-2card-plain-r2",
+      "mode": "plain",
+      "returncode": -9,
+      "elapsed_s": 300.0,
+      "passed": false,
+      "blocked": true,
+      "steps_logged": 0,
+      "hang_seqnums": []
+    },
+    {
+      "name": "fsdp2-2card-sync-r2",
+      "mode": "sync",
+      "returncode": 0,
+      "elapsed_s": 26.6,
+      "passed": true,
+      "blocked": false,
+      "steps_logged": 0,
+      "hang_seqnums": []
+    },
+    {
+      "name": "fsdp2-2card-plain-r3",
+      "mode": "plain",
+      "returncode": -9,
+      "elapsed_s": 300.1,
+      "passed": false,
+      "blocked": true,
+      "steps_logged": 0,
+      "hang_seqnums": []
+    },
+    {
+      "name": "fsdp2-2card-sync-r3",
+      "mode": "sync",
+      "returncode": -9,
+      "elapsed_s": 300.1,
+      "passed": false,
+      "blocked": true,
+      "steps_logged": 1,
+      "hang_seqnums": []
+    }
+  ],
+  "summary": {
+    "plain": "1/3 passed",
+    "sync": "2/3 passed"
+  },
+  "conclusion": "inconclusive: 2/3 vs 1/3 on interleaved attempts; the sync does not reliably remove the hang, so it was not adopted and the switch was removed from the harness"
+}

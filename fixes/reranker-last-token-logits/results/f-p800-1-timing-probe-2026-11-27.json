@@ -1,0 +1,128 @@
+{
+  "what": "Exploratory probe for platform blocker F-P800-1 (XCCL _ALLGATHER_BASE hangs under FSDP2 on 2 x P800): is the hang sensitive to host-side timing between the ranks at the first all-gather of a forward?",
+  "date": "2026-11-27 08:14-08:38",
+  "workload": "2-layer Qwen3 (hidden 4096, vocab 151669) under the real parallel_utils.apply_fsdp2, 4 steps of forward/backward/clip/AdamW on 4 x 128 tokens, torchrun --nproc_per_node=2",
+  "variants": {
+    "plain": "no artificial delay",
+    "skew": "rank 1 sleeps 3 s before every forward, rank 0 does not",
+    "aligned": "both ranks sleep 3 s before every forward",
+    "barrier": "rank 1 sleeps 3 s, then dist.barrier(), then forward"
+  },
+  "attempts": [
+    {
+      "name": "skew-plain-r1",
+      "variant": "plain",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 0,
+      "last_progress": "r1 step 0: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-skew-r1",
+      "variant": "skew",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 0,
+      "last_progress": "r1 step 0: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-aligned-r1",
+      "variant": "aligned",
+      "clean_exit": true,
+      "hang_detected_by": null,
+      "steps_completed": 4,
+      "last_progress": "r1 CLEAN_EXIT",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-barrier-r1",
+      "variant": "barrier",
+      "clean_exit": true,
+      "hang_detected_by": null,
+      "steps_completed": 4,
+      "last_progress": "r0 CLEAN_EXIT",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-plain-r2",
+      "variant": "plain",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 0,
+      "last_progress": "r0 step 0: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-skew-r2",
+      "variant": "skew",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 3,
+      "last_progress": "r1 step 3: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-aligned-r2",
+      "variant": "aligned",
+      "clean_exit": true,
+      "hang_detected_by": null,
+      "steps_completed": 4,
+      "last_progress": "r1 CLEAN_EXIT",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-barrier-r2",
+      "variant": "barrier",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 0,
+      "last_progress": "r0 step 0: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-plain-r3",
+      "variant": "plain",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 0,
+      "last_progress": "r1 step 0: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-skew-r3",
+      "variant": "skew",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 2,
+      "last_progress": "r1 step 2: issuing forward",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-aligned-r3",
+      "variant": "aligned",
+      "clean_exit": true,
+      "hang_detected_by": null,
+      "steps_completed": 4,
+      "last_progress": "r0 CLEAN_EXIT",
+      "watchdog_seqnums": []
+    },
+    {
+      "name": "skew-barrier-r3",
+      "variant": "barrier",
+      "clean_exit": false,
+      "hang_detected_by": "150 s launcher timeout",
+      "steps_completed": 1,
+      "last_progress": "r1 step 1: issuing forward",
+      "watchdog_seqnums": []
+    }
+  ],
+  "summary": {
+    "plain": "0/3 clean exit",
+    "skew": "0/3 clean exit",
+    "aligned": "3/3 clean exit",
+    "barrier": "1/3 clean exit"
+  },
+  "reading": "3 attempts per variant is a small sample; recorded as an observation for the runtime layer, not as a root cause. A 3 s idle gap on all ranks before each forward was the only variant that never hung; a one-sided delay or a barrier did not help. The e2e harness can insert that gap (RERANKER_E2E_FORWARD_IDLE) to obtain labelled diagnostic runs; plain runs remain the primary record."
+}

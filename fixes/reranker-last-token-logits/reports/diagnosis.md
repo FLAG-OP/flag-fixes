@@ -119,9 +119,15 @@ and 2.98 GiB is reserved by PyTorch but unallocated.
 | PyTorch 已分配 | 71.68 GiB | 71.66 GiB（= 常驻 61.01 + 存活激活 10.65） |
 
 两个 rank 同时在第 3 步的反向失败，失败点是 lm_head 反向里对**整序列 logits 的梯度**
-（`[64, 640, 151669]` bf16）的物化。前两步能过，是因为 11.57 GiB 的整块在一步之内可以
-"前向 logits 用完 → 反向梯度复用"；optimizer step 的 AdamW 状态与临时量重新切分缓存之后，
-后续某一步就拿不到整块了。平台那次落在哪一步不可知，数字则与本机一致。
+（`[64, 640, 151669]` bf16）的物化；那一刻已分配的 71.66 GiB 里没有任何 11.57 GiB 的张量
+（= 常驻 61.01 + 存活激活 10.65），所以是这一请求本身拿不到整块。
+
+第 1、2 步的同一请求都成功了（step 2 峰值 allocated 87.02 GiB 里含这块），为什么第 3 步不行
+取决于分配器的缓存历史，本机没有逐事件追踪，**原因未确认**。一个与现象一致的解释是：
+一步之内"前向 logits 用完 → 反向梯度复用同一整块"可以自洽，而每个 optimizer step 的
+AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）会重新切分缓存，几个 step
+之后就不再有 ≥ 11.57 GiB 的整块，只能向设备要——设备空闲 20.77 GiB 却是零散的（§3.2）。
+平台那次落在哪一步不可知，数字则与本机一致。
 
 `results/e2e-fsdp2-2card-base-b32-longdoc-2026-11-26.{json,train.log}`。长文档子集由
 `tests/build_long_parquet.py` 从 T2Ranking shard 0 确定性地选出（sha256 与行数见 validation.md）。
@@ -187,15 +193,17 @@ and 2.98 GiB is reserved by PyTorch but unallocated.
 
 ## 7. 已知限制与后续
 
-- **修复树在平台形态下没有完整跑通**。基线失败已自然复现（§3.3），但同一数据上修复树的 3 次
-  2 卡尝试分别停在第 2、3、1 步——不是 OOM，而是本机的 XCCL 集合通信卡死（已登记的
-  F-P800-1：`Watchdog caught collective operation timeout`，终止点与 payload 无关）。
-  常规数据上修复树走完 3 步 + validation（step 3 峰值 allocated 83.20 GiB）后同样卡在收尾。
-  因此"修复后 batch 32 在 2 卡上完整跑通"**未验证**；修复对照的干净结果来自单卡构造堆
-  （§3.4）与真实 `apply_fsdp2` 的 2 卡单元测试。
-- 本机 2 卡触发 13 次（trainer 9 次、FSDP2 测试 4 次），两棵树都中招：3 次按计划跑完
-  （基线自然 OOM 1 次、FSDP2 测试 2 次），1 次走完训练循环后卡在收尾，其余 9 次被 watchdog
-  或设备异常提前终止。这是平台阻断，不是本修复引入的；完整清单见 `validation.md`。
+- **修复树在平台形态下没有完整跑通**。基线失败已自然复现（§3.3）；同一数据上修复树的 4 次
+  2 卡尝试里，前三次分别停在第 2、3、1 步，第 4 次走完了 3 步——包括基线 OOM 的那一步，
+  step 3 峰值 allocated 84.41 GiB——然后停在 validation。卡住的不是 OOM，而是本机的 XCCL
+  集合通信（已登记的 F-P800-1：`Watchdog caught collective operation timeout`，终止点与
+  payload 无关）。常规数据上修复树走完 3 步 + validation（step 3 峰值 allocated 83.20 GiB）
+  后同样卡在收尾。因此"修复后 batch 32 在 2 卡上完整跑通"**未验证**；修复对照的干净结果
+  来自单卡构造堆（§3.4）与真实 `apply_fsdp2` 的 2 卡单元测试。
+- 本机 2 卡主干触发 14 次（trainer 10 次、FSDP2 测试 4 次），两棵树都中招：3 次按计划跑完
+  （基线自然 OOM 1 次、FSDP2 测试 2 次），修复树 2 次走完 3 个 optimizer step 后卡住，其余
+  9 次被 watchdog 或设备异常提前终止。这是平台阻断，不是本修复引入的；完整清单与两项
+  探索（步骤边界同步、主机时序）见 `validation.md`。
 - 单卡 bf16 DDP 下，厂商的 `clip_grad_norm_` 对 bf16 梯度会物化约 35 GiB 临时张量
   （allocated 30.5 GiB 时 clip 峰值 65.66 GiB），AdamW step 另有 15.25 GiB 临时张量。
   这两项与 logits 无关、本修复不覆盖，e2e 的单卡命令以 `max_grad_norm=0` 绕开前者。

@@ -146,9 +146,9 @@ def main() -> int:
     resident = torch.cuda.memory_allocated()
     record["part2"] = {
         "resident_gib": round(resident / GIB, 3),
-        "resident_note": "bf16 weights + 3 stand-ins per parameter = the 61.03 GiB the real trainer "
-                         "has allocated after its first optimizer step (fp32 master/grad/AdamW on 2 cards "
-                         "and bf16 on 1 card have the same footprint)",
+        "resident_note": "bf16 weights + 3 stand-ins per parameter: same footprint as the real trainer "
+                         "after its first optimizer step (61.01-61.03 GiB measured; fp32 master/grad/AdamW "
+                         "on 2 cards and bf16 on 1 card)",
     }
     fillers: list[torch.Tensor] = []
     sizes: list[float] = []
@@ -161,7 +161,6 @@ def main() -> int:
             sizes.append(size_gib)
         except torch.OutOfMemoryError:
             break
-    device_free_after_fill = torch.cuda.mem_get_info()[0] / GIB
     del fillers  # stay in the allocator cache as uneven free blocks
     torch.cuda.synchronize()
     free, _ = torch.cuda.mem_get_info()

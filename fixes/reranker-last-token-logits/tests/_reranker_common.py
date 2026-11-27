@@ -48,10 +48,6 @@ def require_module(name: str, hint: str):
         raise Skip(f"{name} is not importable ({type(error).__name__}: {error}); {hint}")
 
 
-def gib(value: float) -> float:
-    return round(value / 2**30, 3)
-
-
 def full_logit_reference(adapter, features) -> torch.Tensor:
     """Score ``features`` the way the baseline adapter did.
 
@@ -161,7 +157,3 @@ def lm_head_probe(adapter):
             handle_post.remove()
 
     return active()
-
-
-def print_json(record: dict) -> None:
-    print("RESULT_JSON " + json.dumps(record, ensure_ascii=False, default=str))

@@ -96,9 +96,10 @@ tests/e2e_reranker_train.py              # 原始 trainer + 真实 checkpoint + 
   `Tried to allocate 11.57 GiB … 20.77 GiB is free … 71.66 GiB is allocated by PyTorch`
   （平台记录 11.57 / 20.90 / 71.68）。
 - **修复树在同一配置下没有完整跑通**：本机 XCCL 集合通信间歇性卡死（已登记的 F-P800-1）。
-  长文档子集上 3 次尝试分别停在第 2、3、1 步（走完的 step 与基线 loss 逐位相同）；
-  常规数据上走完 3 步 + validation 后卡在收尾的集合通信。修复对照的干净结果来自单卡构造堆
-  （repro：基线 OOM → 修复跑通）与真实 `apply_fsdp2` 的 2 卡单元测试（修复树通过一次）。
+  长文档子集上 4 次尝试：3 次分别停在第 2、3、1 步，第 4 次走完 3 步——包括基线 OOM 的那一步——
+  后停在 validation；走完的 step 与基线 loss 逐位相同。常规数据上走完 3 步 + validation 后卡在
+  收尾的集合通信。修复对照的干净结果来自单卡构造堆（repro：基线 OOM → 修复跑通）与真实
+  `apply_fsdp2` 的 2 卡单元测试（修复树通过一次）。
 - 平台配置的 batch 16 / GA 1 是为这次 OOM 设的；修复后是否有余量回到 32 或 accum=2，
   需在平台 2 卡环境实测后再改配置。
 - 本机还观察到与 logits 无关的两项显存开销（未修）：厂商 `clip_grad_norm_` 对 bf16 梯度

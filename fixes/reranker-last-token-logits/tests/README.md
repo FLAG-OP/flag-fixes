@@ -58,6 +58,10 @@ launcher 启动，不单独作为验证入口。
 不等大空洞交还设备后 11.57 GiB 请求在数十 GiB 空闲时失败而 1.25 GiB 请求成功。它只记录
 行为、不判定修复，需要一张空闲的 ≥ 90 GiB 卡，结果在 `../results/allocator-probe-*.json`。
 
+`probe_xccl_timing.py`：对平台阻断 F-P800-1 的探索（非本修复范围）。2 层小模型走真实
+`apply_fsdp2` 跑 4 步，比较 plain / 单边延迟 / 两 rank 同睡 / barrier 四种主机时序；卡死表现为
+到不了 `CLEAN_EXIT`，需要从外部终止。结果在 `../results/f-p800-1-timing-probe-2026-11-27.json`。
+
 `build_long_parquet.py`：从 T2Ranking shard 0 里选出正、负样本 prompt 都超过 640 token 预算的行
 （454 行），使每一对都被截断到 `max_length`——平台报错时的 padded 形状。2 卡自然复现
 （`e2e_reranker_train.py --data <该 parquet>`）用它；输出是确定性的。
