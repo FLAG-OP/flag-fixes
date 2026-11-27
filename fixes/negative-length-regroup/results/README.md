@@ -1,5 +1,6 @@
 # Results
 
-No device result is committed yet. Add raw process logs/JSON and the analysis
-script output here only after running the entry A/B plan in
-`../benchmarks/README.md`.
+`ppu_bge_m3_*_seed42.json` files are forward/backward microbenchmark results on
+PPU-ZW810E using real `BAAI/bge-m3` weights and the T2Ranking triplet-15 parquet
+shard. They are not full training-entry A/B results and must not be used to mark
+the fix deployable.

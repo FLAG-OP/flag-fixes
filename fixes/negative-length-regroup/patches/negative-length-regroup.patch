@@ -1,5 +1,5 @@
 diff --git a/flagscale/train/losses/retrieval.py b/flagscale/train/losses/retrieval.py
-index 54ae420..298e3bd 100644
+index 54ae420..851ce55 100644
 --- a/flagscale/train/losses/retrieval.py
 +++ b/flagscale/train/losses/retrieval.py
 @@ -17,6 +17,7 @@
@@ -65,7 +65,7 @@ index 54ae420..298e3bd 100644
 +        return None
 +
 +    token_lengths = tensor_features["attention_mask"].sum(dim=-1).tolist()
-+    order = sorted(range(len(texts)), key=lambda index: (token_lengths[index], index))
++    order = sorted(range(len(texts)), key=lambda index: (-token_lengths[index], index))
 +
 +    flat_embeddings: list[Tensor | None] = [None] * len(order)
 +    for start in range(0, len(order), group_size):

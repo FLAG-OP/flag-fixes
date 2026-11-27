@@ -104,7 +104,7 @@ def _negative_length_regroup_embeddings(
         return None
 
     token_lengths = tensor_features["attention_mask"].sum(dim=-1).tolist()
-    order = sorted(range(len(texts)), key=lambda index: (token_lengths[index], index))
+    order = sorted(range(len(texts)), key=lambda index: (-token_lengths[index], index))
 
     flat_embeddings: list[Tensor | None] = [None] * len(order)
     for start in range(0, len(order), group_size):

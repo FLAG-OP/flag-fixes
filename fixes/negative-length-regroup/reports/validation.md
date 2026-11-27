@@ -33,3 +33,31 @@ The test uses a deterministic mock encoder. It verifies that:
 PCM/HBM counters remain separately blocked in PR8. This fix must remain
 `deployable=false` and `hardware_status=unverified` until those A/B results are
 available and reviewed.
+
+## PPU smoke and microbenchmark
+
+A minimal real-model check ran on PPU-ZW810E with `BAAI/bge-m3` and the T2Ranking
+triplet-15 parquet shard. It used three rows and two negative slots:
+
+```text
+legacy loss  1.4054532
+regroup loss 1.4048704
+abs diff     5.83e-4
+tokenize/encode calls 4 -> 3
+```
+
+The small loss delta is expected because different padding groups change the
+floating-point execution; the pair association and labels remain unchanged.
+
+A forward/backward microbenchmark used the same real model and a fixed random
+sample of rows. It is not the original FlagScale training entry and does not
+include clip+optimizer or multi-step state:
+
+| rows | negatives | legacy median ms | regroup median ms | delta ms |
+| ---: | ---: | ---: | ---: | ---: |
+| 10 | 3 | 320.84 | 324.23 | +3.38 |
+| 30 | 3 | 790.97 | 783.22 | -7.74 |
+| 60 | 3 | 1509.88 | 1503.83 | -6.04 |
+
+This is a sensitivity check, not a deployment result. The candidate therefore
+remains draft and unverified.

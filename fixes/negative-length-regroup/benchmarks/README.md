@@ -1,7 +1,9 @@
 # Entry A/B plan
 
-This directory intentionally has no fabricated benchmark JSON. Run the plan on
-ZW810E with the original BGE-M3 entry before changing the fix status.
+This directory intentionally has no fabricated full-entry benchmark JSON.
+`../tests/bench_negative_length_regroup_ppu.py` is available as a real-model
+forward/backward microbenchmark, but it is not the original FlagScale training
+entry. Run the full plan below before changing the fix status.
 
 1. Prepare a clean checkout of FlagScale at `89f342e690053e07dda845f1365089ec00464e09`
    and apply this patch through `flag-fixes check`/`plan` for review. Use the
