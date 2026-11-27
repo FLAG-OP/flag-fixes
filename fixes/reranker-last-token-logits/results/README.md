@@ -29,7 +29,7 @@ torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份�
 | `e2e-fsdp2-2card-{base,fixed}-randominit-2026-11-26.{json,train.log}`、`e2e-fsdp2-2card-fixed-b16-randominit-2026-11-26.{json,train.log}` | 常规数据、随机权重的早期尝试（基线停在第 2 步、修复停在第 3 步；batch 16 第 1 步遇设备 kernel exception）。这几次没有单独保存 launcher 输出，摘要都在 JSON 里 |
 | `allocator-probe-2026-11-27.{json,log}` | `tests/probe_p800_allocator.py`：不等大空洞交还设备后 11.57 GiB 请求在 72.84 GiB 空闲时失败、1.25 GiB 成功；`expandable_segments` 在两种环境变量拼写下都不生效 |
 | `verify-2026-11-27.json`、`verify-2026-11-27.stderr.log` | 干净提交 `c2aef972` 上的 `flag-fixes verify`（修复树，6 个声明命令，passed、`source_dirty=false`；stderr 为空）。对应审阅修订前的脚本 |
-| `verify-2026-11-27-r2.json`、`verify-2026-11-27-r2.stderr.log` | 审阅修订后的干净提交上的 `flag-fixes verify`（修复树，7 个声明命令，passed、`source_dirty=false`；提交哈希在文件的 `source_commit`） |
+| `verify-2026-11-27-r2.json`、`verify-2026-11-27-r2.stderr.log` | 审阅修订后的干净提交上的 `flag-fixes verify`（修复树，7 个声明命令，passed、`source_dirty=false`；修订提交 `217d46f`） |
 | `launcher-selftest-scoped-2026-11-27.{json,log}`、`…-{hang,normal}.log` | `tests/test_reranker_launchers.py`（默认 scoped）：两个共用同一 worker 脚本路径的 torchrun 作业，17/17 exit 0。超时那组的 2 个 rank 与 2 个子进程在 launcher 返回时全部结束；另一组未被信号，60 s 超时时刻活着、91.9 s 正常结束。`hang.log` / `normal.log` 是两个作业的 torchrun 输出（含 worker 的 `[job-worker]` 公告行） |
 | `launcher-selftest-legacy-2026-11-27.{json,log}`、`…-{hang,normal}.log` | 同一自测用 `--cleanup legacy`（`c6f73493` 的清理方式，`pkill -KILL -f <worker 脚本>`）：另一组 60.2 s 被杀（返回码 -9），超时那组留下 2 个子进程，3/14 项失败，exit 1——预期结果，用来说明自测能区分两种行为 |
 | `launcher-visible-devices-before-c6f73493-2026-11-27.log` | `c6f73493` 的 e2e launcher 在两种环境下的原始输出（以 `###` 分隔行标注环境与命令；文件由 shell 拼接）：默认可见、仅 `XPU_VISIBLE_DEVICES=1,2` 都是 `KeyError: 'CUDA_VISIBLE_DEVICES'`，exit 1，trainer 未启动 |

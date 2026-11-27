@@ -83,7 +83,9 @@ launcher 的责任（不崩溃、不替用户发明 CUDA 列表、如实透传�
   `equivalence-{base,fixed}-2026-11-27.*`、`launcher-selftest-*`、`fsdp2-cuda-2card-fixed-rerun-*`、
   `e2e-1card-fixed-{defaultvis,explicitvis,xpuonly}-*`。`repro`、`bench`、CPU dispatch 与 FSDP2 worker 的判据没有
   改动，11-26 的记录仍对应现版脚本。
-- `verify-2026-11-27-r2.json` 是修订提交上的重跑（7 个命令，`source_dirty=false`），取代上一条。
+- `verify-2026-11-27-r2.json` 是修订提交 `217d46f` 上的重跑（7 个命令，`source_dirty=false`），取代上一条。
+  重跑时 fix 目录没有未提交改动：verify 的输出要先写到仓库之外、跑完再拷进来，否则输出文件本身会被
+  `git status` 计入 dirty（第一次就把输出重定向进了 `results/`，那份 7/7 的记录带着 `source_dirty=true`，已丢弃）。
 - 工具与脚本的原始输出含本机绝对路径，未做脱敏或改写。
 
 ## 关键数据
@@ -223,8 +225,8 @@ PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口
   （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply reranker-last-token-logits --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <基线树>`：clean；对已打补丁的树 `check` 报 `Baseline checksum differs`（exit 2）
-- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在审阅修订后的干净提交上
-  运行（`source_dirty=false`，提交哈希记在结果文件的 `source_commit`），2026-11-27；原始输出
+- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在修订提交 `217d46f` 上
+  运行（fix 目录无未提交改动，`source_dirty=false`），2026-11-27；原始输出
   `../results/verify-2026-11-27-r2.json`（stderr 为空）。声明命令比首轮多一个 launcher 自测
 - 首轮记录 `../results/verify-2026-11-27.json`（干净提交 `c2aef972`，6/6 rc=0）对应修订前的脚本，已被上一条取代；
   首轮的 6 个命令：

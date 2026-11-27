@@ -180,7 +180,7 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
 | launcher（`test_reranker_launchers.py`，CPU，17 项） | 旧清理方式下，超时作业会把另一组的进程一起杀掉（`--cleanup legacy`，exit 1）；默认可见或只设 XPU 列表时 launcher `KeyError`，trainer 不启动 | exit 0：超时清理只作用于本作业；三种可见设备情况 launcher 都能启动 trainer |
 | 真实 trainer 2 卡 FSDP2、batch 32、长文档 | 第 3 步反向 OOM（与平台记录逐项吻合） | 第 4 次尝试越过基线 OOM 点（step 3 峰值 allocated 84.41 GiB），**没有一次干净退出**（XCCL 卡死） |
 | `flag-fixes validate` / `check` / `plan` | — | exit 0 |
-| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（修订后的干净提交，哈希记在结果文件的 `source_commit`） |
+| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（修订提交 `217d46f`，`source_dirty=false`） |
 
 判定与覆盖边界：脚本只有退出码 0 才算通过，缺设备或缺 checkpoint/数据一律退出码 2。
 普通 CI（无设备 runner）只执行 `flag-fixes validate`、`python -m pytest -q` 和本地 fix 脚本的

@@ -84,7 +84,8 @@ validation:
     （此前默认可见或只设 XPU 列表时 KeyError）。launcher 自测 17 项 exit 0，旧清理方式下同一
     自测 3/14 失败（exit 1，预期）；真实 trainer 在默认可见与显式选卡下各跑完 5 步，只设 XPU
     列表时 launcher 能启动 trainer 但 trainer 在本机厂商栈 import 阶段失败（不在本修复范围）。
-    修订后在干净提交上重跑 flag-fixes verify：7 个声明命令，记录于 results/verify-2026-11-27-r2.json。
+    修订后在干净提交 217d46f 上重跑 flag-fixes verify：passed=true、7/7 rc=0、source_dirty=false，
+    记录于 results/verify-2026-11-27-r2.json。
   - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、
     owner=null。
   commands:
