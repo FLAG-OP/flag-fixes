@@ -78,7 +78,10 @@ scores = final_logits[:, self.true_token_id] - final_logits[:, self.false_token_
 
 - `expandable_segments:True` 在本机不生效：经 `PYTORCH_CUDA_ALLOC_CONF` 设置会触发
   `UserWarning: expandable_segments not supported on this platform`；经 `PYTORCH_ALLOC_CONF`
-  设置则没有任何告警，行为与默认分配器相同（碎片堆上同样 OOM）。
+  设置则没有任何告警，行为与默认分配器相同（碎片堆上同样 OOM）。原因在构建层：这个厂商 torch
+  的 `libc10_cuda.so` 里，PyTorch 用于虚拟内存管理的驱动接口（`cuMemCreate`、`cuMemAddressReserve`、
+  `cuMemMap` 等）全是只会断言的占位实现，PyTorch 因此把该选项强制关掉；实际生效的是厂商的
+  `xpu native` 分配器后端（[环境记录](../../../validation/kunlunxin-p800-reranker-fsdp2/results/env_record.json)）。
 - 分配器探针（同一张卡、默认分配器）：先铺 221 个 64 MiB–1 GiB 的不等大块，释放其中 2/3
   并交还设备后，**设备空闲 72.84 GiB、PyTorch 缓存空闲 0 字节**，此时申请 11.57 GiB：
 
@@ -191,7 +194,18 @@ AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）�
 - 代码路径与厂商无关；设备证据只来自 KunlunXin P800（见 `validation.md`）。评测入口
   `evaluate_retrieval.py` 走同一个 forward，推理侧同样少一次全序列投影（未实测）。
 
-## 7. 已知限制与后续
+## 7. 与其他修复的关系
+
+| 修复 | 关系 |
+|---|---|
+| `adamw-fused`（flagscale，`train/train_retrieval.py`） | 无共享文件、无 requires/conflicts。`flag-fixes plan reranker-last-token-logits adamw-fused --target <基线树>` 两个一起预演 exit 0；两份 patch 叠加后的设备验证没有跑 |
+| `flaggems-selective-enable`（flagscale，`train/utils/flaggems.py`） | 无共享文件。本次验证全程 `use_flaggems=false`，两者叠加没有验证 |
+| `gelu-kunlunxin-pow`（FlagGems） | 不同包，无关 |
+| FlagScale 里既有的 `iter_large_leaf_modules`（`parallel.py`） | 同一个平台现象的两次不同处理：那次把 lm_head / embed_tokens 拆成单独的 FSDP 组，使根组的 all-gather 从 2.31 GiB 降到 1.16 GiB；本修复去掉的是另一处 11.57 GiB 的申请。两者正交，可以并存 |
+
+相似根因不自动构成依赖：本修复只改适配层一个分支，不依赖其他修复，也不被它们依赖。
+
+## 8. 已知限制与后续
 
 - **修复树在平台形态下没有完整跑通**。基线失败已自然复现（§3.3）；同一数据上修复树的 4 次
   2 卡尝试里，前三次分别停在第 2、3、1 步，第 4 次走完了 3 步——包括基线 OOM 的那一步，

@@ -1,0 +1,69 @@
+{
+  "python": "3.10.18",
+  "torch": "2.9.0+cu129",
+  "transformers": "4.57.6",
+  "flag_gems_site": "5.0.0",
+  "datasets": "4.0.0",
+  "triton": "3.0.0+f69a5406",
+  "torch_xmlir": "unavailable (PackageNotFoundError)",
+  "env_CUDA_VISIBLE_DEVICES": "1,2",
+  "env_GEMS_VENDOR": "kunlunxin",
+  "env_XMLIR_BMM_DISPATCH_VALUE": "0 (set by the scripts; not in the login shell)",
+  "env_HF_HUB_OFFLINE": "1",
+  "torch_cuda_available": true,
+  "allocator_backend": "xpu native",
+  "device_count": 2,
+  "device_name": "GPU",
+  "device_capability": [
+    8,
+    6
+  ],
+  "device_total_mem_GiB": 96.0,
+  "expandable_segments_build_support": {
+    "how_determined": "2026-11-27, by inspecting the installed vendor torch build (XPytorch torch 2.9.0+cu129) and by running the allocator probe",
+    "allocator_backend": "xpu native",
+    "header_check": {
+      "file": "torch/include/c10/cuda/CUDAAllocatorConfig.h",
+      "rule": "expandable_segments() returns false unless the build defines PYTORCH_C10_DRIVER_API_SUPPORTED; it warns 'expandable_segments not supported on this platform' when the option was requested"
+    },
+    "libc10_cuda_driver_api_fallback_stubs": {
+      "description": "every CUDA driver-API function PyTorch uses for virtual memory management is compiled as the 'unsupported' fallback whose body is an internal assertion",
+      "assertion_text_sample": "cuMemCreate_ INTERNAL ASSERT FAILED at \"/pytorch/c10/cuda/driver_api.cpp\":23, please report a bug to PyTorch.",
+      "stubbed_functions": [
+        "cuDeviceGetAttribute",
+        "cuGetErrorString",
+        "cuMemAddressFree",
+        "cuMemAddressReserve",
+        "cuMemCreate",
+        "cuMemExportToShareableHandle",
+        "cuMemGetAllocationGranularity",
+        "cuMemImportFromShareableHandle",
+        "cuMemMap",
+        "cuMemRelease",
+        "cuMemSetAccess",
+        "cuMemUnmap",
+        "cuMemsetD32Async",
+        "cuStreamWriteValue32",
+        "nvmlDeviceGetComputeRunningProcesses",
+        "nvmlDeviceGetHandleByPciBusId_v2",
+        "nvmlDeviceGetNvLinkRemoteDeviceType",
+        "nvmlDeviceGetNvLinkRemotePciInfo_v2",
+        "nvmlInit_v2",
+        "nvmlSystemGetCudaDriverVersion_v2"
+      ]
+    },
+    "undefined_dynamic_symbols_cuMemVMM": {
+      "libc10_cuda.so": 0,
+      "libtorch_cuda.so": 0,
+      "libtorch_cpu.so": 0,
+      "libc10.so": 0
+    },
+    "observed": {
+      "PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True": "UserWarning: expandable_segments not supported on this platform; 11.57 GiB request on the fragmented heap still OOMs",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True": "no warning; identical OOM on the fragmented heap"
+    }
+  },
+  "xpu_smi": "Fri Nov 27 13:04:37 2026       \n+-----------------------------------------------------------------------------+\n| XPU-SMI               Driver Version: 5.0.21.47    XPU-RT Version: 5.13.0   |\n|-------------------------------+----------------------+----------------------+\n| XPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | XPU-Util  Compute M. |\n|                               |             L3-Usage |            SR-IOV M. |\n|===============================+======================+======================|\n|   0  P800 OAM           N/A   | 00000000:03:00.0 N/A |                    0 |\n| N/A   36C  N/A     95W / 400W |      0MiB / 98304MiB |      0%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   1  P800 OAM           N/A   | 00000000:16:00.0 N/A |                    0 |\n| N/A   38C  N/A     93W / 400W |      0MiB / 98304MiB |      0%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   2  P800 OAM           N/A   | 00000000:1C:00.0 N/A |                    0 |\n| N/A   37C  N/A     93W / 400W |      0MiB / 98304MiB |      0%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   3  P800 OAM           N/A   | 00000000:2E:00.0 N/A |                    0 |\n| N/A   49C  N/A    143W / 400W |   9228MiB / 98304MiB |    100%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   4  P800 OAM           N/A   | 00000000:84:00.0 N/A |                    0 |\n| N/A   47C  N/A    143W / 400W |   3464MiB / 98304MiB |    100%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   5  P800 OAM           N/A   | 00000000:9C:00.0 N/A |                    0 |\n| N/A   40C  N/A     92W / 400W |      0MiB / 98304MiB |      0%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   6  P800 OAM           N/A   | 00000000:B6:00.0 N/A |                    0 |\n| N/A   43C  N/A     95W / 400W |      0MiB / 98304MiB |      0%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n|   7  P800 OAM           N/A   | 00000000:BB:00.0 N/A |                    0 |\n| N/A   41C  N/A     93W / 400W |      0MiB / 98304MiB |      0%      Default |\n|                               |      0MiB /    96MiB |             Disabled |\n+-------------------------------+----------------------+----------------------+\n                                                                               \n+-----------------------------------------------------------------------------+\n| Processes:                                                                  |\n|  XPU   XI   CI        PID   Type   Process name                  XPU Memory |\n|        ID   ID                                                   Usage      |\n|=============================================================================|\n|  No running processes found                                                 |\n+-----------------------------------------------------------------------------+\n",
+  "uname": "Linux VM-20-4-ubuntu 6.8.0-87-generic #88-Ubuntu SMP PREEMPT_DYNAMIC Sat Oct 11 09:28:41 UTC 2025 x86_64 x86_64",
+  "note": "recorded 2026-11-27 after the runs; the device state lines reflect that moment, not the runs"
+}

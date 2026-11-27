@@ -2,21 +2,25 @@
 
 设备数据于 2026-11-26/27 在本机采集；命令、退出码与原始 JSON/日志均在 `../results/`。
 平台形态（2 卡 FSDP2）的**基线失败已自然复现**；修复树在同一配置下被本机的 XCCL
-集合通信卡死（F-P800-1）反复打断，完整跑通的步数有限，详见"2 卡 FSDP2"一节。
+集合通信卡死（F-P800-1）反复打断，没有一次干净退出，详见"2 卡 FSDP2"一节。
 `hardware_status` 保持 `unverified`。
 
-## 环境
+## 环境与源码
 
 | 项 | 值 |
 |---|---|
-| 机器 | KunlunXin P800 OAM ×8 节点，本验证用可见的 2 张卡（每卡 96 GiB），XPU-SMI 5.0.21.47 / XPU-RT 5.13.0 |
+| 执行日期 | 2026-11-26 20:22 – 2026-11-27 08:44（本机时间） |
+| 执行者 | AI 代理自动执行，没有人工复核；全部命令与原始输出都在 `../results/` |
+| 机器 | KunlunXin P800 OAM ×8 节点，本验证用可见的 2 张卡（每卡 96 GiB）；同节点卡 3、4 上始终有其他进程的负载（非本验证） |
+| 驱动 / 运行时 | XPU-SMI 5.0.21.47 / XPU-RT 5.13.0；分配器后端 `xpu native` |
 | torch | 2.9.0+cu129（torch_xmlir shim：XMLIR dev+2026060515、XCCL 3.1.0.2；`torch.cuda.get_device_name` = "GPU"） |
 | transformers | 4.57.6 |
+| FlagGems / Triton | 未启用（`use_flaggems=false`），与本次验证无关 |
 | FlagScale 基线 | `wxj630/FlagScale` `feat/retrieval-flagos` @ `89f342e690053e07dda845f1365089ec00464e09`（tarball 快照；目标文件 blob `e5abccd6` 与 GitHub API 一致，到分支头 `555a7d6a` 未变） |
 | 目标树 | 基线 = 该 commit 的干净快照；修复 = 基线 + `patches/reranker-last-token-logits.patch`（`check`/`plan` 校验 after hash） |
 | 模型（e2e） | `Qwen/Qwen3-Reranker-8B` revision `77d193c791ed757ca307ee72715aa132723da912`；5 个 safetensors 分片 sha256 与 hub LFS oid 逐一相同（`model-0000{1..5}`：`22cdfea4…`、`d2163b74…`、`a5038caa…`、`247f8553…`、`8ba41b93…`） |
 | 数据（e2e） | `sentence-transformers/t2ranking` `triplet-15/train-00000-of-00011.parquet`（30,920 行，sha256 `4d92878e…`）；长文档子集由 `tests/build_long_parquet.py` 从中确定性选出 454 行（sha256 `0d3a0d41…`） |
-| 设备命令环境 | `XMLIR_BMM_DISPATCH_VALUE=0`（平台 P800 启动脚本同值）；其余脚本自备随机权重 |
+| 环境变量 | 设备命令 `XMLIR_BMM_DISPATCH_VALUE=0`（平台 P800 启动脚本同值）；e2e 另设 `WANDB_DISABLED=true`、`HF_HUB_OFFLINE=1` |
 
 hash（fix.yaml 记录同值）：
 
@@ -26,23 +30,44 @@ after   dd34c0dd0459f0469280968496ed7a42d86e46fb3feac6ada822d221ccbfcd89  flagsc
 patch   ee7ded27c09fd2ae7b15f499ce1f14a79891ecf20b428f30fa812848197537d4  patches/reranker-last-token-logits.patch
 ```
 
-omegaconf / hydra 不在共享环境里，本机以 `pip install --target` 装到独立目录并用解释器包装
-喂给 `verify`；未修改共享 conda 环境。
+依赖：torch、transformers、omegaconf（`flagscale.models.retrieval` 的导入链）；e2e 另需 pyarrow、PIL。
+omegaconf 不在共享环境里，本机以 `pip install --target` 装到独立目录，并用一个解释器包装
+把它喂给 `verify`；未修改共享 conda 环境。
 
 ## 命令与结果
 
-统一方式：在 `fixes/reranker-last-token-logits/` 下，
-`PYTHONPATH=<树> python3 tests/<script> [args] --json results/<name>-<tree>-<date>.json`。
+以下命令均在 `fixes/reranker-last-token-logits/` 下执行；`<树>` 是基线或修复后的 FlagScale
+仓库根（放在 `PYTHONPATH` 上），设备命令带 `XMLIR_BMM_DISPATCH_VALUE=0`。证据列的文件都在
+`../results/`，基线与修复各一份。
 
-| 脚本 | 设备 | 基线树 | 修复树 | 判定 |
-|---|---|---|---|---|
-| `test_reranker_lmhead_dispatch.py` | CPU | exit **1**（6/25 例失败：lm_head 输入 `[rows, seq, hidden]`） | exit **0**（25/25） | 符合预期 |
-| `test_reranker_fsdp2_step.py --device cpu --nproc 1` | CPU（gloo） | exit **1**（lm_head 输出 `[16, 258, 151669]`，2.5 GB/次） | exit **0**（`[16, 151669]`，9.7 MB） | 符合预期 |
-| `test_reranker_fsdp2_step.py --device cuda --nproc 2` | P800 ×2（XCCL） | exit **1**（328.6 s 跑完，仅 lm_head 投影判据失败） | exit **0**（26.3 s，两 rank 全过）；此前两次尝试被 XCCL watchdog 阻断 | 符合预期；2 卡不稳定 |
-| `repro_reranker_logits_alloc.py` | P800 单卡 | exit **1**：`Tried to allocate 11.57 GiB … 20.63 GiB is free … 73.51 GiB is allocated by PyTorch` | exit **0**：同一步跑通，峰值 +25.36 GiB | 符合预期 |
-| `test_reranker_scores_equivalence.py` | P800 单卡 | exit 0（平凡：基线即参考） | exit **0**（5 例 max\|diff\| = 0.0） | 数值不回归 |
-| `bench_reranker_step.py --iters 5` | P800 单卡 | exit 0（记录） | exit 0（记录） | 见 `../benchmarks/README.md` |
-| `e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0` | P800 单卡 | exit 0（5 步） | exit 0（5 步） | loss 逐位相同；reserved 峰值 92.76 → 79.64 GiB |
+| 项目 | 精确命令 | 判定标准 | 修复前 | 修复后 | 证据 |
+| --- | --- | --- | --- | --- | --- |
+| 最小复现（单卡碎片堆） | `PYTHONPATH=<树> python3 tests/repro_reranker_logits_alloc.py` | 修复前一步内 OOM；修复后同一步跑通且 lm_head 只输出 `[rows, vocab]` | exit **1**：`Tried to allocate 11.57 GiB … 20.63 GiB is free … 73.51 GiB is allocated by PyTorch` | exit **0**，峰值 +25.36 GiB | `repro-{base,fixed}-2026-11-26.{json,log}` |
+| 最小复现（平台形态，2 卡） | `RERANKER_DATA=<长文档 parquet> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 2 --parallel fsdp2 --master-dtype fp32 --batch 32 --min-steps 3 --no-save` | 基线出现平台记录的报错；修复后走完 3 步 | exit 1，**step 3 反向 OOM**，与平台记录逐项吻合 | 4 次尝试：第 4 次 step 1–3 走完（`training_steps_complete=true`），停在 validation，`passed=false` | `e2e-fsdp2-2card-{base,fixed}-b32-longdoc-*` |
+| dispatch（CPU） | `PYTHONPATH=<树> python3 tests/test_reranker_lmhead_dispatch.py` | lm_head 只收到 `[rows, hidden]`，分数对基线公式 ≤ 1e-4，梯度到达各层 | exit **1**（6/25 例失败：lm_head 收到 `[rows, seq, hidden]`） | exit **0**（25/25） | `dispatch-{base,fixed}-2026-11-26.{json,log}` |
+| dispatch（真实 FSDP2，CPU/gloo） | `PYTHONPATH=<树> python3 tests/test_reranker_fsdp2_step.py --device cpu --nproc 1 --steps 2` | lm_head 是分片的 FSDP 模块且钩子照常；每步两个 micro-batch；梯度与 optimizer 更新正常 | exit **1**（lm_head 输出 `[16, 258, 151669]`） | exit **0**（`[16, 151669]`） | `fsdp2-cpu-{base,fixed}-2026-11-26.{json,log}` |
+| dispatch（真实 FSDP2，P800 ×2） | `PYTHONPATH=<树> python3 tests/test_reranker_fsdp2_step.py --device cuda --nproc 2 --steps 2` | 同上，bf16 autocast | exit **1**（328.6 s 跑完，仅 lm_head 投影判据失败） | exit **0**（26.3 s，两 rank 全过）；此前两次被 XCCL watchdog 阻断 | `fsdp2-cuda-2card-*` |
+| 回归 / 边界 | `PYTHONPATH=<树> python3 tests/test_reranker_scores_equivalence.py` | 分数在参考最大 logit 的 2 个 bf16 ulp 内，梯度相对差 ≤ 3%；fp32 下 1e-4 / 0.1% | exit 0（基线即参考，平凡通过） | exit **0**（5 例 max\|diff\| 都是 0.0） | `equivalence-{base,fixed}-2026-11-26.{json,log}` |
+| 性能 / 精度 | `PYTHONPATH=<树> python3 tests/bench_reranker_step.py --iters 5` | 记录前后耗时与峰值显存（见 `../benchmarks/README.md`） | exit 0 | exit 0 | `bench-{base,fixed}-2026-11-26.{json,log}` |
+| e2e（真实 trainer） | `RERANKER_MODEL=<checkpoint> RERANKER_DATA=<triplet-15> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save` | 两棵树都跑完 5 步；loss 一致 | exit 0 | exit 0；loss 逐位相同 | `e2e-1card-{base,fixed}-2026-11-27.{json,log,train.log}` |
+| 安装 / 回滚 | `python3 -m flag_fixes --root <本仓库> check / plan / apply / status reranker-last-token-logits --target <树>` | 基线 hash 命中、patch 可干净应用、结果与快照一致；未获部署资格时 `apply` 拒绝 | — | `check`/`plan` exit 0；`apply` exit 2（`deployable=false`）；`status` clean | 本页"工具链校验"一节 |
+
+判定：只有退出码 0 算通过；缺设备或缺 checkpoint/数据时脚本退出码 2（跳过，不算通过）。
+
+### 证据的采集时间与脚本版本
+
+- 11-26 的单卡证据（dispatch、fsdp2-cpu、repro、equivalence、bench）与 11-27 的 allocator 探针采集时
+  修复目录尚未提交；脚本与提交版本逻辑相同，之后只删了两个未使用的辅助函数、改了复现脚本的一处
+  说明文字。
+- 三份 2 卡随机权重 trainer 结果（`e2e-fsdp2-2card-*-randominit-*`）和三份 2 卡 FSDP2 测试结果
+  （`fsdp2-cuda-2card-base-*`、`…-fixed-attempt{1,2}-blocked-*`）用的是入库前的脚本副本，其
+  `command` 字段指向 `/tmp/opencode/fixwork/`。与提交版本的差别是：trainer launcher 后来修正了
+  输出目录为空的问题并补了 loss 记录；FSDP2 测试后来把"lm_head 梯度非零"的判据改为只对拥有
+  "yes"/"no" 两行的分片成立。这两处都不影响这些文件记录的事实（报错文本、显存数字、卡死签名、
+  lm_head 收到的形状）。
+- `verify-2026-11-27.json` 是干净提交 `c2aef972` 上的重跑（`source_dirty=false`，6/6 rc=0）；
+  其后的提交只改文档与结果索引。
+- 工具与脚本的原始输出含本机绝对路径，未做脱敏或改写。
 
 ## 关键数据
 
@@ -149,6 +174,12 @@ barrier 都不行，而且这个现象在 8B trainer 上没有复现出可用的
 
 结论：这张卡上一次大请求能否成功取决于空闲段的形状；PyTorch 常规的解法（expandable
 segments）在两种拼写下都不生效。修复后的步骤最大单次请求在 1.25 GiB 这个量级（D 末行可满足）。
+
+不生效的原因定位到构建层（记录在 `../../../validation/kunlunxin-p800-reranker-fsdp2/results/env_record.json`）：
+PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口上；本机 `libc10_cuda.so` 里
+`cuMemCreate`、`cuMemAddressReserve`、`cuMemMap` 等全是只会断言的占位实现，几个 torch 动态库对它们
+没有任何外部符号引用，`CUDAAllocatorConfig.h` 在构建缺少 `PYTORCH_C10_DRIVER_API_SUPPORTED` 时把该
+选项强制关掉并告警；实际生效的是厂商的 `xpu native` 分配器后端。
 
 ## 工具链校验
 

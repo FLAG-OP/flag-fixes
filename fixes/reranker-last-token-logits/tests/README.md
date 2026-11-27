@@ -51,6 +51,7 @@ launcher 启动，不单独作为验证入口。
   历史，只用来在同一张卡上稳定复现"大请求 + 碎片"这一组合。
 - 随机初始化的模型 loss 数值本身没有意义；两棵树的 loss 逐位相同才是检验点。
 - 直接调用 kernel 通过不等于端到端通过；e2e 之前先看 dispatch 与 repro。
+- 本修复在模型适配层，没有算子注册，所以这里的 dispatch 不是指 Torch 的算子分派键，而是两件事：lm_head 实际收到的张量形状（前两个 dispatch 脚本），以及 FSDP2 挂在 lm_head 上的钩子是否照常触发（`test_reranker_fsdp2_step.py`）。
 
 ## 诊断脚本（不作为验证命令）
 

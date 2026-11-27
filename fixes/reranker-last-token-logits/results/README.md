@@ -2,7 +2,8 @@
 
 本目录保存小型 JSON / 日志，均为 2026-11-26/27 在本机（KunlunXin P800 OAM 96 GiB，
 torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份或模型缓存。
-`base` = FlagScale `89f342e6` 干净快照，`fixed` = 基线 + 本 patch。
+`base` = FlagScale `89f342e6` 干净快照，`fixed` = 基线 + 本 patch。环境、hash、逐命令的精确命令行与
+证据采集时间见 `../reports/validation.md`；下面每条记录的输入、判定标准与结果以对应 JSON 为准。
 
 ## 文件清单
 

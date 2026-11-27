@@ -14,6 +14,7 @@
 | 计算 | bf16 autocast，`reranker` 的 BCE loss；无优化器状态 |
 | 计时 | warmup 2；5 次取中位数；每阶段前后 `torch.cuda.synchronize()`。event 中位数与墙钟一致（差 < 1 ms） |
 | 显存 | `torch.cuda.max_memory_allocated()`，含权重；峰值 reserved 为整轮最大缓存 |
+| 环境变量 | `XMLIR_BMM_DISPATCH_VALUE=0`（设备命令统一设置，平台 P800 启动脚本同值）；其余未设置 |
 
 ## 前后对照
 
@@ -61,5 +62,5 @@
 `$TREE` 为打了补丁或未打补丁的 FlagScale 仓库根：
 
 ```bash
-PYTHONPATH="$TREE" python3 tests/bench_reranker_step.py --iters 5 --json out.json
+XMLIR_BMM_DISPATCH_VALUE=0 PYTHONPATH="$TREE" python3 tests/bench_reranker_step.py --iters 5 --json out.json
 ```
