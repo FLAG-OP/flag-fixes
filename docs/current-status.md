@@ -14,7 +14,7 @@
 | 目录校验 | 通过：来源指针、patch hash、快照 hash 和 schema | [初始化 CI](https://github.com/FLAG-OP/flag-fixes/actions/runs/41778171519)、[清单约定](manifest-spec.md) |
 | 管理工具测试 | 26 项通过；Python 3.10 / 3.12 CI 均通过 | [初始化 CI](https://github.com/FLAG-OP/flag-fixes/actions/runs/41778171519)、[测试代码](../tests/) |
 | 包构建 | sdist 和 wheel 构建通过 | [初始化 CI 的构建步骤](https://github.com/FLAG-OP/flag-fixes/actions/runs/41778171519)、[包配置](../pyproject.toml) |
-| 来源交付一致性 | 5 项 source-checked，4 项 needs-adaptation | [检查方法、逐项 patch/源码链接和差异](source-audit.md) |
+| 来源交付一致性 | 6 项 source-checked，4 项 needs-adaptation | [检查方法、逐项 patch/源码链接和差异](source-audit.md) |
 | 本仓库硬件复验 | 9 项外部修复均 unverified；平台基线记录：2026-11-12 平头哥 ZW810E（issue #5 首轮，非 fix 验收） | [验证记录说明](../validation/README.md)、[ZW810E 记录](../validation/thead-zw810e-problem29/README.md) |
 | 可部署条目 | 0 项；导入条目均为草稿，apply 会拒绝 | [安装行为及限制](installation.md) |
 | 平台 bundle / 离线发布 | 尚未交付 | [bundle 规划](../bundles/README.md)、[发布流程](release-process.md) |
@@ -37,7 +37,7 @@ fix 名称链接到本仓库清单；历史说明固定到当前 submodule commi
 | [one-hot-5802](../catalog/fixes/one-hot-5802.yaml) | ascend | needs-adaptation | [onehotFIX README](https://github.com/FLAG-OP/onehotFIX/blob/3cef1d720fc5ce42978be4b7fc1c500eb516278f/README.md) |
 | [pointwise-5739](../catalog/fixes/pointwise-5739.yaml) | ascend | source-checked | [pointwiseFIX README](https://github.com/FLAG-OP/pointwiseFIX/blob/a6b538daa4b61f8da5e368e92847a45ae79ba856/README.md) |
 
-上表只覆盖 9 项外部来源修复；本仓库另有 5 项本地维护修复（[linear-5379](../fixes/linear-5379/)、[zeros-7181](../fixes/zeros-7181/)、[gelu-kunlunxin-pow](../fixes/gelu-kunlunxin-pow/)、[adamw-fused](../fixes/adamw-fused/)、[flaggems-selective-enable](../fixes/flaggems-selective-enable/)），见下节，合计 14 项 fix 索引。
+上表只覆盖 9 项外部来源修复；本仓库另有 6 项本地维护修复（[linear-5379](../fixes/linear-5379/)、[zeros-7181](../fixes/zeros-7181/)、[gelu-kunlunxin-pow](../fixes/gelu-kunlunxin-pow/)、[adamw-fused](../fixes/adamw-fused/)、[flaggems-selective-enable](../fixes/flaggems-selective-enable/)、[negative-length-regroup](../fixes/negative-length-regroup/)），见下节，合计 15 项 fix 索引。
 
 所有条目的 `deployable=false`、`hardware_status=unverified`。gather、lift_fresh、one_hot 的来源差异是 patch 与完整源码的注释/署名不一致；CANN pow 条目需要补丁格式和目标基线适配。
 

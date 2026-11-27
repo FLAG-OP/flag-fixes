@@ -1,0 +1,113 @@
+diff --git a/flagscale/train/losses/retrieval.py b/flagscale/train/losses/retrieval.py
+index 54ae420..298e3bd 100644
+--- a/flagscale/train/losses/retrieval.py
++++ b/flagscale/train/losses/retrieval.py
+@@ -17,6 +17,7 @@
+ from __future__ import annotations
+ 
+ from collections.abc import Mapping
++import os
+ from typing import Any
+ 
+ import torch
+@@ -52,6 +53,82 @@ def embedding_batch(model: nn.Module, inputs: list[Any], device: torch.device) -
+     return F.normalize(embeddings.float(), p=2, dim=-1)
+ 
+ 
++def _embedding_from_prepared(
++    model: nn.Module, features: Mapping[str, Any], device: torch.device
++) -> Tensor:
++    moved_features = move_features(dict(features), device)
++    output = model(moved_features)
++    embeddings = output.get("sentence_embedding")
++    if embeddings is None:
++        embeddings = output.get("pooler_output")
++    if embeddings is None:
++        raise RuntimeError(f"Retrieval model output has no embedding field: {list(output)}")
++    return F.normalize(embeddings.float(), p=2, dim=-1)
++
++
++def _negative_length_regroup_embeddings(
++    model: nn.Module,
++    batch: dict[str, list[str]],
++    device: torch.device,
++    negative_keys: list[str],
++) -> list[Tensor] | None:
++    """Encode hard negatives in token-length-similar groups without changing pairs.
++
++    The flag is opt-in so A/B runs can compare the original negative slots with
++    the regrouped candidate. Each flattened candidate keeps a stable original
++    index; after encoding it is scattered back to that index, so the loss sees
++    the same anchor/positive/negative association and only the forward grouping
++    changes. The fixed group size preserves the original number of forward calls.
++    """
++
++    mode = os.environ.get("FLAGSCALE_NEGATIVE_LENGTH_REGROUP", "0").strip().lower()
++    if mode not in {"1", "true", "on"}:
++        return None
++    if not negative_keys:
++        return []
++
++    group_size = len(batch[negative_keys[0]])
++    if group_size == 0:
++        return None
++    if any(len(batch[key]) != group_size for key in negative_keys):
++        return None
++
++    texts = [text for key in negative_keys for text in batch[key]]
++    features = unwrap_model(model).prepare_embedding_inputs(texts)
++    if not isinstance(features, Mapping) or "attention_mask" not in features:
++        return None
++    tensor_features = {
++        key: value for key, value in features.items() if isinstance(value, Tensor)
++    }
++    if not tensor_features or not isinstance(tensor_features["attention_mask"], Tensor):
++        return None
++
++    token_lengths = tensor_features["attention_mask"].sum(dim=-1).tolist()
++    order = sorted(range(len(texts)), key=lambda index: (token_lengths[index], index))
++
++    flat_embeddings: list[Tensor | None] = [None] * len(order)
++    for start in range(0, len(order), group_size):
++        indices = order[start : start + group_size]
++        grouped_features = {
++            key: value[indices] for key, value in tensor_features.items()
++        }
++        grouped_embeddings = _embedding_from_prepared(
++            model, grouped_features, device
++        )
++        for position, original_index in enumerate(indices):
++            flat_embeddings[original_index] = grouped_embeddings[position]
++
++    if any(embedding is None for embedding in flat_embeddings):
++        return None
++    embeddings = [embedding for embedding in flat_embeddings if embedding is not None]
++    return [
++        torch.stack(
++            embeddings[slot * group_size : (slot + 1) * group_size], dim=0
++        )
++        for slot in range(len(negative_keys))
++    ]
++
++
+ def embedding_loss(
+     model: nn.Module,
+     batch: dict[str, list[str]],
+@@ -62,10 +139,14 @@ def embedding_loss(
+ 
+     anchors = embedding_batch(model, batch["anchor"], device)
+     positives = embedding_batch(model, batch["positive"], device)
+-    negatives: list[Tensor] = []
+     negative_keys = sorted(key for key in batch if key.startswith("negative"))
+-    for key in negative_keys:
+-        negatives.append(embedding_batch(model, batch[key], device))
++    negatives = _negative_length_regroup_embeddings(
++        model, batch, device, negative_keys
++    )
++    if negatives is None:
++        negatives = []
++        for key in negative_keys:
++            negatives.append(embedding_batch(model, batch[key], device))
+ 
+     # In-batch positives are negatives for every other query. Additional hard
+     # negatives stay grouped with their originating query.
