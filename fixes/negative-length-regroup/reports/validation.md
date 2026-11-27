@@ -61,3 +61,20 @@ include clip+optimizer or multi-step state:
 
 This is a sensitivity check, not a deployment result. The candidate therefore
 remains draft and unverified.
+
+## Original-entry one-step A/B
+
+The original `flagscale/train/train_retrieval.py` entry ran four interleaved
+processes per arm on PPU-ZW810E. Each arm used `BAAI/bge-m3`, T2Ranking
+triplet-15, `batch_size=10`, `gradient_accumulation_steps=4`, one epoch, and one
+optimizer step. Checkpoint output was placed on `/dev/shm` to reduce I/O noise.
+
+| arm | median elapsed | range | train loss | test loss |
+| --- | ---: | ---: | ---: | ---: |
+| legacy | 3.65 s | 3.6–3.9 s | 1.402771 | 2.243490 |
+| regroup | 3.70 s | 3.7–3.7 s | 1.475995 | 2.221029 |
+
+The difference is `+0.05 s`, inside the observed run-to-run variation. This is
+only a one-step whole-entry signal and still does not satisfy the multi-process,
+multi-step, retrieval-metric acceptance requested in PR8. The candidate remains
+`deployable=false` and `hardware_status=unverified`.

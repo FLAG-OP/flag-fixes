@@ -48,6 +48,9 @@ validation:
   - PPU 微基准趋势：10 行 × 3 负例时 regroup 中位 +3.38 ms；30 行 × 3 负例时
     中位 -7.74 ms；60 行 × 3 负例时中位 -6.04 ms。这不是原始训练入口的整步
     结果，只能说明候选在更大 batch 下可能有收益。
+  - PPU 原始入口一步 A/B：`flagscale/train/train_retrieval.py`，legacy 4 次
+    交错运行中位 3.65s，regroup 中位 3.70s，差 +0.05s，在运行间波动内；
+    该结果不含多步训练、检索指标和长程梯度/参数验收。
   - 阻断：ZW810E 整步 A/B 未运行；没有整步耗时、tokens/s、峰值显存、loss/
     梯度/更新参数置信区间，不能判断该候选是否值得启用。
   commands:
