@@ -1,0 +1,113 @@
+{
+ "run": "run09",
+ "second": "py_route",
+ "loop": "ORIGINAL entry loop (lookahead, autocast loss, isfinite host sync)",
+ "profiler": false,
+ "phase_batches_identical": true,
+ "per_shape_hits": {
+  "1024x5120_4096": 408,
+  "4096x5120_1024": 408,
+  "1024x3740_4096": 24,
+  "4096x3740_1024": 24,
+  "1024x4430_4096": 24,
+  "4096x4430_1024": 24,
+  "1024x2990_4096": 24,
+  "4096x2990_1024": 24,
+  "1024x3290_4096": 24,
+  "4096x3290_1024": 24,
+  "1024x4310_4096": 24,
+  "4096x4310_1024": 24
+ },
+ "n_shapes_hit": 12,
+ "total_hits": 1056,
+ "tokens_per_s_p1": [
+  14236.2,
+  14783.2,
+  15091.3
+ ],
+ "tokens_per_s_p2": [
+  13937.5,
+  14511.3,
+  14640.0
+ ],
+ "phase1": {
+  "rounds": [
+   {
+    "step_ms": 1900.22,
+    "valid_tokens": 27052,
+    "tokens_per_s": 14236.2,
+    "input_hash": "d2bfed5625354170",
+    "micro_losses": [
+     0.947412,
+     0.594604,
+     0.436792,
+     0.730225
+    ]
+   },
+   {
+    "step_ms": 2127.69,
+    "valid_tokens": 31454,
+    "tokens_per_s": 14783.2,
+    "input_hash": "c5896ff2bece725f",
+    "micro_losses": [
+     0.469678,
+     0.674854,
+     0.565063,
+     0.818457
+    ]
+   },
+   {
+    "step_ms": 2352.75,
+    "valid_tokens": 35506,
+    "tokens_per_s": 15091.3,
+    "input_hash": "6228631cc16cc2dd",
+    "micro_losses": [
+     0.700488,
+     0.823486,
+     0.551465,
+     0.750317
+    ]
+   }
+  ]
+ },
+ "phase2": {
+  "rounds": [
+   {
+    "step_ms": 1940.96,
+    "valid_tokens": 27052,
+    "tokens_per_s": 13937.5,
+    "input_hash": "d2bfed5625354170",
+    "micro_losses": [
+     0.839917,
+     0.485913,
+     0.355701,
+     0.526074
+    ]
+   },
+   {
+    "step_ms": 2167.56,
+    "valid_tokens": 31454,
+    "tokens_per_s": 14511.3,
+    "input_hash": "c5896ff2bece725f",
+    "micro_losses": [
+     0.307239,
+     0.605933,
+     0.550806,
+     0.643652
+    ]
+   },
+   {
+    "step_ms": 2425.28,
+    "valid_tokens": 35506,
+    "tokens_per_s": 14640.0,
+    "input_hash": "6228631cc16cc2dd",
+    "micro_losses": [
+     0.522266,
+     0.790845,
+     0.452344,
+     0.720703
+    ]
+   }
+  ]
+ }
+}

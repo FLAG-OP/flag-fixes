@@ -1,0 +1,118 @@
+{
+ "real_call": {
+  "S": 228,
+  "q_shape": [
+   10,
+   16,
+   228,
+   64
+  ],
+  "qkv_contiguous": false,
+  "strides": [
+   233472,
+   64,
+   1024,
+   1
+  ],
+  "mask": {
+   "shape": [
+    10,
+    1,
+    228,
+    228
+   ],
+   "dtype": "torch.float32",
+   "min": -3.4028234663852886e+38,
+   "valid_frac": 0.2974,
+   "per_sample": true
+  },
+  "dropout_p_model": 0.1,
+  "autocast": "bf16"
+ },
+ "results": {
+  "native_p0.0": {
+   "ran": true,
+   "forward_ran": true,
+   "backward_supported": true,
+   "fwd_only_ms": 0.1834,
+   "fwd_ms": 0.1837,
+   "bwd_ms": 0.3466,
+   "full_ms": 0.5429,
+   "vs_fp32_reldiff": {
+    "out": 0.001617,
+    "dQ": 0.011919,
+    "dK": 0.002393,
+    "dV": 0.002277
+   },
+   "fwd_kernels": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, "
+   ],
+   "bwd_kernels": [],
+   "flag_gems_sha": null,
+   "triton": null
+  },
+  "native_p0.1": {
+   "ran": true,
+   "forward_ran": true,
+   "backward_supported": true,
+   "fwd_only_ms": 0.2064,
+   "fwd_ms": 0.2065,
+   "bwd_ms": 0.3952,
+   "full_ms": 0.6109,
+   "vs_fp32_reldiff": null,
+   "fwd_kernels": [
+    "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80"
+   ],
+   "bwd_kernels": [],
+   "flag_gems_sha": null,
+   "triton": null
+  },
+  "flaggems_p0.0": {
+   "ran": false,
+   "forward_ran": true,
+   "backward_supported": false,
+   "fwd_only_ms": 0.1036,
+   "fwd_ms": null,
+   "bwd_ms": null,
+   "full_ms": null,
+   "vs_fp32_reldiff": null,
+   "fwd_kernels": [
+    "ScaleDotProductAttention"
+   ],
+   "bwd_kernels": null,
+   "flag_gems_sha": "29e14822",
+   "triton": "3.6.0",
+   "error": {
+    "type": "AssertionError",
+    "static_assert": [],
+    "command": "python3 examples/retrieval/sdpa_real_shape.py --inputs /tmp/opencode/zw810e-problem29/results/sdpa_real_S214_inputs.pt --impl flaggems --dropout 0.0 --out /tmp/opencode/zw810e-problem29/results/sdpa_real_S228_flaggems_p0.0.json"
+   }
+  },
+  "flaggems_p0.1": {
+   "ran": false,
+   "forward_ran": null,
+   "backward_supported": null,
+   "fwd_only_ms": null,
+   "fwd_ms": null,
+   "bwd_ms": null,
+   "full_ms": null,
+   "vs_fp32_reldiff": null,
+   "fwd_kernels": null,
+   "bwd_kernels": null,
+   "flag_gems_sha": "29e14822",
+   "triton": "3.6.0",
+   "error": {
+    "type": "AssertionError: Currenty only support dropout_p=0.0",
+    "static_assert": [],
+    "command": "python3 examples/retrieval/sdpa_real_shape.py --inputs /tmp/opencode/zw810e-problem29/results/sdpa_real_S214_inputs.pt --impl flaggems --dropout 0.1 --out /tmp/opencode/zw810e-problem29/results/sdpa_real_S228_flaggems_p0.1.json"
+   }
+  }
+ },
+ "conclusion": {
+  "native": "full training-mode support: p=0 fwd/bwd/full 0.184/0.347/0.543ms; p=0.1 0.206/0.395/0.611ms (kernel _dropout_sm80)",
+  "candidate_forward": "runs and is faster (0.104 vs 0.184 ms) on the real non-contiguous layout",
+  "candidate_backward": "UNSUPPORTED on the real layout: attention.py:975 `assert do.is_contiguous()` (training Q/K/V are transposed views)",
+  "candidate_dropout": "UNSUPPORTED: 'Currently only support dropout_p=0.0' but the model uses p=0.1",
+  "verdict": "FlagGems SDPA is NOT usable for training-mode on this stack (forward-only candidate); native cutlassFA2 remains the only training-capable path"
+ }
+}

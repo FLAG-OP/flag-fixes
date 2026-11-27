@@ -1,0 +1,676 @@
+{
+ "batch": "v4 (round-11 rewrite): same p0_dt/grads_dt clones for all impls; fp64 ref upcast from same values; verdicts via shared function; exit 1 iff any impl FAIL",
+ "steps": 30,
+ "snapshots_at": [
+  1,
+  15,
+  30
+ ],
+ "n": 4096,
+ "p_scale_std": 0.02,
+ "tolerances": "floor = 0.01 * max|ref| (single source: verdict() t_scale, tensor-relative); fp32: per-position |err|<=8*eps32*max(|ref|, floor); bf16/fp16: per-position |err|<=4*ulp_dtype(max(|ref|, floor)); states m/v same rule; step exact; non-finite -> FAIL",
+ "results": {
+  "float32": {
+   "stock": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 4.2619969706225724e-09,
+        "m": 2.2351741846282636e-09,
+        "v": 1.0006565264982295e-11
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 4.2619969706225724e-09,
+       "m": 2.2351741846282636e-09,
+       "v": 1.0006565264982295e-11
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 31,
+       "m_tau_violations": 83,
+       "v_tau_violations": 0,
+       "tau_violations_total": 114,
+       "worst_abs_err": {
+        "p": 2.9586432359618442e-08,
+        "m": 7.11103537165414e-09,
+        "v": 1.0916381031544561e-10
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 2.9586432359618442e-08,
+       "m": 7.11103537165414e-09,
+       "v": 1.0916381031544561e-10
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 201,
+       "m_tau_violations": 93,
+       "v_tau_violations": 0,
+       "tau_violations_total": 294,
+       "worst_abs_err": {
+        "p": 4.108352261167347e-08,
+        "m": 7.887307230947105e-09,
+        "v": 2.817440872618371e-10
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 4.108352261167347e-08,
+       "m": 7.887307230947105e-09,
+       "v": 2.817440872618371e-10
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   },
+   "foreach": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 4.2619969706225724e-09,
+        "m": 2.2351741846282636e-09,
+        "v": 1.0006565264982295e-11
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 4.2619969706225724e-09,
+       "m": 2.2351741846282636e-09,
+       "v": 1.0006565264982295e-11
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 31,
+       "m_tau_violations": 83,
+       "v_tau_violations": 0,
+       "tau_violations_total": 114,
+       "worst_abs_err": {
+        "p": 2.9586432359618442e-08,
+        "m": 7.11103537165414e-09,
+        "v": 1.0916381031544561e-10
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 2.9586432359618442e-08,
+       "m": 7.11103537165414e-09,
+       "v": 1.0916381031544561e-10
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 201,
+       "m_tau_violations": 93,
+       "v_tau_violations": 0,
+       "tau_violations_total": 294,
+       "worst_abs_err": {
+        "p": 4.108352261167347e-08,
+        "m": 7.887307230947105e-09,
+        "v": 2.817440872618371e-10
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 4.108352261167347e-08,
+       "m": 7.887307230947105e-09,
+       "v": 2.817440872618371e-10
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   },
+   "fused": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 5.864423141543895e-09,
+        "m": 1.4901161277114383e-09,
+        "v": 3.3209000734881963e-12
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 5.864423141543895e-09,
+       "m": 1.4901161277114383e-09,
+       "v": 3.3209000734881963e-12
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 16,
+       "m_tau_violations": 60,
+       "v_tau_violations": 0,
+       "tau_violations_total": 76,
+       "worst_abs_err": {
+        "p": 2.0074586444540632e-08,
+        "m": 7.1720129904417895e-09,
+        "v": 6.545917242495661e-11
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 2.0074586444540632e-08,
+       "m": 7.1720129904417895e-09,
+       "v": 6.545917242495661e-11
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 52,
+       "m_tau_violations": 71,
+       "v_tau_violations": 0,
+       "tau_violations_total": 123,
+       "worst_abs_err": {
+        "p": 2.8887866460047817e-08,
+        "m": 6.6974542092812506e-09,
+        "v": 1.2996959227167676e-10
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 2.8887866460047817e-08,
+       "m": 6.6974542092812506e-09,
+       "v": 1.2996959227167676e-10
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   }
+  },
+  "bfloat16": {
+   "stock": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 9.894433560633797e-05,
+        "m": 9.765625000000833e-05,
+        "v": 2.3269653320307057e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 9.894433560633797e-05,
+       "m": 9.765625000000833e-05,
+       "v": 2.3269653320307057e-07
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 106,
+       "m_tau_violations": 243,
+       "v_tau_violations": 7,
+       "tau_violations_total": 356,
+       "worst_abs_err": {
+        "p": 0.000905079116590865,
+        "m": 0.0004442807392827097,
+        "v": 4.840737822184196e-06
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.000905079116590865,
+       "m": 0.0004442807392827097,
+       "v": 4.840737822184196e-06
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 309,
+       "m_tau_violations": 297,
+       "v_tau_violations": 347,
+       "tau_violations_total": 953,
+       "worst_abs_err": {
+        "p": 0.0014677895804925817,
+        "m": 0.0006034234486534257,
+        "v": 1.1982532704529314e-05
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.0014677895804925817,
+       "m": 0.0006034234486534257,
+       "v": 1.1982532704529314e-05
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   },
+   "foreach": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 9.894433560633797e-05,
+        "m": 9.765625000000833e-05,
+        "v": 2.3269653320307057e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 9.894433560633797e-05,
+       "m": 9.765625000000833e-05,
+       "v": 2.3269653320307057e-07
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 106,
+       "m_tau_violations": 243,
+       "v_tau_violations": 7,
+       "tau_violations_total": 356,
+       "worst_abs_err": {
+        "p": 0.000905079116590865,
+        "m": 0.0004442807392827097,
+        "v": 4.840737822184196e-06
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.000905079116590865,
+       "m": 0.0004442807392827097,
+       "v": 4.840737822184196e-06
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 309,
+       "m_tau_violations": 297,
+       "v_tau_violations": 347,
+       "tau_violations_total": 953,
+       "worst_abs_err": {
+        "p": 0.0014677895804925817,
+        "m": 0.0006034234486534257,
+        "v": 1.1982532704529314e-05
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.0014677895804925817,
+       "m": 0.0006034234486534257,
+       "v": 1.1982532704529314e-05
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   },
+   "fused": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 9.894433560633797e-05,
+        "m": 9.765625000000833e-05,
+        "v": 2.3269653320307057e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 9.894433560633797e-05,
+       "m": 9.765625000000833e-05,
+       "v": 2.3269653320307057e-07
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 87,
+       "m_tau_violations": 243,
+       "v_tau_violations": 0,
+       "tau_violations_total": 330,
+       "worst_abs_err": {
+        "p": 0.000905079116590865,
+        "m": 0.0004442807392827097,
+        "v": 3.200506411537348e-06
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.000905079116590865,
+       "m": 0.0004442807392827097,
+       "v": 3.200506411537348e-06
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 274,
+       "m_tau_violations": 297,
+       "v_tau_violations": 0,
+       "tau_violations_total": 571,
+       "worst_abs_err": {
+        "p": 0.0014677895804925817,
+        "m": 0.0006034234486534257,
+        "v": 7.495101163630257e-06
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.0014677895804925817,
+       "m": 0.0006034234486534257,
+       "v": 7.495101163630257e-06
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   }
+  },
+  "float16": {
+   "stock": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": false,
+       "p_tau_violations": 586,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 586,
+       "worst_abs_err": {
+        "p": Infinity,
+        "m": 1.2207031250009714e-05,
+        "v": 2.9802322387691924e-08
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": Infinity,
+       "m": 1.2207031250009714e-05,
+       "v": 2.9802322387691924e-08
+      },
+      "verdict": "FAIL",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": false,
+       "p_tau_violations": 707,
+       "m_tau_violations": 257,
+       "v_tau_violations": 33,
+       "tau_violations_total": 997,
+       "worst_abs_err": {
+        "p": NaN,
+        "m": 5.673973066186444e-05,
+        "v": 6.978100191512245e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": NaN,
+       "m": 5.673973066186444e-05,
+       "v": 6.978100191512245e-07
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": false,
+       "p_tau_violations": 865,
+       "m_tau_violations": 280,
+       "v_tau_violations": 160,
+       "tau_violations_total": 1305,
+       "worst_abs_err": {
+        "p": NaN,
+        "m": 7.57935857262082e-05,
+        "v": 1.7073792907607347e-06
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": NaN,
+       "m": 7.57935857262082e-05,
+       "v": 1.7073792907607347e-06
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   },
+   "foreach": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": false,
+       "p_tau_violations": 586,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 586,
+       "worst_abs_err": {
+        "p": Infinity,
+        "m": 1.2207031250009714e-05,
+        "v": 2.9802322387691924e-08
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": Infinity,
+       "m": 1.2207031250009714e-05,
+       "v": 2.9802322387691924e-08
+      },
+      "verdict": "FAIL",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": false,
+       "p_tau_violations": 707,
+       "m_tau_violations": 257,
+       "v_tau_violations": 33,
+       "tau_violations_total": 997,
+       "worst_abs_err": {
+        "p": NaN,
+        "m": 5.673973066186444e-05,
+        "v": 6.978100191512245e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": NaN,
+       "m": 5.673973066186444e-05,
+       "v": 6.978100191512245e-07
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": false,
+       "p_tau_violations": 865,
+       "m_tau_violations": 280,
+       "v_tau_violations": 160,
+       "tau_violations_total": 1305,
+       "worst_abs_err": {
+        "p": NaN,
+        "m": 7.57935857262082e-05,
+        "v": 1.7073792907607347e-06
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": NaN,
+       "m": 7.57935857262082e-05,
+       "v": 1.7073792907607347e-06
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   },
+   "fused": {
+    "snapshots": [
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 0,
+       "m_tau_violations": 0,
+       "v_tau_violations": 0,
+       "tau_violations_total": 0,
+       "worst_abs_err": {
+        "p": 2.408721024349525e-05,
+        "m": 1.2207031250009714e-05,
+        "v": 2.980232238771903e-08
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 2.408721024349525e-05,
+       "m": 1.2207031250009714e-05,
+       "v": 2.980232238771903e-08
+      },
+      "verdict": "PASS",
+      "snapshot": "first"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 173,
+       "m_tau_violations": 257,
+       "v_tau_violations": 0,
+       "tau_violations_total": 430,
+       "worst_abs_err": {
+        "p": 0.015208811963903668,
+        "m": 5.673973066186444e-05,
+        "v": 4.94282876356588e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.015208811963903668,
+       "m": 5.673973066186444e-05,
+       "v": 4.94282876356588e-07
+      },
+      "verdict": "FAIL",
+      "snapshot": "mid"
+     },
+     {
+      "gates": {
+       "nonfinite_zero": true,
+       "p_tau_violations": 349,
+       "m_tau_violations": 280,
+       "v_tau_violations": 2,
+       "tau_violations_total": 631,
+       "worst_abs_err": {
+        "p": 0.01524362226040945,
+        "m": 7.57935857262082e-05,
+        "v": 9.864339853953843e-07
+       },
+       "step_exact": true
+      },
+      "worst_abs_err": {
+       "p": 0.01524362226040945,
+       "m": 7.57935857262082e-05,
+       "v": 9.864339853953843e-07
+      },
+      "verdict": "FAIL",
+      "snapshot": "last"
+     }
+    ],
+    "verdict": "FAIL"
+   }
+  }
+ },
+ "fp16_stock_corruption": {
+  "nonfinite_param_positions_over_snapshots": 585,
+  "interpretation": "stock fp16 corrupted (expected); fused fp16 judged against fp64 ref"
+ },
+ "summary": {
+  "hard_failures": [
+   "bfloat16/foreach",
+   "bfloat16/fused",
+   "bfloat16/stock",
+   "float16/foreach",
+   "float16/fused",
+   "float16/stock",
+   "float32/foreach",
+   "float32/fused",
+   "float32/stock"
+  ]
+ }
+}

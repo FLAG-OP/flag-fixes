@@ -1,0 +1,176 @@
+{
+ "experiment": "tokenize-overlap REDONE on the original training entry (review BqnWy6w item 2; the round-52 version is RETRACTED: sorted() made negative_1 the positive, zero_grad ran per micro, and no real overlap occurred)",
+ "semantics_fixes": [
+  "explicit batch['anchor'] / batch['positive'] / negatives startswith('negative') (keys negative_1..3)",
+  "zero_grad ONCE per step; 4 micro-batches accumulate; optimizer.step after",
+  "loss identical to embedding_loss: sentence_embedding -> F.normalize(float) -> grouped cross-entropy",
+  "inline loss0 ~0.95/0.47/0.69 matches the real training loss (the discarded version gave 2.86 / 1568)"
+ ],
+ "execution_order_changed": {
+  "inline_measured_overlap_ms": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "overlap_measured_overlap_ms": [
+   34.218,
+   35.003,
+   38.681
+  ],
+  "proof": "per-group tokenize/H2D/compute timestamps in micro_events; overlap = |tokenize[i+1] \u2229 compute[i]|"
+ },
+ "runs": {
+  "rep1": {
+   "order": "inline->overlap",
+   "inline_ms": [
+    1968.2,
+    2205.5,
+    2440.8
+   ],
+   "overlap_ms": [
+    1979.0,
+    2207.0,
+    2437.4
+   ],
+   "paired_overlap_minus_inline": [
+    10.8,
+    1.5,
+    -3.4
+   ],
+   "inline_loss0": [
+    0.951874,
+    0.472191,
+    0.689937
+   ],
+   "overlap_loss0": [
+    0.948353,
+    0.472149,
+    0.688142
+   ],
+   "input_hashes_equal": true,
+   "step_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "measured_overlap_ms": {
+    "inline": 0.0,
+    "overlap": 34.218
+   },
+   "loss_outliers": {
+    "inline": [],
+    "overlap": [
+     2.5292
+    ]
+   }
+  },
+  "rep2": {
+   "order": "overlap->inline",
+   "inline_ms": [
+    1976.4,
+    2215.1,
+    2451.0
+   ],
+   "overlap_ms": [
+    1965.8,
+    2208.0,
+    2420.0
+   ],
+   "paired_overlap_minus_inline": [
+    -10.6,
+    -7.1,
+    -31.0
+   ],
+   "inline_loss0": [
+    0.950457,
+    0.475603,
+    0.687849
+   ],
+   "overlap_loss0": [
+    0.954659,
+    0.478038,
+    0.69574
+   ],
+   "input_hashes_equal": true,
+   "step_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "measured_overlap_ms": {
+    "inline": 0.0,
+    "overlap": 35.003
+   },
+   "loss_outliers": {
+    "inline": [],
+    "overlap": []
+   }
+  },
+  "rep3": {
+   "order": "overlap->inline",
+   "inline_ms": [
+    1976.6,
+    2199.8,
+    2442.6
+   ],
+   "overlap_ms": [
+    1978.2,
+    2208.9,
+    2431.0
+   ],
+   "paired_overlap_minus_inline": [
+    1.6,
+    9.1,
+    -11.6
+   ],
+   "inline_loss0": [
+    0.946624,
+    0.471869,
+    0.68922
+   ],
+   "overlap_loss0": [
+    0.950577,
+    0.475839,
+    2.780378
+   ],
+   "input_hashes_equal": true,
+   "step_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "measured_overlap_ms": {
+    "inline": 0.0,
+    "overlap": 38.681
+   },
+   "loss_outliers": {
+    "inline": [],
+    "overlap": [
+     3.2352,
+     2.7804,
+     2.5115
+    ]
+   }
+  }
+ },
+ "paired_overlap_minus_inline_all6": [
+  10.8,
+  1.5,
+  -3.4,
+  -10.6,
+  -7.1,
+  -31.0,
+  1.6,
+  9.1,
+  -11.6
+ ],
+ "median": -3.4,
+ "n_negative": 5,
+ "input_consistency": "input hashes and token counts (27,052/31,454/35,506) identical between modes in all 3 reps",
+ "verdict": {
+  "performance": "FLAT: 6 paired diffs flip sign (median -3.4 ms, 5/6 negative). Despite 34-39 ms of genuinely hidden tokenize per step, the whole step does not improve -> the hidden host tokenize was NOT on the critical path for most of its duration (the device already had queued work / launch pipelining covered it).",
+  "correctness": "UNSAFE: overlap mode produced loss outliers 2.5-3.2 (real band 0.43-0.95) in rep1 (1) and rep3 (3) while inline had none in all 3 reps -> the tokenizer/prepare_embedding_inputs is NOT thread-safe; concurrent tokenization corrupts inputs. thread_safety_suspect flag recorded per run.",
+  "training_impact": "NOT ADOPTED. The hypothesis 'overlapping tokenize reduces whole-step time' is rejected on performance grounds AND the implementation is incorrect under threads. A safe version would need process-based prefetch (dataloader workers) rather than threads, and is not expected to help given the flat result."
+ },
+ "retraction": "round-52 tokenize_overlap_r51.json ('hypothesis rejected, median +0.35 ms') is RETRACTED as evidence: that experiment had broken semantics; the conclusion happens to agree but was not validly obtained. This file supersedes it."
+}

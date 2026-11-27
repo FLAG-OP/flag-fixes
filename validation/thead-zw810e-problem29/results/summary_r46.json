@@ -1,0 +1,71 @@
+{
+ "run_commit_note": "round-46 (review bqR2JZg)",
+ "1_dw_accuracy_recomputable": {
+  "script_fixes": [
+   "per-element |x-ref|/max(|ref|,0.01*max|ref|,eps) then max (was tensor-level floor)",
+   "structural validation of 72 targets: keys/shape/numel/finiteness before numbers",
+   "exit codes 0/2/3/4/5/6 incl. empty-group detection"
+  ],
+  "regression_selftest": {
+   "identical": "exit 0 PASS",
+   "emptied_post_params": "exit 2 NONZERO PASS",
+   "formula_ref1_1e-4": "0.1000% PASS"
+  },
+  "real_hit_step_recompute": {
+   "n_targets": 72,
+   "per_group": {
+    "FFN_up": 24,
+    "FFN_down": 24,
+    "attn_out_proj": 24
+   },
+   "grad_rel_max_unrounded": {
+    "FFN_up": 0.0,
+    "FFN_down": 0.0,
+    "attn_out_proj": 0.0
+   },
+   "param_bits_unequal": {
+    "FFN_up": 0,
+    "FFN_down": 0,
+    "attn_out_proj": 0
+   },
+   "nan_inf": 0,
+   "problems": 0,
+   "exit": 0,
+   "verdict": "dw-only PASS at 2% per-element floored-rel gate (unrounded recomputation)",
+   "record_sha256": "7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3"
+  },
+  "records_availability": {
+   "size_gb": 6.9,
+   "in_git": false,
+   "tensor_hashes_committed": 576,
+   "cross_process_rebuild_reproduces_archive": false,
+   "rebuild_match": "0/72 per group (grad_norm 10.5625 -> 12.1250)",
+   "what_reproduces": "the VERDICT (within-run 4-way bitwise identity, PASS, 432 hits) - not absolute tensor values",
+   "assistance": "maintainer to attach records.pkl as release artifact or grant upload permission"
+  }
+ },
+ "2_hbm": "BLOCKED - see results/hbm_blocked_r46.md (acu exit 101, PCM held by pg-exporter; who-must-provide-what table included)",
+ "3_timing_and_slow_step": {
+  "sdpa_timing_split": {
+   "S214_native": {
+    "bwd_only_ms": 0.3413,
+    "clone_fwd_bwd_ms": 0.5277
+   },
+   "S228_native": {
+    "bwd_only_ms": 0.3473,
+    "clone_fwd_bwd_ms": 0.5379
+   }
+  },
+  "sdpa_results_unchanged": {
+   "native_fwd_rel": [
+    0.0018428893527016044,
+    0.0015658210031688213
+   ],
+   "flaggems_fwd_rel": [
+    0.7927898168563843,
+    0.788311779499054
+   ]
+  },
+  "slow_step": "NOT REPRODUCED, exact cause UNDETERMINED; 'no separate warmup' removed from all JSON; fg_all new-shape observation reworded correlational (not causal)"
+ }
+}

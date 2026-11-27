@@ -1,0 +1,52 @@
+{
+ "preconditions": {
+  "init": true,
+  "rng_cpu": true,
+  "rng_cuda": true,
+  "micro_inputs": true
+ },
+ "native_run1_vs_native_run2_NONDET_BASELINE": {
+  "ffn_up": {
+   "max": 0.2315,
+   "median": 0.0369
+  },
+  "ffn_down": {
+   "max": 0.3378,
+   "median": 0.1113
+  },
+  "attn_output": {
+   "max": 0.431,
+   "median": 0.1577
+  }
+ },
+ "wrapped_stock_vs_native": {
+  "ffn_up": {
+   "max": 0.1488,
+   "median": 0.0444
+  },
+  "ffn_down": {
+   "max": 0.6757,
+   "median": 0.1495
+  },
+  "attn_output": {
+   "max": 0.2994,
+   "median": 0.1567
+  }
+ },
+ "dw_only_vs_native": {
+  "ffn_up": {
+   "max": 0.1488,
+   "median": 0.0556
+  },
+  "ffn_down": {
+   "max": 0.6757,
+   "median": 0.0954
+  },
+  "attn_output": {
+   "max": 0.431,
+   "median": 0.1483
+  }
+ },
+ "frozen_dW_stock_vs_fg_identical": true,
+ "frozen_dW_shapes": 4
+}

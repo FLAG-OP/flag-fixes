@@ -1,0 +1,363 @@
+{
+ "field_version": "route_entry_ab_v3",
+ "time_unit": "ms",
+ "estimate": "phase2 - phase1 per process (py_route registered between the phases; --second native = control without registration); effect = py_route minus native control. Reported at two levels: paired STEPS (treats the 3 steps of a process as independent) and PROCESSES (one mean per process) - the three steps of a process share the run environment, so the process level is the conservative one.",
+ "unit_note": "the process level is the primary result; the step level is kept for comparison with round-57 (which pooled steps)",
+ "levels": {
+  "all": {
+   "batches": [
+    "batch2",
+    "batch1_console"
+   ],
+   "provenance": {
+    "batch2": "16 processes (8 py_route + 8 native control), per-run JSON files committed (results/route_entry_ab_r57/*.json)",
+    "batch1_console": "12 processes (6 + 6); per-run JSON files were lost to a shell file-naming bug, step times transcribed from the console and committed as results/route_entry_ab_r57_batch1_console/*.json - NOT independent raw records"
+   },
+   "step_level": {
+    "native": {
+     "n": 42,
+     "mean_ms": 5.8,
+     "median_ms": 1.42,
+     "n_negative": 17,
+     "min_ms": -30.61,
+     "max_ms": 71.49
+    },
+    "py_route": {
+     "n": 42,
+     "mean_ms": -3.24,
+     "median_ms": -4.9,
+     "n_negative": 32,
+     "min_ms": -28.9,
+     "max_ms": 72.53
+    },
+    "welch": {
+     "unit": "paired step (phase2 - phase1)",
+     "n_native": 42,
+     "n_py_route": 42,
+     "native_mean_ms": 5.8,
+     "py_route_mean_ms": -3.24,
+     "diff_ms": -9.04,
+     "native_sd_ms": 21.15,
+     "py_route_sd_ms": 18.45,
+     "se_ms": 4.33,
+     "welch_df": 80.5,
+     "t_crit": 2.0,
+     "ci95_ms": [
+      -17.7,
+      -0.37
+     ],
+     "ci_excludes_zero": true,
+     "process_means_negative": {
+      "py_route": 32,
+      "native": 17
+     }
+    }
+   },
+   "process_level": {
+    "native": {
+     "n": 14,
+     "mean_ms": 5.8,
+     "median_ms": 3.42,
+     "n_negative": 6,
+     "min_ms": -16.42,
+     "max_ms": 35.3
+    },
+    "py_route": {
+     "n": 14,
+     "mean_ms": -3.24,
+     "median_ms": -6.08,
+     "n_negative": 13,
+     "min_ms": -23.12,
+     "max_ms": 51.05
+    },
+    "welch": {
+     "unit": "process (mean of its 3 paired steps)",
+     "n_native": 14,
+     "n_py_route": 14,
+     "native_mean_ms": 5.8,
+     "py_route_mean_ms": -3.24,
+     "diff_ms": -9.03,
+     "native_sd_ms": 13.07,
+     "py_route_sd_ms": 16.54,
+     "se_ms": 5.63,
+     "welch_df": 24.7,
+     "t_crit": 2.066,
+     "ci95_ms": [
+      -20.67,
+      2.6
+     ],
+     "ci_excludes_zero": false,
+     "process_means_negative": {
+      "py_route": 13,
+      "native": 6
+     }
+    }
+   }
+  },
+  "batch2_only": {
+   "batches": [
+    "batch2"
+   ],
+   "provenance": {
+    "batch2": "16 processes (8 py_route + 8 native control), per-run JSON files committed (results/route_entry_ab_r57/*.json)"
+   },
+   "step_level": {
+    "native": {
+     "n": 24,
+     "mean_ms": 7.13,
+     "median_ms": 1.42,
+     "n_negative": 11,
+     "min_ms": -30.61,
+     "max_ms": 71.49
+    },
+    "py_route": {
+     "n": 24,
+     "mean_ms": 1.8,
+     "median_ms": -2.4,
+     "n_negative": 16,
+     "min_ms": -28.9,
+     "max_ms": 72.53
+    },
+    "welch": {
+     "unit": "paired step (phase2 - phase1)",
+     "n_native": 24,
+     "n_py_route": 24,
+     "native_mean_ms": 7.13,
+     "py_route_mean_ms": 1.8,
+     "diff_ms": -5.33,
+     "native_sd_ms": 23.57,
+     "py_route_sd_ms": 21.25,
+     "se_ms": 6.48,
+     "welch_df": 45.5,
+     "t_crit": 2.013,
+     "ci95_ms": [
+      -18.38,
+      7.71
+     ],
+     "ci_excludes_zero": false,
+     "process_means_negative": {
+      "py_route": 16,
+      "native": 11
+     }
+    }
+   },
+   "process_level": {
+    "native": {
+     "n": 8,
+     "mean_ms": 7.13,
+     "median_ms": 6.41,
+     "n_negative": 3,
+     "min_ms": -16.42,
+     "max_ms": 35.3
+    },
+    "py_route": {
+     "n": 8,
+     "mean_ms": 1.8,
+     "median_ms": -4.9,
+     "n_negative": 7,
+     "min_ms": -10.11,
+     "max_ms": 51.05
+    },
+    "welch": {
+     "unit": "process (mean of its 3 paired steps)",
+     "n_native": 8,
+     "n_py_route": 8,
+     "native_mean_ms": 7.13,
+     "py_route_mean_ms": 1.8,
+     "diff_ms": -5.33,
+     "native_sd_ms": 15.42,
+     "py_route_sd_ms": 20.14,
+     "se_ms": 8.97,
+     "welch_df": 13.1,
+     "t_crit": 2.177,
+     "ci95_ms": [
+      -24.85,
+      14.19
+     ],
+     "ci_excludes_zero": false,
+     "process_means_negative": {
+      "py_route": 7,
+      "native": 3
+     }
+    }
+   }
+  },
+  "batch1_console_only": {
+   "batches": [
+    "batch1_console"
+   ],
+   "provenance": {
+    "batch1_console": "12 processes (6 + 6); per-run JSON files were lost to a shell file-naming bug, step times transcribed from the console and committed as results/route_entry_ab_r57_batch1_console/*.json - NOT independent raw records"
+   },
+   "step_level": {
+    "native": {
+     "n": 18,
+     "mean_ms": 4.01,
+     "median_ms": 1.59,
+     "n_negative": 6,
+     "min_ms": -27.58,
+     "max_ms": 41.75
+    },
+    "py_route": {
+     "n": 18,
+     "mean_ms": -9.96,
+     "median_ms": -11.08,
+     "n_negative": 16,
+     "min_ms": -26.05,
+     "max_ms": 18.7
+    },
+    "welch": {
+     "unit": "paired step (phase2 - phase1)",
+     "n_native": 18,
+     "n_py_route": 18,
+     "native_mean_ms": 4.01,
+     "py_route_mean_ms": -9.96,
+     "diff_ms": -13.97,
+     "native_sd_ms": 17.93,
+     "py_route_sd_ms": 11.22,
+     "se_ms": 4.98,
+     "welch_df": 28.5,
+     "t_crit": 2.05,
+     "ci95_ms": [
+      -24.19,
+      -3.76
+     ],
+     "ci_excludes_zero": true,
+     "process_means_negative": {
+      "py_route": 16,
+      "native": 6
+     }
+    }
+   },
+   "process_level": {
+    "native": {
+     "n": 6,
+     "mean_ms": 4.01,
+     "median_ms": 0.84,
+     "n_negative": 3,
+     "min_ms": -7.81,
+     "max_ms": 18.57
+    },
+    "py_route": {
+     "n": 6,
+     "mean_ms": -9.96,
+     "median_ms": -9.04,
+     "n_negative": 6,
+     "min_ms": -23.12,
+     "max_ms": -3.99
+    },
+    "welch": {
+     "unit": "process (mean of its 3 paired steps)",
+     "n_native": 6,
+     "n_py_route": 6,
+     "native_mean_ms": 4.01,
+     "py_route_mean_ms": -9.96,
+     "diff_ms": -13.97,
+     "native_sd_ms": 10.22,
+     "py_route_sd_ms": 6.97,
+     "se_ms": 5.05,
+     "welch_df": 8.8,
+     "t_crit": 2.316,
+     "ci95_ms": [
+      -25.67,
+      -2.28
+     ],
+     "ci_excludes_zero": true,
+     "process_means_negative": {
+      "py_route": 6,
+      "native": 3
+     }
+    }
+   }
+  }
+ },
+ "process_level_sign_test": {
+  "process_mean_negative": {
+   "py_route": 13,
+   "n_py_route": 14,
+   "native": 6,
+   "n_native": 14
+  },
+  "fisher_two_sided_p": 0.0128
+ },
+ "process_mean_diffs_ms": {
+  "batch1_console|native": {
+   "run02": -1.77,
+   "run04": 3.46,
+   "run06": -2.26,
+   "run08": 13.89,
+   "run10": -7.81,
+   "run12": 18.57
+  },
+  "batch1_console|py_route": {
+   "run01": -23.12,
+   "run03": -4.31,
+   "run05": -9.36,
+   "run07": -8.71,
+   "run09": -10.26,
+   "run11": -3.99
+  },
+  "batch2|native": {
+   "run02": -1.36,
+   "run03": 3.38,
+   "run06": -16.42,
+   "run07": 9.44,
+   "run10": 12.87,
+   "run11": 35.3,
+   "run14": 16.69,
+   "run15": -2.84
+  },
+  "batch2|py_route": {
+   "run01": -4.02,
+   "run04": -5.78,
+   "run05": -10.11,
+   "run08": -2.64,
+   "run09": 51.05,
+   "run12": -0.01,
+   "run13": -7.7,
+   "run16": -6.37
+  }
+ },
+ "batch_hash_mismatch": 0,
+ "raw_files": [
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run01_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run02_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run03_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run04_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run05_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run06_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run07_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run08_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run09_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run10_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run11_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run12_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run13_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run14_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run15_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57/run16_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run01_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run02_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run03_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run04_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run05_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run06_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run07_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run08_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run09_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run10_native.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run11_py_route.json",
+  "/tmp/opencode/zw810e-problem29/results/route_entry_ab_r57_batch1_console/run12_native.json"
+ ],
+ "valid_tokens_per_s": {
+  "native": {
+   "p1": 14646.4,
+   "p2": 14596.3
+  },
+  "py_route": {
+   "p1": 14666.1,
+   "p2": 14654.1
+  }
+ },
+ "verdict": "PROCESS LEVEL (primary), all 28 processes: diff -9.03 ms, Welch 95% CI [-20.67, +2.60] -> CI SPANS ZERO; batch 2 only (complete raw records, 16 processes): diff -5.33 ms, CI [-24.85, 14.19]; batch 1 only (console transcription, 12 processes): diff -13.97 ms, CI [-25.67, -2.28]; process means negative in 13/14 py_route vs 6/14 native processes. The interval spans zero: there is a small indication of a gain, not enough to deploy."
+}

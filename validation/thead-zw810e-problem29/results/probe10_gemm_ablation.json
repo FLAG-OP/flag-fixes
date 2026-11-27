@@ -1,0 +1,17 @@
+{
+ "device": "PPU-ZW810E",
+ "shape": "M2990 K1024 N1024 bf16 (attn_out class, 2880 calls/step class)",
+ "results": {
+  "reduced_reduction=True": {
+   "ms": 0.0567,
+   "tflops": 110.59
+  },
+  "reduced_reduction=False": {
+   "ms": 0.0564,
+   "tflops": 111.18
+  },
+  "noncontig_input_ms": 0.0611,
+  "contig_input_ms": 0.0566,
+  "fp32_matmul_ms": 0.2256
+ }
+}

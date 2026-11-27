@@ -1,0 +1,92 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "reference": "fp64 closed-form AdamW (formula A): p -= lr*(m_hat/(sqrt(v_hat)+eps) + wd*p); m=b1*m+(1-b1)*g; v=b2*v+(1-b2)*g^2; m_hat=m/(1-b1^t); v_hat=v/(1-b2^t)",
+ "float32": {
+  "foreach": {
+   "step1_vs_ref_max_ulp_param": 2056951489,
+   "final_param_max_rel_vs_ref_scale_gated": 16.566892865988553,
+   "final_param_median_rel": 1.2483057765631649,
+   "final_param_over4eps_positions": 4096,
+   "nonfinite_fused_or_impl": 0,
+   "max_ulp_final": {
+    "param": 2056951489,
+    "m": 2315,
+    "v": 11
+   },
+   "step_matches": 30.0
+  },
+  "fused": {
+   "step1_vs_ref_max_ulp_param": 2056951489,
+   "final_param_max_rel_vs_ref_scale_gated": 16.566900894455777,
+   "final_param_median_rel": 1.2483058356036865,
+   "final_param_over4eps_positions": 4096,
+   "nonfinite_fused_or_impl": 0,
+   "max_ulp_final": {
+    "param": 2056951489,
+    "m": 2808,
+    "v": 4
+   },
+   "step_matches": 30.0
+  }
+ },
+ "bfloat16": {
+  "foreach": {
+   "step1_vs_ref_max_ulp_param": 31388,
+   "final_param_max_rel_vs_ref_scale_gated": 16.784608840174677,
+   "final_param_median_rel": 1.2492849048574637,
+   "final_param_over4eps_positions": 4044,
+   "nonfinite_fused_or_impl": 0,
+   "max_ulp_final": {
+    "param": 31388,
+    "m": 29175,
+    "v": 8
+   },
+   "step_matches": 30.0
+  },
+  "fused": {
+   "step1_vs_ref_max_ulp_param": 31388,
+   "final_param_max_rel_vs_ref_scale_gated": 16.784608840174677,
+   "final_param_median_rel": 1.2459346707850343,
+   "final_param_over4eps_positions": 4042,
+   "nonfinite_fused_or_impl": 0,
+   "max_ulp_final": {
+    "param": 31388,
+    "m": 29175,
+    "v": 4
+   },
+   "step_matches": 30.0
+  }
+ },
+ "float16": {
+  "foreach": {
+   "step1_vs_ref_max_ulp_param": 1000000000,
+   "final_param_max_rel_vs_ref_scale_gated": Infinity,
+   "final_param_median_rel": 1.3031941978158523,
+   "final_param_over4eps_positions": 4087,
+   "nonfinite_fused_or_impl": 498,
+   "max_ulp_final": {
+    "param": 1000000000,
+    "m": 305,
+    "v": 9
+   },
+   "step_matches": 30.0
+  },
+  "fused": {
+   "step1_vs_ref_max_ulp_param": 21719,
+   "final_param_max_rel_vs_ref_scale_gated": 16.55441662792213,
+   "final_param_median_rel": 1.2481175553806692,
+   "final_param_over4eps_positions": 4087,
+   "nonfinite_fused_or_impl": 0,
+   "max_ulp_final": {
+    "param": 21719,
+    "m": 305,
+    "v": 4
+   },
+   "step_matches": 30.0
+  }
+ },
+ "fp16_stock_corruption_record": {
+  "nonfinite_positions_over_3_snapshots": 522
+ }
+}

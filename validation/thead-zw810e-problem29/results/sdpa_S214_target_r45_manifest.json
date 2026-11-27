@@ -1,0 +1,104 @@
+{
+ "target": {
+  "step": 2,
+  "micro": 0,
+  "group": "negative_2",
+  "text_hash16": "4d84ea53dba8924d",
+  "loader_pair_index": 8,
+  "n_seqs": 10,
+  "S_captured": 214
+ },
+ "captured": true,
+ "q": {
+  "shape": [
+   10,
+   16,
+   214,
+   64
+  ],
+  "dtype": "torch.bfloat16",
+  "stride": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "contig": false
+ },
+ "k": {
+  "shape": [
+   10,
+   16,
+   214,
+   64
+  ],
+  "dtype": "torch.bfloat16",
+  "stride": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "contig": false
+ },
+ "v": {
+  "shape": [
+   10,
+   16,
+   214,
+   64
+  ],
+  "dtype": "torch.bfloat16",
+  "stride": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "contig": false
+ },
+ "mask": {
+  "shape": [
+   10,
+   1,
+   214,
+   214
+  ],
+  "dtype": "torch.float32",
+  "stride": [
+   45796,
+   45796,
+   214,
+   1
+  ],
+  "min": -3.4028234663852886e+38,
+  "valid_frac": 0.6336,
+  "n_neg_inf": 0
+ },
+ "dropout_p": 0.1,
+ "dO": {
+  "shape": [
+   10,
+   16,
+   214,
+   64
+  ],
+  "dtype": "torch.bfloat16",
+  "stride": [
+   219136,
+   64,
+   1024,
+   1
+  ],
+  "contig": false,
+  "absmax": 0.0002899169921875
+ },
+ "note": "captured from the FIRST encoder layer's SDPA call at this S in the target micro; dO = real upstream grad via output tensor hook",
+ "tensor_hashes": {
+  "q": "be199074f061217e",
+  "k": "6e6bf5e442eb8325",
+  "v": "947ca59e368ef562",
+  "m": "e90688e871e03404",
+  "dO": "457b0fe0b383b32a"
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "mode": "native",
+ "rounds": [
+  {
+   "step_ms": 1879.5,
+   "valid_tokens": 27052,
+   "tokens_per_s": 14393,
+   "input_hash": "d2bfed5625354170"
+  },
+  {
+   "step_ms": 2115.0,
+   "valid_tokens": 31454,
+   "tokens_per_s": 14872,
+   "input_hash": "c5896ff2bece725f"
+  },
+  {
+   "step_ms": 2336.2,
+   "valid_tokens": 35506,
+   "tokens_per_s": 15198,
+   "input_hash": "6228631cc16cc2dd"
+  }
+ ],
+ "per_shape_hits": {},
+ "total_hits": 0,
+ "n_shapes_hit": 0,
+ "all_12_hit": false,
+ "diagnostic_kernels": {
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+  "aten::mm": 5776,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+  "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+ },
+ "host_aten_mm_events": 5776
+}

@@ -1,0 +1,132 @@
+{
+ "hypothesis": "dW-only whole-step neutrality is caused by HOST dispatch overhead of the Python aten::mm override, not by lack of kernel gain",
+ "experiment": "single-factor control in the real BGE-M3 entry: native vs dw_only_routed (Triton dW kernel via Python route) vs dw_native_contig (NATIVE mm on an explicit contiguous() copy, SAME Python route + SAME mm.out fallback + SAME output allocation); profiler OFF; 3 real steps (27,052/31,454/35,506 tokens); two independent reps with rotated group order",
+ "whole_step": [
+  {
+   "rep": "rep1",
+   "order": "native,dw_only,native_contig",
+   "native_ms": [
+    1907.7,
+    2127.7,
+    2353.2
+   ],
+   "tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "tokens_per_s": [
+    14180,
+    14783,
+    15088
+   ],
+   "hashes_equal": true,
+   "dw_only_minus_native": [
+    30.9,
+    3.6,
+    10.3
+   ],
+   "native_contig_minus_native": [
+    60.3,
+    57.2,
+    57.4
+   ],
+   "int_hits_recorded": {
+    "dw_only": 1056,
+    "native_contig": 2112,
+    "NOTE": "hit counts are NOT reliably attributable: IMPL libraries stack, the later-registered one captures the earlier group's count (1056/2112 swap between reps). Timing is unaffected (each group timed in its own pass)."
+   }
+  },
+  {
+   "rep": "rep2",
+   "order": "native_contig,dw_only,native",
+   "native_ms": [
+    1932.7,
+    2150.7,
+    2392.3
+   ],
+   "tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "tokens_per_s": [
+    13997,
+    14625,
+    14842
+   ],
+   "hashes_equal": true,
+   "dw_only_minus_native": [
+    33.4,
+    -7.5,
+    -22.7
+   ],
+   "native_contig_minus_native": [
+    10.4,
+    7.8,
+    -10.3
+   ],
+   "int_hits_recorded": {
+    "dw_only": 2112,
+    "native_contig": 1056,
+    "NOTE": "hit counts are NOT reliably attributable: IMPL libraries stack, the later-registered one captures the earlier group's count (1056/2112 swap between reps). Timing is unaffected (each group timed in its own pass)."
+   }
+  }
+ ],
+ "dw_only_vs_native_all6": [
+  30.9,
+  3.6,
+  10.3,
+  33.4,
+  -7.5,
+  -22.7
+ ],
+ "dw_only_median": 6.95,
+ "dw_only_range": [
+  -22.7,
+  33.4
+ ],
+ "native_contig_vs_native_all6": [
+  60.3,
+  57.2,
+  57.4,
+  10.4,
+  7.8,
+  -10.3
+ ],
+ "native_contig_median": 33.800000000000004,
+ "native_contig_range": [
+  -10.3,
+  60.3
+ ],
+ "trace_diagnostic_profiler_on": {
+  "native": {
+   "host_aten_mm_count": 5776,
+   "host_aten_mm_cpu_ms": 308.52
+  },
+  "dw_only_routed": {
+   "host_aten_mm_count": 11120,
+   "host_aten_mm_cpu_ms": 611.13
+  },
+  "dw_native_contig": {
+   "host_aten_mm_count": 11552,
+   "host_aten_mm_cpu_ms": 497.23
+  }
+ },
+ "findings": [
+  "HOST DISPATCH: registering the Python IMPL override doubles host aten::mm events (5,776 -> 11,120) and host CPU time (308.5 -> 611.1 ms per step, +303 ms). This is ~10x larger than the ~25-33 ms/step kernel-level saving, so the Python routing layer consumes any dW kernel gain.",
+  "PYTHON ROUTING DECISION ITSELF is cheap (microbench ~0.65 us/call x 5,768 = ~3.8 ms/step) - the cost is the aten->Python->aten double traversal, not the shape lookup.",
+  "OUTPUT ALLOCATION (torch.empty + mm.out vs mm) is NOT the cause: microbench delta within +-10 us on the dW shapes.",
+  "native+contiguous() is NOT faster than native (6 paired diffs: 4 positive, rep1 consistently ~+57 ms): the explicit copy costs more than the transposed-view penalty it removes. So the FlagGems 'gain' is not a free layout effect either.",
+  "KERNEL GAIN RECONCILIATION: FG mm internally calls .contiguous() on non-contiguous inputs. On a CONTIGUOUS operand FG == native (102.6 vs 98.6 TF/s); on the real TRANSPOSED VIEW native drops to 82.7 TF/s while FG stays 102.4. The apparent gain is therefore 'native mm is slow on transposed views', which native+copy does not recover because the copy itself costs.",
+  "Microbenchmarks on this device are UNSTABLE across runs (same shape measured 0.42 ms and 1.69 ms in different processes) - whole-step paired runs are the only reliable comparison."
+ ],
+ "verdict": {
+  "python_routing_explains_delta": true,
+  "quantified": "~303 ms/step host overhead from the Python IMPL override (profiler-on diagnostic) vs <=33 ms/step available kernel saving",
+  "candidate_kernel_gain": "small and shape-dependent; on real transposed-view operands FG is faster (102 vs 83 TF/s) but native+contiguous is not a substitute (copy cost)",
+  "whole_step_result": "dw_only vs native all6: median 7.0 ms, range [-22.7, 33.4] (sign flips); native+contig vs native: median 33.8 ms (mostly slower)",
+  "training_impact": "a library-level (non-Python) registration that avoids the aten->Python double traversal is the only way the dW gain could reach the whole step; NOT available in this environment (FlagGems mm is a Python function) - listed as the next falsifiable test, NOT executed"
+ },
+ "assistance_needed": "a C++/library-level hook to call the dW kernel without per-call Python dispatch, or Triton-compile-free native support for transposed-view operands"
+}

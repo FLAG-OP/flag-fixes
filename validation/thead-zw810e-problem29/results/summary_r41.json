@@ -1,0 +1,73 @@
+{
+ "A_accuracy_acceptance": {
+  "thresholds": {
+   "loss_abs_tol": 0.05,
+   "grad_rel_tol": 0.02,
+   "param_abs_tol": 0.02,
+   "nonfinite_max": 0,
+   "basis": "bf16 mantissa 8 bits -> ~0.4% rel; 2% grad rel covers accumulation; loss abs 0.05 vs values ~0.5-1.0"
+  },
+  "same_state_scope": "first-warmup-step target grads (identical init/RNG/batch; only mm kernel differs)",
+  "loss_diff_max": 0.007422,
+  "grad_rel_floored": {
+   "median": 0.024,
+   "p90": 0.075,
+   "max": 0.1214
+  },
+  "param_abs_max": 0.000214,
+  "nonfinite": 0,
+  "verdict": "FAIL (worst grad rel 12.1% > 2% tol; loss 0.0074<0.05 PASS; param 2.1e-4<0.02 PASS; nonfinite 0 PASS) \u2014 honest FAIL, exit 5",
+  "detail_file": "wholestep_acc_r41.json.accfail.json",
+  "worst_layers": [
+   "attn.output.dense L0/L2/L11/L13 (NOT in dW whitelist - divergence propagates via bf16 dW kernel change)"
+  ]
+ },
+ "B_clean_perf": {
+  "native": 2128.0,
+  "wrapped_stock": 2148.3,
+  "fg_all": 2206.0,
+  "dw_only": 2149.0,
+  "dw_hits_int": 1056,
+  "dw_vs_native_per_round": [
+   9.0,
+   21.0,
+   -12.7
+  ],
+  "dw_vs_wrapped_stock_per_round": [
+   -12.3,
+   0.7,
+   -18.6
+  ],
+  "verdict": "whole-step effect NOT resolved at 3-round scale (variance band); single-op budget ~25.09 ms/step (reviewer weighting) unverified at whole step"
+ },
+ "C_sdpa": {
+  "independence_mask_diff": 0.0,
+  "independence_nomask_ctrl": 6.75,
+  "timings_p0": {
+   "fwd_p0": 0.7018,
+   "bwd_p0": 1.1251,
+   "full_p0": 1.8723
+  },
+  "timings_p01": {
+   "fwd_p01": 0.784,
+   "bwd_p01": 1.2967,
+   "full_p01": 2.1289
+  },
+  "native_vs_fp32_reldiff": {
+   "out": 0.003505,
+   "dQ": 0.004829,
+   "dK": 0.004317,
+   "dV": 0.003805
+  },
+  "candidate_via_entry": "NO-OP PASSTHROUGH VERIFIED",
+  "candidate_kernel": "fmha_cutlassF_bf16_aligned_k64x128x64_sm80 (AttentionKernelFA2) \u2014 same as native",
+  "candidate_direct": "COMPILE FAILED (GROUP_HEAD CompileTimeAssertionFailure (BLOCK_N <= HEAD_DIM )",
+  "conclusion": "no usable SDPA candidate on this stack"
+ },
+ "D_offline": {
+  "midseq_totals": "89.96/73.06/16.9 ms (per-row consistent; reviewer weighting 91.91/73.78/18.13 noted)",
+  "parser_s4_busy": 2262.5,
+  "render_generator": "section-span fixed (3c-3..3c-7 preserved)"
+ },
+ "E_hbm": "BLOCKED (pg-exporter holds PCM; commands/exit 101/dmesg archived logs/hbm_probe_r38.log)"
+}

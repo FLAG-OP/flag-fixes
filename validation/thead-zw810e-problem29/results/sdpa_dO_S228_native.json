@@ -1,0 +1,111 @@
+{
+ "label": "S228",
+ "impl": "native",
+ "S": 228,
+ "dropout_p": 0.0,
+ "input_strides": {
+  "q": [
+   233472,
+   64,
+   1024,
+   1
+  ],
+  "k": [
+   233472,
+   64,
+   1024,
+   1
+  ],
+  "v": [
+   233472,
+   64,
+   1024,
+   1
+  ],
+  "dO": [
+   233472,
+   64,
+   1024,
+   1
+  ]
+ },
+ "input_contig": {
+  "q": false,
+  "k": false,
+  "v": false,
+  "dO": false
+ },
+ "fp32_ref": {
+  "out_absmax": 8.374534606933594,
+  "dQ_absmax": 2.2716551029589027e-05,
+  "dO_absmax": 0.0001430511474609375
+ },
+ "forward": {
+  "ran": true,
+  "out_stride": [
+   233472,
+   64,
+   1024,
+   1
+  ],
+  "out_contig": false,
+  "vs_fp32_max_abs": 0.013113021850585938,
+  "vs_fp32_relmax": 0.0015658210031688213,
+  "fwd_ms": 0.1839
+ },
+ "backward_dO_original_layout": {
+  "ran": true,
+  "dO_stride_used": [
+   233472,
+   64,
+   1024,
+   1
+  ],
+  "dO_contig": false,
+  "dQ_vs_fp32_relmax": 0.0048836711794137955,
+  "dK_vs_fp32_relmax": 0.0035842738579958677,
+  "dV_vs_fp32_relmax": 0.0027039763517677784,
+  "dQ_nonfinite": 0,
+  "dK_nonfinite": 0,
+  "dV_nonfinite": 0,
+  "clone_fwd_bwd_ms": 0.5379,
+  "bwd_only_ms": 0.3473,
+  "timing_boundaries": {
+   "clone_fwd_bwd_ms": "input clone + forward + backward",
+   "bwd_only_ms": "autograd.grad only; graph prebuilt outside"
+  }
+ },
+ "backward_dO_contiguous": {
+  "ran": true,
+  "dO_stride_used": [
+   233472,
+   14592,
+   64,
+   1
+  ],
+  "dO_contig": true,
+  "dQ_vs_fp32_relmax": 0.0048836711794137955,
+  "dK_vs_fp32_relmax": 0.0035842738579958677,
+  "dV_vs_fp32_relmax": 0.0027039763517677784,
+  "dQ_nonfinite": 0,
+  "dK_nonfinite": 0,
+  "dV_nonfinite": 0,
+  "clone_fwd_bwd_ms": 0.5501,
+  "bwd_only_ms": 0.359,
+  "timing_boundaries": {
+   "clone_fwd_bwd_ms": "input clone + forward + backward",
+   "bwd_only_ms": "autograd.grad only; graph prebuilt outside"
+  }
+ },
+ "backward_all_contiguous": {
+  "ran": true,
+  "dQ_vs_fp32_relmax": 0.0048836711794137955,
+  "dK_vs_fp32_relmax": 0.0035842738579958677,
+  "dV_vs_fp32_relmax": 0.0027039763517677784,
+  "dQ_nonfinite": 0,
+  "fwd_out_vs_fp32_relmax": 0.0015658210031688213,
+  "bwd_ms_incl_contiguize": 0.6173
+ },
+ "dO_contiguize_copy_ms": 0.0178,
+ "full_fwd_bwd_with_copy_ms": 0.5643
+}

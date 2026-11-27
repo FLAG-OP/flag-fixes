@@ -1,0 +1,48 @@
+{
+ "rebuild_vs_archived_manifest": {
+  "native_run1": {
+   "pre_grads_match": "0/72",
+   "post_params_match": "0/72"
+  },
+  "native_run2": {
+   "pre_grads_match": "0/72",
+   "post_params_match": "0/72"
+  },
+  "wrapped_stock": {
+   "pre_grads_match": "0/72",
+   "post_params_match": "0/72"
+  },
+  "dw_only": {
+   "pre_grads_match": "0/72",
+   "post_params_match": "0/72"
+  }
+ },
+ "rebuild_vs_archived_records": {
+  "native_run1": {
+   "pre_grads_bitwise_equal": "0/72",
+   "post_params_bitwise_equal": "0/72"
+  },
+  "native_run2": {
+   "pre_grads_bitwise_equal": "0/72",
+   "post_params_bitwise_equal": "0/72"
+  },
+  "wrapped_stock": {
+   "pre_grads_bitwise_equal": "0/72",
+   "post_params_bitwise_equal": "0/72"
+  },
+  "dw_only": {
+   "pre_grads_bitwise_equal": "0/72",
+   "post_params_bitwise_equal": "0/72"
+  }
+ },
+ "finding": {
+  "archived_run_grad_norm": 10.5625,
+  "rebuild_run_grad_norm": 12.125,
+  "cross_process_rebuild_reproduces_archive": false,
+  "within_run_conclusion_still_holds": "in the rebuild run, native_run1 == native_run2 == wrapped_stock == dw_only bitwise for all 72 targets (VERDICT PASS), dw_only hits 432",
+  "interpretation": "snapshot-restore WITHIN a process is deterministic; rebuilding from seed 42 in a NEW process is NOT (model init or the 2 preceding steps have a non-deterministic source) - so 'rebuild the same record from the specified snapshot' is NOT a valid reproduction path",
+  "what_is_reproducible": "the VERDICT (same-snapshot 4-way bitwise identity + PASS) reproduces on every run; the absolute tensor values do not",
+  "records_availability": "records.pkl is 6.9 GB (72 target layers x 4 groups, float32) - exceeds git limits; no release/artifact permission in this environment. 576 per-tensor sha256 hashes are committed in acc_hit_step_r44_tensor_hashes.json for integrity checking",
+  "assistance_needed": "maintainer to attach results/acc_hit_step_r44.json.records.pkl (sha256 7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3) as a release artifact, or grant artifact-upload permission"
+ }
+}

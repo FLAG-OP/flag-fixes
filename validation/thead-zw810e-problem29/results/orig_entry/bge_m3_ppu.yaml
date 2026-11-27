@@ -1,0 +1,42 @@
+name: bge-m3
+task: embedding
+seed: 42
+batch_size: 10
+gradient_accumulation_steps: 4
+epochs: 3
+log_every: 10
+temperature: 0.05
+# Default location; override with train.output_dir=... to keep runs apart.
+output_dir: ${oc.env:FLAGSCALE_OUTPUT_DIR,/flagos-retrieval-ckpts/${train.name}}
+
+model:
+  model_type: bge_m3
+  model_path: /tmp/bge-m3-hf
+  max_length: 512
+  torch_dtype: bf16
+  freeze_backbone: false
+
+data:
+  path: /tmp/t2ranking/t2ranking/triplet-15
+  validation_path: /tmp/t2ranking/t2ranking/triplet-15
+  test_path: /tmp/t2ranking/t2ranking/triplet-15
+  train_split: train
+  validation_split: validation
+  test_split: test
+  eval_max_samples: 256
+  split_modulo: 20
+  shuffle_buffer: 20000
+  length_sort_window: 256
+  num_negatives: 3
+  max_samples: null
+
+optimizer:
+  lr: 2.0e-5
+  weight_decay: 0.01
+  # Constant-lr fine-tuning over multiple epochs overfits: see the reranker
+  # config for the measured 9x train/validation gap. `lr_decay_steps` is
+  # optional; without it the schedule re-anchors after epoch 1.
+  lr_decay_style: cosine
+  min_lr: 2.0e-6
+  warmup_steps: 200
+  max_grad_norm: 1.0

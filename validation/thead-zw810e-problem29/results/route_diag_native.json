@@ -1,0 +1,37 @@
+{
+ "mode": "native",
+ "wall_ms_with_profiler": 3363.4,
+ "note": "profiler ON: diagnostic only",
+ "host_aten_mm": {
+  "count": 5776,
+  "cpu_time_total_ms": 308.52
+ },
+ "device_kernel_total_ms": 7546.6,
+ "host_gap_ms": -4183.2,
+ "top_device_kernels": [
+  [
+   "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile12",
+   776.1
+  ],
+  [
+   "autograd::engine::evaluate_function: AddmmBackward0",
+   746.6
+  ],
+  [
+   "aten::mm",
+   694.7
+  ],
+  [
+   "AddmmBackward0",
+   694.6
+  ],
+  [
+   "aten::linear",
+   483.3
+  ],
+  [
+   "aten::scaled_dot_product_attention",
+   346.2
+  ]
+ ]
+}

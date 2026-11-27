@@ -1,0 +1,1592 @@
+{
+ "field_version": "gap_markers_v2",
+ "time_unit": "ms",
+ "loop": "entry",
+ "gc": "default",
+ "min_gap_ms": 2.0,
+ "profiled_steps": [
+  2,
+  3,
+  4
+ ],
+ "method": "device gaps = union of kernel/gpu_memcpy/gpu_memset intervals per step; per gap every category interval is CLIPPED to the gap, then unioned, then made exclusive in priority order (tokenizer > prepare_embedding_inputs > h2d > next_batch > loss_sync > python_gc > launch_submit > blocking_runtime > other_runtime > cpu_op); UNKNOWN = gap - covered. next_kernel = first device event after the gap, with the host time of its launch call relative to the gap start. No neighbourhood attribution.",
+ "categories": {
+  "tokenizer": "MK_tokenizer: the tokenizer call",
+  "prepare_embedding_inputs_other": "MK_prepare_embedding_inputs minus tokenizer",
+  "h2d": "MK_h2d: move_features",
+  "next_batch": "MK_next_batch: DataLoader fetch (entry loop)",
+  "loss_sync": "MK_loss_sync: the entry's isfinite(loss) host sync (entry loop)",
+  "python_gc": "MK_python_gc: Python garbage-collection pauses (gc.callbacks)",
+  "launch_submit": "cudaLaunchKernel*/cuLaunchKernel* call duration",
+  "blocking_runtime": "*Synchronize / cudaMemcpy / cudaMalloc / cudaFree / cudaStreamQuery ... call duration",
+  "other_runtime": "other CUDA runtime call durations",
+  "cpu_op": "aten op dispatch intervals not inside the above"
+ },
+ "marker_names_found": [
+  "MK_h2d",
+  "MK_loss_sync",
+  "MK_next_batch",
+  "MK_prepare_embedding_inputs",
+  "MK_python_gc",
+  "MK_tokenizer"
+ ],
+ "device_events_without_correlation": 0,
+ "device_events_total": 139647,
+ "steps": {
+  "s2": {
+   "step_ms_profiled": 2094.3,
+   "device_window_ms": 2072.18,
+   "device_busy_union_ms": 1806.45,
+   "device_idle_ms": 265.73,
+   "busy_pct": 87.18,
+   "n_device_events": 46394,
+   "n_gaps": 46393,
+   "n_gaps_ge_min": 15,
+   "idle_in_gaps_ge_min_ms": 55.37,
+   "all_gaps_partition_ms": {
+    "tokenizer": 40.33,
+    "prepare_embedding_inputs_other": 0.39,
+    "h2d": 10.29,
+    "next_batch": 0.0,
+    "loss_sync": 1.07,
+    "python_gc": 0.01,
+    "launch_submit": 27.06,
+    "blocking_runtime": 0.83,
+    "other_runtime": 3.1,
+    "cpu_op": 137.22,
+    "unknown": 45.43
+   },
+   "gaps_ge_min_partition_ms": {
+    "tokenizer": 36.82,
+    "prepare_embedding_inputs_other": 0.34,
+    "h2d": 0.72,
+    "next_batch": 0.0,
+    "loss_sync": 0.0,
+    "python_gc": 0.0,
+    "launch_submit": 0.05,
+    "blocking_runtime": 0.0,
+    "other_runtime": 0.0,
+    "cpu_op": 0.11,
+    "unknown": 17.34
+   },
+   "gaps": [
+    {
+     "gap_start_rel_step_ms": 23.693,
+     "gap_ms": 2.106,
+     "tokenizer": 1.993,
+     "prepare_embedding_inputs_other": 0.032,
+     "h2d": 0.058,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.023,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m0",
+       "overlap_ms": 2.106
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.011
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.005
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.8,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.089
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 49.527,
+     "gap_ms": 3.849,
+     "tokenizer": 3.722,
+     "prepare_embedding_inputs_other": 0.035,
+     "h2d": 0.067,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.026,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m0",
+       "overlap_ms": 3.849
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.013
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.004
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.8,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.83
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 123.71,
+     "gap_ms": 3.598,
+     "tokenizer": 3.479,
+     "prepare_embedding_inputs_other": 0.033,
+     "h2d": 0.064,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.021,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m0",
+       "overlap_ms": 3.598
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.013
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.003
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.4,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.581
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 165.254,
+     "gap_ms": 10.202,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.015,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.03,
+     "unknown": 10.158,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_backward_m0",
+       "overlap_ms": 10.202
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.015
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.6,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 10.184
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 507.104,
+     "gap_ms": 2.477,
+     "tokenizer": 2.323,
+     "prepare_embedding_inputs_other": 0.04,
+     "h2d": 0.083,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.031,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m1",
+       "overlap_ms": 2.477
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.018
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.8,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.457
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 533.871,
+     "gap_ms": 4.39,
+     "tokenizer": 4.274,
+     "prepare_embedding_inputs_other": 0.03,
+     "h2d": 0.057,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.029,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m1",
+       "overlap_ms": 4.39
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.014
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.002
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.8,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 4.373
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 674.922,
+     "gap_ms": 2.369,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.013,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.027,
+     "unknown": 2.328,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_backward_m1",
+       "overlap_ms": 2.369
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.013
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.7,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.353
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1065.311,
+     "gap_ms": 2.637,
+     "tokenizer": 2.529,
+     "prepare_embedding_inputs_other": 0.03,
+     "h2d": 0.054,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.024,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m2",
+       "overlap_ms": 2.637
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.014
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.9,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.62
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1092.483,
+     "gap_ms": 5.118,
+     "tokenizer": 5.005,
+     "prepare_embedding_inputs_other": 0.029,
+     "h2d": 0.055,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.029,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m2",
+       "overlap_ms": 5.118
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.013
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.7,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 5.102
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1175.165,
+     "gap_ms": 3.215,
+     "tokenizer": 3.101,
+     "prepare_embedding_inputs_other": 0.016,
+     "h2d": 0.084,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.013,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m2",
+       "overlap_ms": 3.215
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.018
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.0
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.2,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.195
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1212.963,
+     "gap_ms": 2.167,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.011,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.025,
+     "unknown": 2.131,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_backward_m2",
+       "overlap_ms": 2.167
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.011
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.7,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.154
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1551.987,
+     "gap_ms": 2.425,
+     "tokenizer": 2.299,
+     "prepare_embedding_inputs_other": 0.036,
+     "h2d": 0.064,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.026,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m3",
+       "overlap_ms": 2.425
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.014
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.9,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.409
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1578.853,
+     "gap_ms": 4.698,
+     "tokenizer": 4.571,
+     "prepare_embedding_inputs_other": 0.032,
+     "h2d": 0.065,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.03,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m3",
+       "overlap_ms": 4.698
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.016
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.8,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 4.68
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1660.943,
+     "gap_ms": 3.646,
+     "tokenizer": 3.524,
+     "prepare_embedding_inputs_other": 0.031,
+     "h2d": 0.067,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.025,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_forward_m3",
+       "overlap_ms": 3.646
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.016
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.0
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.6,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.629
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1710.11,
+     "gap_ms": 2.476,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.009,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.023,
+     "unknown": 2.444,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s2_backward_m3",
+       "overlap_ms": 2.476
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.009
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.5,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.465
+     }
+    }
+   ]
+  },
+  "s3": {
+   "step_ms_profiled": 2286.6,
+   "device_window_ms": 2282.62,
+   "device_busy_union_ms": 2034.53,
+   "device_idle_ms": 248.09,
+   "busy_pct": 89.13,
+   "n_device_events": 46433,
+   "n_gaps": 46432,
+   "n_gaps_ge_min": 13,
+   "idle_in_gaps_ge_min_ms": 39.25,
+   "all_gaps_partition_ms": {
+    "tokenizer": 28.34,
+    "prepare_embedding_inputs_other": 0.28,
+    "h2d": 10.27,
+    "next_batch": 0.0,
+    "loss_sync": 1.07,
+    "python_gc": 0.0,
+    "launch_submit": 26.42,
+    "blocking_runtime": 1.03,
+    "other_runtime": 2.8,
+    "cpu_op": 140.36,
+    "unknown": 37.52
+   },
+   "gaps_ge_min_partition_ms": {
+    "tokenizer": 25.73,
+    "prepare_embedding_inputs_other": 0.25,
+    "h2d": 0.53,
+    "next_batch": 0.0,
+    "loss_sync": 0.0,
+    "python_gc": 0.0,
+    "launch_submit": 0.33,
+    "blocking_runtime": 0.0,
+    "other_runtime": 0.0,
+    "cpu_op": 4.71,
+    "unknown": 7.7
+   },
+   "gaps": [
+    {
+     "gap_start_rel_step_ms": 3.438,
+     "gap_ms": 2.07,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.02,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 2.05,
+     "unknown": 0.0,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m0",
+       "overlap_ms": 2.07
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.02
+      }
+     ],
+     "prev_kernel": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}:",
+     "next_kernel": {
+      "name": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}:",
+      "dur_us": 4.9,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.048
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 29.547,
+     "gap_ms": 2.848,
+     "tokenizer": 2.715,
+     "prepare_embedding_inputs_other": 0.038,
+     "h2d": 0.064,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.032,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m0",
+       "overlap_ms": 2.848
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.016
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.9,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.83
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 56.607,
+     "gap_ms": 5.921,
+     "tokenizer": 5.8,
+     "prepare_embedding_inputs_other": 0.031,
+     "h2d": 0.059,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.031,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m0",
+       "overlap_ms": 5.921
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.014
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.7,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 5.905
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 555.899,
+     "gap_ms": 2.044,
+     "tokenizer": 1.804,
+     "prepare_embedding_inputs_other": 0.025,
+     "h2d": 0.091,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.124,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m1",
+       "overlap_ms": 2.041
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.02
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.0
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char*, 3ul> >(i",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.2,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.022
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 584.072,
+     "gap_ms": 2.62,
+     "tokenizer": 2.498,
+     "prepare_embedding_inputs_other": 0.042,
+     "h2d": 0.055,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.025,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m1",
+       "overlap_ms": 2.62
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.013
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.0,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.605
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 611.481,
+     "gap_ms": 4.634,
+     "tokenizer": 4.505,
+     "prepare_embedding_inputs_other": 0.035,
+     "h2d": 0.065,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.03,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m1",
+       "overlap_ms": 4.634
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.015
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.7,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 4.618
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 771.313,
+     "gap_ms": 2.681,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.011,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.028,
+     "unknown": 2.642,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_backward_m1",
+       "overlap_ms": 2.681
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.011
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.5,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.668
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1201.474,
+     "gap_ms": 3.056,
+     "tokenizer": 2.936,
+     "prepare_embedding_inputs_other": 0.031,
+     "h2d": 0.064,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.024,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m2",
+       "overlap_ms": 3.056
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.013
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.1,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.041
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1374.534,
+     "gap_ms": 2.166,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.009,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.023,
+     "unknown": 2.134,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_backward_m2",
+       "overlap_ms": 2.166
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.009
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.6,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.155
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1781.062,
+     "gap_ms": 2.867,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.28,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.001,
+     "cpu_op": 2.585,
+     "unknown": 0.0,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m3",
+       "overlap_ms": 2.867
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cuLaunchKernelEx",
+       "clipped_union_ms": 0.28
+      },
+      {
+       "name": "cudaGetDeviceProperties_v2",
+       "clipped_union_ms": 0.001
+      },
+      {
+       "name": "cudaFree",
+       "clipped_union_ms": 0.0
+      }
+     ],
+     "prev_kernel": "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64",
+     "next_kernel": {
+      "name": "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x64x4_layout0x1x0x0_align1x1x4x4_splitk0_fusion5_pr",
+      "dur_us": 8.2,
+      "launch_call": "cuLaunchKernelEx",
+      "launch_rel_gap_start_ms": 2.585
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1806.969,
+     "gap_ms": 3.21,
+     "tokenizer": 3.073,
+     "prepare_embedding_inputs_other": 0.035,
+     "h2d": 0.072,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.03,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m3",
+       "overlap_ms": 3.21
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.022
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.2,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.186
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1907.909,
+     "gap_ms": 2.482,
+     "tokenizer": 2.397,
+     "prepare_embedding_inputs_other": 0.013,
+     "h2d": 0.063,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.008,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_forward_m3",
+       "overlap_ms": 2.482
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.016
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.1,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 2.464
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1941.556,
+     "gap_ms": 2.657,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.009,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.024,
+     "unknown": 2.624,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s3_backward_m3",
+       "overlap_ms": 2.657
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.009
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.5,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.645
+     }
+    }
+   ]
+  },
+  "s4": {
+   "step_ms_profiled": 2501.1,
+   "device_window_ms": 2497.3,
+   "device_busy_union_ms": 2262.06,
+   "device_idle_ms": 235.24,
+   "busy_pct": 90.58,
+   "n_device_events": 46820,
+   "n_gaps": 46819,
+   "n_gaps_ge_min": 10,
+   "idle_in_gaps_ge_min_ms": 32.72,
+   "all_gaps_partition_ms": {
+    "tokenizer": 24.15,
+    "prepare_embedding_inputs_other": 0.24,
+    "h2d": 11.73,
+    "next_batch": 0.0,
+    "loss_sync": 1.14,
+    "python_gc": 0.0,
+    "launch_submit": 25.04,
+    "blocking_runtime": 1.32,
+    "other_runtime": 2.61,
+    "cpu_op": 132.42,
+    "unknown": 36.6
+   },
+   "gaps_ge_min_partition_ms": {
+    "tokenizer": 21.18,
+    "prepare_embedding_inputs_other": 0.19,
+    "h2d": 3.45,
+    "next_batch": 0.0,
+    "loss_sync": 0.0,
+    "python_gc": 0.0,
+    "launch_submit": 0.04,
+    "blocking_runtime": 0.0,
+    "other_runtime": 0.0,
+    "cpu_op": 0.09,
+    "unknown": 7.77
+   },
+   "gaps": [
+    {
+     "gap_start_rel_step_ms": 25.642,
+     "gap_ms": 3.627,
+     "tokenizer": 3.5,
+     "prepare_embedding_inputs_other": 0.032,
+     "h2d": 0.067,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.028,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m0",
+       "overlap_ms": 3.627
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.016
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.3,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.609
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 651.838,
+     "gap_ms": 2.007,
+     "tokenizer": 1.84,
+     "prepare_embedding_inputs_other": 0.027,
+     "h2d": 0.089,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.05,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m1",
+       "overlap_ms": 2.007
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.019
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char*, 3ul> >(i",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.3,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 1.985
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 680.208,
+     "gap_ms": 3.594,
+     "tokenizer": 3.468,
+     "prepare_embedding_inputs_other": 0.035,
+     "h2d": 0.067,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.024,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m1",
+       "overlap_ms": 3.594
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.015
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.002
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.3,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.576
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 834.847,
+     "gap_ms": 2.762,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.013,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.031,
+     "unknown": 2.719,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_backward_m1",
+       "overlap_ms": 2.762
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.013
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.6,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.747
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1185.773,
+     "gap_ms": 3.012,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 3.012,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.0,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m2",
+       "overlap_ms": 3.012
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 2.933
+      },
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.008
+      }
+     ],
+     "prev_kernel": "Memcpy HtoD (Pageable -> Device)",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 1.3,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.001
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1213.836,
+     "gap_ms": 3.831,
+     "tokenizer": 3.711,
+     "prepare_embedding_inputs_other": 0.034,
+     "h2d": 0.061,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.025,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m2",
+       "overlap_ms": 3.831
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.014
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.002
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.4,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 3.814
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1279.959,
+     "gap_ms": 4.804,
+     "tokenizer": 4.681,
+     "prepare_embedding_inputs_other": 0.031,
+     "h2d": 0.068,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.024,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m2",
+       "overlap_ms": 4.804
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.016
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.002
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.7,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 4.786
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1389.627,
+     "gap_ms": 2.301,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.01,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.032,
+     "unknown": 2.26,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_backward_m2",
+       "overlap_ms": 2.301
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.01
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.5,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.288
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 1802.401,
+     "gap_ms": 4.124,
+     "tokenizer": 3.979,
+     "prepare_embedding_inputs_other": 0.035,
+     "h2d": 0.082,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.0,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.0,
+     "unknown": 0.028,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_forward_m3",
+       "overlap_ms": 4.124
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaMemcpyAsync",
+       "clipped_union_ms": 0.019
+      },
+      {
+       "name": "cudaStreamSynchronize",
+       "clipped_union_ms": 0.001
+      }
+     ],
+     "prev_kernel": "void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f",
+     "next_kernel": {
+      "name": "Memcpy HtoD (Pageable -> Device)",
+      "dur_us": 2.5,
+      "launch_call": "cudaMemcpyAsync",
+      "launch_rel_gap_start_ms": 4.103
+     }
+    },
+    {
+     "gap_start_rel_step_ms": 2014.474,
+     "gap_ms": 2.658,
+     "tokenizer": 0.0,
+     "prepare_embedding_inputs_other": 0.0,
+     "h2d": 0.0,
+     "next_batch": 0.0,
+     "loss_sync": 0.0,
+     "python_gc": 0.0,
+     "launch_submit": 0.014,
+     "blocking_runtime": 0.0,
+     "other_runtime": 0.0,
+     "cpu_op": 0.031,
+     "unknown": 2.613,
+     "enclosing_host_markers": [
+      {
+       "name": "rf_s4_backward_m3",
+       "overlap_ms": 2.658
+      }
+     ],
+     "top_runtime_calls": [
+      {
+       "name": "cudaLaunchKernel",
+       "clipped_union_ms": 0.014
+      }
+     ],
+     "prev_kernel": "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::nati",
+     "next_kernel": {
+      "name": "void at::native::vectorized_elementwise_kernel<4, at::native::BUnaryFunctor<float, float, float, at::native::binary_inte",
+      "dur_us": 1.4,
+      "launch_call": "cudaLaunchKernel",
+      "launch_rel_gap_start_ms": 2.642
+     }
+    }
+   ]
+  }
+ },
+ "totals": {
+  "device_window_ms": 6852.1,
+  "device_busy_union_ms": 6103.03,
+  "busy_pct": 89.07,
+  "n_gaps": 139644,
+  "n_gaps_ge_min": 38,
+  "idle_in_gaps_ge_min_ms": 127.35
+ },
+ "totals_gaps_ge_min_partition_ms": {
+  "tokenizer": 83.73,
+  "prepare_embedding_inputs_other": 0.79,
+  "h2d": 4.7,
+  "next_batch": 0.0,
+  "loss_sync": 0.0,
+  "python_gc": 0.0,
+  "launch_submit": 0.41,
+  "blocking_runtime": 0.0,
+  "other_runtime": 0.0,
+  "cpu_op": 4.91,
+  "unknown": 32.81
+ },
+ "totals_all_gaps_partition_ms": {
+  "tokenizer": 92.81,
+  "prepare_embedding_inputs_other": 0.91,
+  "h2d": 32.28,
+  "next_batch": 0.0,
+  "loss_sync": 3.27,
+  "python_gc": 0.02,
+  "launch_submit": 78.53,
+  "blocking_runtime": 3.18,
+  "other_runtime": 8.52,
+  "cpu_op": 410.0,
+  "unknown": 119.55
+ }
+}

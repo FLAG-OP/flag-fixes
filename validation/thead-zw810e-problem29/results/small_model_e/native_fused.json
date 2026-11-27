@@ -1,0 +1,170 @@
+{
+ "config": "native",
+ "optim": "fused",
+ "device": "cuda",
+ "device_name": "PPU-ZW810E",
+ "params_all_cuda_before_optim": true,
+ "optimizer_choice": "fused",
+ "tokens_cuda": true,
+ "embedding_trainable_in_params": true,
+ "steps": 8,
+ "losses": [
+  4.13274610764347e-05,
+  3.076979555771686e-05,
+  2.250965371786151e-05,
+  1.6174031770788133e-05,
+  1.1430867743911222e-05,
+  7.969450052769389e-06,
+  5.516845703823492e-06,
+  3.846368599624839e-06
+ ],
+ "step_ms": [
+  1186.58,
+  2.65,
+  2.12,
+  2.01,
+  1.99,
+  1.98,
+  2.0,
+  1.94
+ ],
+ "optimizer_ms": [
+  15.46,
+  0.252,
+  0.221,
+  0.219,
+  0.209,
+  0.21,
+  0.2,
+  0.205
+ ],
+ "grads_all_on_cuda": true,
+ "all_grads_present": true,
+ "grad_stats": {
+  "param_0": {
+   "device": "cuda",
+   "grad_sha": "dc143166b674d6aa",
+   "grad_max_abs": 6.02263378057799e-11,
+   "grad_finite": true,
+   "param_sha": "3f21110e73cce25c"
+  },
+  "param_1": {
+   "device": "cuda",
+   "grad_sha": "90423cff233afe3e",
+   "grad_max_abs": 5.152350074366652e-11,
+   "grad_finite": true,
+   "param_sha": "724c6cde04d68597"
+  },
+  "param_2": {
+   "device": "cuda",
+   "grad_sha": "fc45a2f46d7ce1d2",
+   "grad_max_abs": 5.5840384399763465e-11,
+   "grad_finite": true,
+   "param_sha": "46d4c63b140fca78"
+  },
+  "param_3": {
+   "device": "cuda",
+   "grad_sha": "f45eaaf1e6ddd1c3",
+   "grad_max_abs": 1.1822328671584614e-09,
+   "grad_finite": true,
+   "param_sha": "4f75901a412f3dc1"
+  },
+  "param_4": {
+   "device": "cuda",
+   "grad_sha": "44346bbc22410b35",
+   "grad_max_abs": 2.4678706722625066e-07,
+   "grad_finite": true,
+   "param_sha": "c97fbf57a4da1f73"
+  },
+  "param_5": {
+   "device": "cuda",
+   "grad_sha": "562ce4d1c02da892",
+   "grad_max_abs": 6.285042264408958e-09,
+   "grad_finite": true,
+   "param_sha": "d0f664eb0838bc00"
+  },
+  "param_6": {
+   "device": "cuda",
+   "grad_sha": "d0c0ec4fd4f56f35",
+   "grad_max_abs": 1.2746310673605876e-08,
+   "grad_finite": true,
+   "param_sha": "443f288ea700fcec"
+  },
+  "param_7": {
+   "device": "cuda",
+   "grad_sha": "b47fd34a0f7c6f32",
+   "grad_max_abs": 5.519836324130445e-11,
+   "grad_finite": true,
+   "param_sha": "21674593a1e2bb94"
+  },
+  "param_8": {
+   "device": "cuda",
+   "grad_sha": "8f9aabbde514ccda",
+   "grad_max_abs": 4.7584367002251327e-11,
+   "grad_finite": true,
+   "param_sha": "f711e2e12ea4cfa8"
+  },
+  "param_9": {
+   "device": "cuda",
+   "grad_sha": "44507a8dce631b5a",
+   "grad_max_abs": 5.311786427375509e-11,
+   "grad_finite": true,
+   "param_sha": "69f65ccb9e03728a"
+  },
+  "param_10": {
+   "device": "cuda",
+   "grad_sha": "f53e55efa2c6002b",
+   "grad_max_abs": 9.783912569005793e-10,
+   "grad_finite": true,
+   "param_sha": "b519148a41baa9d1"
+  },
+  "param_11": {
+   "device": "cuda",
+   "grad_sha": "bfb691497181b0e5",
+   "grad_max_abs": 3.012906972799101e-07,
+   "grad_finite": true,
+   "param_sha": "33a584822fb19619"
+  },
+  "param_12": {
+   "device": "cuda",
+   "grad_sha": "24bc5a4ff7b5cffc",
+   "grad_max_abs": 6.057136126003115e-09,
+   "grad_finite": true,
+   "param_sha": "02b0ef7913702100"
+  },
+  "param_13": {
+   "device": "cuda",
+   "grad_sha": "4673a8311f40de91",
+   "grad_max_abs": 9.898780461981005e-09,
+   "grad_finite": true,
+   "param_sha": "da2b5347e641c5c9"
+  },
+  "param_14": {
+   "device": "cuda",
+   "grad_sha": "af7bd2dc9ddd18ee",
+   "grad_max_abs": 1.9163221054441237e-07,
+   "grad_finite": true,
+   "param_sha": "8227232c6234d60d"
+  },
+  "param_15_embedding_weight": {
+   "device": "cuda",
+   "grad_sha": "670f8c6999f606ae",
+   "grad_max_abs": 3.7177011336098076e-07,
+   "grad_finite": true,
+   "param_sha": "42cb5ac98f8eeaf8"
+  }
+ },
+ "all_grads_finite": true,
+ "fwd_bwd_kernels_gelu": [
+  "void at::native::vectorized_elementwise_kernel<4, at::native::GeluCUDAKernelImpl",
+  "void at::native::vectorized_elementwise_kernel<4, at::native::GeluBackwardCUDAKe"
+ ],
+ "fwd_bwd_kernels_sample": [
+  "void at::native::vectorized_gather_kernel<16, long>(char*, c",
+  "void at::native::elementwise_kernel<128, 2, at::native::gpu_",
+  "void at::native::elementwise_kernel<128, 2, at::native::gpu_",
+  "gemm_ktype0_aiu1_mtype1_dtypeFP32xFP32xFP32xFP32xFP32_tile25",
+  "gemm_ktype1_aiu1_mtype1_dtypeFP32xFP32xFP32xFP32xFP32_tile64",
+  "void at::native::vectorized_elementwise_kernel<4, at::native"
+ ]
+}

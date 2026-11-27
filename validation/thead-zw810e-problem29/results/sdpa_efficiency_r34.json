@@ -1,0 +1,20 @@
+{
+ "H": 16,
+ "D": 64,
+ "B_per_group": 10,
+ "groups_per_micro": 5,
+ "micros_per_step": 4,
+ "formula": "fwd=4*B*H*S^2*D (QK^T+PV, padded S incl mask positions); bwd=6*B*H*S^2*D (dQ,dK,dV); recompute flag unknown",
+ "flops_tflop_per_step": {
+  "forward": 0.32,
+  "backward": 0.47
+ },
+ "sdpa_device_ms_per_step": {
+  "forward": 204.72,
+  "backward": 375.47
+ },
+ "tflops": {
+  "forward": 0.0,
+  "backward": 0.0
+ }
+}

@@ -25,6 +25,7 @@ import torch.nn.functional as F
 ap = argparse.ArgumentParser()
 ap.add_argument("--config", required=True, choices=["native", "gems_full", "gems_selective"])
 ap.add_argument("--steps", type=int, default=8)
+ap.add_argument("--optim", default="stock", choices=["stock", "fused"])
 ap.add_argument("--out", required=True)
 args = ap.parse_args()
 
@@ -75,7 +76,7 @@ def main():
     head = (torch.randn(D, D) * 0.02).to(DEVICE)
     head = torch.nn.Parameter(head)
     params = list(blocks.parameters()) + [head]
-    rec = {"config": args.config, "device": str(DEVICE), "device_name": torch.cuda.get_device_name(0)}
+    rec = {"config": args.config, "optim": args.optim, "device": str(DEVICE), "device_name": torch.cuda.get_device_name(0)}
 
     # embedding created BEFORE optimizer and included in params (review round 3:
     # trainable embedding, not a frozen operator-path-only test)
@@ -89,15 +90,21 @@ def main():
     # device assertions BEFORE optimizer construction
     rec["params_all_cuda_before_optim"] = all(p.device.type == "cuda" for p in params)
 
-    opt = torch.optim.AdamW(params, lr=1e-3, weight_decay=0.01)
+    kw = dict(lr=1e-3, weight_decay=0.01)
+    if args.optim == "fused":
+        kw["fused"] = True
+    opt = torch.optim.AdamW(params, **kw)
+    rec["optimizer_choice"] = args.optim
 
     rec["tokens_cuda"] = tok.device.type == "cuda"
     rec["embedding_trainable_in_params"] = any(p is emb.weight for p in params)
     rec["steps"] = args.steps
-    losses, step_ms = [], []
+    losses, step_ms, opt_ms = [], [], []
     for st in range(args.steps):
         s = torch.cuda.Event(True)
         e = torch.cuda.Event(True)
+        so = torch.cuda.Event(True)
+        eo = torch.cuda.Event(True)
         s.record()
         x = emb(tok)
         for blk in blocks:
@@ -106,15 +113,19 @@ def main():
         loss = logits.float().pow(2).mean()
         opt.zero_grad(set_to_none=True)
         loss.backward()
+        so.record()
         opt.step()
+        eo.record()
         torch.cuda.synchronize()
         e.record()
         torch.cuda.synchronize()
         losses.append(float(loss.detach()))
         step_ms.append(round(s.elapsed_time(e), 2))
+        opt_ms.append(round(so.elapsed_time(eo), 3))
 
     rec["losses"] = losses
     rec["step_ms"] = step_ms
+    rec["optimizer_ms"] = opt_ms
 
     # device + evidence asserts AFTER training
     rec["grads_all_on_cuda"] = all(p.grad is not None and p.grad.device.type == "cuda" for p in params)

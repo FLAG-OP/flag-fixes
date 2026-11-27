@@ -1,0 +1,63 @@
+{
+ "impl": "flaggems",
+ "dropout_p": 0.0,
+ "shape": [
+  10,
+  16,
+  228,
+  64
+ ],
+ "q_stride": [
+  233472,
+  64,
+  1024,
+  1
+ ],
+ "k_stride": [
+  233472,
+  64,
+  1024,
+  1
+ ],
+ "v_stride": [
+  233472,
+  64,
+  1024,
+  1
+ ],
+ "mask": {
+  "shape": [
+   10,
+   1,
+   228,
+   228
+  ],
+  "dtype": "torch.float32",
+  "stride": [
+   51984,
+   51984,
+   228,
+   1
+  ],
+  "min": -3.4028234663852886e+38,
+  "valid_frac": 0.2974
+ },
+ "autocast": "bf16 (model path)",
+ "inputs": "captured from real model forward (sdpa_real_S214_inputs.pt)",
+ "flag_gems_sha": "29e14822",
+ "triton": "3.6.0",
+ "forward_ran": true,
+ "fwd_only_ms": 0.1036,
+ "fwd_kernels": [
+  "ScaleDotProductAttention"
+ ],
+ "backward_supported": false,
+ "ran": false,
+ "limitation": "candidate FORWARD runs on the real non-contiguous layout but BACKWARD is unsupported",
+ "error": {
+  "type": "AssertionError",
+  "full_tail": "Traceback (most recent call last):\n  File \"/tmp/opencode/FlagScale-ppu/examples/retrieval/sdpa_real_shape.py\", line 67, in <module>\n    dq,dk,dv=torch.autograd.grad(y,(qq,kk,vv),g,retain_graph=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/__init__.py\", line 515, in grad\n    result = _engine_run_backward(\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/graph.py\", line 865, in _engine_run_backward\n    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/torch/autograd/function.py\", line 317, in apply\n    return user_fn(self, *args)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward\n    dq, dk, dv = scaled_dot_product_attention_backward(\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 975, in scaled_dot_product_attention_backward\n    assert do.is_contiguous()\n           ^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "static_assert": [],
+  "command": "python3 examples/retrieval/sdpa_real_shape.py --inputs /tmp/opencode/zw810e-problem29/results/sdpa_real_S214_inputs.pt --impl flaggems --dropout 0.0 --out /tmp/opencode/zw810e-problem29/results/sdpa_real_S228_flaggems_p0.0.json"
+ }
+}

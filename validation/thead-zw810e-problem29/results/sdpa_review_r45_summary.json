@@ -1,0 +1,223 @@
+{
+ "target_batch_recovered": {
+  "step": 2,
+  "micro": 0,
+  "group": "negative_2",
+  "text_hash16": "4d84ea53dba8924d",
+  "n_seqs": 10,
+  "valid_tokens": 1356,
+  "S": 214,
+  "note": "matches the review's trace record; the earlier 'S214' file was actually S=228 - now distinguished by filename (S214_* vs S228_*)",
+  "input_layouts": {
+   "q": {
+    "shape": [
+     10,
+     16,
+     214,
+     64
+    ],
+    "dtype": "torch.bfloat16",
+    "stride": [
+     219136,
+     64,
+     1024,
+     1
+    ],
+    "contig": false
+   },
+   "k": {
+    "shape": [
+     10,
+     16,
+     214,
+     64
+    ],
+    "dtype": "torch.bfloat16",
+    "stride": [
+     219136,
+     64,
+     1024,
+     1
+    ],
+    "contig": false
+   },
+   "v": {
+    "shape": [
+     10,
+     16,
+     214,
+     64
+    ],
+    "dtype": "torch.bfloat16",
+    "stride": [
+     219136,
+     64,
+     1024,
+     1
+    ],
+    "contig": false
+   },
+   "mask": {
+    "shape": [
+     10,
+     1,
+     214,
+     214
+    ],
+    "dtype": "torch.float32",
+    "stride": [
+     45796,
+     45796,
+     214,
+     1
+    ],
+    "min": -3.4028234663852886e+38,
+    "valid_frac": 0.6336,
+    "n_neg_inf": 0
+   },
+   "dO": {
+    "shape": [
+     10,
+     16,
+     214,
+     64
+    ],
+    "dtype": "torch.bfloat16",
+    "stride": [
+     219136,
+     64,
+     1024,
+     1
+    ],
+    "contig": false,
+    "absmax": 0.0002899169921875
+   }
+  }
+ },
+ "capture_replay_cmd": "python3 examples/retrieval/sdpa_capture_target.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --out-prefix results/sdpa_S214_target_r45  |  python3 examples/retrieval/sdpa_dO_layout.py --inputs results/sdpa_S214_target_r45.pt --label S214_target --impl {native|flaggems} --out <json>",
+ "dO_layout_test": {
+  "S214": {
+   "S": 214,
+   "native": {
+    "fwd_vs_fp32_relmax": 0.0018428893527016044,
+    "fwd_ms": 0.1783,
+    "bwd_orig_dO": {
+     "ran": true,
+     "dQ_vs_fp32_relmax": 0.00294101913459599,
+     "dK_vs_fp32_relmax": 0.003318374278023839,
+     "dV_vs_fp32_relmax": 0.002778389258310199,
+     "bwd_ms": 0.5278
+    },
+    "bwd_contig_dO": {
+     "ran": true,
+     "dQ_vs_fp32_relmax": 0.00294101913459599,
+     "dK_vs_fp32_relmax": 0.003318374278023839,
+     "dV_vs_fp32_relmax": 0.002778389258310199,
+     "bwd_ms": 0.5484
+    },
+    "dO_layout_insensitive": true,
+    "full_incl_copy_ms": 0.5587
+   },
+   "flaggems": {
+    "fwd_vs_fp32_relmax": 0.7927898168563843,
+    "fwd_vs_fp32_max_abs": 6.635130405426025,
+    "fwd_ms": 0.1185,
+    "bwd_orig_dO": {
+     "ran": false,
+     "assert": "AssertionError"
+    },
+    "bwd_contig_dO": {
+     "ran": false,
+     "assert": "AssertionError",
+     "first_fail": "File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward"
+    },
+    "bwd_all_contiguous": {
+     "ran": true,
+     "dQ": 5.353435039520264,
+     "dK": 7.773690223693848,
+     "dV": 0.8010130524635315,
+     "fwd_out_rel": 0.7927898168563843
+    }
+   }
+  },
+  "S228": {
+   "S": 228,
+   "native": {
+    "fwd_vs_fp32_relmax": 0.0015658210031688213,
+    "fwd_ms": 0.1852,
+    "bwd_orig_dO": {
+     "ran": true,
+     "dQ_vs_fp32_relmax": 0.0048836711794137955,
+     "dK_vs_fp32_relmax": 0.0035842738579958677,
+     "dV_vs_fp32_relmax": 0.0027039763517677784,
+     "bwd_ms": 0.5387
+    },
+    "bwd_contig_dO": {
+     "ran": true,
+     "dQ_vs_fp32_relmax": 0.0048836711794137955,
+     "dK_vs_fp32_relmax": 0.0035842738579958677,
+     "dV_vs_fp32_relmax": 0.0027039763517677784,
+     "bwd_ms": 0.55
+    },
+    "dO_layout_insensitive": true,
+    "full_incl_copy_ms": 0.5649
+   },
+   "flaggems": {
+    "fwd_vs_fp32_relmax": 0.788311779499054,
+    "fwd_vs_fp32_max_abs": 6.601744174957275,
+    "fwd_ms": 0.1218,
+    "bwd_orig_dO": {
+     "ran": false,
+     "assert": "AssertionError"
+    },
+    "bwd_contig_dO": {
+     "ran": false,
+     "assert": "AssertionError",
+     "first_fail": "File \"/tmp/opencode/FlagGems-base/src/flag_gems/ops/attention.py\", line 1139, in backward"
+    },
+    "bwd_all_contiguous": {
+     "ran": true,
+     "dQ": 3954.97900390625,
+     "dK": 1581.625,
+     "dV": 154.57382202148438,
+     "fwd_out_rel": 0.788311779499054
+    }
+   }
+  }
+ },
+ "dropout_0.1_model_actual": {
+  "S214": {
+   "native": {
+    "ran": true,
+    "fwd_ms": 0.2009,
+    "bwd_ms": 0.389,
+    "full_ms": 0.5992,
+    "kernel": [
+     "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(Attention"
+    ]
+   },
+   "flaggems": {
+    "ran": false,
+    "error": "AssertionError: Currenty only support dropout_p=0.0"
+   }
+  },
+  "S228": {
+   "native_full_ms": 0.611,
+   "flaggems": "same assertion (round-45 r43 file)"
+  }
+ },
+ "p0_gain_separate_line": {
+  "native_fwd_ms_S214": 0.1782,
+  "flaggems_fwd_ms_S214": 0.1185,
+  "speedup": 1.5,
+  "NOTE": "INVALID for adoption - candidate forward is numerically WRONG (79% vs FP32) on real inputs; speed measured on wrong numbers; NOT to be folded into training throughput"
+ },
+ "conclusions": {
+  "forward_numeric": "candidate forward on REAL inputs (non-contiguous transposed Q/K/V + per-sample float32 additive mask -3.4e38) is WRONG: 79.3% (S214) / 78.8% (S228) vs FP32; native 0.18% / 0.16%",
+  "backward_constraint_localized": "two separate asserts: attention.py:975 do.is_contiguous() AND :977 query.is_contiguous(); real training dO AND Q are both non-contiguous transposed views; contiguous dO alone still fails on Q",
+  "all_contiguous_backward": "runs but numerically wrong (dQ 5.35 / dK 7.77 at S214; dQ 3.95e3 / dK 1.58e3 at S228) - inherits the wrong forward",
+  "native_dO_insensitive": "native backward identical for original vs contiguous dO",
+  "dropout": "model uses p=0.1; candidate asserts 'Currently only support dropout_p=0.0' on both shapes",
+  "verdict": "FlagGems SDPA is NOT usable for real training on this stack (wrong forward numerics + Q/dO contiguity constraints + no dropout). The earlier 'forward 1.8x faster' claim is RETRACTED (measured on incorrect outputs). Training stays on native cutlassFA2."
+ }
+}

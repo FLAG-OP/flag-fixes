@@ -1,0 +1,276 @@
+{
+ "device": "PPU-ZW810E",
+ "groups": {
+  "native": {
+   "group": "native",
+   "median_ms": 2132.8,
+   "step_ms": [
+    1897.8,
+    2132.8,
+    2356.9
+   ],
+   "valid_tokens_per_s": [
+    14255,
+    14748,
+    15065
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.687305,
+    0.827124,
+    0.554395,
+    0.760474
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    15.3125
+   ],
+   "grad_norms_rounds": [
+    10.875,
+    10.4375,
+    10.125
+   ],
+   "param_hash16": "3c8b0a970945bc9b",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0
+  },
+  "wrapped_stock_mmout": {
+   "group": "wrapped_stock_mmout",
+   "median_ms": 2150.6,
+   "step_ms": [
+    1919.1,
+    2150.6,
+    2382.0
+   ],
+   "valid_tokens_per_s": [
+    14097,
+    14626,
+    14906
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.700391,
+    0.824341,
+    0.54502,
+    0.755664
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    14.6875
+   ],
+   "grad_norms_rounds": [
+    11.8125,
+    9.8125,
+    10.0
+   ],
+   "param_hash16": "6fc548f09c6a3fb4",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "accuracy_vs_native": {
+    "last_round_micro_loss_diff": [
+     0.013086,
+     -0.002783,
+     -0.009375,
+     -0.00481
+    ],
+    "grad_norm_diff_rounds": [
+     0.938,
+     -0.625,
+     -0.125
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   }
+  },
+  "fg_all": {
+   "group": "fg_all",
+   "median_ms": 2223.6,
+   "step_ms": [
+    1986.7,
+    2223.6,
+    2465.1
+   ],
+   "valid_tokens_per_s": [
+    13616,
+    14146,
+    14404
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.695215,
+    0.832178,
+    0.547754,
+    0.752563
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    21.875
+   ],
+   "grad_norms_rounds": [
+    12.25,
+    9.625,
+    10.125
+   ],
+   "param_hash16": "e0974d921a9aacdc",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "accuracy_vs_native": {
+    "last_round_micro_loss_diff": [
+     0.00791,
+     0.005054,
+     -0.006641,
+     -0.007911
+    ],
+    "grad_norm_diff_rounds": [
+     1.375,
+     -0.812,
+     0.0
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   }
+  },
+  "dw_only_routed": {
+   "group": "dw_only_routed",
+   "median_ms": 2140.3,
+   "step_ms": [
+    1909.8,
+    2140.3,
+    2349.4
+   ],
+   "valid_tokens_per_s": [
+    14165,
+    14696,
+    15113
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "micro_losses_last_round": [
+    0.695703,
+    0.823975,
+    0.554102,
+    0.751294
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    11.125
+   ],
+   "grad_norms_rounds": [
+    10.4375,
+    10.5625,
+    10.75
+   ],
+   "param_hash16": "22a74166a893a6f2",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "accuracy_vs_native": {
+    "last_round_micro_loss_diff": [
+     0.008398,
+     -0.003149,
+     -0.000293,
+     -0.00918
+    ],
+    "grad_norm_diff_rounds": [
+     -0.438,
+     0.125,
+     0.625
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   },
+   "dw_hits_summary": {
+    "timed_hits": 0,
+    "warmup_hits": 0,
+    "shapes_hit": 0,
+    "shapes_expected": 12,
+    "missing_shapes": [
+     [
+      4096,
+      2990,
+      2990,
+      1024
+     ],
+     [
+      4096,
+      5120,
+      5120,
+      1024
+     ],
+     [
+      1024,
+      3740,
+      3740,
+      4096
+     ],
+     [
+      4096,
+      4430,
+      4430,
+      1024
+     ],
+     [
+      4096,
+      3740,
+      3740,
+      1024
+     ],
+     [
+      1024,
+      2990,
+      2990,
+      4096
+     ]
+    ],
+    "per_shape_timed": {}
+   },
+   "dw_perf_int_count": 1056
+  }
+ },
+ "dW_shape_set_size": 12,
+ "notes": "wrapped-stock uses aten.mm.out escape = TRUE stock kernel; dw_only routes measured FFN dW shapes to FlagGems mm, all else stock mm.out; cold_first_calls = shapes triggering first-encounter compile in fg_all"
+}

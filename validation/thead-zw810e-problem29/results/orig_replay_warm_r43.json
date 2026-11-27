@@ -1,0 +1,2675 @@
+{
+ "mode": "warm",
+ "cache_dir": "/tmp/triton_cold43",
+ "cache_entries_before": 32,
+ "cache_entries_after": 32,
+ "cache_miss_proxy_new_entries": 0,
+ "compiler_log": "Triton MLIR/PTX logs not captured (no TRITON_KERNEL_DUMP set); cache dir diff = compile evidence",
+ "rounds": [
+  {
+   "tag": "warmup0",
+   "step_ms": 6786.2,
+   "cum_unique_shapes": 123,
+   "new_shapes_this_step": 123,
+   "cache_entries": 32
+  },
+  {
+   "tag": "warmup1",
+   "step_ms": 2203.5,
+   "cum_unique_shapes": 225,
+   "new_shapes_this_step": 102,
+   "cache_entries": 32
+  },
+  {
+   "tag": "timed0",
+   "step_ms": 2095.8,
+   "cum_unique_shapes": 303,
+   "new_shapes_this_step": 78,
+   "cache_entries": 32
+  },
+  {
+   "tag": "timed1",
+   "step_ms": 2228.5,
+   "cum_unique_shapes": 369,
+   "new_shapes_this_step": 66,
+   "cache_entries": 32
+  },
+  {
+   "tag": "timed2",
+   "step_ms": 2419.0,
+   "cum_unique_shapes": 435,
+   "new_shapes_this_step": 66,
+   "cache_entries": 32
+  }
+ ],
+ "unique_shapes": 435,
+ "first_call_total_ms_incl_exec": null,
+ "first_call_ms_per_shape_median": null,
+ "first_call_ms_per_shape_max": null,
+ "later_calls": 28445,
+ "later_avg_ms_per_call": null,
+ "per_shape": {
+  "[x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x]": {
+   "first_ms": null,
+   "calls": 40,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x,x x1x0x]x:x[x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 20,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x,x x4x0x]x:x[x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 20,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x9x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x9x2x0x]x:x[x4x9x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x9x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x4x9x2x0x]x:x[x4x9x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x9x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x9x2x0x]x:x[x4x9x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x2x2x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x2x2x8x0x]x:x[x2x2x8x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x2x2x8x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x2x2x8x0x]x:x[x2x2x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x2x2x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x2x2x8x0x]x:x[x2x2x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x7x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x3x7x1x0x]x:x[x3x7x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x7x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x3x7x1x0x]x:x[x3x7x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x7x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x3x7x1x0x]x:x[x3x7x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x0x0x]x:x[x4x0x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x4x0x0x]x:x[x4x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x0x0x]x:x[x4x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 72,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x2x0x]x:x[x1x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 72,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 72,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x1x2x0x]x:x[x1x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 72,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 288,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x2x0x]x:x[x1x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 288,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x6x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x6x8x0x]x:x[x1x6x8x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x6x8x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x1x6x8x0x]x:x[x1x6x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x6x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x6x8x0x]x:x[x1x6x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x2x6x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x2x6x5x0x]x:x[x2x6x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x2x6x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x2x6x5x0x]x:x[x2x6x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x2x6x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x2x6x5x0x]x:x[x2x6x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x4x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x3x4x3x0x]x:x[x3x4x3x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x4x3x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x3x4x3x0x]x:x[x3x4x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x4x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x3x4x3x0x]x:x[x3x4x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x5x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x5x2x0x]x:x[x5x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x5x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x5x2x0x]x:x[x5x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x5x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x5x2x0x]x:x[x5x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x6x0x]x:x[x1x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x1x6x0x]x:x[x1x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 384,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x6x0x]x:x[x1x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 384,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x1x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x1x2x0x]x:x[x4x1x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x1x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x4x1x2x0x]x:x[x4x1x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x1x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x1x2x0x]x:x[x4x1x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x7x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x7x1x0x]x:x[x1x7x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x7x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x1x7x1x0x]x:x[x1x7x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x7x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x7x1x0x]x:x[x1x7x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x5x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x5x0x0x]x:x[x4x5x0x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x5x0x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x4x5x0x0x]x:x[x4x5x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x5x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x5x0x0x]x:x[x4x5x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x7x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x7x3x0x]x:x[x7x3x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x7x3x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x7x3x0x]x:x[x7x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x7x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x7x3x0x]x:x[x7x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x9x0x]x:x[x1x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x1x9x0x]x:x[x1x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x9x0x]x:x[x1x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x5x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 48,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x5x8x0x]x:x[x4x5x8x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 48,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x5x8x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 48,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x4x5x8x0x]x:x[x4x5x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 48,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x5x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 192,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x5x8x0x]x:x[x4x5x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 192,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x0x2x0x]x:x[x4x0x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x4x0x2x0x]x:x[x4x0x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x4x0x2x0x]x:x[x4x0x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x8x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x3x8x9x0x]x:x[x3x8x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x8x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x3x8x9x0x]x:x[x3x8x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x3x8x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x3x8x9x0x]x:x[x3x8x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x9x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x9x6x0x]x:x[x9x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x9x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x9x6x0x]x:x[x9x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x9x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x9x6x0x]x:x[x9x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x4x0x]x:x[x1x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x0x9x6x,x x1x4x0x]x:x[x1x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 384,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x1x0x2x4x,x x1x4x0x]x:x[x1x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 384,
+   "later_ms_sum": 0.0,
+   "first_step": 0
+  },
+  "[x4x9x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x9x5x0x]x:x[x4x9x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x9x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x4x9x5x0x]x:x[x4x9x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x9x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x9x5x0x]x:x[x4x9x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x7x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x3x7x9x0x]x:x[x3x7x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x7x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x3x7x9x0x]x:x[x3x7x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x7x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x3x7x9x0x]x:x[x3x7x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x0x9x0x]x:x[x4x0x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x4x0x9x0x]x:x[x4x0x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x0x9x0x]x:x[x4x0x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x0x5x0x]x:x[x1x0x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x1x0x5x0x]x:x[x1x0x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x0x5x0x]x:x[x1x0x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x1x0x]x:x[x2x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x2x1x0x]x:x[x2x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x1x0x]x:x[x2x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x8x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x8x7x0x]x:x[x2x8x7x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x8x7x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x2x8x7x0x]x:x[x2x8x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x8x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x8x7x0x]x:x[x2x8x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x5x1x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 408,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x5x1x2x0x]x:x[x5x1x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 408,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x5x1x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 408,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x5x1x2x0x]x:x[x5x1x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 408,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x5x1x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 1632,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x5x1x2x0x]x:x[x5x1x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 1632,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x2x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x2x5x0x]x:x[x1x2x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x2x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x1x2x5x0x]x:x[x1x2x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x2x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x2x5x0x]x:x[x1x2x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x5x0x]x:x[x1x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x1x5x0x]x:x[x1x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 384,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x5x0x]x:x[x1x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 384,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x9x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x9x1x0x]x:x[x2x9x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x9x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x2x9x1x0x]x:x[x2x9x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x9x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x9x1x0x]x:x[x2x9x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x8x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x3x8x4x0x]x:x[x3x8x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x8x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x3x8x4x0x]x:x[x3x8x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x8x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x3x8x4x0x]x:x[x3x8x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x9x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x9x2x0x]x:x[x1x9x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x9x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x1x9x2x0x]x:x[x1x9x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x9x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x9x2x0x]x:x[x1x9x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x3x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x3x6x0x]x:x[x1x3x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x3x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x1x3x6x0x]x:x[x1x3x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x3x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x3x6x0x]x:x[x1x3x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x9x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x9x2x0x]x:x[x2x9x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x9x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x2x9x2x0x]x:x[x2x9x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x2x9x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x2x9x2x0x]x:x[x2x9x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x3x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x3x6x0x]x:x[x4x3x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x3x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x4x3x6x0x]x:x[x4x3x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x3x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x3x6x0x]x:x[x4x3x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x0x0x0x]x:x[x4x0x0x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x0x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x4x0x0x0x]x:x[x4x0x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x4x0x0x0x]x:x[x4x0x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x5x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x5x6x0x]x:x[x1x5x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x5x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x4x0x9x6x,x x1x5x6x0x]x:x[x1x5x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x5x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x1x0x2x4x,x x1x5x6x0x]x:x[x1x5x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 1
+  },
+  "[x3x7x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x3x7x4x0x]x:x[x3x7x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x3x7x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x3x7x4x0x]x:x[x3x7x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x3x7x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x3x7x4x0x]x:x[x3x7x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x1x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x1x4x0x]x:x[x2x1x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x1x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x2x1x4x0x]x:x[x2x1x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x1x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x1x4x0x]x:x[x2x1x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x4x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x4x4x3x0x]x:x[x4x4x3x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x4x3x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x4x4x3x0x]x:x[x4x4x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x4x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x4x4x3x0x]x:x[x4x4x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x6x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x6x7x0x]x:x[x1x6x7x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x6x7x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x1x6x7x0x]x:x[x1x6x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x6x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x6x7x0x]x:x[x1x6x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x9x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x9x9x0x]x:x[x2x9x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x9x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x2x9x9x0x]x:x[x2x9x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x9x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x9x9x0x]x:x[x2x9x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x7x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x7x4x0x]x:x[x1x7x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x7x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x1x7x4x0x]x:x[x1x7x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x7x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x7x4x0x]x:x[x1x7x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x8x0x]x:x[x1x8x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x8x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x1x8x0x]x:x[x1x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x8x0x]x:x[x1x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x3x2x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x3x2x9x0x]x:x[x3x2x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x3x2x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x3x2x9x0x]x:x[x3x2x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x3x2x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x3x2x9x0x]x:x[x3x2x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x4x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x4x9x0x]x:x[x2x4x9x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x4x9x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x2x4x9x0x]x:x[x2x4x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x4x9x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x4x9x0x]x:x[x2x4x9x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x9x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x9x1x0x]x:x[x1x9x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x9x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x1x9x1x0x]x:x[x1x9x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x9x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x1x9x1x0x]x:x[x1x9x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x3x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x4x3x1x0x]x:x[x4x3x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x3x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x4x3x1x0x]x:x[x4x3x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x3x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x4x3x1x0x]x:x[x4x3x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x2x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x2x3x0x]x:x[x2x2x3x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x2x3x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x2x2x3x0x]x:x[x2x2x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x2x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x2x3x0x]x:x[x2x2x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x1x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x1x0x0x]x:x[x2x1x0x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x1x0x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x0x9x6x,x x2x1x0x0x]x:x[x2x1x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x2x1x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x1x0x2x4x,x x2x1x0x0x]x:x[x2x1x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 2
+  },
+  "[x4x8x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x4x8x5x0x]x:x[x4x8x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x8x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x4x8x5x0x]x:x[x4x8x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x8x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x4x8x5x0x]x:x[x4x8x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x8x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x8x0x0x]x:x[x2x8x0x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x8x0x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x8x0x0x]x:x[x2x8x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x8x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x8x0x0x]x:x[x2x8x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x3x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x3x2x0x]x:x[x2x3x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x3x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x3x2x0x]x:x[x2x3x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x3x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x3x2x0x]x:x[x2x3x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x2x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x2x6x0x]x:x[x2x2x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x2x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x2x6x0x]x:x[x2x2x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x2x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x2x6x0x]x:x[x2x2x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x9x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x4x9x1x0x]x:x[x4x9x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x9x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x4x9x1x0x]x:x[x4x9x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x9x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x4x9x1x0x]x:x[x4x9x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x4x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x3x4x4x0x]x:x[x3x4x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x4x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x3x4x4x0x]x:x[x3x4x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x4x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x3x4x4x0x]x:x[x3x4x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x8x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x8x4x0x]x:x[x2x8x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x8x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x8x4x0x]x:x[x2x8x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x8x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x8x4x0x]x:x[x2x8x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x9x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x9x7x0x]x:x[x2x9x7x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x9x7x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x9x7x0x]x:x[x2x9x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x9x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x9x7x0x]x:x[x2x9x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x5x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x5x6x0x]x:x[x2x5x6x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x5x6x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x5x6x0x]x:x[x2x5x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x5x6x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x5x6x0x]x:x[x2x5x6x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x9x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x3x9x4x0x]x:x[x3x9x4x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x9x4x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x3x9x4x0x]x:x[x3x9x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x9x4x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x3x9x4x0x]x:x[x3x9x4x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x9x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x9x5x0x]x:x[x2x9x5x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x9x5x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x4x0x9x6x,x x2x9x5x0x]x:x[x2x9x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x2x9x5x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x1x0x2x4x,x x2x9x5x0x]x:x[x2x9x5x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 3
+  },
+  "[x3x4x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x4x2x0x]x:x[x3x4x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x4x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x3x4x2x0x]x:x[x3x4x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x4x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x4x2x0x]x:x[x3x4x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x1x3x0x]x:x[x1x3x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x3x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x1x3x0x]x:x[x1x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x1x3x0x]x:x[x1x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x2x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x2x2x7x0x]x:x[x2x2x7x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x2x7x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x2x2x7x0x]x:x[x2x2x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x2x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x2x2x7x0x]x:x[x2x2x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x9x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x4x9x3x0x]x:x[x4x9x3x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x9x3x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x4x9x3x0x]x:x[x4x9x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x9x3x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x4x9x3x0x]x:x[x4x9x3x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x5x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x5x7x0x]x:x[x3x5x7x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x5x7x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x3x5x7x0x]x:x[x3x5x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x5x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x5x7x0x]x:x[x3x5x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x4x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x4x8x0x]x:x[x3x4x8x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x4x8x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x3x4x8x0x]x:x[x3x4x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x4x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x4x8x0x]x:x[x3x4x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x2x0x0x]x:x[x2x0x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x0x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x2x0x0x]x:x[x2x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x0x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x2x0x0x]x:x[x2x0x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x8x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x4x8x8x0x]x:x[x4x8x8x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x8x8x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x4x8x8x0x]x:x[x4x8x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x8x8x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x4x8x8x0x]x:x[x4x8x8x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x5x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x2x5x1x0x]x:x[x2x5x1x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x5x1x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x2x5x1x0x]x:x[x2x5x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x2x5x1x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x2x5x1x0x]x:x[x2x5x1x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x7x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x7x7x0x]x:x[x3x7x7x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x7x7x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x3x7x7x0x]x:x[x3x7x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x3x7x7x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x3x7x7x0x]x:x[x3x7x7x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x5x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x4x5x2x0x]x:x[x4x5x2x0x,x x4x0x9x6x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x5x2x0x,x x4x0x9x6x]x:x[x4x0x9x6x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x0x9x6x,x x4x5x2x0x]x:x[x4x5x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 24,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x4x5x2x0x,x x1x0x2x4x]x:x[x1x0x2x4x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  },
+  "[x1x0x2x4x,x x4x5x2x0x]x:x[x4x5x2x0x,x x1x0x2x4x]": {
+   "first_ms": null,
+   "calls": 96,
+   "later_ms_sum": 0.0,
+   "first_step": 4
+  }
+ },
+ "replay_mode": "orig",
+ "first_encounter_step_distribution": {
+  "0": 123,
+  "1": 102,
+  "2": 78,
+  "3": 66,
+  "4": 66
+ },
+ "cache_dir_entries_final": 32,
+ "compiler_log_note": "TRITON_KERNEL_DUMP / MLIR timestamps not enabled - compile not separable from first-call exec; cache entry count per step = miss proxy",
+ "warmup_bleed_note": "first_call timing is per mm call with its own synchronize; warmup steps 0-1 populate first_call, so timed steps only see already-seen shapes unless a new length appears",
+ "timing_boundaries": "first_ms includes compile+autotune+exec+sync (cannot be split without TRITON_KERNEL_DUMP/MLIR timestamps); later_ms_sum = steady-state exec+sync"
+}

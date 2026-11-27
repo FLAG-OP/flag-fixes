@@ -1,0 +1,280 @@
+{
+ "experiment": "ONE PROCESS PER MODE (no aten registration stacking); profiler OFF for timing; 3 real steps; 2 reps with rotated order; fallback identical across routed modes",
+ "runs": {
+  "rep1": {
+   "order": "native->py_route->native_contig",
+   "native_ms": [
+    1879.5,
+    2115.0,
+    2336.2
+   ],
+   "py_route_ms": [
+    1860.7,
+    2111.7,
+    2328.3
+   ],
+   "native_contig_ms": [
+    1914.9,
+    2125.3,
+    2366.9
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "native_tokens_per_s": [
+    14393,
+    14872,
+    15198
+   ],
+   "py_tokens_per_s": [
+    14539,
+    14895,
+    15250
+   ],
+   "input_hashes_equal": true,
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "py_route_minus_native": [
+    -18.8,
+    -3.3,
+    -7.9
+   ],
+   "native_contig_minus_native": [
+    35.4,
+    10.3,
+    30.7
+   ],
+   "hits": {
+    "py_route": 1584,
+    "native_contig": 1584,
+    "shapes": "12/12 & 12/12",
+    "all_12": true
+   },
+   "host_aten_mm_events": {
+    "native": 5776,
+    "py_route": 11024,
+    "native_contig": 11552
+   },
+   "diagnostic_kernels": {
+    "native": {
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+     "aten::mm": 5776,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+    },
+    "py_route": {
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 2688,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+     "aten::mm": 11024,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+     "mm_kernel_general": 528,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+    },
+    "native_contig": {
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+     "aten::mm": 11552,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+    }
+   },
+   "per_shape_hits_py": {
+    "[1024, 5120]x[5120, 4096]": 672,
+    "[4096, 5120]x[5120, 1024]": 672,
+    "[1024, 3740]x[3740, 4096]": 24,
+    "[4096, 3740]x[3740, 1024]": 24,
+    "[1024, 4430]x[4430, 4096]": 24,
+    "[4096, 4430]x[4430, 1024]": 24,
+    "[1024, 2990]x[2990, 4096]": 24,
+    "[4096, 2990]x[2990, 1024]": 24,
+    "[1024, 3290]x[3290, 4096]": 24,
+    "[4096, 3290]x[3290, 1024]": 24,
+    "[1024, 4310]x[4310, 4096]": 24,
+    "[4096, 4310]x[4310, 1024]": 24
+   }
+  },
+  "rep2": {
+   "order": "native_contig->py_route->native",
+   "native_ms": [
+    1876.1,
+    2109.1,
+    2334.7
+   ],
+   "py_route_ms": [
+    1872.9,
+    2109.2,
+    2323.6
+   ],
+   "native_contig_ms": [
+    1917.3,
+    2131.8,
+    2368.7
+   ],
+   "valid_tokens": [
+    27052,
+    31454,
+    35506
+   ],
+   "native_tokens_per_s": [
+    14419,
+    14913,
+    15208
+   ],
+   "py_tokens_per_s": [
+    14444,
+    14912,
+    15281
+   ],
+   "input_hashes_equal": true,
+   "input_hashes": [
+    "d2bfed5625354170",
+    "c5896ff2bece725f",
+    "6228631cc16cc2dd"
+   ],
+   "py_route_minus_native": [
+    -3.2,
+    0.1,
+    -11.1
+   ],
+   "native_contig_minus_native": [
+    41.2,
+    22.7,
+    34.0
+   ],
+   "hits": {
+    "py_route": 1584,
+    "native_contig": 1584,
+    "shapes": "12/12 & 12/12",
+    "all_12": true
+   },
+   "host_aten_mm_events": {
+    "native": 5776,
+    "py_route": 11024,
+    "native_contig": 11552
+   },
+   "diagnostic_kernels": {
+    "native": {
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+     "aten::mm": 5776,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+    },
+    "py_route": {
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 2688,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+     "aten::mm": 11024,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+     "mm_kernel_general": 528,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+    },
+    "native_contig": {
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+     "aten::mm": 11552,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+     "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+    }
+   },
+   "per_shape_hits_py": {
+    "[1024, 5120]x[5120, 4096]": 672,
+    "[4096, 5120]x[5120, 1024]": 672,
+    "[1024, 3740]x[3740, 4096]": 24,
+    "[4096, 3740]x[3740, 1024]": 24,
+    "[1024, 4430]x[4430, 4096]": 24,
+    "[4096, 4430]x[4430, 1024]": 24,
+    "[1024, 2990]x[2990, 4096]": 24,
+    "[4096, 2990]x[2990, 1024]": 24,
+    "[1024, 3290]x[3290, 4096]": 24,
+    "[4096, 3290]x[3290, 1024]": 24,
+    "[1024, 4310]x[4310, 4096]": 24,
+    "[4096, 4310]x[4310, 1024]": 24
+   }
+  }
+ },
+ "py_route_vs_native_all6": [
+  -18.8,
+  -3.3,
+  -7.9,
+  -3.2,
+  0.1,
+  -11.1
+ ],
+ "native_contig_vs_native_all6": [
+  35.4,
+  10.3,
+  30.7,
+  41.2,
+  22.7,
+  34.0
+ ],
+ "step_sd_note": "per-step load differs (tokens 27052/31454/35506) -> only paired diffs are comparable",
+ "findings": [
+  "CLEAN ISOLATION (one process per mode) removes the registration-stacking artefact: hit attribution is now stable (each routed mode independently hits 1584 = 528/step x 3 steps over 12/12 shapes) and no longer swaps.",
+  "py_route vs native over 6 real steps: [-18.8, -3.3, -7.9, -3.2, 0.1, -11.1] ms -> median -5.6 ms, 5/6 NEGATIVE (faster). This is the first direction-consistent result; all earlier runs (registration stacking) flipped sign.",
+  "native_contig vs native: [35.4, 10.3, 30.7, 41.2, 22.7, 34.0] ms -> median 32.4 ms, 0/6 negative. Explicit contiguous() copy is consistently MORE expensive than the transposed-view penalty it removes -> this native-side alternative is CLOSED.",
+  "KERNEL IDENTITY CONFIRMED: py_route runs Triton mm_kernel_general 528x (the whitelisted dW) + native gemm_ktype0 tile128x128 2688x; native_contig and native both run that native gemm 3216x (=2688+528). All other kernel counts are identical across the three modes -> both routed paths perform the SAME computation on the SAME call set.",
+  "HOST DISPATCH OVERHEAD IS REAL: host aten::mm events 5,776 (native) -> 11,024 (py_route) -> 11,552 (native_contig). The Python override roughly doubles host mm events. But the whole-step delta is still slightly negative for py_route, i.e. the dW kernel gain (~15-33 ms/step on the measured shapes) slightly EXCEEDS the host cost. The earlier '+303 ms/step host time' figure was profiler-on diagnostic CPU time, not wall time, and was inflated by registration stacking.",
+  "NATIVE TRANSPOSED-VIEW ALTERNATIVES (same product): gy.t()@x 0.485 ms; (x.t()@gy).t() 0.519; contiguous() copy inside 0.637; matmul 0.520 -> no native path beats A. No dedicated transposed-view fast path exists on this stack.",
+  "LIBRARY HANDLE BUG FOUND AND FIXED: torch.library.Library(...) must be kept alive; when the returned object is garbage-collected the registration is silently dropped (first run of route_isolated.py showed hits=0 and identical aten::mm counts in all modes)."
+ ],
+ "verdict": {
+  "question": "can the dW kernel's local gain cross the call boundary and reach the whole step?",
+  "answer": "YES, marginally: with a clean single registration the dW Python route is faster than native on 5 of 6 real steps (median -5.6 ms, range -18.8..+0.1), i.e. roughly 0.26% of a ~2.13 s step. The host dispatch cost of the Python override is real but is slightly smaller than the kernel gain.",
+  "caveats": [
+   "6 paired steps only; one step is +0.1 (neutral); the margin is within the step-to-step spread, so this is 'small, direction-mostly-consistent gain', NOT a guaranteed speedup",
+   "host-time figures are profiler-on diagnostic (correlation evidence), not wall-clock decomposition",
+   "no library-level/C++ hook is available in this environment (FlagGems mm is a Python function) - the remaining host cost cannot be removed here"
+  ],
+  "training_impact": "dW Python route: precision bitwise-identical (hit-step recompute PASS), small consistent whole-step gain (~5.6 ms median, ~0.26%). Not adopted as deployable (hardware_status unverified; gain within noise); recorded as the one candidate with a positive, reproducible-sign result. Native contiguous() alternative closed."
+ },
+ "py_route_median_ms": -5.6,
+ "py_route_min_ms": -18.8,
+ "py_route_max_ms": 0.1,
+ "py_route_n_negative": 5,
+ "native_contig_median_ms": 32.35,
+ "native_contig_min_ms": 10.3,
+ "native_contig_max_ms": 41.2,
+ "native_contig_n_negative": 0,
+ "FIELD_FIX_NOTE": "FIXED round-51 (review bqj7-Bw): the old flat keys median/min/max/n_negative held the native_contig values and were mislabeled as py_route. Per-path keys added above; the old flat keys are retained below as legacy_contig_* for traceability.",
+ "legacy_contig_median_ms": 32.35,
+ "legacy_contig_min_ms": 10.3,
+ "legacy_contig_max_ms": 41.2,
+ "legacy_contig_n_negative": 0
+}

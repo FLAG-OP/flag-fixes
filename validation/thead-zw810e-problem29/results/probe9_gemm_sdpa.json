@@ -1,0 +1,77 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "gemm_bf16_fp32": {
+  "qkv_1024x3072": {
+   "bf16_xw_ms": 0.1696,
+   "bf16_tflops": 110.92,
+   "bf16_xwkn_ms": 0.1764,
+   "fp32_ms": 0.6096,
+   "fp32_tflops": 30.86
+  },
+  "attn_out_1024x1024": {
+   "bf16_xw_ms": 0.0615,
+   "bf16_tflops": 101.96,
+   "bf16_xwkn_ms": 0.0715,
+   "fp32_ms": 0.2011,
+   "fp32_tflops": 31.18
+  },
+  "ffn_up_1024x4096": {
+   "bf16_xw_ms": 0.2153,
+   "bf16_tflops": 116.5,
+   "bf16_xwkn_ms": 0.2196,
+   "fp32_ms": 0.7821,
+   "fp32_tflops": 32.07
+  },
+  "ffn_down_4096x1024": {
+   "bf16_xw_ms": 0.2023,
+   "bf16_tflops": 123.98,
+   "bf16_xwkn_ms": 0.2573,
+   "fp32_ms": 0.7881,
+   "fp32_tflops": 31.83
+  },
+  "lm_head_1024x250002": {
+   "bf16_xw_ms": 12.4314,
+   "bf16_tflops": 123.15,
+   "bf16_xwkn_ms": 13.3048,
+   "fp32_ms": 45.3982,
+   "fp32_tflops": 33.72
+  }
+ },
+ "sdpa_bf16_b8_s512_h16_d64": {
+  "flash": {
+   "ok": true,
+   "ms": 0.1317
+  },
+  "efficient": {
+   "ok": true,
+   "ms": 0.2489
+  },
+  "math": {
+   "ok": true,
+   "ms": 0.9863
+  },
+  "default": {
+   "ok": true,
+   "ms": 0.1316
+  }
+ },
+ "sdpa_bf16_default": {
+  "ok": true,
+  "ms": 0.1316
+ },
+ "sdpa_fp32_same_shape": {
+  "flash": {
+   "ok": false,
+   "error": "RuntimeError: No available kernel. Aborting execution."
+  },
+  "efficient": {
+   "ok": true,
+   "ms": 0.6481
+  },
+  "math": {
+   "ok": true,
+   "ms": 0.8021
+  }
+ }
+}

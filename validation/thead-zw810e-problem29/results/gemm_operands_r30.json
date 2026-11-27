@@ -1,0 +1,65 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "limitation_verified_on_device": {
+  "torchdispatch_mm_calls": 0,
+  "profiler_shapes": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ]
+ },
+ "limitation_note": "TorchDispatchMode sees 0 mm/addmm (XMLIR dispatch-key interception); profiler record_shapes leaves input_shapes=None on this build. Operand stride/transpose/dtype below are DERIVED from F.linear semantics + native dtypes; direct dump requires vendor/runtime support (queued).",
+ "measured_counts_per_micro": {
+  "forward_window": {
+   "aten::addmm": 725,
+   "aten::mm": 2
+  },
+  "backward_window": {
+   "aten::mm": 1442
+  },
+  "both_window": {
+   "aten::mm": 1442
+  }
+ },
+ "measured_counts_per_step_x4": {
+  "forward_addmm": 2900,
+  "backward_mm": 5768
+ },
+ "derived_operands_s512": [
+  {
+   "class": "ffn_up",
+   "fwd": "addmm(bias[5120,4096], x[5120,1024], w.t()[1024,4096] col-major=TRANSPOSED operand)",
+   "dX": "mm(gy[5120,4096], w[4096,1024])",
+   "dW": "mm(gy.t()[4096,5120], x[5120,1024]) -> reduce to [4096,1024]",
+   "dtype": "bf16 operands (autocast; weights native bf16)",
+   "calls_per_micro": 24
+  },
+  {
+   "class": "ffn_down",
+   "fwd": "addmm(bias[5120,1024], x[5120,4096], w.t()[4096,1024] TRANSPOSED)",
+   "dX": "mm(gy[5120,1024], w[1024,4096])",
+   "dW": "mm(gy.t()[1024,5120], x[5120,4096]) -> [1024,4096]",
+   "dtype": "bf16",
+   "calls_per_micro": 24
+  },
+  {
+   "class": "attn_qkv",
+   "fwd": "addmm(bias[5120,1024], x[5120,1024], w.t()[1024,1024] TRANSPOSED)",
+   "dX": "mm(gy[5120,1024], w[1024,1024])",
+   "dW": "mm(gy.t()[1024,5120], x[5120,1024])",
+   "dtype": "bf16",
+   "calls_per_micro": 72
+  },
+  {
+   "class": "attn_out",
+   "fwd": "addmm(bias[5120,1024], x[5120,1024], w.t()[1024,1024] TRANSPOSED)",
+   "dX": "mm(gy[5120,1024], w[1024,1024])",
+   "dW": "mm(gy.t()[1024,5120], x[5120,1024])",
+   "dtype": "bf16",
+   "calls_per_micro": 24
+  }
+ ]
+}

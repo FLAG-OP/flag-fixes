@@ -1,0 +1,5323 @@
+{
+ "field_version": "roofline_v2",
+ "time_unit": "ms",
+ "dtype_bytes": 2,
+ "peak_reference_tflops": 139.2,
+ "scope": "DERIVED from model FLOPs and forced operand traffic. NOT HBM-measured. bw_lb_gbps = minimum effective traffic rate to achieve the observed device time; utilization_vs_peak compares MODEL effective TFLOP/s to the repo reference peak, it is NOT a matrix-unit counter activity.",
+ "hardware_status": "unverified (PCM BLOCKED - no HBM bytes / matrix-unit activity)",
+ "input_sha256": {
+  "training_trace_r36_trace.json.gz": "270b6ef46c4700d8f260e2e3a910cf89e7133257aff5c1e9e001799c223729e1",
+  "training_trace_analysis_r36.json": "e5e7832ff683ab1369e89aa34cbbc3a992d44f13d758cb1e2bff2b7f75264313",
+  "kernel_efficiency_r36.json": "cdb2d932d6e6ea5f58cdfc4a1708b906ba34fa717afcfbe019b14d1165a2eba8",
+  "gemm_efficiency_r33.json": "d50d2214cb8705c3368b171eacbd210544acf5c4a5e83ba93d95054eb3ff5b60",
+  "sdpa_efficiency_r36.json": "da629b3baef036f0faf3613b4299b722ec2c7858aa86807171254df76bd0dde6",
+  "route_isolated_r48.json": "5b6d7e3372b8566f04f8296a48a3d076f3249a1017d158683b217e5c61bbb464",
+  "probe9_gemm_sdpa.json": "215578b07fb262285f613431a6341bf1e0adb2488cdaf7820277e580c890978a"
+ },
+ "headroom_by_shape": {
+  "method": "per-shape ideal time = FLOPs/(139.2e12) [ms]; headroom = device_ms - ideal_ms (clamped >=0); summed over the backward dW/dX rows of each tier",
+  "window": "SINGLE-STEP window: the per-shape rows come from ONE training step (kernel_efficiency_r36, step 2). Every device_ms / headroom_ms in this block is per step-2 window; 772.12 ms is the 3-step mean backward-GEMM time and is a different window.",
+  "n_rows": 100,
+  "covered_device_ms_per_step": 718.73,
+  "covered_headroom_ms_per_step": 248.73,
+  "single_step_covered_device_ms": 718.73,
+  "three_step_mean_backward_gemm_ms": 772.12,
+  "coverage_note": "single-step rows (718.73 ms, step 2) and the 3-step mean (772.12 ms) are DIFFERENT windows; no coverage % and no 'uncovered' ms is derived from them (the previously derived coverage percentage and uncovered-ms figures are removed).",
+  "hot6_device_ms": 220.11,
+  "hot6_headroom_ms": 57.19,
+  "window_note": "the 100 per-shape rows come from ONE training step (kernel_efficiency_r36, step 2); 772.12 ms is the 3-step mean backward-GEMM time. 718.73/772.12 is reported as a RATIO BETWEEN DIFFERENT WINDOWS, not a same-window coverage percentage.",
+  "retraction": "The earlier 'up to ~285 ms/step' = (1-0.63)*772 from the 6-row 63% floor is RETRACTED. per-shape headroom = device_ms - FLOPs/peak is the ideal-device-time gap UNDER THE 139.2 REFERENCE ASSUMPTION; it is NOT an end-to-end ceiling.",
+  "by_group": [
+   {
+    "group": "long (flattened tokens >= 4000)",
+    "n": 20,
+    "device_ms": 353.48,
+    "headroom_ms": 99.91,
+    "kinds": {
+     "dW_ffn_up": 5,
+     "dW_ffn_down": 3,
+     "dX_ffn_down": 3,
+     "dX_ffn_up": 3,
+     "dX_other": 2,
+     "dX_attn_proj": 4
+    },
+    "calls": 1728,
+    "top_shapes": [
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       5120,
+       1024
+      ],
+      "token_dim": 5120,
+      "count": 96,
+      "device_ms": 46.8,
+      "headroom_ms_vs_peak": 17.179
+     },
+     {
+      "kind": "dW_ffn_down",
+      "shape": [
+       1024,
+       5120,
+       4096
+      ],
+      "token_dim": 5120,
+      "count": 96,
+      "device_ms": 46.71,
+      "headroom_ms_vs_peak": 17.089
+     },
+     {
+      "kind": "dX_other",
+      "shape": [
+       1024,
+       5120,
+       1024
+      ],
+      "token_dim": 5120,
+      "count": 288,
+      "device_ms": 31.77,
+      "headroom_ms_vs_peak": 9.554
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       5120,
+       1024,
+       1024
+      ],
+      "token_dim": 5120,
+      "count": 288,
+      "device_ms": 28.37,
+      "headroom_ms_vs_peak": 6.154
+     },
+     {
+      "kind": "dX_ffn_down",
+      "shape": [
+       5120,
+       1024,
+       4096
+      ],
+      "token_dim": 5120,
+      "count": 96,
+      "device_ms": 34.56,
+      "headroom_ms_vs_peak": 4.939
+     }
+    ]
+   },
+   {
+    "group": "mid (1400 <= flattened tokens < 4000)",
+    "n": 60,
+    "device_ms": 324.79,
+    "headroom_ms": 113.91,
+    "kinds": {
+     "dW_ffn_down": 3,
+     "dW_ffn_up": 6,
+     "dX_attn_proj": 10,
+     "dX_ffn_down": 10,
+     "dX_ffn_up": 10,
+     "dW_other": 14,
+     "dW_attn_proj": 7
+    },
+    "calls": 2880,
+    "top_shapes": [
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       1670,
+       1024,
+       1024
+      ],
+      "token_dim": 1670,
+      "count": 96,
+      "device_ms": 5.9,
+      "headroom_ms_vs_peak": 3.485
+     },
+     {
+      "kind": "dW_ffn_down",
+      "shape": [
+       1024,
+       3740,
+       4096
+      ],
+      "token_dim": 3740,
+      "count": 24,
+      "device_ms": 8.69,
+      "headroom_ms_vs_peak": 3.281
+     },
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       3740,
+       1024
+      ],
+      "token_dim": 3740,
+      "count": 24,
+      "device_ms": 8.67,
+      "headroom_ms_vs_peak": 3.261
+     },
+     {
+      "kind": "dW_ffn_up",
+      "shape": [
+       4096,
+       3290,
+       1024
+      ],
+      "token_dim": 3290,
+      "count": 24,
+      "device_ms": 7.89,
+      "headroom_ms_vs_peak": 3.131
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       1740,
+       1024,
+       1024
+      ],
+      "token_dim": 1740,
+      "count": 96,
+      "device_ms": 5.63,
+      "headroom_ms_vs_peak": 3.113
+     }
+    ]
+   },
+   {
+    "group": "short (flattened tokens < 1400)",
+    "n": 18,
+    "device_ms": 40.23,
+    "headroom_ms": 34.67,
+    "kinds": {
+     "dX_attn_proj": 3,
+     "dW_attn_proj": 3,
+     "dW_other": 6,
+     "dX_ffn_down": 3,
+     "dX_ffn_up": 3
+    },
+    "calls": 1152,
+    "top_shapes": [
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       160,
+       1024,
+       1024
+      ],
+      "token_dim": 160,
+      "count": 192,
+      "device_ms": 6.72,
+      "headroom_ms_vs_peak": 6.257
+     },
+     {
+      "kind": "dW_attn_proj",
+      "shape": [
+       1024,
+       160,
+       1024
+      ],
+      "token_dim": 160,
+      "count": 192,
+      "device_ms": 5.25,
+      "headroom_ms_vs_peak": 4.787
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       180,
+       1024,
+       1024
+      ],
+      "token_dim": 180,
+      "count": 96,
+      "device_ms": 3.41,
+      "headroom_ms_vs_peak": 3.15
+     },
+     {
+      "kind": "dX_attn_proj",
+      "shape": [
+       140,
+       1024,
+       1024
+      ],
+      "token_dim": 140,
+      "count": 96,
+      "device_ms": 2.97,
+      "headroom_ms_vs_peak": 2.767
+     },
+     {
+      "kind": "dW_attn_proj",
+      "shape": [
+       1024,
+       180,
+       1024
+      ],
+      "token_dim": 180,
+      "count": 96,
+      "device_ms": 2.57,
+      "headroom_ms_vs_peak": 2.31
+     }
+    ]
+   }
+  ],
+  "loss_matmul_separate": {
+   "n": 2,
+   "device_ms": 0.23,
+   "headroom_ms": 0.23,
+   "rows": [
+    {
+     "kind": "dW_other",
+     "shape": [
+      40,
+      10,
+      1024
+     ],
+     "token_dim": null,
+     "count": 4,
+     "device_ms": 0.14,
+     "headroom_ms_vs_peak": 0.14
+    },
+    {
+     "kind": "dX_other",
+     "shape": [
+      10,
+      40,
+      1024
+     ],
+     "token_dim": null,
+     "count": 4,
+     "device_ms": 0.09,
+     "headroom_ms_vs_peak": 0.09
+    }
+   ]
+  },
+  "regroup_note": "round-58 (review 7182886976 item 3): the two [1024,5120,1024] rows move from the short tier to the long tier (5120 flattened tokens); the two loss matmuls ([40,10,1024] dW and [10,40,1024] dX) are listed separately. Previous values: mid 113.91 / long 87.16 / short 47.65 ms.",
+  "token_dim_rule": "flattened-token dim = the operand dimension of [M,K,N] that is NOT a fixed model dimension (1024 / 4096): [4096,5120,1024] -> 5120 (K), [5120,1024,1024] -> 5120 (M), [1024,5120,1024] -> 5120 (K, was 1024 under the previous dX-takes-M rule). Rows with neither M nor K a model dimension are the loss matmuls (listed separately). Both model dims -> dW takes K, dX takes M. The old max(M,K) rule counted the fixed FFN feature dim 4096 as a long sequence (review BqpXfeg item 4).",
+  "rows": [
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     5120,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 46.8,
+    "flops_tflop": 4.1232,
+    "effective_tflops": 88.1,
+    "ideal_ms_at_peak": 29.621,
+    "headroom_ms_vs_peak": 17.179,
+    "headroom_pct_of_shape_time": 36.7
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     5120,
+     4096
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 46.71,
+    "flops_tflop": 4.1232,
+    "effective_tflops": 88.27,
+    "ideal_ms_at_peak": 29.621,
+    "headroom_ms_vs_peak": 17.089,
+    "headroom_pct_of_shape_time": 36.6
+   },
+   {
+    "kind": "dX_other",
+    "shape": [
+     1024,
+     5120,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 288,
+    "device_ms": 31.77,
+    "flops_tflop": 3.0924,
+    "effective_tflops": 97.34,
+    "ideal_ms_at_peak": 22.216,
+    "headroom_ms_vs_peak": 9.554,
+    "headroom_pct_of_shape_time": 30.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     5120,
+     1024,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 288,
+    "device_ms": 28.37,
+    "flops_tflop": 3.0924,
+    "effective_tflops": 109.0,
+    "ideal_ms_at_peak": 22.216,
+    "headroom_ms_vs_peak": 6.154,
+    "headroom_pct_of_shape_time": 21.7
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     5120,
+     1024,
+     4096
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 34.56,
+    "flops_tflop": 4.1232,
+    "effective_tflops": 119.3,
+    "ideal_ms_at_peak": 29.621,
+    "headroom_ms_vs_peak": 4.939,
+    "headroom_pct_of_shape_time": 14.3
+   },
+   {
+    "kind": "dX_other",
+    "shape": [
+     1024,
+     5120,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 10.6,
+    "flops_tflop": 1.0308,
+    "effective_tflops": 97.24,
+    "ideal_ms_at_peak": 7.405,
+    "headroom_ms_vs_peak": 3.195,
+    "headroom_pct_of_shape_time": 30.1
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     5120,
+     4096,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 31.9,
+    "flops_tflop": 4.1232,
+    "effective_tflops": 129.25,
+    "ideal_ms_at_peak": 29.621,
+    "headroom_ms_vs_peak": 2.279,
+    "headroom_pct_of_shape_time": 7.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     5120,
+     1024,
+     1024
+    ],
+    "token_dim": 5120,
+    "count": 96,
+    "device_ms": 9.45,
+    "flops_tflop": 1.0308,
+    "effective_tflops": 109.08,
+    "ideal_ms_at_peak": 7.405,
+    "headroom_ms_vs_peak": 2.045,
+    "headroom_pct_of_shape_time": 21.6
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     4430,
+     1024
+    ],
+    "token_dim": 4430,
+    "count": 24,
+    "device_ms": 10.32,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 86.42,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 3.913,
+    "headroom_pct_of_shape_time": 37.9
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     4430,
+     4096
+    ],
+    "token_dim": 4430,
+    "count": 24,
+    "device_ms": 10.25,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 87.01,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 3.843,
+    "headroom_pct_of_shape_time": 37.5
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     4430,
+     1024,
+     1024
+    ],
+    "token_dim": 4430,
+    "count": 96,
+    "device_ms": 10.17,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 87.7,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 3.763,
+    "headroom_pct_of_shape_time": 37.0
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     1024,
+     4430,
+     1024
+    ],
+    "token_dim": 4430,
+    "count": 96,
+    "device_ms": 9.43,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 94.58,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 3.023,
+    "headroom_pct_of_shape_time": 32.1
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     4430,
+     1024,
+     4096
+    ],
+    "token_dim": 4430,
+    "count": 24,
+    "device_ms": 9.34,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 95.49,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 2.933,
+    "headroom_pct_of_shape_time": 31.4
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     4430,
+     4096,
+     1024
+    ],
+    "token_dim": 4430,
+    "count": 24,
+    "device_ms": 9.11,
+    "flops_tflop": 0.8919,
+    "effective_tflops": 97.9,
+    "ideal_ms_at_peak": 6.407,
+    "headroom_ms_vs_peak": 2.703,
+    "headroom_pct_of_shape_time": 29.7
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     4310,
+     1024
+    ],
+    "token_dim": 4310,
+    "count": 24,
+    "device_ms": 9.98,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 86.95,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 3.747,
+    "headroom_pct_of_shape_time": 37.5
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     4310,
+     4096
+    ],
+    "token_dim": 4310,
+    "count": 24,
+    "device_ms": 9.97,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 87.03,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 3.737,
+    "headroom_pct_of_shape_time": 37.5
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     4310,
+     1024,
+     1024
+    ],
+    "token_dim": 4310,
+    "count": 96,
+    "device_ms": 9.67,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 89.73,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 3.437,
+    "headroom_pct_of_shape_time": 35.5
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     1024,
+     4310,
+     1024
+    ],
+    "token_dim": 4310,
+    "count": 96,
+    "device_ms": 9.07,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 95.67,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 2.837,
+    "headroom_pct_of_shape_time": 31.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     4310,
+     4096,
+     1024
+    ],
+    "token_dim": 4310,
+    "count": 24,
+    "device_ms": 8.64,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 100.43,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 2.407,
+    "headroom_pct_of_shape_time": 27.9
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     4310,
+     1024,
+     4096
+    ],
+    "token_dim": 4310,
+    "count": 24,
+    "device_ms": 7.37,
+    "flops_tflop": 0.8677,
+    "effective_tflops": 117.74,
+    "ideal_ms_at_peak": 6.233,
+    "headroom_ms_vs_peak": 1.137,
+    "headroom_pct_of_shape_time": 15.4
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     3740,
+     4096
+    ],
+    "token_dim": 3740,
+    "count": 24,
+    "device_ms": 8.69,
+    "flops_tflop": 0.753,
+    "effective_tflops": 86.65,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 3.281,
+    "headroom_pct_of_shape_time": 37.8
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     3740,
+     1024
+    ],
+    "token_dim": 3740,
+    "count": 24,
+    "device_ms": 8.67,
+    "flops_tflop": 0.753,
+    "effective_tflops": 86.85,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 3.261,
+    "headroom_pct_of_shape_time": 37.6
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     1024,
+     3740,
+     1024
+    ],
+    "token_dim": 3740,
+    "count": 96,
+    "device_ms": 7.97,
+    "flops_tflop": 0.753,
+    "effective_tflops": 94.47,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 2.561,
+    "headroom_pct_of_shape_time": 32.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     3740,
+     1024,
+     1024
+    ],
+    "token_dim": 3740,
+    "count": 96,
+    "device_ms": 7.15,
+    "flops_tflop": 0.753,
+    "effective_tflops": 105.31,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 1.741,
+    "headroom_pct_of_shape_time": 24.3
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     3740,
+     1024,
+     4096
+    ],
+    "token_dim": 3740,
+    "count": 24,
+    "device_ms": 6.62,
+    "flops_tflop": 0.753,
+    "effective_tflops": 113.74,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 1.211,
+    "headroom_pct_of_shape_time": 18.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     3740,
+     4096,
+     1024
+    ],
+    "token_dim": 3740,
+    "count": 24,
+    "device_ms": 6.01,
+    "flops_tflop": 0.753,
+    "effective_tflops": 125.28,
+    "ideal_ms_at_peak": 5.409,
+    "headroom_ms_vs_peak": 0.601,
+    "headroom_pct_of_shape_time": 10.0
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     3290,
+     1024
+    ],
+    "token_dim": 3290,
+    "count": 24,
+    "device_ms": 7.89,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 83.95,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 3.131,
+    "headroom_pct_of_shape_time": 39.7
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     3290,
+     4096
+    ],
+    "token_dim": 3290,
+    "count": 24,
+    "device_ms": 7.82,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 84.7,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 3.061,
+    "headroom_pct_of_shape_time": 39.1
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     1024,
+     3290,
+     1024
+    ],
+    "token_dim": 3290,
+    "count": 96,
+    "device_ms": 7.11,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 93.16,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 2.351,
+    "headroom_pct_of_shape_time": 33.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     3290,
+     1024,
+     1024
+    ],
+    "token_dim": 3290,
+    "count": 96,
+    "device_ms": 6.84,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 96.84,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 2.081,
+    "headroom_pct_of_shape_time": 30.4
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     3290,
+     4096,
+     1024
+    ],
+    "token_dim": 3290,
+    "count": 24,
+    "device_ms": 5.99,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 110.58,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 1.231,
+    "headroom_pct_of_shape_time": 20.6
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     3290,
+     1024,
+     4096
+    ],
+    "token_dim": 3290,
+    "count": 24,
+    "device_ms": 5.76,
+    "flops_tflop": 0.6624,
+    "effective_tflops": 114.99,
+    "ideal_ms_at_peak": 4.759,
+    "headroom_ms_vs_peak": 1.001,
+    "headroom_pct_of_shape_time": 17.4
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2990,
+     1024,
+     1024
+    ],
+    "token_dim": 2990,
+    "count": 96,
+    "device_ms": 7.22,
+    "flops_tflop": 0.602,
+    "effective_tflops": 83.37,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 2.895,
+    "headroom_pct_of_shape_time": 40.1
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     2990,
+     1024
+    ],
+    "token_dim": 2990,
+    "count": 24,
+    "device_ms": 7.0,
+    "flops_tflop": 0.602,
+    "effective_tflops": 86.0,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 2.675,
+    "headroom_pct_of_shape_time": 38.2
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     2990,
+     4096
+    ],
+    "token_dim": 2990,
+    "count": 24,
+    "device_ms": 6.98,
+    "flops_tflop": 0.602,
+    "effective_tflops": 86.24,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 2.655,
+    "headroom_pct_of_shape_time": 38.0
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     1024,
+     2990,
+     1024
+    ],
+    "token_dim": 2990,
+    "count": 96,
+    "device_ms": 6.49,
+    "flops_tflop": 0.602,
+    "effective_tflops": 92.75,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 2.165,
+    "headroom_pct_of_shape_time": 33.4
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2990,
+     4096,
+     1024
+    ],
+    "token_dim": 2990,
+    "count": 24,
+    "device_ms": 6.31,
+    "flops_tflop": 0.602,
+    "effective_tflops": 95.4,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 1.985,
+    "headroom_pct_of_shape_time": 31.5
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2990,
+     1024,
+     4096
+    ],
+    "token_dim": 2990,
+    "count": 24,
+    "device_ms": 5.31,
+    "flops_tflop": 0.602,
+    "effective_tflops": 113.36,
+    "ideal_ms_at_peak": 4.325,
+    "headroom_ms_vs_peak": 0.985,
+    "headroom_pct_of_shape_time": 18.5
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     2490,
+     1024
+    ],
+    "token_dim": 2490,
+    "count": 24,
+    "device_ms": 5.87,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 85.4,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 2.269,
+    "headroom_pct_of_shape_time": 38.7
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     2490,
+     4096
+    ],
+    "token_dim": 2490,
+    "count": 24,
+    "device_ms": 5.85,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 85.69,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 2.249,
+    "headroom_pct_of_shape_time": 38.4
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     2490,
+     1024
+    ],
+    "token_dim": 2490,
+    "count": 96,
+    "device_ms": 5.47,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 91.65,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 1.869,
+    "headroom_pct_of_shape_time": 34.2
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2490,
+     1024,
+     1024
+    ],
+    "token_dim": 2490,
+    "count": 96,
+    "device_ms": 4.89,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 102.52,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 1.289,
+    "headroom_pct_of_shape_time": 26.4
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2490,
+     1024,
+     4096
+    ],
+    "token_dim": 2490,
+    "count": 24,
+    "device_ms": 4.52,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 110.91,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 0.919,
+    "headroom_pct_of_shape_time": 20.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2490,
+     4096,
+     1024
+    ],
+    "token_dim": 2490,
+    "count": 24,
+    "device_ms": 4.01,
+    "flops_tflop": 0.5013,
+    "effective_tflops": 125.01,
+    "ideal_ms_at_peak": 3.601,
+    "headroom_ms_vs_peak": 0.409,
+    "headroom_pct_of_shape_time": 10.2
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     2230,
+     1024
+    ],
+    "token_dim": 2230,
+    "count": 24,
+    "device_ms": 5.32,
+    "flops_tflop": 0.449,
+    "effective_tflops": 84.39,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 2.094,
+    "headroom_pct_of_shape_time": 39.4
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     2230,
+     4096
+    ],
+    "token_dim": 2230,
+    "count": 24,
+    "device_ms": 5.3,
+    "flops_tflop": 0.449,
+    "effective_tflops": 84.71,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 2.074,
+    "headroom_pct_of_shape_time": 39.1
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     2230,
+     1024
+    ],
+    "token_dim": 2230,
+    "count": 96,
+    "device_ms": 4.99,
+    "flops_tflop": 0.449,
+    "effective_tflops": 89.97,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 1.764,
+    "headroom_pct_of_shape_time": 35.4
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2230,
+     1024,
+     1024
+    ],
+    "token_dim": 2230,
+    "count": 96,
+    "device_ms": 4.86,
+    "flops_tflop": 0.449,
+    "effective_tflops": 92.38,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 1.634,
+    "headroom_pct_of_shape_time": 33.6
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2230,
+     1024,
+     4096
+    ],
+    "token_dim": 2230,
+    "count": 24,
+    "device_ms": 4.07,
+    "flops_tflop": 0.449,
+    "effective_tflops": 110.31,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 0.844,
+    "headroom_pct_of_shape_time": 20.7
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2230,
+     4096,
+     1024
+    ],
+    "token_dim": 2230,
+    "count": 24,
+    "device_ms": 4.01,
+    "flops_tflop": 0.449,
+    "effective_tflops": 111.96,
+    "ideal_ms_at_peak": 3.226,
+    "headroom_ms_vs_peak": 0.784,
+    "headroom_pct_of_shape_time": 19.6
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2140,
+     1024,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 96,
+    "device_ms": 5.69,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 75.72,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 2.595,
+    "headroom_pct_of_shape_time": 45.6
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     2140,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 5.18,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 83.17,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 2.085,
+    "headroom_pct_of_shape_time": 40.3
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     2140,
+     4096
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 5.14,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 83.82,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 2.045,
+    "headroom_pct_of_shape_time": 39.8
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2140,
+     4096,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 4.97,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 86.69,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 1.875,
+    "headroom_pct_of_shape_time": 37.7
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     2140,
+     1024
+    ],
+    "token_dim": 2140,
+    "count": 96,
+    "device_ms": 4.84,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 89.02,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 1.745,
+    "headroom_pct_of_shape_time": 36.1
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2140,
+     1024,
+     4096
+    ],
+    "token_dim": 2140,
+    "count": 24,
+    "device_ms": 3.8,
+    "flops_tflop": 0.4308,
+    "effective_tflops": 113.38,
+    "ideal_ms_at_peak": 3.095,
+    "headroom_ms_vs_peak": 0.705,
+    "headroom_pct_of_shape_time": 18.6
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     2100,
+     1024,
+     1024
+    ],
+    "token_dim": 2100,
+    "count": 96,
+    "device_ms": 5.7,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 74.17,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 2.663,
+    "headroom_pct_of_shape_time": 46.7
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     2100,
+     1024
+    ],
+    "token_dim": 2100,
+    "count": 24,
+    "device_ms": 5.04,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 83.89,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 2.003,
+    "headroom_pct_of_shape_time": 39.7
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     2100,
+     4096
+    ],
+    "token_dim": 2100,
+    "count": 24,
+    "device_ms": 5.02,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 84.22,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 1.983,
+    "headroom_pct_of_shape_time": 39.5
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     2100,
+     4096,
+     1024
+    ],
+    "token_dim": 2100,
+    "count": 24,
+    "device_ms": 4.95,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 85.41,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 1.913,
+    "headroom_pct_of_shape_time": 38.6
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     2100,
+     1024
+    ],
+    "token_dim": 2100,
+    "count": 96,
+    "device_ms": 4.74,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 89.2,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 1.703,
+    "headroom_pct_of_shape_time": 35.9
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     2100,
+     1024,
+     4096
+    ],
+    "token_dim": 2100,
+    "count": 24,
+    "device_ms": 3.82,
+    "flops_tflop": 0.4228,
+    "effective_tflops": 110.68,
+    "ideal_ms_at_peak": 3.037,
+    "headroom_ms_vs_peak": 0.783,
+    "headroom_pct_of_shape_time": 20.5
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     1910,
+     1024,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 96,
+    "device_ms": 5.66,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 67.94,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 2.898,
+    "headroom_pct_of_shape_time": 51.2
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     1910,
+     4096,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 24,
+    "device_ms": 4.9,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 78.48,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 2.138,
+    "headroom_pct_of_shape_time": 43.6
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     1910,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 24,
+    "device_ms": 4.63,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 83.05,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 1.868,
+    "headroom_pct_of_shape_time": 40.3
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     1910,
+     4096
+    ],
+    "token_dim": 1910,
+    "count": 24,
+    "device_ms": 4.57,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 84.14,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 1.808,
+    "headroom_pct_of_shape_time": 39.6
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     1910,
+     1024
+    ],
+    "token_dim": 1910,
+    "count": 96,
+    "device_ms": 4.35,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 88.4,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 1.588,
+    "headroom_pct_of_shape_time": 36.5
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     1910,
+     1024,
+     4096
+    ],
+    "token_dim": 1910,
+    "count": 24,
+    "device_ms": 3.53,
+    "flops_tflop": 0.3845,
+    "effective_tflops": 108.93,
+    "ideal_ms_at_peak": 2.762,
+    "headroom_ms_vs_peak": 0.768,
+    "headroom_pct_of_shape_time": 21.8
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     1740,
+     1024,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 96,
+    "device_ms": 5.63,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 62.22,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 3.113,
+    "headroom_pct_of_shape_time": 55.3
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     1740,
+     4096,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 4.89,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 71.64,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 2.373,
+    "headroom_pct_of_shape_time": 48.5
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     1740,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 4.32,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 81.09,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 1.803,
+    "headroom_pct_of_shape_time": 41.7
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     1740,
+     4096
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 4.31,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 81.28,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 1.793,
+    "headroom_pct_of_shape_time": 41.6
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     1740,
+     1024
+    ],
+    "token_dim": 1740,
+    "count": 96,
+    "device_ms": 4.11,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 85.23,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 1.593,
+    "headroom_pct_of_shape_time": 38.8
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     1740,
+     1024,
+     4096
+    ],
+    "token_dim": 1740,
+    "count": 24,
+    "device_ms": 3.25,
+    "flops_tflop": 0.3503,
+    "effective_tflops": 107.79,
+    "ideal_ms_at_peak": 2.517,
+    "headroom_ms_vs_peak": 0.733,
+    "headroom_pct_of_shape_time": 22.6
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     1670,
+     1024,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 96,
+    "device_ms": 5.9,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 56.99,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 3.485,
+    "headroom_pct_of_shape_time": 59.1
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     1670,
+     4096,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 4.89,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 68.76,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 2.475,
+    "headroom_pct_of_shape_time": 50.6
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     1670,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 4.18,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 80.43,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.765,
+    "headroom_pct_of_shape_time": 42.2
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     1670,
+     4096
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 4.16,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 80.82,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.745,
+    "headroom_pct_of_shape_time": 41.9
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     1670,
+     1024
+    ],
+    "token_dim": 1670,
+    "count": 96,
+    "device_ms": 4.02,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 83.64,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.605,
+    "headroom_pct_of_shape_time": 39.9
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     1670,
+     1024,
+     4096
+    ],
+    "token_dim": 1670,
+    "count": 24,
+    "device_ms": 3.61,
+    "flops_tflop": 0.3362,
+    "effective_tflops": 93.13,
+    "ideal_ms_at_peak": 2.415,
+    "headroom_ms_vs_peak": 1.195,
+    "headroom_pct_of_shape_time": 33.1
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     180,
+     1024,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 96,
+    "device_ms": 3.41,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 10.63,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 3.15,
+    "headroom_pct_of_shape_time": 92.4
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     180,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 96,
+    "device_ms": 2.57,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 14.1,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 2.31,
+    "headroom_pct_of_shape_time": 89.9
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     180,
+     4096
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 1.12,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 32.36,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.86,
+    "headroom_pct_of_shape_time": 76.8
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     180,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 1.12,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 32.36,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.86,
+    "headroom_pct_of_shape_time": 76.8
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     180,
+     1024,
+     4096
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 1.06,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 34.19,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.8,
+    "headroom_pct_of_shape_time": 75.5
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     180,
+     4096,
+     1024
+    ],
+    "token_dim": 180,
+    "count": 24,
+    "device_ms": 0.99,
+    "flops_tflop": 0.0362,
+    "effective_tflops": 36.6,
+    "ideal_ms_at_peak": 0.26,
+    "headroom_ms_vs_peak": 0.73,
+    "headroom_pct_of_shape_time": 73.7
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     160,
+     1024,
+     1024
+    ],
+    "token_dim": 160,
+    "count": 192,
+    "device_ms": 6.72,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 9.59,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 6.257,
+    "headroom_pct_of_shape_time": 93.1
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     160,
+     1024
+    ],
+    "token_dim": 160,
+    "count": 192,
+    "device_ms": 5.25,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 12.27,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 4.787,
+    "headroom_pct_of_shape_time": 91.2
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     160,
+     4096
+    ],
+    "token_dim": 160,
+    "count": 48,
+    "device_ms": 2.26,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 28.51,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 1.797,
+    "headroom_pct_of_shape_time": 79.5
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     160,
+     1024
+    ],
+    "token_dim": 160,
+    "count": 48,
+    "device_ms": 2.23,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 28.89,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 1.767,
+    "headroom_pct_of_shape_time": 79.2
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     160,
+     1024,
+     4096
+    ],
+    "token_dim": 160,
+    "count": 48,
+    "device_ms": 2.1,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 30.68,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 1.637,
+    "headroom_pct_of_shape_time": 78.0
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     160,
+     4096,
+     1024
+    ],
+    "token_dim": 160,
+    "count": 48,
+    "device_ms": 2.01,
+    "flops_tflop": 0.0644,
+    "effective_tflops": 32.05,
+    "ideal_ms_at_peak": 0.463,
+    "headroom_ms_vs_peak": 1.547,
+    "headroom_pct_of_shape_time": 77.0
+   },
+   {
+    "kind": "dX_attn_proj",
+    "shape": [
+     140,
+     1024,
+     1024
+    ],
+    "token_dim": 140,
+    "count": 96,
+    "device_ms": 2.97,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 9.49,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 2.767,
+    "headroom_pct_of_shape_time": 93.2
+   },
+   {
+    "kind": "dW_attn_proj",
+    "shape": [
+     1024,
+     140,
+     1024
+    ],
+    "token_dim": 140,
+    "count": 96,
+    "device_ms": 2.36,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 11.94,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 2.157,
+    "headroom_pct_of_shape_time": 91.4
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     1024,
+     140,
+     4096
+    ],
+    "token_dim": 140,
+    "count": 24,
+    "device_ms": 1.08,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 26.1,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 0.877,
+    "headroom_pct_of_shape_time": 81.2
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     4096,
+     140,
+     1024
+    ],
+    "token_dim": 140,
+    "count": 24,
+    "device_ms": 1.05,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 26.84,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 0.847,
+    "headroom_pct_of_shape_time": 80.7
+   },
+   {
+    "kind": "dX_ffn_down",
+    "shape": [
+     140,
+     1024,
+     4096
+    ],
+    "token_dim": 140,
+    "count": 24,
+    "device_ms": 0.99,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 28.47,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 0.787,
+    "headroom_pct_of_shape_time": 79.5
+   },
+   {
+    "kind": "dX_ffn_up",
+    "shape": [
+     140,
+     4096,
+     1024
+    ],
+    "token_dim": 140,
+    "count": 24,
+    "device_ms": 0.94,
+    "flops_tflop": 0.0282,
+    "effective_tflops": 29.98,
+    "ideal_ms_at_peak": 0.203,
+    "headroom_ms_vs_peak": 0.737,
+    "headroom_pct_of_shape_time": 78.4
+   },
+   {
+    "kind": "dW_other",
+    "shape": [
+     40,
+     10,
+     1024
+    ],
+    "token_dim": null,
+    "count": 4,
+    "device_ms": 0.14,
+    "flops_tflop": 0.0,
+    "effective_tflops": 0.02,
+    "ideal_ms_at_peak": 0.0,
+    "headroom_ms_vs_peak": 0.14,
+    "headroom_pct_of_shape_time": 100.0
+   },
+   {
+    "kind": "dX_other",
+    "shape": [
+     10,
+     40,
+     1024
+    ],
+    "token_dim": null,
+    "count": 4,
+    "device_ms": 0.09,
+    "flops_tflop": 0.0,
+    "effective_tflops": 0.04,
+    "ideal_ms_at_peak": 0.0,
+    "headroom_ms_vs_peak": 0.09,
+    "headroom_pct_of_shape_time": 100.0
+   }
+  ]
+ },
+ "bw_unit_regression": {
+  "case": "S=512 FFN-up dW (4096,5120,1024) x96, 46.80 ms",
+  "forced_bytes_mb": 5838.47,
+  "expected_gbps": 124.75,
+  "formula": "bytes/(ms*1e6) -> decimal GB/s"
+ },
+ "bw_lb_caveat": "bw_lb_gbps = forced_bytes_lb / (device_ms*1e6): LOGICAL byte rate assuming each operand is read/written ONCE per call. It is NOT an HBM measurement (cache reuse and repeated reads change real HBM traffic) and NOT a 'bandwidth lower bound' (renamed per review). Real HBM traffic needs PCM counters (BLOCKED).",
+ "unit_fix_note": "FIXED round-51: previous bw_lb used bytes/(ms*1e-6)/1e9 = 1000x too large (S=512 dW showed 124,754 GB/s instead of 124.75). All bw values and conclusions derived from them corrected; 'strongly compute-bound' downgraded to a hypothesis to verify.",
+ "sanity_backward_gemm_hot": {
+  "n": 6,
+  "eff_min": 88.1,
+  "eff_max": 129.25,
+  "util_min": 0.6329,
+  "util_max": 0.9285,
+  "expected": "~88-129 TFLOP/s, 63%-93% of 139.2 (review sanity band)"
+ },
+ "short_shapes_fixed_overhead": [
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    160,
+    1024,
+    1024
+   ],
+   "count": 192,
+   "per_call_ms": 0.035,
+   "effective_tflops": 9.59
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    160,
+    1024
+   ],
+   "count": 192,
+   "per_call_ms": 0.02734,
+   "effective_tflops": 12.27
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    180,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "per_call_ms": 0.03552,
+   "effective_tflops": 10.63
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    140,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "per_call_ms": 0.03094,
+   "effective_tflops": 9.49
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    180,
+    1024
+   ],
+   "count": 96,
+   "per_call_ms": 0.02677,
+   "effective_tflops": 14.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    140,
+    1024
+   ],
+   "count": 96,
+   "per_call_ms": 0.02458,
+   "effective_tflops": 11.94
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    160,
+    4096
+   ],
+   "count": 48,
+   "per_call_ms": 0.04708,
+   "effective_tflops": 28.51
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    160,
+    1024,
+    4096
+   ],
+   "count": 48,
+   "per_call_ms": 0.04375,
+   "effective_tflops": 30.68
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    180,
+    4096
+   ],
+   "count": 24,
+   "per_call_ms": 0.04667,
+   "effective_tflops": 32.36
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    140,
+    4096
+   ],
+   "count": 24,
+   "per_call_ms": 0.045,
+   "effective_tflops": 26.1
+  }
+ ],
+ "per_shape": [
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    4096,
+    5120,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 4.1232,
+   "device_ms": 46.8,
+   "effective_tflops": 88.1,
+   "utilization_vs_peak": 0.6329,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 5838.47,
+   "bw_lb_gbps": 124.8,
+   "arithmetic_intensity": 706.21,
+   "per_call_ms": 0.4875,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 29.621,
+   "headroom_ms_vs_peak": 17.179,
+   "headroom_pct_of_shape_time": 36.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_down",
+   "shape": [
+    1024,
+    5120,
+    4096
+   ],
+   "count": 96,
+   "flops_tflop": 4.1232,
+   "device_ms": 46.71,
+   "effective_tflops": 88.27,
+   "utilization_vs_peak": 0.6341,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 5838.47,
+   "bw_lb_gbps": 125.0,
+   "arithmetic_intensity": 706.21,
+   "per_call_ms": 0.48656,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 29.621,
+   "headroom_ms_vs_peak": 17.089,
+   "headroom_pct_of_shape_time": 36.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    5120,
+    1024,
+    4096
+   ],
+   "count": 96,
+   "flops_tflop": 4.1232,
+   "device_ms": 34.56,
+   "effective_tflops": 119.3,
+   "utilization_vs_peak": 0.8571,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 5838.47,
+   "bw_lb_gbps": 168.9,
+   "arithmetic_intensity": 706.21,
+   "per_call_ms": 0.36,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 29.621,
+   "headroom_ms_vs_peak": 4.939,
+   "headroom_pct_of_shape_time": 14.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    5120,
+    4096,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 4.1232,
+   "device_ms": 31.9,
+   "effective_tflops": 129.25,
+   "utilization_vs_peak": 0.9285,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 5838.47,
+   "bw_lb_gbps": 183.0,
+   "arithmetic_intensity": 706.21,
+   "per_call_ms": 0.33229,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 29.621,
+   "headroom_ms_vs_peak": 2.279,
+   "headroom_pct_of_shape_time": 7.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_other",
+   "shape": [
+    1024,
+    5120,
+    1024
+   ],
+   "count": 288,
+   "flops_tflop": 3.0924,
+   "device_ms": 31.77,
+   "effective_tflops": 97.34,
+   "utilization_vs_peak": 0.6993,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 6643.78,
+   "bw_lb_gbps": 209.1,
+   "arithmetic_intensity": 465.45,
+   "per_call_ms": 0.11031,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 22.216,
+   "headroom_ms_vs_peak": 9.554,
+   "headroom_pct_of_shape_time": 30.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    5120,
+    1024,
+    1024
+   ],
+   "count": 288,
+   "flops_tflop": 3.0924,
+   "device_ms": 28.37,
+   "effective_tflops": 109.0,
+   "utilization_vs_peak": 0.7831,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 6643.78,
+   "bw_lb_gbps": 234.2,
+   "arithmetic_intensity": 465.45,
+   "per_call_ms": 0.09851,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 22.216,
+   "headroom_ms_vs_peak": 6.154,
+   "headroom_pct_of_shape_time": 21.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_other",
+   "shape": [
+    1024,
+    5120,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 1.0308,
+   "device_ms": 10.6,
+   "effective_tflops": 97.24,
+   "utilization_vs_peak": 0.6986,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 2214.59,
+   "bw_lb_gbps": 208.9,
+   "arithmetic_intensity": 465.45,
+   "per_call_ms": 0.11042,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 7.405,
+   "headroom_ms_vs_peak": 3.195,
+   "headroom_pct_of_shape_time": 30.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    4096,
+    4430,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.8919,
+   "device_ms": 10.32,
+   "effective_tflops": 86.42,
+   "utilization_vs_peak": 0.6208,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1290.04,
+   "bw_lb_gbps": 125.0,
+   "arithmetic_intensity": 691.35,
+   "per_call_ms": 0.43,
+   "token_dim": 4430,
+   "ideal_ms_at_peak": 6.407,
+   "headroom_ms_vs_peak": 3.913,
+   "headroom_pct_of_shape_time": 37.9
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_down",
+   "shape": [
+    1024,
+    4430,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.8919,
+   "device_ms": 10.25,
+   "effective_tflops": 87.01,
+   "utilization_vs_peak": 0.6251,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1290.04,
+   "bw_lb_gbps": 125.9,
+   "arithmetic_intensity": 691.35,
+   "per_call_ms": 0.42708,
+   "token_dim": 4430,
+   "ideal_ms_at_peak": 6.407,
+   "headroom_ms_vs_peak": 3.843,
+   "headroom_pct_of_shape_time": 37.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    4430,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.8919,
+   "device_ms": 10.17,
+   "effective_tflops": 87.7,
+   "utilization_vs_peak": 0.63,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1943.27,
+   "bw_lb_gbps": 191.1,
+   "arithmetic_intensity": 458.96,
+   "per_call_ms": 0.10594,
+   "token_dim": 4430,
+   "ideal_ms_at_peak": 6.407,
+   "headroom_ms_vs_peak": 3.763,
+   "headroom_pct_of_shape_time": 37.0
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    4096,
+    4310,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.8677,
+   "device_ms": 9.98,
+   "effective_tflops": 86.95,
+   "utilization_vs_peak": 0.6246,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1260.55,
+   "bw_lb_gbps": 126.3,
+   "arithmetic_intensity": 688.36,
+   "per_call_ms": 0.41583,
+   "token_dim": 4310,
+   "ideal_ms_at_peak": 6.233,
+   "headroom_ms_vs_peak": 3.747,
+   "headroom_pct_of_shape_time": 37.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_down",
+   "shape": [
+    1024,
+    4310,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.8677,
+   "device_ms": 9.97,
+   "effective_tflops": 87.03,
+   "utilization_vs_peak": 0.6252,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1260.55,
+   "bw_lb_gbps": 126.4,
+   "arithmetic_intensity": 688.36,
+   "per_call_ms": 0.41542,
+   "token_dim": 4310,
+   "ideal_ms_at_peak": 6.233,
+   "headroom_ms_vs_peak": 3.737,
+   "headroom_pct_of_shape_time": 37.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    4310,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.8677,
+   "device_ms": 9.67,
+   "effective_tflops": 89.73,
+   "utilization_vs_peak": 0.6446,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1896.09,
+   "bw_lb_gbps": 196.1,
+   "arithmetic_intensity": 457.64,
+   "per_call_ms": 0.10073,
+   "token_dim": 4310,
+   "ideal_ms_at_peak": 6.233,
+   "headroom_ms_vs_peak": 3.437,
+   "headroom_pct_of_shape_time": 35.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    5120,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 1.0308,
+   "device_ms": 9.45,
+   "effective_tflops": 109.08,
+   "utilization_vs_peak": 0.7836,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 2214.59,
+   "bw_lb_gbps": 234.3,
+   "arithmetic_intensity": 465.45,
+   "per_call_ms": 0.09844,
+   "token_dim": 5120,
+   "ideal_ms_at_peak": 7.405,
+   "headroom_ms_vs_peak": 2.045,
+   "headroom_pct_of_shape_time": 21.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    1024,
+    4430,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.8919,
+   "device_ms": 9.43,
+   "effective_tflops": 94.58,
+   "utilization_vs_peak": 0.6794,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1943.27,
+   "bw_lb_gbps": 206.1,
+   "arithmetic_intensity": 458.96,
+   "per_call_ms": 0.09823,
+   "token_dim": 4430,
+   "ideal_ms_at_peak": 6.407,
+   "headroom_ms_vs_peak": 3.023,
+   "headroom_pct_of_shape_time": 32.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    4430,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.8919,
+   "device_ms": 9.34,
+   "effective_tflops": 95.49,
+   "utilization_vs_peak": 0.686,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1290.04,
+   "bw_lb_gbps": 138.1,
+   "arithmetic_intensity": 691.35,
+   "per_call_ms": 0.38917,
+   "token_dim": 4430,
+   "ideal_ms_at_peak": 6.407,
+   "headroom_ms_vs_peak": 2.933,
+   "headroom_pct_of_shape_time": 31.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    4430,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.8919,
+   "device_ms": 9.11,
+   "effective_tflops": 97.9,
+   "utilization_vs_peak": 0.7033,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1290.04,
+   "bw_lb_gbps": 141.6,
+   "arithmetic_intensity": 691.35,
+   "per_call_ms": 0.37958,
+   "token_dim": 4430,
+   "ideal_ms_at_peak": 6.407,
+   "headroom_ms_vs_peak": 2.703,
+   "headroom_pct_of_shape_time": 29.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    1024,
+    4310,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.8677,
+   "device_ms": 9.07,
+   "effective_tflops": 95.67,
+   "utilization_vs_peak": 0.6873,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1896.09,
+   "bw_lb_gbps": 209.1,
+   "arithmetic_intensity": 457.64,
+   "per_call_ms": 0.09448,
+   "token_dim": 4310,
+   "ideal_ms_at_peak": 6.233,
+   "headroom_ms_vs_peak": 2.837,
+   "headroom_pct_of_shape_time": 31.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_down",
+   "shape": [
+    1024,
+    3740,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.753,
+   "device_ms": 8.69,
+   "effective_tflops": 86.65,
+   "utilization_vs_peak": 0.6225,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1120.47,
+   "bw_lb_gbps": 128.9,
+   "arithmetic_intensity": 672.01,
+   "per_call_ms": 0.36208,
+   "token_dim": 3740,
+   "ideal_ms_at_peak": 5.409,
+   "headroom_ms_vs_peak": 3.281,
+   "headroom_pct_of_shape_time": 37.8
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    4096,
+    3740,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.753,
+   "device_ms": 8.67,
+   "effective_tflops": 86.85,
+   "utilization_vs_peak": 0.6239,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1120.47,
+   "bw_lb_gbps": 129.2,
+   "arithmetic_intensity": 672.01,
+   "per_call_ms": 0.36125,
+   "token_dim": 3740,
+   "ideal_ms_at_peak": 5.409,
+   "headroom_ms_vs_peak": 3.261,
+   "headroom_pct_of_shape_time": 37.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    4310,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.8677,
+   "device_ms": 8.64,
+   "effective_tflops": 100.43,
+   "utilization_vs_peak": 0.7215,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1260.55,
+   "bw_lb_gbps": 145.9,
+   "arithmetic_intensity": 688.36,
+   "per_call_ms": 0.36,
+   "token_dim": 4310,
+   "ideal_ms_at_peak": 6.233,
+   "headroom_ms_vs_peak": 2.407,
+   "headroom_pct_of_shape_time": 27.9
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    1024,
+    3740,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.753,
+   "device_ms": 7.97,
+   "effective_tflops": 94.47,
+   "utilization_vs_peak": 0.6787,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1671.95,
+   "bw_lb_gbps": 209.8,
+   "arithmetic_intensity": 450.35,
+   "per_call_ms": 0.08302,
+   "token_dim": 3740,
+   "ideal_ms_at_peak": 5.409,
+   "headroom_ms_vs_peak": 2.561,
+   "headroom_pct_of_shape_time": 32.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    4096,
+    3290,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.6624,
+   "device_ms": 7.89,
+   "effective_tflops": 83.95,
+   "utilization_vs_peak": 0.6031,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1009.88,
+   "bw_lb_gbps": 128.0,
+   "arithmetic_intensity": 655.89,
+   "per_call_ms": 0.32875,
+   "token_dim": 3290,
+   "ideal_ms_at_peak": 4.759,
+   "headroom_ms_vs_peak": 3.131,
+   "headroom_pct_of_shape_time": 39.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_down",
+   "shape": [
+    1024,
+    3290,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.6624,
+   "device_ms": 7.82,
+   "effective_tflops": 84.7,
+   "utilization_vs_peak": 0.6085,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1009.88,
+   "bw_lb_gbps": 129.1,
+   "arithmetic_intensity": 655.89,
+   "per_call_ms": 0.32583,
+   "token_dim": 3290,
+   "ideal_ms_at_peak": 4.759,
+   "headroom_ms_vs_peak": 3.061,
+   "headroom_pct_of_shape_time": 39.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    4310,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.8677,
+   "device_ms": 7.37,
+   "effective_tflops": 117.74,
+   "utilization_vs_peak": 0.8458,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1260.55,
+   "bw_lb_gbps": 171.0,
+   "arithmetic_intensity": 688.36,
+   "per_call_ms": 0.30708,
+   "token_dim": 4310,
+   "ideal_ms_at_peak": 6.233,
+   "headroom_ms_vs_peak": 1.137,
+   "headroom_pct_of_shape_time": 15.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    2990,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.602,
+   "device_ms": 7.22,
+   "effective_tflops": 83.37,
+   "utilization_vs_peak": 0.599,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1377.04,
+   "bw_lb_gbps": 190.7,
+   "arithmetic_intensity": 437.14,
+   "per_call_ms": 0.07521,
+   "token_dim": 2990,
+   "ideal_ms_at_peak": 4.325,
+   "headroom_ms_vs_peak": 2.895,
+   "headroom_pct_of_shape_time": 40.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    3740,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.753,
+   "device_ms": 7.15,
+   "effective_tflops": 105.31,
+   "utilization_vs_peak": 0.7565,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1671.95,
+   "bw_lb_gbps": 233.8,
+   "arithmetic_intensity": 450.35,
+   "per_call_ms": 0.07448,
+   "token_dim": 3740,
+   "ideal_ms_at_peak": 5.409,
+   "headroom_ms_vs_peak": 1.741,
+   "headroom_pct_of_shape_time": 24.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    1024,
+    3290,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.6624,
+   "device_ms": 7.11,
+   "effective_tflops": 93.16,
+   "utilization_vs_peak": 0.6692,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1495.01,
+   "bw_lb_gbps": 210.3,
+   "arithmetic_intensity": 443.05,
+   "per_call_ms": 0.07406,
+   "token_dim": 3290,
+   "ideal_ms_at_peak": 4.759,
+   "headroom_ms_vs_peak": 2.351,
+   "headroom_pct_of_shape_time": 33.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    4096,
+    2990,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.602,
+   "device_ms": 7.0,
+   "effective_tflops": 86.0,
+   "utilization_vs_peak": 0.6178,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 936.15,
+   "bw_lb_gbps": 133.7,
+   "arithmetic_intensity": 643.02,
+   "per_call_ms": 0.29167,
+   "token_dim": 2990,
+   "ideal_ms_at_peak": 4.325,
+   "headroom_ms_vs_peak": 2.675,
+   "headroom_pct_of_shape_time": 38.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_down",
+   "shape": [
+    1024,
+    2990,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.602,
+   "device_ms": 6.98,
+   "effective_tflops": 86.24,
+   "utilization_vs_peak": 0.6196,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 936.15,
+   "bw_lb_gbps": 134.1,
+   "arithmetic_intensity": 643.02,
+   "per_call_ms": 0.29083,
+   "token_dim": 2990,
+   "ideal_ms_at_peak": 4.325,
+   "headroom_ms_vs_peak": 2.655,
+   "headroom_pct_of_shape_time": 38.0
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    3290,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.6624,
+   "device_ms": 6.84,
+   "effective_tflops": 96.84,
+   "utilization_vs_peak": 0.6957,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1495.01,
+   "bw_lb_gbps": 218.6,
+   "arithmetic_intensity": 443.05,
+   "per_call_ms": 0.07125,
+   "token_dim": 3290,
+   "ideal_ms_at_peak": 4.759,
+   "headroom_ms_vs_peak": 2.081,
+   "headroom_pct_of_shape_time": 30.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    160,
+    1024,
+    1024
+   ],
+   "count": 192,
+   "flops_tflop": 0.0644,
+   "device_ms": 6.72,
+   "effective_tflops": 9.59,
+   "utilization_vs_peak": 0.0689,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 528.48,
+   "bw_lb_gbps": 78.6,
+   "arithmetic_intensity": 121.9,
+   "per_call_ms": 0.035,
+   "token_dim": 160,
+   "ideal_ms_at_peak": 0.463,
+   "headroom_ms_vs_peak": 6.257,
+   "headroom_pct_of_shape_time": 93.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    3740,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.753,
+   "device_ms": 6.62,
+   "effective_tflops": 113.74,
+   "utilization_vs_peak": 0.8171,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1120.47,
+   "bw_lb_gbps": 169.3,
+   "arithmetic_intensity": 672.01,
+   "per_call_ms": 0.27583,
+   "token_dim": 3740,
+   "ideal_ms_at_peak": 5.409,
+   "headroom_ms_vs_peak": 1.211,
+   "headroom_pct_of_shape_time": 18.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_ffn_up",
+   "shape": [
+    1024,
+    2990,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.602,
+   "device_ms": 6.49,
+   "effective_tflops": 92.75,
+   "utilization_vs_peak": 0.6663,
+   "same_shape_reference_tflops": 116.5,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1377.04,
+   "bw_lb_gbps": 212.2,
+   "arithmetic_intensity": 437.14,
+   "per_call_ms": 0.0676,
+   "token_dim": 2990,
+   "ideal_ms_at_peak": 4.325,
+   "headroom_ms_vs_peak": 2.165,
+   "headroom_pct_of_shape_time": 33.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    2990,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.602,
+   "device_ms": 6.31,
+   "effective_tflops": 95.4,
+   "utilization_vs_peak": 0.6853,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 936.15,
+   "bw_lb_gbps": 148.4,
+   "arithmetic_intensity": 643.02,
+   "per_call_ms": 0.26292,
+   "token_dim": 2990,
+   "ideal_ms_at_peak": 4.325,
+   "headroom_ms_vs_peak": 1.985,
+   "headroom_pct_of_shape_time": 31.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    3740,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.753,
+   "device_ms": 6.01,
+   "effective_tflops": 125.28,
+   "utilization_vs_peak": 0.9,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1120.47,
+   "bw_lb_gbps": 186.4,
+   "arithmetic_intensity": 672.01,
+   "per_call_ms": 0.25042,
+   "token_dim": 3740,
+   "ideal_ms_at_peak": 5.409,
+   "headroom_ms_vs_peak": 0.601,
+   "headroom_pct_of_shape_time": 10.0
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    3290,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.6624,
+   "device_ms": 5.99,
+   "effective_tflops": 110.58,
+   "utilization_vs_peak": 0.7944,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1009.88,
+   "bw_lb_gbps": 168.6,
+   "arithmetic_intensity": 655.89,
+   "per_call_ms": 0.24958,
+   "token_dim": 3290,
+   "ideal_ms_at_peak": 4.759,
+   "headroom_ms_vs_peak": 1.231,
+   "headroom_pct_of_shape_time": 20.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    1670,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.3362,
+   "device_ms": 5.9,
+   "effective_tflops": 56.99,
+   "utilization_vs_peak": 0.4094,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 858.0,
+   "bw_lb_gbps": 145.4,
+   "arithmetic_intensity": 391.86,
+   "per_call_ms": 0.06146,
+   "token_dim": 1670,
+   "ideal_ms_at_peak": 2.415,
+   "headroom_ms_vs_peak": 3.485,
+   "headroom_pct_of_shape_time": 59.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    2490,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.5013,
+   "device_ms": 5.87,
+   "effective_tflops": 85.4,
+   "utilization_vs_peak": 0.6135,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 813.27,
+   "bw_lb_gbps": 138.5,
+   "arithmetic_intensity": 616.41,
+   "per_call_ms": 0.24458,
+   "token_dim": 2490,
+   "ideal_ms_at_peak": 3.601,
+   "headroom_ms_vs_peak": 2.269,
+   "headroom_pct_of_shape_time": 38.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    2490,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.5013,
+   "device_ms": 5.85,
+   "effective_tflops": 85.69,
+   "utilization_vs_peak": 0.6156,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 813.27,
+   "bw_lb_gbps": 139.0,
+   "arithmetic_intensity": 616.41,
+   "per_call_ms": 0.24375,
+   "token_dim": 2490,
+   "ideal_ms_at_peak": 3.601,
+   "headroom_ms_vs_peak": 2.249,
+   "headroom_pct_of_shape_time": 38.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    3290,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.6624,
+   "device_ms": 5.76,
+   "effective_tflops": 114.99,
+   "utilization_vs_peak": 0.8261,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1009.88,
+   "bw_lb_gbps": 175.3,
+   "arithmetic_intensity": 655.89,
+   "per_call_ms": 0.24,
+   "token_dim": 3290,
+   "ideal_ms_at_peak": 4.759,
+   "headroom_ms_vs_peak": 1.001,
+   "headroom_pct_of_shape_time": 17.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    2100,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.4228,
+   "device_ms": 5.7,
+   "effective_tflops": 74.17,
+   "utilization_vs_peak": 0.5329,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1027.08,
+   "bw_lb_gbps": 180.2,
+   "arithmetic_intensity": 411.64,
+   "per_call_ms": 0.05938,
+   "token_dim": 2100,
+   "ideal_ms_at_peak": 3.037,
+   "headroom_ms_vs_peak": 2.663,
+   "headroom_pct_of_shape_time": 46.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    2140,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.4308,
+   "device_ms": 5.69,
+   "effective_tflops": 75.72,
+   "utilization_vs_peak": 0.544,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1042.81,
+   "bw_lb_gbps": 183.3,
+   "arithmetic_intensity": 413.15,
+   "per_call_ms": 0.05927,
+   "token_dim": 2140,
+   "ideal_ms_at_peak": 3.095,
+   "headroom_ms_vs_peak": 2.595,
+   "headroom_pct_of_shape_time": 45.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    1910,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.3845,
+   "device_ms": 5.66,
+   "effective_tflops": 67.94,
+   "utilization_vs_peak": 0.4881,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 952.37,
+   "bw_lb_gbps": 168.3,
+   "arithmetic_intensity": 403.77,
+   "per_call_ms": 0.05896,
+   "token_dim": 1910,
+   "ideal_ms_at_peak": 2.762,
+   "headroom_ms_vs_peak": 2.898,
+   "headroom_pct_of_shape_time": 51.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    1740,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.3503,
+   "device_ms": 5.63,
+   "effective_tflops": 62.22,
+   "utilization_vs_peak": 0.447,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 885.52,
+   "bw_lb_gbps": 157.3,
+   "arithmetic_intensity": 395.6,
+   "per_call_ms": 0.05865,
+   "token_dim": 1740,
+   "ideal_ms_at_peak": 2.517,
+   "headroom_ms_vs_peak": 3.113,
+   "headroom_pct_of_shape_time": 55.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    2490,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.5013,
+   "device_ms": 5.47,
+   "effective_tflops": 91.65,
+   "utilization_vs_peak": 0.6584,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1180.43,
+   "bw_lb_gbps": 215.8,
+   "arithmetic_intensity": 424.68,
+   "per_call_ms": 0.05698,
+   "token_dim": 2490,
+   "ideal_ms_at_peak": 3.601,
+   "headroom_ms_vs_peak": 1.869,
+   "headroom_pct_of_shape_time": 34.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    2230,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.449,
+   "device_ms": 5.32,
+   "effective_tflops": 84.39,
+   "utilization_vs_peak": 0.6063,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 749.37,
+   "bw_lb_gbps": 140.9,
+   "arithmetic_intensity": 599.11,
+   "per_call_ms": 0.22167,
+   "token_dim": 2230,
+   "ideal_ms_at_peak": 3.226,
+   "headroom_ms_vs_peak": 2.094,
+   "headroom_pct_of_shape_time": 39.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    2990,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.602,
+   "device_ms": 5.31,
+   "effective_tflops": 113.36,
+   "utilization_vs_peak": 0.8144,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 936.15,
+   "bw_lb_gbps": 176.3,
+   "arithmetic_intensity": 643.02,
+   "per_call_ms": 0.22125,
+   "token_dim": 2990,
+   "ideal_ms_at_peak": 4.325,
+   "headroom_ms_vs_peak": 0.985,
+   "headroom_pct_of_shape_time": 18.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    2230,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.449,
+   "device_ms": 5.3,
+   "effective_tflops": 84.71,
+   "utilization_vs_peak": 0.6085,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 749.37,
+   "bw_lb_gbps": 141.4,
+   "arithmetic_intensity": 599.11,
+   "per_call_ms": 0.22083,
+   "token_dim": 2230,
+   "ideal_ms_at_peak": 3.226,
+   "headroom_ms_vs_peak": 2.074,
+   "headroom_pct_of_shape_time": 39.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    160,
+    1024
+   ],
+   "count": 192,
+   "flops_tflop": 0.0644,
+   "device_ms": 5.25,
+   "effective_tflops": 12.27,
+   "utilization_vs_peak": 0.0882,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 528.48,
+   "bw_lb_gbps": 100.7,
+   "arithmetic_intensity": 121.9,
+   "per_call_ms": 0.02734,
+   "token_dim": 160,
+   "ideal_ms_at_peak": 0.463,
+   "headroom_ms_vs_peak": 4.787,
+   "headroom_pct_of_shape_time": 91.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    2140,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.4308,
+   "device_ms": 5.18,
+   "effective_tflops": 83.17,
+   "utilization_vs_peak": 0.5975,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 727.25,
+   "bw_lb_gbps": 140.4,
+   "arithmetic_intensity": 592.42,
+   "per_call_ms": 0.21583,
+   "token_dim": 2140,
+   "ideal_ms_at_peak": 3.095,
+   "headroom_ms_vs_peak": 2.085,
+   "headroom_pct_of_shape_time": 40.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    2140,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.4308,
+   "device_ms": 5.14,
+   "effective_tflops": 83.82,
+   "utilization_vs_peak": 0.6022,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 727.25,
+   "bw_lb_gbps": 141.5,
+   "arithmetic_intensity": 592.42,
+   "per_call_ms": 0.21417,
+   "token_dim": 2140,
+   "ideal_ms_at_peak": 3.095,
+   "headroom_ms_vs_peak": 2.045,
+   "headroom_pct_of_shape_time": 39.8
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    2100,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.4228,
+   "device_ms": 5.04,
+   "effective_tflops": 83.89,
+   "utilization_vs_peak": 0.6026,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 717.42,
+   "bw_lb_gbps": 142.3,
+   "arithmetic_intensity": 589.31,
+   "per_call_ms": 0.21,
+   "token_dim": 2100,
+   "ideal_ms_at_peak": 3.037,
+   "headroom_ms_vs_peak": 2.003,
+   "headroom_pct_of_shape_time": 39.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    2100,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.4228,
+   "device_ms": 5.02,
+   "effective_tflops": 84.22,
+   "utilization_vs_peak": 0.605,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 717.42,
+   "bw_lb_gbps": 142.9,
+   "arithmetic_intensity": 589.31,
+   "per_call_ms": 0.20917,
+   "token_dim": 2100,
+   "ideal_ms_at_peak": 3.037,
+   "headroom_ms_vs_peak": 1.983,
+   "headroom_pct_of_shape_time": 39.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    2230,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.449,
+   "device_ms": 4.99,
+   "effective_tflops": 89.97,
+   "utilization_vs_peak": 0.6463,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1078.2,
+   "bw_lb_gbps": 216.1,
+   "arithmetic_intensity": 416.4,
+   "per_call_ms": 0.05198,
+   "token_dim": 2230,
+   "ideal_ms_at_peak": 3.226,
+   "headroom_ms_vs_peak": 1.764,
+   "headroom_pct_of_shape_time": 35.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    2140,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.4308,
+   "device_ms": 4.97,
+   "effective_tflops": 86.69,
+   "utilization_vs_peak": 0.6228,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 727.25,
+   "bw_lb_gbps": 146.3,
+   "arithmetic_intensity": 592.42,
+   "per_call_ms": 0.20708,
+   "token_dim": 2140,
+   "ideal_ms_at_peak": 3.095,
+   "headroom_ms_vs_peak": 1.875,
+   "headroom_pct_of_shape_time": 37.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    2100,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.4228,
+   "device_ms": 4.95,
+   "effective_tflops": 85.41,
+   "utilization_vs_peak": 0.6136,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 717.42,
+   "bw_lb_gbps": 144.9,
+   "arithmetic_intensity": 589.31,
+   "per_call_ms": 0.20625,
+   "token_dim": 2100,
+   "ideal_ms_at_peak": 3.037,
+   "headroom_ms_vs_peak": 1.913,
+   "headroom_pct_of_shape_time": 38.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    1910,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.3845,
+   "device_ms": 4.9,
+   "effective_tflops": 78.48,
+   "utilization_vs_peak": 0.5638,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 670.73,
+   "bw_lb_gbps": 136.9,
+   "arithmetic_intensity": 573.31,
+   "per_call_ms": 0.20417,
+   "token_dim": 1910,
+   "ideal_ms_at_peak": 2.762,
+   "headroom_ms_vs_peak": 2.138,
+   "headroom_pct_of_shape_time": 43.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    1670,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.3362,
+   "device_ms": 4.89,
+   "effective_tflops": 68.76,
+   "utilization_vs_peak": 0.4939,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 611.75,
+   "bw_lb_gbps": 125.1,
+   "arithmetic_intensity": 549.6,
+   "per_call_ms": 0.20375,
+   "token_dim": 1670,
+   "ideal_ms_at_peak": 2.415,
+   "headroom_ms_vs_peak": 2.475,
+   "headroom_pct_of_shape_time": 50.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    1740,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.3503,
+   "device_ms": 4.89,
+   "effective_tflops": 71.64,
+   "utilization_vs_peak": 0.5146,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 628.95,
+   "bw_lb_gbps": 128.6,
+   "arithmetic_intensity": 556.97,
+   "per_call_ms": 0.20375,
+   "token_dim": 1740,
+   "ideal_ms_at_peak": 2.517,
+   "headroom_ms_vs_peak": 2.373,
+   "headroom_pct_of_shape_time": 48.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    2490,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.5013,
+   "device_ms": 4.89,
+   "effective_tflops": 102.52,
+   "utilization_vs_peak": 0.7365,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1180.43,
+   "bw_lb_gbps": 241.4,
+   "arithmetic_intensity": 424.68,
+   "per_call_ms": 0.05094,
+   "token_dim": 2490,
+   "ideal_ms_at_peak": 3.601,
+   "headroom_ms_vs_peak": 1.289,
+   "headroom_pct_of_shape_time": 26.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    2230,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.449,
+   "device_ms": 4.86,
+   "effective_tflops": 92.38,
+   "utilization_vs_peak": 0.6636,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 1078.2,
+   "bw_lb_gbps": 221.9,
+   "arithmetic_intensity": 416.4,
+   "per_call_ms": 0.05063,
+   "token_dim": 2230,
+   "ideal_ms_at_peak": 3.226,
+   "headroom_ms_vs_peak": 1.634,
+   "headroom_pct_of_shape_time": 33.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    2140,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.4308,
+   "device_ms": 4.84,
+   "effective_tflops": 89.02,
+   "utilization_vs_peak": 0.6395,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1042.81,
+   "bw_lb_gbps": 215.5,
+   "arithmetic_intensity": 413.15,
+   "per_call_ms": 0.05042,
+   "token_dim": 2140,
+   "ideal_ms_at_peak": 3.095,
+   "headroom_ms_vs_peak": 1.745,
+   "headroom_pct_of_shape_time": 36.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    2100,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.4228,
+   "device_ms": 4.74,
+   "effective_tflops": 89.2,
+   "utilization_vs_peak": 0.6408,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 1027.08,
+   "bw_lb_gbps": 216.7,
+   "arithmetic_intensity": 411.64,
+   "per_call_ms": 0.04938,
+   "token_dim": 2100,
+   "ideal_ms_at_peak": 3.037,
+   "headroom_ms_vs_peak": 1.703,
+   "headroom_pct_of_shape_time": 35.9
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    1910,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.3845,
+   "device_ms": 4.63,
+   "effective_tflops": 83.05,
+   "utilization_vs_peak": 0.5966,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 670.73,
+   "bw_lb_gbps": 144.9,
+   "arithmetic_intensity": 573.31,
+   "per_call_ms": 0.19292,
+   "token_dim": 1910,
+   "ideal_ms_at_peak": 2.762,
+   "headroom_ms_vs_peak": 1.868,
+   "headroom_pct_of_shape_time": 40.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    1910,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.3845,
+   "device_ms": 4.57,
+   "effective_tflops": 84.14,
+   "utilization_vs_peak": 0.6045,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 670.73,
+   "bw_lb_gbps": 146.8,
+   "arithmetic_intensity": 573.31,
+   "per_call_ms": 0.19042,
+   "token_dim": 1910,
+   "ideal_ms_at_peak": 2.762,
+   "headroom_ms_vs_peak": 1.808,
+   "headroom_pct_of_shape_time": 39.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    2490,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.5013,
+   "device_ms": 4.52,
+   "effective_tflops": 110.91,
+   "utilization_vs_peak": 0.7968,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 813.27,
+   "bw_lb_gbps": 179.9,
+   "arithmetic_intensity": 616.41,
+   "per_call_ms": 0.18833,
+   "token_dim": 2490,
+   "ideal_ms_at_peak": 3.601,
+   "headroom_ms_vs_peak": 0.919,
+   "headroom_pct_of_shape_time": 20.3
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    1910,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.3845,
+   "device_ms": 4.35,
+   "effective_tflops": 88.4,
+   "utilization_vs_peak": 0.635,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 952.37,
+   "bw_lb_gbps": 218.9,
+   "arithmetic_intensity": 403.77,
+   "per_call_ms": 0.04531,
+   "token_dim": 1910,
+   "ideal_ms_at_peak": 2.762,
+   "headroom_ms_vs_peak": 1.588,
+   "headroom_pct_of_shape_time": 36.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    1740,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.3503,
+   "device_ms": 4.32,
+   "effective_tflops": 81.09,
+   "utilization_vs_peak": 0.5825,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 628.95,
+   "bw_lb_gbps": 145.6,
+   "arithmetic_intensity": 556.97,
+   "per_call_ms": 0.18,
+   "token_dim": 1740,
+   "ideal_ms_at_peak": 2.517,
+   "headroom_ms_vs_peak": 1.803,
+   "headroom_pct_of_shape_time": 41.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    1740,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.3503,
+   "device_ms": 4.31,
+   "effective_tflops": 81.28,
+   "utilization_vs_peak": 0.5839,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 628.95,
+   "bw_lb_gbps": 145.9,
+   "arithmetic_intensity": 556.97,
+   "per_call_ms": 0.17958,
+   "token_dim": 1740,
+   "ideal_ms_at_peak": 2.517,
+   "headroom_ms_vs_peak": 1.793,
+   "headroom_pct_of_shape_time": 41.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    1670,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.3362,
+   "device_ms": 4.18,
+   "effective_tflops": 80.43,
+   "utilization_vs_peak": 0.5778,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 611.75,
+   "bw_lb_gbps": 146.4,
+   "arithmetic_intensity": 549.6,
+   "per_call_ms": 0.17417,
+   "token_dim": 1670,
+   "ideal_ms_at_peak": 2.415,
+   "headroom_ms_vs_peak": 1.765,
+   "headroom_pct_of_shape_time": 42.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    1670,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.3362,
+   "device_ms": 4.16,
+   "effective_tflops": 80.82,
+   "utilization_vs_peak": 0.5806,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 611.75,
+   "bw_lb_gbps": 147.1,
+   "arithmetic_intensity": 549.6,
+   "per_call_ms": 0.17333,
+   "token_dim": 1670,
+   "ideal_ms_at_peak": 2.415,
+   "headroom_ms_vs_peak": 1.745,
+   "headroom_pct_of_shape_time": 41.9
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    1740,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.3503,
+   "device_ms": 4.11,
+   "effective_tflops": 85.23,
+   "utilization_vs_peak": 0.6123,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 885.52,
+   "bw_lb_gbps": 215.5,
+   "arithmetic_intensity": 395.6,
+   "per_call_ms": 0.04281,
+   "token_dim": 1740,
+   "ideal_ms_at_peak": 2.517,
+   "headroom_ms_vs_peak": 1.593,
+   "headroom_pct_of_shape_time": 38.8
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    2230,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.449,
+   "device_ms": 4.07,
+   "effective_tflops": 110.31,
+   "utilization_vs_peak": 0.7925,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 749.37,
+   "bw_lb_gbps": 184.1,
+   "arithmetic_intensity": 599.11,
+   "per_call_ms": 0.16958,
+   "token_dim": 2230,
+   "ideal_ms_at_peak": 3.226,
+   "headroom_ms_vs_peak": 0.844,
+   "headroom_pct_of_shape_time": 20.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    1670,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.3362,
+   "device_ms": 4.02,
+   "effective_tflops": 83.64,
+   "utilization_vs_peak": 0.6008,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 858.0,
+   "bw_lb_gbps": 213.4,
+   "arithmetic_intensity": 391.86,
+   "per_call_ms": 0.04187,
+   "token_dim": 1670,
+   "ideal_ms_at_peak": 2.415,
+   "headroom_ms_vs_peak": 1.605,
+   "headroom_pct_of_shape_time": 39.9
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    2490,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.5013,
+   "device_ms": 4.01,
+   "effective_tflops": 125.01,
+   "utilization_vs_peak": 0.8981,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 813.27,
+   "bw_lb_gbps": 202.8,
+   "arithmetic_intensity": 616.41,
+   "per_call_ms": 0.16708,
+   "token_dim": 2490,
+   "ideal_ms_at_peak": 3.601,
+   "headroom_ms_vs_peak": 0.409,
+   "headroom_pct_of_shape_time": 10.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    2230,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.449,
+   "device_ms": 4.01,
+   "effective_tflops": 111.96,
+   "utilization_vs_peak": 0.8043,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 749.37,
+   "bw_lb_gbps": 186.9,
+   "arithmetic_intensity": 599.11,
+   "per_call_ms": 0.16708,
+   "token_dim": 2230,
+   "ideal_ms_at_peak": 3.226,
+   "headroom_ms_vs_peak": 0.784,
+   "headroom_pct_of_shape_time": 19.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    2100,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.4228,
+   "device_ms": 3.82,
+   "effective_tflops": 110.68,
+   "utilization_vs_peak": 0.7951,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 717.42,
+   "bw_lb_gbps": 187.8,
+   "arithmetic_intensity": 589.31,
+   "per_call_ms": 0.15917,
+   "token_dim": 2100,
+   "ideal_ms_at_peak": 3.037,
+   "headroom_ms_vs_peak": 0.783,
+   "headroom_pct_of_shape_time": 20.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    2140,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.4308,
+   "device_ms": 3.8,
+   "effective_tflops": 113.38,
+   "utilization_vs_peak": 0.8145,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 727.25,
+   "bw_lb_gbps": 191.4,
+   "arithmetic_intensity": 592.42,
+   "per_call_ms": 0.15833,
+   "token_dim": 2140,
+   "ideal_ms_at_peak": 3.095,
+   "headroom_ms_vs_peak": 0.705,
+   "headroom_pct_of_shape_time": 18.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    1670,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.3362,
+   "device_ms": 3.61,
+   "effective_tflops": 93.13,
+   "utilization_vs_peak": 0.6691,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 611.75,
+   "bw_lb_gbps": 169.5,
+   "arithmetic_intensity": 549.6,
+   "per_call_ms": 0.15042,
+   "token_dim": 1670,
+   "ideal_ms_at_peak": 2.415,
+   "headroom_ms_vs_peak": 1.195,
+   "headroom_pct_of_shape_time": 33.1
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    1910,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.3845,
+   "device_ms": 3.53,
+   "effective_tflops": 108.93,
+   "utilization_vs_peak": 0.7826,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 670.73,
+   "bw_lb_gbps": 190.0,
+   "arithmetic_intensity": 573.31,
+   "per_call_ms": 0.14708,
+   "token_dim": 1910,
+   "ideal_ms_at_peak": 2.762,
+   "headroom_ms_vs_peak": 0.768,
+   "headroom_pct_of_shape_time": 21.8
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    180,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.0362,
+   "device_ms": 3.41,
+   "effective_tflops": 10.63,
+   "utilization_vs_peak": 0.0763,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 272.11,
+   "bw_lb_gbps": 79.8,
+   "arithmetic_intensity": 133.18,
+   "per_call_ms": 0.03552,
+   "token_dim": 180,
+   "ideal_ms_at_peak": 0.26,
+   "headroom_ms_vs_peak": 3.15,
+   "headroom_pct_of_shape_time": 92.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    1740,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.3503,
+   "device_ms": 3.25,
+   "effective_tflops": 107.79,
+   "utilization_vs_peak": 0.7743,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 628.95,
+   "bw_lb_gbps": 193.5,
+   "arithmetic_intensity": 556.97,
+   "per_call_ms": 0.13542,
+   "token_dim": 1740,
+   "ideal_ms_at_peak": 2.517,
+   "headroom_ms_vs_peak": 0.733,
+   "headroom_pct_of_shape_time": 22.6
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_attn_proj",
+   "shape": [
+    140,
+    1024,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.0282,
+   "device_ms": 2.97,
+   "effective_tflops": 9.49,
+   "utilization_vs_peak": 0.0682,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 256.38,
+   "bw_lb_gbps": 86.3,
+   "arithmetic_intensity": 109.94,
+   "per_call_ms": 0.03094,
+   "token_dim": 140,
+   "ideal_ms_at_peak": 0.203,
+   "headroom_ms_vs_peak": 2.767,
+   "headroom_pct_of_shape_time": 93.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    180,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.0362,
+   "device_ms": 2.57,
+   "effective_tflops": 14.1,
+   "utilization_vs_peak": 0.1013,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 272.11,
+   "bw_lb_gbps": 105.9,
+   "arithmetic_intensity": 133.18,
+   "per_call_ms": 0.02677,
+   "token_dim": 180,
+   "ideal_ms_at_peak": 0.26,
+   "headroom_ms_vs_peak": 2.31,
+   "headroom_pct_of_shape_time": 89.9
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_attn_proj",
+   "shape": [
+    1024,
+    140,
+    1024
+   ],
+   "count": 96,
+   "flops_tflop": 0.0282,
+   "device_ms": 2.36,
+   "effective_tflops": 11.94,
+   "utilization_vs_peak": 0.0858,
+   "same_shape_reference_tflops": 101.96,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 256.38,
+   "bw_lb_gbps": 108.6,
+   "arithmetic_intensity": 109.94,
+   "per_call_ms": 0.02458,
+   "token_dim": 140,
+   "ideal_ms_at_peak": 0.203,
+   "headroom_ms_vs_peak": 2.157,
+   "headroom_pct_of_shape_time": 91.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    160,
+    4096
+   ],
+   "count": 48,
+   "flops_tflop": 0.0644,
+   "device_ms": 2.26,
+   "effective_tflops": 28.51,
+   "utilization_vs_peak": 0.2048,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 481.3,
+   "bw_lb_gbps": 213.0,
+   "arithmetic_intensity": 133.86,
+   "per_call_ms": 0.04708,
+   "token_dim": 160,
+   "ideal_ms_at_peak": 0.463,
+   "headroom_ms_vs_peak": 1.797,
+   "headroom_pct_of_shape_time": 79.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    160,
+    1024
+   ],
+   "count": 48,
+   "flops_tflop": 0.0644,
+   "device_ms": 2.23,
+   "effective_tflops": 28.89,
+   "utilization_vs_peak": 0.2075,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 481.3,
+   "bw_lb_gbps": 215.8,
+   "arithmetic_intensity": 133.86,
+   "per_call_ms": 0.04646,
+   "token_dim": 160,
+   "ideal_ms_at_peak": 0.463,
+   "headroom_ms_vs_peak": 1.767,
+   "headroom_pct_of_shape_time": 79.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    160,
+    1024,
+    4096
+   ],
+   "count": 48,
+   "flops_tflop": 0.0644,
+   "device_ms": 2.1,
+   "effective_tflops": 30.68,
+   "utilization_vs_peak": 0.2204,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 481.3,
+   "bw_lb_gbps": 229.2,
+   "arithmetic_intensity": 133.86,
+   "per_call_ms": 0.04375,
+   "token_dim": 160,
+   "ideal_ms_at_peak": 0.463,
+   "headroom_ms_vs_peak": 1.637,
+   "headroom_pct_of_shape_time": 78.0
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    160,
+    4096,
+    1024
+   ],
+   "count": 48,
+   "flops_tflop": 0.0644,
+   "device_ms": 2.01,
+   "effective_tflops": 32.05,
+   "utilization_vs_peak": 0.2303,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 481.3,
+   "bw_lb_gbps": 239.5,
+   "arithmetic_intensity": 133.86,
+   "per_call_ms": 0.04187,
+   "token_dim": 160,
+   "ideal_ms_at_peak": 0.463,
+   "headroom_ms_vs_peak": 1.547,
+   "headroom_pct_of_shape_time": 77.0
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    180,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.0362,
+   "device_ms": 1.12,
+   "effective_tflops": 32.36,
+   "utilization_vs_peak": 0.2324,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 245.56,
+   "bw_lb_gbps": 219.3,
+   "arithmetic_intensity": 147.57,
+   "per_call_ms": 0.04667,
+   "token_dim": 180,
+   "ideal_ms_at_peak": 0.26,
+   "headroom_ms_vs_peak": 0.86,
+   "headroom_pct_of_shape_time": 76.8
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    180,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.0362,
+   "device_ms": 1.12,
+   "effective_tflops": 32.36,
+   "utilization_vs_peak": 0.2324,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 245.56,
+   "bw_lb_gbps": 219.3,
+   "arithmetic_intensity": 147.57,
+   "per_call_ms": 0.04667,
+   "token_dim": 180,
+   "ideal_ms_at_peak": 0.26,
+   "headroom_ms_vs_peak": 0.86,
+   "headroom_pct_of_shape_time": 76.8
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    1024,
+    140,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.0282,
+   "device_ms": 1.08,
+   "effective_tflops": 26.1,
+   "utilization_vs_peak": 0.1875,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 235.73,
+   "bw_lb_gbps": 218.3,
+   "arithmetic_intensity": 119.57,
+   "per_call_ms": 0.045,
+   "token_dim": 140,
+   "ideal_ms_at_peak": 0.203,
+   "headroom_ms_vs_peak": 0.877,
+   "headroom_pct_of_shape_time": 81.2
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    180,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.0362,
+   "device_ms": 1.06,
+   "effective_tflops": 34.19,
+   "utilization_vs_peak": 0.2456,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 245.56,
+   "bw_lb_gbps": 231.7,
+   "arithmetic_intensity": 147.57,
+   "per_call_ms": 0.04417,
+   "token_dim": 180,
+   "ideal_ms_at_peak": 0.26,
+   "headroom_ms_vs_peak": 0.8,
+   "headroom_pct_of_shape_time": 75.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    4096,
+    140,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.0282,
+   "device_ms": 1.05,
+   "effective_tflops": 26.84,
+   "utilization_vs_peak": 0.1928,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 235.73,
+   "bw_lb_gbps": 224.5,
+   "arithmetic_intensity": 119.57,
+   "per_call_ms": 0.04375,
+   "token_dim": 140,
+   "ideal_ms_at_peak": 0.203,
+   "headroom_ms_vs_peak": 0.847,
+   "headroom_pct_of_shape_time": 80.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    180,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.0362,
+   "device_ms": 0.99,
+   "effective_tflops": 36.6,
+   "utilization_vs_peak": 0.263,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 245.56,
+   "bw_lb_gbps": 248.0,
+   "arithmetic_intensity": 147.57,
+   "per_call_ms": 0.04125,
+   "token_dim": 180,
+   "ideal_ms_at_peak": 0.26,
+   "headroom_ms_vs_peak": 0.73,
+   "headroom_pct_of_shape_time": 73.7
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_down",
+   "shape": [
+    140,
+    1024,
+    4096
+   ],
+   "count": 24,
+   "flops_tflop": 0.0282,
+   "device_ms": 0.99,
+   "effective_tflops": 28.47,
+   "utilization_vs_peak": 0.2045,
+   "same_shape_reference_tflops": 123.98,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 235.73,
+   "bw_lb_gbps": 238.1,
+   "arithmetic_intensity": 119.57,
+   "per_call_ms": 0.04125,
+   "token_dim": 140,
+   "ideal_ms_at_peak": 0.203,
+   "headroom_ms_vs_peak": 0.787,
+   "headroom_pct_of_shape_time": 79.5
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_ffn_up",
+   "shape": [
+    140,
+    4096,
+    1024
+   ],
+   "count": 24,
+   "flops_tflop": 0.0282,
+   "device_ms": 0.94,
+   "effective_tflops": 29.98,
+   "utilization_vs_peak": 0.2154,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 235.73,
+   "bw_lb_gbps": 250.8,
+   "arithmetic_intensity": 119.57,
+   "per_call_ms": 0.03917,
+   "token_dim": 140,
+   "ideal_ms_at_peak": 0.203,
+   "headroom_ms_vs_peak": 0.737,
+   "headroom_pct_of_shape_time": 78.4
+  },
+  {
+   "phase": "backward",
+   "kind": "dW_other",
+   "shape": [
+    40,
+    10,
+    1024
+   ],
+   "count": 4,
+   "flops_tflop": 0.0,
+   "device_ms": 0.14,
+   "effective_tflops": 0.02,
+   "utilization_vs_peak": 0.0002,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": true,
+   "forced_bytes_lb_mb": 0.41,
+   "bw_lb_gbps": 2.9,
+   "arithmetic_intensity": 7.94,
+   "per_call_ms": 0.035,
+   "token_dim": null,
+   "ideal_ms_at_peak": 0.0,
+   "headroom_ms_vs_peak": 0.14,
+   "headroom_pct_of_shape_time": 100.0
+  },
+  {
+   "phase": "backward",
+   "kind": "dX_other",
+   "shape": [
+    10,
+    40,
+    1024
+   ],
+   "count": 4,
+   "flops_tflop": 0.0,
+   "device_ms": 0.09,
+   "effective_tflops": 0.04,
+   "utilization_vs_peak": 0.0003,
+   "same_shape_reference_tflops": null,
+   "A_transposed_view": false,
+   "forced_bytes_lb_mb": 0.41,
+   "bw_lb_gbps": 4.6,
+   "arithmetic_intensity": 7.94,
+   "per_call_ms": 0.0225,
+   "token_dim": null,
+   "ideal_ms_at_peak": 0.0,
+   "headroom_ms_vs_peak": 0.09,
+   "headroom_pct_of_shape_time": 100.0
+  }
+ ],
+ "critical_path_by_step_interval_union": {
+  "s2": {
+   "window_ms": 2056.5,
+   "busy_union_ms": 1806.9,
+   "idle_ms": 249.5,
+   "busy_pct": 87.9,
+   "kernel_union_ms": 1806.1,
+   "memcpy_memset_union_ms": 0.8,
+   "memcpy_compute_overlap_ms": 0.0,
+   "phase_exposure": {
+    "forward": {
+     "window_ms": 1697.0,
+     "busy_union_ms": 1471.0,
+     "idle_ms": 226.0
+    },
+    "backward": {
+     "window_ms": 1864.5,
+     "busy_union_ms": 1675.3,
+     "idle_ms": 189.2
+    },
+    "clip_optimizer": {
+     "window_ms": 12.3,
+     "busy_union_ms": 9.8,
+     "idle_ms": 2.4
+    }
+   },
+   "r36_reference_busy_ms": 1806.9,
+   "abs_error_vs_r36_ms": 0.0
+  },
+  "s3": {
+   "window_ms": 2265.0,
+   "busy_union_ms": 2035.3,
+   "idle_ms": 229.7,
+   "busy_pct": 89.9,
+   "kernel_union_ms": 2034.5,
+   "memcpy_memset_union_ms": 0.8,
+   "memcpy_compute_overlap_ms": 0.0,
+   "phase_exposure": {
+    "forward": {
+     "window_ms": 1926.3,
+     "busy_union_ms": 1721.1,
+     "idle_ms": 205.2
+    },
+    "backward": {
+     "window_ms": 2078.0,
+     "busy_union_ms": 1885.7,
+     "idle_ms": 192.3
+    },
+    "clip_optimizer": {
+     "window_ms": 12.9,
+     "busy_union_ms": 10.2,
+     "idle_ms": 2.7
+    }
+   },
+   "r36_reference_busy_ms": 2035.3,
+   "abs_error_vs_r36_ms": 0.0
+  },
+  "s4": {
+   "window_ms": 2473.7,
+   "busy_union_ms": 2262.5,
+   "idle_ms": 211.2,
+   "busy_pct": 91.5,
+   "kernel_union_ms": 2261.6,
+   "memcpy_memset_union_ms": 0.9,
+   "memcpy_compute_overlap_ms": 0.0,
+   "phase_exposure": {
+    "forward": {
+     "window_ms": 1974.8,
+     "busy_union_ms": 1785.8,
+     "idle_ms": 189.0
+    },
+    "backward": {
+     "window_ms": 2252.5,
+     "busy_union_ms": 2073.5,
+     "idle_ms": 179.1
+    },
+    "clip_optimizer": {
+     "window_ms": 14.3,
+     "busy_union_ms": 10.4,
+     "idle_ms": 3.8
+    }
+   },
+   "r36_reference_busy_ms": 2262.5,
+   "abs_error_vs_r36_ms": -0.0
+  }
+ },
+ "critical_path_method": "per step: window=[first marker start, next step start); busy = UNION of clipped kernel+memcpy+memset intervals (NOT a sum of durations); idle=window-busy; overlap=|K|+|M|-|K u M|",
+ "phase_ranking": [
+  {
+   "phase": "backward GEMM",
+   "device_ms_per_step": 772.12,
+   "pct_of_kernel_total": 38.0
+  },
+  {
+   "phase": "backward attention",
+   "device_ms_per_step": 375.44,
+   "pct_of_kernel_total": 18.5
+  },
+  {
+   "phase": "forward GEMM",
+   "device_ms_per_step": 330.16,
+   "pct_of_kernel_total": 16.2
+  },
+  {
+   "phase": "forward attention",
+   "device_ms_per_step": 204.64,
+   "pct_of_kernel_total": 10.1
+  },
+  {
+   "phase": "elementwise",
+   "device_ms_per_step": 184.15,
+   "pct_of_kernel_total": 9.1
+  },
+  {
+   "phase": "reduction",
+   "device_ms_per_step": 52.19,
+   "pct_of_kernel_total": 2.6
+  },
+  {
+   "phase": "gelu",
+   "device_ms_per_step": 35.01,
+   "pct_of_kernel_total": 1.7
+  },
+  {
+   "phase": "layernorm",
+   "device_ms_per_step": 31.05,
+   "pct_of_kernel_total": 1.5
+  },
+  {
+   "phase": "clip+optimizer",
+   "device_ms_per_step": 17.62,
+   "pct_of_kernel_total": 0.9
+  }
+ ],
+ "kernel_total_ms_per_step": 2034.08,
+ "dw_whitelist_alignment": {
+  "whitelist_size": 12,
+  "matched": 12,
+  "missing": [],
+  "extra": [],
+  "exact_match": true,
+  "note": "shapes matched exactly against the routing whitelist (route_isolated_r48.py N_MK); kind decided by the A transpose flag"
+ },
+ "dw_routing_alignment": {
+  "source": "route_isolated_r48.json + kernel_efficiency_r36.json",
+  "kernel_names": {
+   "native": {
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+    "aten::mm": 5776,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+   },
+   "py_route": {
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 2688,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+    "aten::mm": 11024,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+    "mm_kernel_general": 528,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+   },
+   "native_contig": {
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x32x16x16x": 192,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x128x32x6": 3216,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x128x32x32": 216,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile16x64x16x16x": 20,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x128x64x6": 2064,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile256x64x64x32": 240,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile128x256x64x6": 2304,
+    "aten::mm": 11552,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile32x64x16x32x": 136,
+    "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile64x256x32x64": 288
+   }
+  },
+  "whole_step_paired_diff_py_route_minus_native_ms": [
+   -18.8,
+   -3.3,
+   -7.9,
+   -3.2,
+   0.1,
+   -11.1
+  ],
+  "py_route_median_ms": -5.6,
+  "native_contig_paired_diff_ms": [
+   35.4,
+   10.3,
+   30.7,
+   41.2,
+   22.7,
+   34.0
+  ],
+  "native_contig_median_ms": 32.35,
+  "median_note": "two INDEPENDENT baselines, each from its own 6 paired diffs (review: previous JSON wrote the contig median into the py_route field)",
+  "shapes": [
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     5120,
+     1024
+    ],
+    "count": 96,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 46.8,
+     "effective_tflops": 88.1,
+     "forced_bytes_lb_mb": 5838.47,
+     "bw_lb_gbps": 124.8,
+     "ai": 706.21
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 8053.06,
+     "forced_bytes_lb_mb_incl_copy": 13891.53,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 8053.06,
+     "forced_bytes_lb_mb_incl_copy": 13891.53
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 46.8,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     5120,
+     4096
+    ],
+    "count": 96,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 46.71,
+     "effective_tflops": 88.27,
+     "forced_bytes_lb_mb": 5838.47,
+     "bw_lb_gbps": 125.0,
+     "ai": 706.21
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 2013.27,
+     "forced_bytes_lb_mb_incl_copy": 7851.74,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 2013.27,
+     "forced_bytes_lb_mb_incl_copy": 7851.74
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 46.71,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     4430,
+     1024
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 10.32,
+     "effective_tflops": 86.42,
+     "forced_bytes_lb_mb": 1290.04,
+     "bw_lb_gbps": 125.0,
+     "ai": 691.35
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 1741.95,
+     "forced_bytes_lb_mb_incl_copy": 3031.99,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 1741.95,
+     "forced_bytes_lb_mb_incl_copy": 3031.99
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 10.32,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     4430,
+     4096
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 10.25,
+     "effective_tflops": 87.01,
+     "forced_bytes_lb_mb": 1290.04,
+     "bw_lb_gbps": 125.9,
+     "ai": 691.35
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 435.49,
+     "forced_bytes_lb_mb_incl_copy": 1725.53,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 435.49,
+     "forced_bytes_lb_mb_incl_copy": 1725.53
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 10.25,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     4310,
+     1024
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 9.98,
+     "effective_tflops": 86.95,
+     "forced_bytes_lb_mb": 1260.55,
+     "bw_lb_gbps": 126.3,
+     "ai": 688.36
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 1694.76,
+     "forced_bytes_lb_mb_incl_copy": 2955.31,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 1694.76,
+     "forced_bytes_lb_mb_incl_copy": 2955.31
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 9.98,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     4310,
+     4096
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 9.97,
+     "effective_tflops": 87.03,
+     "forced_bytes_lb_mb": 1260.55,
+     "bw_lb_gbps": 126.4,
+     "ai": 688.36
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 423.69,
+     "forced_bytes_lb_mb_incl_copy": 1684.24,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 423.69,
+     "forced_bytes_lb_mb_incl_copy": 1684.24
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 9.97,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     3740,
+     4096
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 8.69,
+     "effective_tflops": 86.65,
+     "forced_bytes_lb_mb": 1120.47,
+     "bw_lb_gbps": 128.9,
+     "ai": 672.01
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 367.66,
+     "forced_bytes_lb_mb_incl_copy": 1488.13,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 367.66,
+     "forced_bytes_lb_mb_incl_copy": 1488.13
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 8.69,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     3740,
+     1024
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 8.67,
+     "effective_tflops": 86.85,
+     "forced_bytes_lb_mb": 1120.47,
+     "bw_lb_gbps": 129.2,
+     "ai": 672.01
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 1470.63,
+     "forced_bytes_lb_mb_incl_copy": 2591.1,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 1470.63,
+     "forced_bytes_lb_mb_incl_copy": 2591.1
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 8.67,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     3290,
+     1024
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 7.89,
+     "effective_tflops": 83.95,
+     "forced_bytes_lb_mb": 1009.88,
+     "bw_lb_gbps": 128.0,
+     "ai": 655.89
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 1293.68,
+     "forced_bytes_lb_mb_incl_copy": 2303.56,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 1293.68,
+     "forced_bytes_lb_mb_incl_copy": 2303.56
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 7.89,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     3290,
+     4096
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 7.82,
+     "effective_tflops": 84.7,
+     "forced_bytes_lb_mb": 1009.88,
+     "bw_lb_gbps": 129.1,
+     "ai": 655.89
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 323.42,
+     "forced_bytes_lb_mb_incl_copy": 1333.3,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 323.42,
+     "forced_bytes_lb_mb_incl_copy": 1333.3
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 7.82,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_up",
+    "shape": [
+     4096,
+     2990,
+     1024
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 7.0,
+     "effective_tflops": 86.0,
+     "forced_bytes_lb_mb": 936.15,
+     "bw_lb_gbps": 133.7,
+     "ai": 643.02
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 1175.72,
+     "forced_bytes_lb_mb_incl_copy": 2111.86,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 1175.72,
+     "forced_bytes_lb_mb_incl_copy": 2111.86
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 7.0,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   },
+   {
+    "kind": "dW_ffn_down",
+    "shape": [
+     1024,
+     2990,
+     4096
+    ],
+    "count": 24,
+    "native": {
+     "kernel": "gemm_ktype0 (vendor), A transposed view",
+     "device_ms": 6.98,
+     "effective_tflops": 86.24,
+     "forced_bytes_lb_mb": 936.15,
+     "bw_lb_gbps": 134.1,
+     "ai": 643.02
+    },
+    "flaggems_contiguous_copy": {
+     "extra_bytes_lb_mb": 293.93,
+     "forced_bytes_lb_mb_incl_copy": 1230.08,
+     "note": "FlagGems mm calls .contiguous() on a non-contiguous A: extra read+write of A (M*K) before the GEMM - counted SEPARATELY, not folded into the GEMM body"
+    },
+    "explicit_contiguous_copy": {
+     "extra_bytes_lb_mb": 293.93,
+     "forced_bytes_lb_mb_incl_copy": 1230.08
+    },
+    "same_shape_reference": "matched",
+    "per_path_timings": {
+     "native_transposed_view_ms": 6.98,
+     "copy_time_ms": null,
+     "flaggems_total_ms": null,
+     "explicit_contig_total_ms": null,
+     "note": "per-shape kernel/copy/total times for the routed paths come from ffn_dw_compare_r38 (S=512) and ffn_dw_midseq_r38 (mid-seq); see dw_per_path_timings below"
+    }
+   }
+  ],
+  "critical_path_exposure_note": "see critical_path_by_step_interval_union: per-step idle 237-295 ms (backward phase exposure dominates)"
+ },
+ "dw_per_path_timings": {
+  "n_shapes": 12,
+  "n_measured": 12,
+  "note": "per-call kernel ms for native transposed view / FlagGems / explicit contiguous (copy + total incl. copy). Only records whose M/K/N, dtype (bf16) and layout (transposed A) all match are marked as same-shape reference.",
+  "sum_per_step": {
+   "native_ms": 183.06,
+   "flaggems_ms": 150.6,
+   "explicit_contig_ms": 214.19,
+   "saving_flaggems_ms": 32.46,
+   "saving_explicit_contig_ms": -31.16
+  },
+  "shapes": [
+   {
+    "shape_NMK": [
+     4096,
+     5120,
+     1024
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.48505,
+    "flaggems_ms": 0.41665,
+    "explicit_contig_copy_ms": 0.2139,
+    "explicit_contig_total_ms": 0.63875,
+    "calls_per_step": 96,
+    "source": "ffn_dw_compare_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 46.56,
+    "per_step_flaggems_ms": 40.0,
+    "per_step_explicit_contig_ms": 61.32,
+    "saving_flaggems_ms": 6.57,
+    "saving_explicit_contig_ms": -14.76
+   },
+   {
+    "shape_NMK": [
+     1024,
+     5120,
+     4096
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.48475,
+    "flaggems_ms": 0.39105,
+    "explicit_contig_copy_ms": 0.06825,
+    "explicit_contig_total_ms": 0.48535,
+    "calls_per_step": 96,
+    "source": "ffn_dw_compare_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 46.54,
+    "per_step_flaggems_ms": 37.54,
+    "per_step_explicit_contig_ms": 46.59,
+    "saving_flaggems_ms": 9.0,
+    "saving_explicit_contig_ms": -0.06
+   },
+   {
+    "shape_NMK": [
+     4096,
+     4430,
+     1024
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.4283,
+    "flaggems_ms": 0.3631,
+    "explicit_contig_copy_ms": 0.2079,
+    "explicit_contig_total_ms": 0.588,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 10.28,
+    "per_step_flaggems_ms": 8.71,
+    "per_step_explicit_contig_ms": 14.11,
+    "saving_flaggems_ms": 1.56,
+    "saving_explicit_contig_ms": -3.83
+   },
+   {
+    "shape_NMK": [
+     1024,
+     4430,
+     4096
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.4256,
+    "flaggems_ms": 0.3643,
+    "explicit_contig_copy_ms": 0.0832,
+    "explicit_contig_total_ms": 0.4484,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 10.21,
+    "per_step_flaggems_ms": 8.74,
+    "per_step_explicit_contig_ms": 10.76,
+    "saving_flaggems_ms": 1.47,
+    "saving_explicit_contig_ms": -0.55
+   },
+   {
+    "shape_NMK": [
+     4096,
+     4310,
+     1024
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.4209,
+    "flaggems_ms": 0.3328,
+    "explicit_contig_copy_ms": 0.2271,
+    "explicit_contig_total_ms": 0.6131,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 10.1,
+    "per_step_flaggems_ms": 7.99,
+    "per_step_explicit_contig_ms": 14.71,
+    "saving_flaggems_ms": 2.11,
+    "saving_explicit_contig_ms": -4.61
+   },
+   {
+    "shape_NMK": [
+     1024,
+     4310,
+     4096
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.4434,
+    "flaggems_ms": 0.33,
+    "explicit_contig_copy_ms": 0.0793,
+    "explicit_contig_total_ms": 0.434,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 10.64,
+    "per_step_flaggems_ms": 7.92,
+    "per_step_explicit_contig_ms": 10.42,
+    "saving_flaggems_ms": 2.72,
+    "saving_explicit_contig_ms": 0.23
+   },
+   {
+    "shape_NMK": [
+     4096,
+     3740,
+     1024
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.386,
+    "flaggems_ms": 0.3075,
+    "explicit_contig_copy_ms": 0.183,
+    "explicit_contig_total_ms": 0.5009,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 9.26,
+    "per_step_flaggems_ms": 7.38,
+    "per_step_explicit_contig_ms": 12.02,
+    "saving_flaggems_ms": 1.88,
+    "saving_explicit_contig_ms": -2.76
+   },
+   {
+    "shape_NMK": [
+     1024,
+     3740,
+     4096
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.3612,
+    "flaggems_ms": 0.2987,
+    "explicit_contig_copy_ms": 0.0621,
+    "explicit_contig_total_ms": 0.3712,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 8.67,
+    "per_step_flaggems_ms": 7.17,
+    "per_step_explicit_contig_ms": 8.91,
+    "saving_flaggems_ms": 1.5,
+    "saving_explicit_contig_ms": -0.24
+   },
+   {
+    "shape_NMK": [
+     4096,
+     3290,
+     1024
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.342,
+    "flaggems_ms": 0.272,
+    "explicit_contig_copy_ms": 0.1664,
+    "explicit_contig_total_ms": 0.4435,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 8.21,
+    "per_step_flaggems_ms": 6.53,
+    "per_step_explicit_contig_ms": 10.64,
+    "saving_flaggems_ms": 1.68,
+    "saving_explicit_contig_ms": -2.44
+   },
+   {
+    "shape_NMK": [
+     1024,
+     3290,
+     4096
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.3412,
+    "flaggems_ms": 0.2734,
+    "explicit_contig_copy_ms": 0.0559,
+    "explicit_contig_total_ms": 0.3305,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 8.19,
+    "per_step_flaggems_ms": 6.56,
+    "per_step_explicit_contig_ms": 7.93,
+    "saving_flaggems_ms": 1.63,
+    "saving_explicit_contig_ms": 0.26
+   },
+   {
+    "shape_NMK": [
+     4096,
+     2990,
+     1024
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.2898,
+    "flaggems_ms": 0.2511,
+    "explicit_contig_copy_ms": 0.1502,
+    "explicit_contig_total_ms": 0.3996,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 6.96,
+    "per_step_flaggems_ms": 6.03,
+    "per_step_explicit_contig_ms": 9.59,
+    "saving_flaggems_ms": 0.93,
+    "saving_explicit_contig_ms": -2.64
+   },
+   {
+    "shape_NMK": [
+     1024,
+     2990,
+     4096
+    ],
+    "in_single_op_records": true,
+    "native_transposed_view_ms": 0.3099,
+    "flaggems_ms": 0.2511,
+    "explicit_contig_copy_ms": 0.05,
+    "explicit_contig_total_ms": 0.2997,
+    "calls_per_step": 24,
+    "source": "ffn_dw_midseq_r38.json",
+    "same_shape_reference": "matched (N,M,K + bf16 + transposed A view)",
+    "per_step_native_ms": 7.44,
+    "per_step_flaggems_ms": 6.03,
+    "per_step_explicit_contig_ms": 7.19,
+    "saving_flaggems_ms": 1.41,
+    "saving_explicit_contig_ms": 0.24
+   }
+  ]
+ },
+ "conclusion": {
+  "situation_1_compute_efficiency": "6 hot backward-GEMM shapes run at 88.1-129.25 TFLOP/s = 63%-93% of the 139.2 reference. Per-shape headroom (device_ms - FLOPs/139.2e12, the ideal-device-time gap under that reference, NOT an end-to-end ceiling) over 100 backward dW/dX rows of step 2 = 248.73 ms; by token-dim group: long (flattened tokens >= 4000): 99.91 ms over 353.48 ms device (20 rows); mid (1400 <= flattened tokens < 4000): 113.91 ms over 324.79 ms device (60 rows); short (flattened tokens < 1400): 34.67 ms over 40.23 ms device (18 rows). The 3-step mean backward GEMM (772.12 ms) is a different window and is not divided by these single-step rows. The earlier 'up to 285 ms/step' extrapolation is RETRACTED.",
+  "situation_2_logical_traffic": "dW arithmetic intensity 656-706 FLOP/byte; logical byte rate (each operand read/written once) 124-126 GB/s on the S=512 shapes. Whether the GEMMs are compute-bound is a HYPOTHESIS TO VERIFY: it needs real HBM counters (BLOCKED) because cache reuse and repeated reads change the actual traffic. No 'strongly compute-bound' claim is made.",
+  "situation_2_contiguous_copy": "the .contiguous() copy FlagGems mm performs on a transposed A adds 8053.06 MB (S=512 dW-up) and 2013.27 MB (S=512 dW-down) of extra read+write per shape per step - a real extra traffic item, counted SEPARATELY from the GEMM body; it is why native+contiguous() loses (+32.4 ms median) while FlagGems still gains (its Triton kernel is faster on the contiguous operand by more than the copy costs)",
+  "situation_3_idle_large": "per-step idle 211-250 ms (87.9-91.5% busy) - idle is 8%-12% of the step and is NOT attributable without a host swimlane (needs counters/platform)",
+  "ranking": "backward GEMM (38%) > backward attention (18.5%) > forward GEMM (16.2%) > forward attention (10.1%)",
+  "direction": "(a) backward GEMM (38%) has the largest absolute headroom but its effective TFLOP/s (88-129) is already 63%-93% of reference -> vendor-side kernel tuning, not application-level; the transposed-view dW shapes (88 TF/s, 63%) are the weakest - a vendor fast path for transposed operands would target ~27 ms/step of the 258 ms dW time at most; (b) attention (fwd+bwd ~28.6%) runs at 12-13 TFLOP/s model-math over STAGE time - NOT comparable to the GEMM peak (softmax/dropout/masking are inside the stage time) -> needs a training-capable SDPA candidate (FlagGems ruled out); (c) idle 8-12% (211-250 ms/step) -> submission gaps or exposed copies, NOT attributable without a host swimlane",
+  "blocked": [
+   "HBM read/write bytes",
+   "HBM bandwidth utilization",
+   "matrix-unit activity",
+   "host swimlane attribution of idle"
+  ],
+  "platform_assistance": "PCM window (pg-exporter), equivalent counter tool, vendor confirmation of metric level - see hbm_blocked_r46.md"
+ }
+}

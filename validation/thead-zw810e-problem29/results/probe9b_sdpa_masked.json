@@ -1,0 +1,24 @@
+{
+ "device": "PPU-ZW810E",
+ "shape": "B8 H16 S512 D64 bf16 + padding mask",
+ "results": {
+  "masked_bool": {
+   "default_ms": 0.5859
+  },
+  "masked_float": {
+   "error": "RuntimeError: invalid dtype for bias - should match query's dtype"
+  },
+  "masked_bool/flash": {
+   "ok": false,
+   "error": "RuntimeError: No available kernel. Aborting execution."
+  },
+  "masked_bool/efficient": {
+   "ok": true,
+   "ms": 0.5906
+  },
+  "masked_bool/math": {
+   "ok": true,
+   "ms": 1.2488
+  }
+ }
+}

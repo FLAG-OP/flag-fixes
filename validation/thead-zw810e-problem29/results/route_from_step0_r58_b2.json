@@ -1,0 +1,222 @@
+{
+ "field_version": "route_from_step0_v3",
+ "n_processes": 15,
+ "copy_grads": [
+  "host"
+ ],
+ "files": [
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json",
+  "run.json"
+ ],
+ "steps_compared": [],
+ "step_labels": {},
+ "groups": {
+  "native_from_start": {
+   "n_processes": 5,
+   "distinct_initial_param_sha256": 1,
+   "step0_micro0_losses": [
+    1.165966749
+   ],
+   "step0_losses_identical_across_processes": true,
+   "step_batch_hashes_first_process": [
+    "230e6090a50da609",
+    "c56ecd82e9207b65",
+    "038db01d997e1076",
+    "474b324c4b11b2c3",
+    "ee6faadec6f0ea86",
+    "919b2722bb9857dd",
+    "fee28506b0fb4962",
+    "77b99dea70c62477",
+    "7a23d6bbb8fcaf11",
+    "288503503a6302c1",
+    "873051929d240157",
+    "8606eac50a5afca1"
+   ],
+   "distinct_warmup_param_sha256": 5,
+   "distinct_warmup_state_sha256": 5,
+   "hit_step_micro0_loss": [
+    0.941162,
+    0.945166,
+    0.947266,
+    0.947412,
+    0.950781
+   ],
+   "hit_step_grad_norm": [
+    10.1875,
+    10.3125,
+    10.75,
+    10.875,
+    16.25
+   ],
+   "hit_step_grad_norm_range": [
+    10.1875,
+    16.25
+   ],
+   "call_counts_total": {
+    "whitelist_match": 0,
+    "flag_gems_mm": 0,
+    "native_fallback": 0
+   },
+   "per_step_calls_first_process": [
+    {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 0
+    },
+    {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 0
+    },
+    {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 0
+    }
+   ]
+  },
+  "fallback_from_start": {
+   "n_processes": 5,
+   "distinct_initial_param_sha256": 1,
+   "step0_micro0_losses": [
+    1.165966749
+   ],
+   "step0_losses_identical_across_processes": true,
+   "step_batch_hashes_first_process": [
+    "230e6090a50da609",
+    "c56ecd82e9207b65",
+    "038db01d997e1076",
+    "474b324c4b11b2c3",
+    "ee6faadec6f0ea86",
+    "919b2722bb9857dd",
+    "fee28506b0fb4962",
+    "77b99dea70c62477",
+    "7a23d6bbb8fcaf11",
+    "288503503a6302c1",
+    "873051929d240157",
+    "8606eac50a5afca1"
+   ],
+   "distinct_warmup_param_sha256": 5,
+   "distinct_warmup_state_sha256": 5,
+   "hit_step_micro0_loss": [
+    0.940869,
+    0.945312,
+    0.945898,
+    0.946582,
+    0.949951
+   ],
+   "hit_step_grad_norm": [
+    9.5,
+    9.875,
+    10.0,
+    10.1875,
+    10.25
+   ],
+   "hit_step_grad_norm_range": [
+    9.5,
+    10.25
+   ],
+   "call_counts_total": {
+    "whitelist_match": 2640,
+    "flag_gems_mm": 0,
+    "native_fallback": 86640
+   },
+   "per_step_calls_first_process": [
+    {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 5776
+    },
+    {
+     "whitelist_match": 96,
+     "flag_gems_mm": 0,
+     "native_fallback": 5776
+    },
+    {
+     "whitelist_match": 432,
+     "flag_gems_mm": 0,
+     "native_fallback": 5776
+    }
+   ]
+  },
+  "route_from_start": {
+   "n_processes": 5,
+   "distinct_initial_param_sha256": 1,
+   "step0_micro0_losses": [
+    1.165966749
+   ],
+   "step0_losses_identical_across_processes": true,
+   "step_batch_hashes_first_process": [
+    "230e6090a50da609",
+    "c56ecd82e9207b65",
+    "038db01d997e1076",
+    "474b324c4b11b2c3",
+    "ee6faadec6f0ea86",
+    "919b2722bb9857dd",
+    "fee28506b0fb4962",
+    "77b99dea70c62477",
+    "7a23d6bbb8fcaf11",
+    "288503503a6302c1",
+    "873051929d240157",
+    "8606eac50a5afca1"
+   ],
+   "distinct_warmup_param_sha256": 5,
+   "distinct_warmup_state_sha256": 5,
+   "hit_step_micro0_loss": [
+    0.941309,
+    0.944482,
+    0.945166,
+    0.9479,
+    0.94834
+   ],
+   "hit_step_grad_norm": [
+    9.6875,
+    10.125,
+    10.375,
+    10.75,
+    11.5
+   ],
+   "hit_step_grad_norm_range": [
+    9.6875,
+    11.5
+   ],
+   "call_counts_total": {
+    "whitelist_match": 2640,
+    "flag_gems_mm": 2640,
+    "native_fallback": 84000
+   },
+   "per_step_calls_first_process": [
+    {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 5776
+    },
+    {
+     "whitelist_match": 96,
+     "flag_gems_mm": 96,
+     "native_fallback": 5680
+    },
+    {
+     "whitelist_match": 432,
+     "flag_gems_mm": 432,
+     "native_fallback": 5344
+    }
+   ]
+  }
+ },
+ "pair_classes_by_step": {},
+ "pair_detail": {}
+}

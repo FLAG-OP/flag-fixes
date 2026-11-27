@@ -1,0 +1,148 @@
+{
+ "run_commit_note": "round-42 (review fe65d8f six items)",
+ "1_accuracy_closure": {
+  "same_state_preconditions": {
+   "init": true,
+   "rng_cpu": true,
+   "rng_cuda": true,
+   "micro_inputs": true
+  },
+  "native_vs_native_nondet_baseline_MAX": {
+   "ffn_up": 0.2315,
+   "ffn_down": 0.3378,
+   "attn_output": 0.431
+  },
+  "dw_only_vs_native_MAX": {
+   "ffn_up": 0.1488,
+   "ffn_down": 0.6757,
+   "attn_output": 0.431
+  },
+  "wrapped_stock_vs_native_MAX": {
+   "ffn_up": 0.1488,
+   "ffn_down": 0.6757,
+   "attn_output": 0.2994
+  },
+  "frozen_dW_stock_vs_fg_bitwise_identical": true,
+  "frozen_dW_shapes": 4,
+  "verdict": "dW-only FAIL (2% tol) retained, but attributed to DEVICE NONDETERMINISM (native self-baseline 23-43% >= candidate deviation; frozen dW bitwise identical) - NOT candidate kernel; not a deploy candidate",
+  "attention_output_error_source": "native nondeterminism (NOT 'dW propagating through backward graph' - retracted)"
+ },
+ "2_clean_perf": {
+  "native": {
+   "median": 2128.4,
+   "rounds": [
+    1905.3,
+    2128.4,
+    2355.0
+   ],
+   "tokens_per_s": [
+    14198,
+    14778,
+    15077
+   ]
+  },
+  "wrapped_stock": {
+   "median": 2143.5,
+   "tokens_per_s": [
+    14049,
+    14674,
+    14971
+   ]
+  },
+  "fg_all": {
+   "median": 2203.2,
+   "tokens_per_s": [
+    13639,
+    14277,
+    14529
+   ]
+  },
+  "dw_only": {
+   "median": 2135.7,
+   "rounds": [
+    1898.5,
+    2135.7,
+    2356.8
+   ],
+   "tokens_per_s": [
+    14249,
+    14728,
+    15066
+   ],
+   "int_hits": 1056
+  },
+  "dw_vs_native_paired_ms": [
+   -6.8,
+   7.3,
+   1.8
+  ],
+  "dw_vs_native_paired_median": 1.8,
+  "dw_vs_wrapped_paired_ms": [
+   -27.0,
+   -7.8,
+   -14.8
+  ],
+  "dw_vs_wrapped_paired_median": -14.8,
+  "round_sd_note": "sd across rounds ~225ms is per-step LOAD difference (length window), not noise; only paired diffs valid",
+  "verdict": "no stable whole-step gain resolved in this 3-step window; no claim that gains are offset by any specific overhead"
+ },
+ "3_cold_warm": {
+  "cold_warmup0_ms": 21900.7,
+  "warm_warmup0_ms": 5900.3,
+  "cold_timed_ms": [
+   2499.9,
+   3660.8,
+   2938.9
+  ],
+  "warm_timed_ms": [
+   2511.3,
+   2711.8,
+   2935.6
+  ],
+  "first_call_total_ms_cold": 20081.2,
+  "first_call_total_ms_warm": 1578.1,
+  "compile_ms_derived": 18503.1,
+  "cache_new_entries_cold": 31,
+  "cache_new_entries_warm": 0,
+  "first_call_max_ms_cold": 1471.762,
+  "first_call_max_ms_warm": 934.049,
+  "steady_ms_per_call_cold": 0.1685,
+  "steady_ms_per_call_warm": 0.1684,
+  "unique_shapes": 435,
+  "verdict": "first-run slowdown with cold cache is reproducible (warmup0 21.9s vs 5.9s); the historical ~20s TIMED steps are NOT REPRODUCED, exact cause UNDETERMINED (old entry had 2 warmup steps)",
+  "warm_first_run_note": "warm warmup0 5.9s > timed ~2.5s: first-encounter cost persists with cache hits (cache_new=0); composition (autotune/launch/load) not separated"
+ },
+ "4_sdpa": {
+  "independence": {
+   "with_mask_valid_region_max_diff": 0.0,
+   "no_mask_control_max_diff": 6.75,
+   "interpretation": "with-mask diff ~0 => masked-position V does not affect valid outputs; no-mask diff >>0 => perturbation is real"
+  },
+  "entry_status": "NO-OP PASSTHROUGH (profiler-verified: identical kernel set to native at same dropout; only_enable registered no op)",
+  "only_enable_registered_nothing": true,
+  "kernel_set_differs_same_dropout": false,
+  "native_kernel_p0": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::arch::Sm"
+  ],
+  "native_kernel_p01_dropout_variant": [
+   "fmha_cutlassF_bf16_aligned_k64x128x64_dropout_sm80(AttentionKernelFA2<cutlass::bfloat16_t, cutlass::"
+  ],
+  "direct_status": "COMPILE FAILED - CANDIDATE BLOCKED",
+  "tile_assert": [
+   "tl.static_assert(BLOCK_N <= HEAD_DIM)"
+  ],
+  "flag_gems_sha": "29e14822",
+  "timings_p0": {
+   "fwd_p0": 0.6989,
+   "bwd_p0": 1.1278,
+   "full_p0": 1.8751
+  },
+  "varlen": {
+   "S512_pad32": 0.7858,
+   "S214_pad16": 0.2038
+  },
+  "verdict": "no usable SDPA candidate on this stack (entry passthrough + direct compile BLOCKED)"
+ },
+ "5_hbm": "BLOCKED - acu exit code 101 (captured directly this run), dmesg PCM held by pg-exporter; L2 also blocked; platform feedback channel unavailable (logs/hbm_probe_r42.log)",
+ "6_readme_sync": "3c-4/3c-5 stale claims marked superseded; 3c-6 corrected to provable statements; 33.69ms-vs-median comparison stopped; budget and whole-step use same 3-step window weights (25.09 ms/step)"
+}

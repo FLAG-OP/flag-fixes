@@ -1,0 +1,85 @@
+/tmp/opencode/FlagGems-base/src/flag_gems/utils/libentry.py:411: RuntimeWarning: active Triton backend does not provide a replay benchmarker; falling back to event timing
+  resolved_benchmark = resolve_benchmarker(
+`torch_dtype` is deprecated! Use `dtype` instead!
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:219: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @custom_fwd
+/usr/local/lib/python3.12/site-packages/megatron/core/tensor_parallel/layers.py:249: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @custom_bwd
+phase A: exit=0 | [native_run1] hits=0 gn=10.5625 target_layers=72
+[native_run2] hits=0 gn=10.5625 target_layers=72
+PHASE_A_DONE
+phase B: exit=0 | [wrapped_stock] hits=0 gn=10.5625 target_layers=72
+[dw_only] hits=432 gn=10.5625 target_layers=72
+PHASE_B_DONE
+{
+ "A_native_run1_vs_native_run2_nondet": {
+  "FFN_up": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  },
+  "FFN_down": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  },
+  "attn_out_proj": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  }
+ },
+ "B_wrapped_stock_vs_native": {
+  "FFN_up": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  },
+  "FFN_down": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  },
+  "attn_out_proj": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  }
+ },
+ "C_dw_only_vs_native": {
+  "FFN_up": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  },
+  "FFN_down": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  },
+  "attn_out_proj": {
+   "grad_rel_max": 0.0,
+   "grad_rel_median": 0.0,
+   "post_param_absdiff_max": 0.0,
+   "grad_nonfinite": 0,
+   "PASS_2pct": true
+  }
+ }
+}
+VERDICT: dw-only PASS at 2% grad gate on the hit step; native-vs-native baseline itself PASS at the same gate

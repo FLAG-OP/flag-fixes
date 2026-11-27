@@ -1,0 +1,113 @@
+{
+ "run": "run13",
+ "second": "py_route",
+ "loop": "ORIGINAL entry loop (lookahead, autocast loss, isfinite host sync)",
+ "profiler": false,
+ "phase_batches_identical": true,
+ "per_shape_hits": {
+  "1024x5120_4096": 408,
+  "4096x5120_1024": 408,
+  "1024x3740_4096": 24,
+  "4096x3740_1024": 24,
+  "1024x4430_4096": 24,
+  "4096x4430_1024": 24,
+  "1024x2990_4096": 24,
+  "4096x2990_1024": 24,
+  "1024x3290_4096": 24,
+  "4096x3290_1024": 24,
+  "1024x4310_4096": 24,
+  "4096x4310_1024": 24
+ },
+ "n_shapes_hit": 12,
+ "total_hits": 1056,
+ "tokens_per_s_p1": [
+  14302.1,
+  14730.5,
+  15062.7
+ ],
+ "tokens_per_s_p2": [
+  14339.1,
+  14736.7,
+  15174.2
+ ],
+ "phase1": {
+  "rounds": [
+   {
+    "step_ms": 1891.47,
+    "valid_tokens": 27052,
+    "tokens_per_s": 14302.1,
+    "input_hash": "d2bfed5625354170",
+    "micro_losses": [
+     0.947412,
+     0.588257,
+     0.435669,
+     0.72793
+    ]
+   },
+   {
+    "step_ms": 2135.3,
+    "valid_tokens": 31454,
+    "tokens_per_s": 14730.5,
+    "input_hash": "c5896ff2bece725f",
+    "micro_losses": [
+     0.472485,
+     0.69436,
+     0.566003,
+     0.826904
+    ]
+   },
+   {
+    "step_ms": 2357.21,
+    "valid_tokens": 35506,
+    "tokens_per_s": 15062.7,
+    "input_hash": "6228631cc16cc2dd",
+    "micro_losses": [
+     0.687695,
+     0.819946,
+     0.549023,
+     0.752173
+    ]
+   }
+  ]
+ },
+ "phase2": {
+  "rounds": [
+   {
+    "step_ms": 1886.59,
+    "valid_tokens": 27052,
+    "tokens_per_s": 14339.1,
+    "input_hash": "d2bfed5625354170",
+    "micro_losses": [
+     0.841821,
+     0.484253,
+     0.355859,
+     0.523535
+    ]
+   },
+   {
+    "step_ms": 2134.4,
+    "valid_tokens": 31454,
+    "tokens_per_s": 14736.7,
+    "input_hash": "c5896ff2bece725f",
+    "micro_losses": [
+     0.304907,
+     0.601245,
+     0.556641,
+     0.635547
+    ]
+   },
+   {
+    "step_ms": 2339.89,
+    "valid_tokens": 35506,
+    "tokens_per_s": 15174.2,
+    "input_hash": "6228631cc16cc2dd",
+    "micro_losses": [
+     0.506348,
+     0.768359,
+     0.454199,
+     0.712695
+    ]
+   }
+  ]
+ }
+}

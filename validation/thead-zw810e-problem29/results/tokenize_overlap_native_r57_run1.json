@@ -1,0 +1,106 @@
+{
+ "experiment": "tokenize prefetch on the ORIGINAL training entry with NO experiment-added synchronization (review BqyWj1A item 2)",
+ "why": "the round-56 script (tokenize_overlap.py) called torch.cuda.synchronize() inside compute() to observe device intervals; that sync is absent from the real entry. This run uses the untouched loss_for_batch for inline and a by-group-future prefetch for the prefetch mode, with NO synchronize and NO interval recording.",
+ "result_reverses_round56": true,
+ "runs": {
+  "rep1": {
+   "order": "inline->prefetch",
+   "inline_ms": [
+    1887.9,
+    2118.5,
+    2347.2
+   ],
+   "prefetch_ms": [
+    1936.3,
+    2139.8,
+    2369.6
+   ],
+   "paired_prefetch_minus_inline": [
+    48.4,
+    21.3,
+    22.4
+   ]
+  },
+  "rep2": {
+   "order": "prefetch->inline",
+   "inline_ms": [
+    1882.0,
+    2123.8,
+    2341.8
+   ],
+   "prefetch_ms": [
+    1898.8,
+    2141.7,
+    2357.0
+   ],
+   "paired_prefetch_minus_inline": [
+    16.8,
+    17.9,
+    15.2
+   ]
+  },
+  "rep3": {
+   "order": "inline->prefetch",
+   "inline_ms": [
+    1896.4,
+    2127.2,
+    2340.5
+   ],
+   "prefetch_ms": [
+    1896.3,
+    2123.3,
+    2348.5
+   ],
+   "paired_prefetch_minus_inline": [
+    -0.1,
+    -3.9,
+    8.0
+   ]
+  },
+  "rep4": {
+   "order": "prefetch->inline",
+   "inline_ms": [
+    1888.7,
+    2125.9,
+    2349.4
+   ],
+   "prefetch_ms": [
+    1913.0,
+    2142.4,
+    2365.8
+   ],
+   "paired_prefetch_minus_inline": [
+    24.3,
+    16.5,
+    16.4
+   ]
+  }
+ },
+ "paired_prefetch_minus_inline_all12": [
+  48.4,
+  21.3,
+  22.4,
+  16.8,
+  17.9,
+  15.2,
+  -0.1,
+  -3.9,
+  8.0,
+  24.3,
+  16.5,
+  16.4
+ ],
+ "median": 16.65,
+ "min": -3.9,
+ "max": 48.4,
+ "n_positive": 10,
+ "loss_max_abs_dev": 0.0109,
+ "verdict": {
+  "performance": "REGRESSION on the real entry: 10/12 paired steps SLOWER (2/12 faster); median +16.6 ms (range -3.9 .. 48.4). The round-56 '-25.2 ms, 12/12 faster' result is RETRACTED as a measurement-path artefact: the experiment-only synchronize() in compute() blocked the host after every group launch in inline mode (preventing natural launch pipelining from hiding tokenize), while in overlap mode the worker thread's tokenize ran during that blocking wait - so the 'gain' was the prefetch partly cancelling the artefact it had itself introduced, not a real speedup.",
+  "mechanism": "in the real asynchronous entry the host already runs ahead of the device (launch pipelining), so the per-group host tokenize is naturally hidden; the extra thread + futures add overhead instead of removing exposed time",
+  "training_impact": "NOT ADOPTED. The 'tokenize prefetch' candidate is CLOSED. The forward-window gaps remain UNKNOWN and are NOT explained by exposed tokenize time in the real entry."
+ },
+ "supersedes": "tokenize_overlap_r55.json (round-56) - its 12/12 result is withdrawn.",
+ "erratum": "the first version of this file said '11/12 slower' in its verdict text; the data (n_positive=10) show 10/12 slower, 2/12 faster. Text corrected, data unchanged.",
+ "status": "run 1 (superseded by tokenize_overlap_native_r57.json = run 2 on the exact entry loop + this run). Loop of run 1: no one-batch lookahead; prefetch variant = loss_reimpl (logits matmul + cross_entropy re-implemented outside autocast)."
+}

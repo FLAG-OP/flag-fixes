@@ -1,0 +1,236 @@
+{
+ "device": "PPU-ZW810E",
+ "groups": {
+  "native": {
+   "group": "native",
+   "median_ms": 2128.0,
+   "step_ms": [
+    1908.4,
+    2128.0,
+    2373.3
+   ],
+   "valid_tokens_per_s": [
+    null,
+    null,
+    null
+   ],
+   "micro_losses_last_round": [
+    0.691406,
+    0.829004,
+    0.546484,
+    0.752661
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    12.6875
+   ],
+   "grad_norms_rounds": [
+    9.625,
+    10.0625,
+    12.375
+   ],
+   "param_hash16": "ef9d464fdf502607",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0
+  },
+  "wrapped_stock_mmout": {
+   "group": "wrapped_stock_mmout",
+   "median_ms": 2148.3,
+   "step_ms": [
+    1929.7,
+    2148.3,
+    2379.2
+   ],
+   "valid_tokens_per_s": [
+    null,
+    null,
+    null
+   ],
+   "micro_losses_last_round": [
+    0.695215,
+    0.833936,
+    0.549609,
+    0.752637
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    10.875
+   ],
+   "grad_norms_rounds": [
+    10.75,
+    10.375,
+    10.1875
+   ],
+   "param_hash16": "2e48772aa531a427",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "accuracy_vs_native": {
+    "last_round_micro_loss_diff": [
+     0.003809,
+     0.004932,
+     0.003125,
+     -2.4e-05
+    ],
+    "grad_norm_diff_rounds": [
+     1.125,
+     0.312,
+     -2.188
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   }
+  },
+  "fg_all": {
+   "group": "fg_all",
+   "median_ms": 2206.0,
+   "step_ms": [
+    1976.5,
+    2206.0,
+    2447.8
+   ],
+   "valid_tokens_per_s": [
+    null,
+    null,
+    null
+   ],
+   "micro_losses_last_round": [
+    0.695312,
+    0.827905,
+    0.558301,
+    0.739966
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    13.9375
+   ],
+   "grad_norms_rounds": [
+    10.6875,
+    10.1875,
+    11.4375
+   ],
+   "param_hash16": "173bbb14dc65c3bd",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "accuracy_vs_native": {
+    "last_round_micro_loss_diff": [
+     0.003906,
+     -0.001099,
+     0.011817,
+     -0.012695
+    ],
+    "grad_norm_diff_rounds": [
+     1.062,
+     0.125,
+     -0.938
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   }
+  },
+  "dw_only_routed": {
+   "group": "dw_only_routed",
+   "median_ms": 2149.0,
+   "step_ms": [
+    1917.4,
+    2149.0,
+    2360.6
+   ],
+   "valid_tokens_per_s": [
+    null,
+    null,
+    null
+   ],
+   "micro_losses_last_round": [
+    0.685938,
+    0.823267,
+    0.54834,
+    0.751099
+   ],
+   "grad_norms_warmup": [
+    15.75,
+    11.25
+   ],
+   "grad_norms_rounds": [
+    10.3125,
+    9.8125,
+    10.0
+   ],
+   "param_hash16": "a74a7f5ee1c9e877",
+   "param_absmax": 1.8516,
+   "wrapper_stats": {},
+   "cold_first_calls": 0,
+   "accuracy_vs_native": {
+    "last_round_micro_loss_diff": [
+     -0.005468,
+     -0.005737,
+     0.001856,
+     -0.001562
+    ],
+    "grad_norm_diff_rounds": [
+     0.688,
+     -0.25,
+     -2.375
+    ],
+    "param_hash_equal": false,
+    "param_absmax": 1.8516,
+    "nonfinite_params": 0,
+    "criteria": "bf16-level deviation expected for candidate kernels; nonfinite must be 0; param hash equality NOT required (different kernels)"
+   },
+   "dw_hits_summary": {
+    "timed_hits": 0,
+    "warmup_hits": 0,
+    "shapes_hit": 0,
+    "shapes_expected": 12,
+    "missing_shapes": [
+     [
+      4096,
+      2990,
+      2990,
+      1024
+     ],
+     [
+      4096,
+      5120,
+      5120,
+      1024
+     ],
+     [
+      1024,
+      3740,
+      3740,
+      4096
+     ],
+     [
+      4096,
+      4430,
+      4430,
+      1024
+     ],
+     [
+      4096,
+      3740,
+      3740,
+      1024
+     ],
+     [
+      1024,
+      2990,
+      2990,
+      4096
+     ]
+    ],
+    "per_shape_timed": {}
+   },
+   "dw_perf_int_count": 1056
+  }
+ },
+ "dW_shape_set_size": 12,
+ "notes": "wrapped-stock uses aten.mm.out escape = TRUE stock kernel; dw_only routes measured FFN dW shapes to FlagGems mm, all else stock mm.out; cold_first_calls = shapes triggering first-encounter compile in fg_all"
+}

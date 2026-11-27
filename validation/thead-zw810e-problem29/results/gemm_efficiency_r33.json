@@ -1,0 +1,1934 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "window": "ONE full training step (4 micros), same seed/loader as r28/r32",
+ "note": "dispatch-mode wrapping adds CPU submission overhead - kernel device times valid, step wall NOT comparable to clean trace; TFLOP/s per (phase,shape) same-window",
+ "rows": [
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 5120]:bfloat16T|[5120, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 46.685,
+   "derived_MKN": [
+    4096,
+    5120,
+    1024
+   ],
+   "tflops_per_call": 88.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 5120]:bfloat16T|[5120, 4096]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 46.673,
+   "derived_MKN": [
+    1024,
+    5120,
+    4096
+   ],
+   "tflops_per_call": 88.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 5120]:bfloat16T|[5120, 1024]:bfloat16",
+   "count_per_step": 384,
+   "device_ms_per_step": 42.356,
+   "derived_MKN": [
+    1024,
+    5120,
+    1024
+   ],
+   "tflops_per_call": 97.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[5120, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 384,
+   "device_ms_per_step": 37.782,
+   "derived_MKN": [
+    5120,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 109.1
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[5120, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 384,
+   "device_ms_per_step": 37.725,
+   "derived_MKN": [
+    5120,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 109.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[5120, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 34.569,
+   "derived_MKN": [
+    5120,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 119.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[5120, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 34.275,
+   "derived_MKN": [
+    5120,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 120.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[5120, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 32.765,
+   "derived_MKN": [
+    5120,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 125.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[5120, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 31.895,
+   "derived_MKN": [
+    5120,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 129.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 4430]:bfloat16T|[4430, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 10.261,
+   "derived_MKN": [
+    4096,
+    4430,
+    1024
+   ],
+   "tflops_per_call": 86.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4430]:bfloat16T|[4430, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 10.256,
+   "derived_MKN": [
+    1024,
+    4430,
+    4096
+   ],
+   "tflops_per_call": 87.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4430, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 10.118,
+   "derived_MKN": [
+    4430,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 88.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 4310]:bfloat16T|[4310, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 10.036,
+   "derived_MKN": [
+    4096,
+    4310,
+    1024
+   ],
+   "tflops_per_call": 86.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4310]:bfloat16T|[4310, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 9.967,
+   "derived_MKN": [
+    1024,
+    4310,
+    4096
+   ],
+   "tflops_per_call": 87.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 9.693,
+   "derived_MKN": [
+    4310,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 89.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4430, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 9.319,
+   "derived_MKN": [
+    4430,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 95.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4430]:bfloat16T|[4430, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 9.3,
+   "derived_MKN": [
+    1024,
+    4430,
+    1024
+   ],
+   "tflops_per_call": 95.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 4310]:bfloat16T|[4310, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 9.084,
+   "derived_MKN": [
+    1024,
+    4310,
+    1024
+   ],
+   "tflops_per_call": 95.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4430, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 9.035,
+   "derived_MKN": [
+    4430,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 98.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 3740]:bfloat16T|[3740, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 8.781,
+   "derived_MKN": [
+    4096,
+    3740,
+    1024
+   ],
+   "tflops_per_call": 85.7
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[160, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 192,
+   "device_ms_per_step": 8.692,
+   "derived_MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 7.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3740]:bfloat16T|[3740, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 8.69,
+   "derived_MKN": [
+    1024,
+    3740,
+    4096
+   ],
+   "tflops_per_call": 86.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 8.656,
+   "derived_MKN": [
+    4310,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 100.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[4430, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 8.183,
+   "derived_MKN": [
+    4430,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 109.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3740]:bfloat16T|[3740, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.931,
+   "derived_MKN": [
+    1024,
+    3740,
+    1024
+   ],
+   "tflops_per_call": 94.9
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[1910, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.826,
+   "derived_MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 49.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 3290]:bfloat16T|[3290, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.796,
+   "derived_MKN": [
+    4096,
+    3290,
+    1024
+   ],
+   "tflops_per_call": 85.0
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[4310, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.782,
+   "derived_MKN": [
+    4310,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 111.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3290]:bfloat16T|[3290, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.758,
+   "derived_MKN": [
+    1024,
+    3290,
+    4096
+   ],
+   "tflops_per_call": 85.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4310, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.371,
+   "derived_MKN": [
+    4310,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 117.7
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[4430, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.293,
+   "derived_MKN": [
+    4430,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 122.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[4430, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.236,
+   "derived_MKN": [
+    4430,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 123.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[3740, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.221,
+   "derived_MKN": [
+    3740,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 104.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[4310, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.199,
+   "derived_MKN": [
+    4310,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 120.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.191,
+   "derived_MKN": [
+    2990,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 83.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3740, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.153,
+   "derived_MKN": [
+    3740,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 105.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 3290]:bfloat16T|[3290, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.09,
+   "derived_MKN": [
+    1024,
+    3290,
+    1024
+   ],
+   "tflops_per_call": 93.4
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[1740, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.083,
+   "derived_MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 49.5
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[1670, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 7.075,
+   "derived_MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 47.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2990]:bfloat16T|[2990, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 7.015,
+   "derived_MKN": [
+    4096,
+    2990,
+    1024
+   ],
+   "tflops_per_call": 85.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2990]:bfloat16T|[2990, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.981,
+   "derived_MKN": [
+    1024,
+    2990,
+    4096
+   ],
+   "tflops_per_call": 86.2
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3290, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.888,
+   "derived_MKN": [
+    3290,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 96.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[4310, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.856,
+   "derived_MKN": [
+    4310,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 126.6
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2140, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.84,
+   "derived_MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 63.0
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2100, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.651,
+   "derived_MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 63.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3740, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.612,
+   "derived_MKN": [
+    3740,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 113.9
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[3290, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.529,
+   "derived_MKN": [
+    3290,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 101.4
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2230, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.49,
+   "derived_MKN": [
+    2230,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 69.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[3740, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.486,
+   "derived_MKN": [
+    3740,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 116.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2990]:bfloat16T|[2990, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.47,
+   "derived_MKN": [
+    1024,
+    2990,
+    1024
+   ],
+   "tflops_per_call": 93.0
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2490, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 6.444,
+   "derived_MKN": [
+    2490,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 77.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[3740, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.287,
+   "derived_MKN": [
+    3740,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 119.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.279,
+   "derived_MKN": [
+    2990,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 95.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 192,
+   "device_ms_per_step": 6.125,
+   "derived_MKN": [
+    160,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 10.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3740, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 6.007,
+   "derived_MKN": [
+    3740,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 125.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2990, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.998,
+   "derived_MKN": [
+    2990,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 100.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3290, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.988,
+   "derived_MKN": [
+    3290,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 110.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2490]:bfloat16T|[2490, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.85,
+   "derived_MKN": [
+    1024,
+    2490,
+    4096
+   ],
+   "tflops_per_call": 85.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2490]:bfloat16T|[2490, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.837,
+   "derived_MKN": [
+    4096,
+    2490,
+    1024
+   ],
+   "tflops_per_call": 85.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.763,
+   "derived_MKN": [
+    1670,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 58.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[3290, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.753,
+   "derived_MKN": [
+    3290,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 115.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2140, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.708,
+   "derived_MKN": [
+    2140,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 75.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.691,
+   "derived_MKN": [
+    2100,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 74.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.659,
+   "derived_MKN": [
+    1910,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 68.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.626,
+   "derived_MKN": [
+    1740,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 62.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[3290, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.608,
+   "derived_MKN": [
+    3290,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 118.1
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[3290, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.59,
+   "derived_MKN": [
+    3290,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 118.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2490]:bfloat16T|[2490, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 5.467,
+   "derived_MKN": [
+    1024,
+    2490,
+    1024
+   ],
+   "tflops_per_call": 91.7
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[2490, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.337,
+   "derived_MKN": [
+    2490,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 93.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2230]:bfloat16T|[2230, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.326,
+   "derived_MKN": [
+    4096,
+    2230,
+    1024
+   ],
+   "tflops_per_call": 84.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2230]:bfloat16T|[2230, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.316,
+   "derived_MKN": [
+    1024,
+    2230,
+    4096
+   ],
+   "tflops_per_call": 84.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2990, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.311,
+   "derived_MKN": [
+    2990,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 113.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[2990, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.305,
+   "derived_MKN": [
+    2990,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 113.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2140]:bfloat16T|[2140, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.153,
+   "derived_MKN": [
+    1024,
+    2140,
+    4096
+   ],
+   "tflops_per_call": 83.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2140]:bfloat16T|[2140, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.134,
+   "derived_MKN": [
+    4096,
+    2140,
+    1024
+   ],
+   "tflops_per_call": 83.9
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2990, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.079,
+   "derived_MKN": [
+    2990,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 118.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2100]:bfloat16T|[2100, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 5.008,
+   "derived_MKN": [
+    1024,
+    2100,
+    4096
+   ],
+   "tflops_per_call": 84.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 2100]:bfloat16T|[2100, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.995,
+   "derived_MKN": [
+    4096,
+    2100,
+    1024
+   ],
+   "tflops_per_call": 84.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2230]:bfloat16T|[2230, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.969,
+   "derived_MKN": [
+    1024,
+    2230,
+    1024
+   ],
+   "tflops_per_call": 90.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.956,
+   "derived_MKN": [
+    2100,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 85.3
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2140, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.95,
+   "derived_MKN": [
+    2140,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 87.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.904,
+   "derived_MKN": [
+    2490,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 102.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[2230, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.902,
+   "derived_MKN": [
+    2230,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 91.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.9,
+   "derived_MKN": [
+    1910,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 78.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.896,
+   "derived_MKN": [
+    1740,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 71.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.892,
+   "derived_MKN": [
+    1670,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 68.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.861,
+   "derived_MKN": [
+    2230,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 92.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2140]:bfloat16T|[2140, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.859,
+   "derived_MKN": [
+    1024,
+    2140,
+    1024
+   ],
+   "tflops_per_call": 88.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 160]:bfloat16T|[160, 1024]:bfloat16",
+   "count_per_step": 192,
+   "device_ms_per_step": 4.831,
+   "derived_MKN": [
+    1024,
+    160,
+    1024
+   ],
+   "tflops_per_call": 13.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[2100, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.812,
+   "derived_MKN": [
+    2100,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 87.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 2100]:bfloat16T|[2100, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.759,
+   "derived_MKN": [
+    1024,
+    2100,
+    1024
+   ],
+   "tflops_per_call": 88.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[180, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.711,
+   "derived_MKN": [
+    180,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 7.7
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[2140, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.638,
+   "derived_MKN": [
+    2140,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 92.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1910]:bfloat16T|[1910, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.63,
+   "derived_MKN": [
+    4096,
+    1910,
+    1024
+   ],
+   "tflops_per_call": 83.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1910]:bfloat16T|[1910, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.586,
+   "derived_MKN": [
+    1024,
+    1910,
+    4096
+   ],
+   "tflops_per_call": 83.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.535,
+   "derived_MKN": [
+    2490,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 110.5
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[140, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.425,
+   "derived_MKN": [
+    140,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 6.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1910]:bfloat16T|[1910, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.373,
+   "derived_MKN": [
+    1024,
+    1910,
+    1024
+   ],
+   "tflops_per_call": 87.9
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[1910, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.32,
+   "derived_MKN": [
+    1910,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 89.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1740]:bfloat16T|[1740, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.304,
+   "derived_MKN": [
+    1024,
+    1740,
+    4096
+   ],
+   "tflops_per_call": 81.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1740]:bfloat16T|[1740, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.285,
+   "derived_MKN": [
+    4096,
+    1740,
+    1024
+   ],
+   "tflops_per_call": 81.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 1670]:bfloat16T|[1670, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.201,
+   "derived_MKN": [
+    4096,
+    1670,
+    1024
+   ],
+   "tflops_per_call": 80.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1670]:bfloat16T|[1670, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.196,
+   "derived_MKN": [
+    1024,
+    1670,
+    4096
+   ],
+   "tflops_per_call": 80.1
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[1740, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.186,
+   "derived_MKN": [
+    1740,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 83.7
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[1670, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.139,
+   "derived_MKN": [
+    1670,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 81.2
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1740]:bfloat16T|[1740, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.113,
+   "derived_MKN": [
+    1024,
+    1740,
+    1024
+   ],
+   "tflops_per_call": 85.2
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 1670]:bfloat16T|[1670, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 4.075,
+   "derived_MKN": [
+    1024,
+    1670,
+    1024
+   ],
+   "tflops_per_call": 82.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.073,
+   "derived_MKN": [
+    2230,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 110.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[1910, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.053,
+   "derived_MKN": [
+    1910,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 94.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2490, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.014,
+   "derived_MKN": [
+    2490,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 124.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2230, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 4.014,
+   "derived_MKN": [
+    2230,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 111.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2140, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.989,
+   "derived_MKN": [
+    2140,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 108.0
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2490, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.986,
+   "derived_MKN": [
+    2490,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 125.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[1670, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.982,
+   "derived_MKN": [
+    1670,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 84.4
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2230, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.98,
+   "derived_MKN": [
+    2230,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 112.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[2100, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.979,
+   "derived_MKN": [
+    2100,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 106.3
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[1740, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.965,
+   "derived_MKN": [
+    1740,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 88.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2140, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.82,
+   "derived_MKN": [
+    2140,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 112.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[2100, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.79,
+   "derived_MKN": [
+    2100,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 111.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1910, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.54,
+   "derived_MKN": [
+    1910,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 108.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1670, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.511,
+   "derived_MKN": [
+    1670,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 95.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[160, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 48,
+   "device_ms_per_step": 3.398,
+   "derived_MKN": [
+    160,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 19.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1740, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 3.249,
+   "derived_MKN": [
+    1740,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 107.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 3.011,
+   "derived_MKN": [
+    180,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 12.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 1024]:bfloat16|[1024, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 2.873,
+   "derived_MKN": [
+    140,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 9.8
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[160, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 48,
+   "device_ms_per_step": 2.72,
+   "derived_MKN": [
+    160,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 23.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 180]:bfloat16T|[180, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 2.399,
+   "derived_MKN": [
+    1024,
+    180,
+    1024
+   ],
+   "tflops_per_call": 15.1
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 140]:bfloat16T|[140, 1024]:bfloat16",
+   "count_per_step": 96,
+   "device_ms_per_step": 2.241,
+   "derived_MKN": [
+    1024,
+    140,
+    1024
+   ],
+   "tflops_per_call": 12.6
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 160]:bfloat16T|[160, 4096]:bfloat16",
+   "count_per_step": 48,
+   "device_ms_per_step": 2.227,
+   "derived_MKN": [
+    1024,
+    160,
+    4096
+   ],
+   "tflops_per_call": 28.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 160]:bfloat16T|[160, 1024]:bfloat16",
+   "count_per_step": 48,
+   "device_ms_per_step": 2.17,
+   "derived_MKN": [
+    4096,
+    160,
+    1024
+   ],
+   "tflops_per_call": 29.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 48,
+   "device_ms_per_step": 2.064,
+   "derived_MKN": [
+    160,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 31.2
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[160, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 48,
+   "device_ms_per_step": 1.938,
+   "derived_MKN": [
+    160,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 33.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[180, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.796,
+   "derived_MKN": [
+    180,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 20.2
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[140, 4096]:bfloat16|[4096, 1024]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.715,
+   "derived_MKN": [
+    140,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 16.4
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[180, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.425,
+   "derived_MKN": [
+    180,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 25.4
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[4096]:bfloat16|[140, 1024]:bfloat16|[1024, 4096]:bfloat16T",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.377,
+   "derived_MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 20.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 180]:bfloat16T|[180, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.083,
+   "derived_MKN": [
+    1024,
+    180,
+    4096
+   ],
+   "tflops_per_call": 33.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 180]:bfloat16T|[180, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.083,
+   "derived_MKN": [
+    4096,
+    180,
+    1024
+   ],
+   "tflops_per_call": 33.5
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[1024, 140]:bfloat16T|[140, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.067,
+   "derived_MKN": [
+    1024,
+    140,
+    4096
+   ],
+   "tflops_per_call": 26.4
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[4096, 140]:bfloat16T|[140, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.038,
+   "derived_MKN": [
+    4096,
+    140,
+    1024
+   ],
+   "tflops_per_call": 27.2
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 1.011,
+   "derived_MKN": [
+    180,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 35.8
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 1024]:bfloat16|[1024, 4096]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 0.981,
+   "derived_MKN": [
+    140,
+    1024,
+    4096
+   ],
+   "tflops_per_call": 28.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[180, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 0.955,
+   "derived_MKN": [
+    180,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 37.9
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[140, 4096]:bfloat16|[4096, 1024]:bfloat16",
+   "count_per_step": 24,
+   "device_ms_per_step": 0.924,
+   "derived_MKN": [
+    140,
+    4096,
+    1024
+   ],
+   "tflops_per_call": 30.5
+  },
+  {
+   "phase": "forward",
+   "op": "addmm",
+   "operand_sig": "[1024]:bfloat16|[10, 1024]:bfloat16|[1024, 1024]:bfloat16T",
+   "count_per_step": 20,
+   "device_ms_per_step": 0.59,
+   "derived_MKN": [
+    10,
+    1024,
+    1024
+   ],
+   "tflops_per_call": 0.7
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[40, 10]:bfloat16T|[10, 1024]:bfloat16",
+   "count_per_step": 4,
+   "device_ms_per_step": 0.129,
+   "derived_MKN": [
+    40,
+    10,
+    1024
+   ],
+   "tflops_per_call": 0.0
+  },
+  {
+   "phase": "backward",
+   "op": "mm",
+   "operand_sig": "[10, 40]:bfloat16|[40, 1024]:bfloat16",
+   "count_per_step": 4,
+   "device_ms_per_step": 0.073,
+   "derived_MKN": [
+    10,
+    40,
+    1024
+   ],
+   "tflops_per_call": 0.0
+  },
+  {
+   "phase": "forward",
+   "op": "mm",
+   "operand_sig": "[10, 1024]:bfloat16|[1024, 40]:bfloat16T",
+   "count_per_step": 8,
+   "device_ms_per_step": 0.051,
+   "derived_MKN": [
+    10,
+    1024,
+    40
+   ],
+   "tflops_per_call": 0.1
+  }
+ ],
+ "peak_tflops": 139.2,
+ "vendor_reference_tflops": 135.7
+}

@@ -1,0 +1,11 @@
+PASS SDPA tflops recomputed from per-step means
+PASS SDPA per-step FLOPs are per-step (not 3-step sums)
+PASS SDPA group rows sum == per-step sum [0.316 vs 0.316]
+PASS memcpy per-step counts sum == total events [8082 vs 8082]
+PASS final_table ms consistent with kernel_efficiency_r36 [74 rows matched]
+PASS all efficiency rows <= 139.2 TFLOP/s
+PASS kernel_efficiency rows <= 139.2 TFLOP/s
+PASS no-profiler pairing asserted (text-hash)
+PASS kernel-efficiency fingerprint asserted
+
+ALL CHECKS PASS

@@ -22,12 +22,12 @@ flag-fixes --root . show gather-5746
 ## 当前交付范围
 
 - 8 个历史修复源仓库的固定 submodule 和 9 项 fix 索引（GELU 来源拆出 Triton 层条目）。
-- 5 项本仓库维护的本地修复 [linear-5379](fixes/linear-5379/)、[zeros-7181](fixes/zeros-7181/)、2 项 FlagGems/FlagScale 性能修复 [gelu-kunlunxin-pow](fixes/gelu-kunlunxin-pow/)、[adamw-fused](fixes/adamw-fused/)，以及 1 项接入层修复 [flaggems-selective-enable](fixes/flaggems-selective-enable/)（FlagScale 层，flaggems_include 选择性注册）（flag_fixes fix 索引合计 14 项 = 9 项外部 + 5 项本地）。
+- 6 项本仓库维护的本地修复 [linear-5379](fixes/linear-5379/)、[zeros-7181](fixes/zeros-7181/)、2 项 FlagGems/FlagScale 性能修复 [gelu-kunlunxin-pow](fixes/gelu-kunlunxin-pow/)、[adamw-fused](fixes/adamw-fused/)、1 项接入层修复 [flaggems-selective-enable](fixes/flaggems-selective-enable/)（FlagScale 层，flaggems_include 选择性注册），以及 1 项默认关闭的 FlagScale 候选 [negative-length-regroup](fixes/negative-length-regroup/)（flag_fixes fix 索引合计 15 项 = 9 项外部 + 6 项本地）。
 - 新修复模板和 `new` 创建入口。
 - 清单校验、基线检查、安装预演、显式安装、状态、回滚与验证命令。
 - 安装器使用临时目标树进行功能测试。
 
-导入条目初始均为 `deployable: false`、`hardware_status: unverified`。原仓库中的测试报告保留为历史证据；本仓库尚未完成当前平台复验，`apply` 会拒绝这些草稿。清单通过、安装机制测试通过、设备验收通过是不同状态。当前 5 项标记 source-checked，4 项 needs-adaptation：gather/lift_fresh/one_hot 的 patch 结果与源码快照在注释/署名上不同，cann-pow 补丁格式需适配。详见 [源码接入审计](docs/source-audit.md)。source-checked 仅表示指定来源的 patch/快照字节一致，不是设备或版本兼容性声明。平台 profile、经过整组硬件验证的 bundle 与离线发布工具属于后续工作。
+导入条目初始均为 `deployable: false`、`hardware_status: unverified`。原仓库中的测试报告保留为历史证据；本仓库尚未完成当前平台复验，`apply` 会拒绝这些草稿。清单通过、安装机制测试通过、设备验收通过是不同状态。当前 6 项标记 source-checked，4 项 needs-adaptation：gather/lift_fresh/one_hot 的 patch 结果与源码快照在注释/署名上不同，cann-pow 补丁格式需适配。详见 [源码接入审计](docs/source-audit.md)。source-checked 仅表示指定来源的 patch/快照字节一致，不是设备或版本兼容性声明。平台 profile、经过整组硬件验证的 bundle 与离线发布工具属于后续工作。
 
 ## 检查与部署
 

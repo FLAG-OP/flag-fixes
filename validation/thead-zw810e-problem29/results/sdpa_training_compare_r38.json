@@ -1,0 +1,32 @@
+{
+ "shape": "B10 H16 S512 D64 bf16",
+ "mask": "bool, last 32 keys padded",
+ "dropout": {
+  "config": 0.1,
+  "note": "module-level; SDPA-internal p tested 0.0 (exact numeric) and 0.1 (timing)"
+ },
+ "recompute": "UNKNOWN (no implementation evidence; flash-style backward typically recomputes - not confirmed on this stack)",
+ "native_fwd_ms_p0": 0.7006,
+ "native_fwd_bwd_ms_p0": 1.2136,
+ "native_fwd_ms_p01": 0.7854,
+ "native_fwd_bwd_ms_p01": 1.3848,
+ "fg_flash_probe": "FAILED: TypeError: flash_attention_forward() takes 10 positional arguments but 11 were given",
+ "padded_v_independence_max_diff_validregion": 0.0,
+ "padded_v_independence_valid_max_diff": 0.0,
+ "fg_repro": {
+  "component_versions": {
+   "torch": "2.10.0",
+   "triton": "3.6.0",
+   "flag_gems_src": "/tmp/opencode/FlagGems-base/src"
+  },
+  "call_signature_tried": "FG_SDPA(q,k,v, attn_mask=bool[B,1,S,S], dropout_p=0.0)",
+  "entries_tried": [
+   "flag_gems.scaled_dot_product_attention"
+  ],
+  "branches_not_executed": [
+   "flash_attention_forward/backward wrapper (signature mismatch 10-vs-11 args)"
+  ],
+  "full_exception": "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/runtime/jit.py\", line 906, in _do_compile\n    kernel = self.compile(src, target=target, options=options.__dict__)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/spec/ppu/triton/compiler/compiler.py\", line 330, in compile\n    module = backend.make_ir(src, options, codegen_fns, module_map, context)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/backends/compiler.py\", line 64, in make_ir\n    return src.make_ir(self.target, options, codegen_fns, module_map, context)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/triton/spec/ppu/triton/compiler/compiler.py\", line 106, in make_ir\n    return ast_to_ttir(self.fn, self, context=context, options=options, codegen_fns=codegen_fns,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntriton.compiler.errors.CompileTimeAssertionFailure: at 43:4:\n    GROUP_HEAD: tl.constexpr,\n    Q_CTX,\n    KV_CTX,\n    HEAD_DIM: tl.constexpr,\n    HEAD_DIM_ACTUAL: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    STAGE: tl.constexpr,\n    HAS_ATTN_MASK: tl.constexpr,\n    PRE_LOAD_V: tl.constexpr,\n):\n    tl.static_assert(BLOCK_N <= HEAD_DIM)\n    ^\n"
+ },
+ "fg_sdpa_error": "CompileTimeAssertionFailure: at 43:4:\n    GROUP_HEAD: tl.constexpr,\n    Q_CTX,\n    KV_CTX,\n    HEAD_DIM: tl.constexpr,\n    HEAD_DIM_ACTUAL: tl.constexpr,\n    BLOCK_M: tl.constexpr"
+}

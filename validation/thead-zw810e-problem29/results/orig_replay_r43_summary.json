@@ -1,0 +1,110 @@
+{
+ "entry": "ORIGINAL timing entry (no per-MM events/sync); only int first-encounter counter",
+ "cold": {
+  "steps": [
+   [
+    "warmup0",
+    22150.7
+   ],
+   [
+    "warmup1",
+    3637.7
+   ],
+   [
+    "timed0",
+    1944.0
+   ],
+   [
+    "timed1",
+    3135.2
+   ],
+   [
+    "timed2",
+    2438.8
+   ]
+  ],
+  "new_shapes_per_step": [
+   123,
+   102,
+   78,
+   66,
+   66
+  ],
+  "cache_entries_per_step": [
+   29,
+   31,
+   31,
+   32,
+   32
+  ],
+  "cache_new_total": 31,
+  "first_encounter_step_dist": {
+   "0": 123,
+   "1": 102,
+   "2": 78,
+   "3": 66,
+   "4": 66
+  }
+ },
+ "warm": {
+  "steps": [
+   [
+    "warmup0",
+    6786.2
+   ],
+   [
+    "warmup1",
+    2203.5
+   ],
+   [
+    "timed0",
+    2095.8
+   ],
+   [
+    "timed1",
+    2228.5
+   ],
+   [
+    "timed2",
+    2419.0
+   ]
+  ],
+  "new_shapes_per_step": [
+   123,
+   102,
+   78,
+   66,
+   66
+  ],
+  "cache_entries_per_step": [
+   32,
+   32,
+   32,
+   32,
+   32
+  ],
+  "cache_new_total": 0,
+  "first_encounter_step_dist": {
+   "0": 123,
+   "1": 102,
+   "2": 78,
+   "3": 66,
+   "4": 66
+  }
+ },
+ "unique_shapes": 435,
+ "reproduction_of_old_slow_steps": {
+  "old_observed": "threeway_r39.wrapped_fg: timed rounds 1955 / 21416 / 19601 ms (two ~20s TIMED steps after warmup)",
+  "this_replay_cold_timed_ms": [
+   1944.0,
+   3135.2,
+   2438.8
+  ],
+  "reproduced_magnitude": false,
+  "magnitude_unreproduced_note": "exact ~20s timed-step magnitude NOT reproduced (max 3.1s here). CORRECTION: the old threeway_mm_compare.py entry DID have two warmup steps; its ~20s steps were TIMED steps after warmup. That entry registered FlagGems via only_enable while this replay calls flag_gems.mm directly, and the cache state differed. Conclusion: NOT REPRODUCED, exact cause UNDETERMINED.",
+  "compile_vs_exec_split": "not separable: TRITON_KERNEL_DUMP/MLIR timestamps not enabled; per-step cache entry deltas + new-shape counts are the available proxies",
+  "observed_in_this_replay": "cold cache: warmup0 22,151 ms vs warm 6,786 ms (first-run slowdown, reproducible); post-warmup slowest timed step 3,135 ms cold vs 2,229 ms warm",
+  "old_slow_step_conclusion": "NOT REPRODUCED; exact cause UNDETERMINED. The old threeway entry HAD 2 warmup steps and its ~20 s steps were timed steps after warmup; this replay's first-run slowdown does not explain them."
+ },
+ "warm_still_slow_note": "warm warmup0 6,786 ms > timed ~2.1-2.4 s: first-run cost persists with cache hits (cache_new=0) - not a disk cache miss; composition (autotune/launch/load) not separated"
+}

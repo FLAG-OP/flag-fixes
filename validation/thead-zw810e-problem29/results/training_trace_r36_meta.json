@@ -1,0 +1,547 @@
+{
+ "device": "PPU-ZW810E",
+ "torch": "2.10.0",
+ "config": {
+  "batch_rows": 10,
+  "accum": 4,
+  "dtype": "bf16",
+  "env": {
+   "FL_FLAGGEMS": "",
+   "FL_ADAMW_FUSED": "0"
+  },
+  "seed": 42
+ },
+ "timings_ms": {
+  "warmup": [
+   4332.4,
+   1853.9
+  ],
+  "noprofiler": [],
+  "profiled": [
+   2056.5,
+   2264.9,
+   2476.6
+  ]
+ },
+ "capture_overhead_note": "overhead computed in samewindow_noprofiler.py with strict pairing (this capture pass records profiler-window steps only)",
+ "trace_path": "training_trace_r36_trace.json.gz",
+ "batch_fingerprints": {
+  "fingerprints": {
+   "step_2": [
+    {
+     "anchor": {
+      "loader_index": 0,
+      "text_hash16": "95ee7835efbb2639",
+      "sequences": 10,
+      "max_len": 16,
+      "valid_tokens": 111,
+      "padded_positions": 160
+     },
+     "negative_1": {
+      "loader_index": 1,
+      "text_hash16": "b32373b8d04e6f13",
+      "sequences": 10,
+      "max_len": 443,
+      "valid_tokens": 2233,
+      "padded_positions": 4430
+     },
+     "negative_2": {
+      "loader_index": 2,
+      "text_hash16": "4d84ea53dba8924d",
+      "sequences": 10,
+      "max_len": 214,
+      "valid_tokens": 1356,
+      "padded_positions": 2140
+     },
+     "negative_3": {
+      "loader_index": 3,
+      "text_hash16": "942a383a9b6c8ba7",
+      "sequences": 10,
+      "max_len": 374,
+      "valid_tokens": 1838,
+      "padded_positions": 3740
+     },
+     "positive": {
+      "loader_index": 4,
+      "text_hash16": "8414c6b1780a274c",
+      "sequences": 10,
+      "max_len": 167,
+      "valid_tokens": 1552,
+      "padded_positions": 1670
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 5,
+      "text_hash16": "1cc7f8abf126f0dd",
+      "sequences": 10,
+      "max_len": 18,
+      "valid_tokens": 102,
+      "padded_positions": 180
+     },
+     "negative_1": {
+      "loader_index": 6,
+      "text_hash16": "9017f6816507d95f",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1647,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 7,
+      "text_hash16": "1ef9085897b396d7",
+      "sequences": 10,
+      "max_len": 299,
+      "valid_tokens": 1279,
+      "padded_positions": 2990
+     },
+     "negative_3": {
+      "loader_index": 8,
+      "text_hash16": "339d36552aa6167d",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2119,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "loader_index": 9,
+      "text_hash16": "c2b0c784be41b326",
+      "sequences": 10,
+      "max_len": 174,
+      "valid_tokens": 1629,
+      "padded_positions": 1740
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 10,
+      "text_hash16": "7c11153dc61a3e28",
+      "sequences": 10,
+      "max_len": 16,
+      "valid_tokens": 107,
+      "padded_positions": 160
+     },
+     "negative_1": {
+      "loader_index": 11,
+      "text_hash16": "6d5833de023d1aaf",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1952,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 12,
+      "text_hash16": "b29899f1e70f7dcf",
+      "sequences": 10,
+      "max_len": 249,
+      "valid_tokens": 1297,
+      "padded_positions": 2490
+     },
+     "negative_3": {
+      "loader_index": 13,
+      "text_hash16": "9baa7e5d1952e9a1",
+      "sequences": 10,
+      "max_len": 329,
+      "valid_tokens": 1250,
+      "padded_positions": 3290
+     },
+     "positive": {
+      "loader_index": 14,
+      "text_hash16": "354e47babc1f6116",
+      "sequences": 10,
+      "max_len": 191,
+      "valid_tokens": 1760,
+      "padded_positions": 1910
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 15,
+      "text_hash16": "96e11d751b078db0",
+      "sequences": 10,
+      "max_len": 14,
+      "valid_tokens": 103,
+      "padded_positions": 140
+     },
+     "negative_1": {
+      "loader_index": 16,
+      "text_hash16": "54618799856784d5",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1806,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 17,
+      "text_hash16": "bf7492d03c908723",
+      "sequences": 10,
+      "max_len": 223,
+      "valid_tokens": 1216,
+      "padded_positions": 2230
+     },
+     "negative_3": {
+      "loader_index": 18,
+      "text_hash16": "24f4cb3f26913ae8",
+      "sequences": 10,
+      "max_len": 431,
+      "valid_tokens": 1812,
+      "padded_positions": 4310
+     },
+     "positive": {
+      "loader_index": 19,
+      "text_hash16": "2aaef5bc66bbcf36",
+      "sequences": 10,
+      "max_len": 210,
+      "valid_tokens": 1883,
+      "padded_positions": 2100
+     }
+    }
+   ],
+   "step_3": [
+    {
+     "anchor": {
+      "loader_index": 20,
+      "text_hash16": "8e019cc2e1fc78f2",
+      "sequences": 10,
+      "max_len": 15,
+      "valid_tokens": 101,
+      "padded_positions": 150
+     },
+     "negative_1": {
+      "loader_index": 21,
+      "text_hash16": "8a838cc7ee939f0b",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1973,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 22,
+      "text_hash16": "5b23613b7b6cb6ec",
+      "sequences": 10,
+      "max_len": 280,
+      "valid_tokens": 1284,
+      "padded_positions": 2800
+     },
+     "negative_3": {
+      "loader_index": 23,
+      "text_hash16": "2c741a943f90e94a",
+      "sequences": 10,
+      "max_len": 485,
+      "valid_tokens": 2573,
+      "padded_positions": 4850
+     },
+     "positive": {
+      "loader_index": 24,
+      "text_hash16": "15e19cd6a0b77a6f",
+      "sequences": 10,
+      "max_len": 232,
+      "valid_tokens": 2041,
+      "padded_positions": 2320
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 25,
+      "text_hash16": "59d05ab048c71fd5",
+      "sequences": 10,
+      "max_len": 14,
+      "valid_tokens": 100,
+      "padded_positions": 140
+     },
+     "negative_1": {
+      "loader_index": 26,
+      "text_hash16": "558347b358498988",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2477,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 27,
+      "text_hash16": "3633ca1a2475ab02",
+      "sequences": 10,
+      "max_len": 458,
+      "valid_tokens": 1944,
+      "padded_positions": 4580
+     },
+     "negative_3": {
+      "loader_index": 28,
+      "text_hash16": "cd62992163fbc78a",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1351,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "loader_index": 29,
+      "text_hash16": "6b8927237fa51ca1",
+      "sequences": 10,
+      "max_len": 226,
+      "valid_tokens": 2071,
+      "padded_positions": 2260
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 30,
+      "text_hash16": "a2f168b1ce01ab5c",
+      "sequences": 10,
+      "max_len": 12,
+      "valid_tokens": 91,
+      "padded_positions": 120
+     },
+     "negative_1": {
+      "loader_index": 31,
+      "text_hash16": "2c982790403d236a",
+      "sequences": 10,
+      "max_len": 344,
+      "valid_tokens": 1387,
+      "padded_positions": 3440
+     },
+     "negative_2": {
+      "loader_index": 32,
+      "text_hash16": "17cccecf6937a872",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2184,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "loader_index": 33,
+      "text_hash16": "4d1ff84cfeb8f7a1",
+      "sequences": 10,
+      "max_len": 491,
+      "valid_tokens": 2210,
+      "padded_positions": 4910
+     },
+     "positive": {
+      "loader_index": 34,
+      "text_hash16": "8cd4d37932897d6f",
+      "sequences": 10,
+      "max_len": 284,
+      "valid_tokens": 2398,
+      "padded_positions": 2840
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 35,
+      "text_hash16": "0de7cc9867acd0bf",
+      "sequences": 10,
+      "max_len": 12,
+      "valid_tokens": 95,
+      "padded_positions": 120
+     },
+     "negative_1": {
+      "loader_index": 36,
+      "text_hash16": "7dc59d1833933392",
+      "sequences": 10,
+      "max_len": 394,
+      "valid_tokens": 1780,
+      "padded_positions": 3940
+     },
+     "negative_2": {
+      "loader_index": 37,
+      "text_hash16": "dbc277b6d3bb0c98",
+      "sequences": 10,
+      "max_len": 256,
+      "valid_tokens": 1359,
+      "padded_positions": 2560
+     },
+     "negative_3": {
+      "loader_index": 38,
+      "text_hash16": "9a836d4ce702d89c",
+      "sequences": 10,
+      "max_len": 297,
+      "valid_tokens": 1545,
+      "padded_positions": 2970
+     },
+     "positive": {
+      "loader_index": 39,
+      "text_hash16": "be39530b4da24388",
+      "sequences": 10,
+      "max_len": 295,
+      "valid_tokens": 2490,
+      "padded_positions": 2950
+     }
+    }
+   ],
+   "step_4": [
+    {
+     "anchor": {
+      "loader_index": 40,
+      "text_hash16": "a1300ac07d32a8da",
+      "sequences": 10,
+      "max_len": 13,
+      "valid_tokens": 92,
+      "padded_positions": 130
+     },
+     "negative_1": {
+      "loader_index": 41,
+      "text_hash16": "ddf03376e78ad663",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1352,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 42,
+      "text_hash16": "9f1cf06ca92f3190",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2322,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "loader_index": 43,
+      "text_hash16": "23a554470e1bfee6",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1681,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "loader_index": 44,
+      "text_hash16": "d8448f2be2808142",
+      "sequences": 10,
+      "max_len": 342,
+      "valid_tokens": 2753,
+      "padded_positions": 3420
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 45,
+      "text_hash16": "38dd4a96c65b9b6f",
+      "sequences": 10,
+      "max_len": 20,
+      "valid_tokens": 112,
+      "padded_positions": 200
+     },
+     "negative_1": {
+      "loader_index": 46,
+      "text_hash16": "67dda0d4bc4ea495",
+      "sequences": 10,
+      "max_len": 357,
+      "valid_tokens": 1197,
+      "padded_positions": 3570
+     },
+     "negative_2": {
+      "loader_index": 47,
+      "text_hash16": "2d7960b90502dc06",
+      "sequences": 10,
+      "max_len": 493,
+      "valid_tokens": 2082,
+      "padded_positions": 4930
+     },
+     "negative_3": {
+      "loader_index": 48,
+      "text_hash16": "2be8cf1bd857138e",
+      "sequences": 10,
+      "max_len": 227,
+      "valid_tokens": 1115,
+      "padded_positions": 2270
+     },
+     "positive": {
+      "loader_index": 49,
+      "text_hash16": "e91e3aeb586a50b7",
+      "sequences": 10,
+      "max_len": 348,
+      "valid_tokens": 3072,
+      "padded_positions": 3480
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 50,
+      "text_hash16": "2a37a98bdbfe58e6",
+      "sequences": 10,
+      "max_len": 15,
+      "valid_tokens": 109,
+      "padded_positions": 150
+     },
+     "negative_1": {
+      "loader_index": 51,
+      "text_hash16": "46b6c18ee99eaab9",
+      "sequences": 10,
+      "max_len": 251,
+      "valid_tokens": 1407,
+      "padded_positions": 2510
+     },
+     "negative_2": {
+      "loader_index": 52,
+      "text_hash16": "eaf906dbdc6747b7",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 1564,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "loader_index": 53,
+      "text_hash16": "4a989ed501207d61",
+      "sequences": 10,
+      "max_len": 488,
+      "valid_tokens": 1888,
+      "padded_positions": 4880
+     },
+     "positive": {
+      "loader_index": 54,
+      "text_hash16": "c78a47d934020222",
+      "sequences": 10,
+      "max_len": 377,
+      "valid_tokens": 3302,
+      "padded_positions": 3770
+     }
+    },
+    {
+     "anchor": {
+      "loader_index": 55,
+      "text_hash16": "947c5468c5077fa0",
+      "sequences": 10,
+      "max_len": 14,
+      "valid_tokens": 93,
+      "padded_positions": 140
+     },
+     "negative_1": {
+      "loader_index": 56,
+      "text_hash16": "ad36dc9e0975c4fa",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2535,
+      "padded_positions": 5120
+     },
+     "negative_2": {
+      "loader_index": 57,
+      "text_hash16": "d9547d2e6d59074b",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2711,
+      "padded_positions": 5120
+     },
+     "negative_3": {
+      "loader_index": 58,
+      "text_hash16": "5c332f2a7c9e56a1",
+      "sequences": 10,
+      "max_len": 512,
+      "valid_tokens": 2318,
+      "padded_positions": 5120
+     },
+     "positive": {
+      "loader_index": 59,
+      "text_hash16": "ad33298c0d2df144",
+      "sequences": 10,
+      "max_len": 452,
+      "valid_tokens": 3801,
+      "padded_positions": 4520
+     }
+    }
+   ]
+  },
+  "note": "tokenized AFTER profiler window; per micro/group attention-mask stats"
+ },
+ "commands": {
+  "capture": "python3 examples/retrieval/capture_training_trace.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --skip 2 --trace-steps 3 --out-prefix /tmp/opencode/zw810e-problem29/results/training_trace_r36",
+  "analysis": "python3 scripts/parse_training_trace.py --trace <trace.json.gz> --out results/training_trace_analysis_r32.json"
+ }
+}

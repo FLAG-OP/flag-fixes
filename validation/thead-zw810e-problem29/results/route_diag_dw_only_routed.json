@@ -1,0 +1,37 @@
+{
+ "mode": "dw_only_routed",
+ "wall_ms_with_profiler": 3396.9,
+ "note": "profiler ON: diagnostic only",
+ "host_aten_mm": {
+  "count": 11120,
+  "cpu_time_total_ms": 611.13
+ },
+ "device_kernel_total_ms": 7940.5,
+ "host_gap_ms": -4543.6,
+ "top_device_kernels": [
+  [
+   "aten::mm",
+   1179.9
+  ],
+  [
+   "autograd::engine::evaluate_function: AddmmBackward0",
+   718.0
+  ],
+  [
+   "AddmmBackward0",
+   666.1
+  ],
+  [
+   "gemm_ktype0_aiu1_mtype1_dtypeBF16xBF16xFP32xBF16xBF16_tile12",
+   595.3
+  ],
+  [
+   "aten::linear",
+   483.4
+  ],
+  [
+   "aten::scaled_dot_product_attention",
+   346.1
+  ]
+ ]
+}

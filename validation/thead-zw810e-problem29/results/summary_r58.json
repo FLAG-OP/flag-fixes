@@ -1,0 +1,2076 @@
+{
+ "round": 58,
+ "review": "TruNcat3, PR #8 comment 7182886976 (2026-11-26T04:46:13Z)",
+ "base_commit": "59346831df384a2ffb393dc36eca579029fa2e3c",
+ "item1_state_consistency_after_real_updates": {
+  "file": "results/train_state_r58.json (+ results/train_state_r58.<candidate>.json)",
+  "script": "scripts/train_state_consistency.py (v3)",
+  "command": "for c in dw_route prefetch_faithful prefetch_loss_reimpl prefetch_loss_reimpl_run1 h2d_nonblocking; do python3 examples/retrieval/train_state_consistency.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --candidate $c --out results/train_state_r58.json; done; python3 examples/retrieval/train_state_consistency.py --merge --out results/train_state_r58.json",
+  "what_changed_vs_round57": "the warmup now consists of 2 REAL optimizer updates of the entry loop (clip_grad_norm_ + optimizer.step), so the snapshot carries AdamW momentum; accumulated dense gradients are compared after EVERY micro-batch; the pre-clip gradient norm, key sets and non-finite counts are checked; dw_route counts whitelist matches and actual flag_gems.mm calls and fails if the route was requested but never reached",
+  "snapshot_example": {
+   "param_sha256_dense": "1efcd804d352f2fdf5397fcbe7ffdf16c08c8cce877f525ce545912e37b6edc1",
+   "param_sha256_all": "9770e099f65828606c4fa16f3425de77dbe271c59cdc7648339db92064c4701f",
+   "optimizer": {
+    "state_entries": 389,
+    "steps": [
+     2.0
+    ],
+    "state_keys": [
+     "exp_avg",
+     "exp_avg_sq",
+     "step"
+    ],
+    "exp_avg_l2": 0.13920620485885735,
+    "exp_avg_sq_sum": 0.0020006469139097435,
+    "all_finite": true
+   },
+   "batch_hashes": [
+    "0780be3b0eee32a0",
+    "253e063abc2a6240",
+    "2c68924b83855510",
+    "6c860fd436a15687"
+   ],
+   "rng_cpu_sha256": "59294f27b0e77a92354f1b2f751dbc744656e015429c30ed67e23dfc0e62bbc0",
+   "rng_cuda_sha256": "85f7f89c7e6c13baaa9e9a71205e0f019f85f95971980a69c2fc84a2876fda23"
+  },
+  "snapshot_dense_param_sha256_per_process": {
+   "dw_route": "1efcd804d352f2fd",
+   "h2d_nonblocking": "d4fdce089655734b",
+   "prefetch_faithful": "a415ba90b068ecb0",
+   "prefetch_loss_reimpl": "7b306d102ab17bae",
+   "prefetch_loss_reimpl_run1": "585885df6e7fa308"
+  },
+  "counts": {
+   "dense_gradient_tensors": 386,
+   "dense_param_tensors": 388,
+   "dense_optimizer_state_tensors": 1158,
+   "micro_batches_compared": 4,
+   "embedding_tables_excluded": 3
+  },
+  "correction": "'391/391 params' in the round-57 summary headline was wrong; the data show 386 dense gradient tensors and 388 dense parameter tensors (the 3 embedding tables excluded).",
+  "native_per_micro_dense_grads_identical": {
+   "micro1": true,
+   "micro2": true,
+   "micro3": true,
+   "micro4": true
+  },
+  "candidates": {
+   "prefetch_faithful": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs the accumulated dense gradients after every micro-batch (386 tensors), the pre-clip gradient norm, the post-update dense parameters (388 tensors) and the dense optimizer state are identical to the same-snapshot native runs; losses equal; key sets equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors": 386,
+    "dense_param_tensors": 388,
+    "dense_grad_tensors_differing_max": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal": true,
+    "grad_norm_equal": true,
+    "keys_equal": true,
+    "nonfinite_total": 0,
+    "call_counts_candidate_runs": null,
+    "native_band": {
+     "pairs": 3,
+     "dense_bitwise_identical_in_all_pairs": true,
+     "keys_equal_all_pairs": true,
+     "losses_and_grad_norm_equal_all_pairs": true,
+     "embedding_table_grad_tensors_differing_per_pair": [
+      2,
+      2,
+      2
+     ],
+     "embedding_table_grad_max_abs": 0.00020409
+    },
+    "snapshot": {
+     "param_sha256_dense": "a415ba90b068ecb0695094dff4c5b9b5cfbb88e2b235f0bd86cb931f622f0930",
+     "param_sha256_all": "d5b0da1b89b7ede40e04517fa1560d14b0ebc7e8e96294add6a00f94e38b99b0",
+     "optimizer": {
+      "state_entries": 389,
+      "steps": [
+       2.0
+      ],
+      "state_keys": [
+       "exp_avg",
+       "exp_avg_sq",
+       "step"
+      ],
+      "exp_avg_l2": 0.14165827390481897,
+      "exp_avg_sq_sum": 0.0020060679663741017,
+      "all_finite": true
+     },
+     "batch_hashes": [
+      "0780be3b0eee32a0",
+      "253e063abc2a6240",
+      "2c68924b83855510",
+      "6c860fd436a15687"
+     ],
+     "rng_cpu_sha256": "59294f27b0e77a92354f1b2f751dbc744656e015429c30ed67e23dfc0e62bbc0",
+     "rng_cuda_sha256": "85f7f89c7e6c13baaa9e9a71205e0f019f85f95971980a69c2fc84a2876fda23"
+    },
+    "grad_norm": [
+     12.8125
+    ],
+    "loss0": 0.945068
+   },
+   "h2d_nonblocking": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs the accumulated dense gradients after every micro-batch (386 tensors), the pre-clip gradient norm, the post-update dense parameters (388 tensors) and the dense optimizer state are identical to the same-snapshot native runs; losses equal; key sets equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors": 386,
+    "dense_param_tensors": 388,
+    "dense_grad_tensors_differing_max": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal": true,
+    "grad_norm_equal": true,
+    "keys_equal": true,
+    "nonfinite_total": 0,
+    "call_counts_candidate_runs": null,
+    "native_band": {
+     "pairs": 3,
+     "dense_bitwise_identical_in_all_pairs": true,
+     "keys_equal_all_pairs": true,
+     "losses_and_grad_norm_equal_all_pairs": true,
+     "embedding_table_grad_tensors_differing_per_pair": [
+      2,
+      2,
+      2
+     ],
+     "embedding_table_grad_max_abs": 0.00010681
+    },
+    "snapshot": {
+     "param_sha256_dense": "d4fdce089655734bd95755ba10bece2d64e94ab936f099a804d7ed9d3115eb96",
+     "param_sha256_all": "a494f6eee733db1807c2831e2b9bb0a58e5dc9f6b144f51f84f6bb8a313c69dd",
+     "optimizer": {
+      "state_entries": 389,
+      "steps": [
+       2.0
+      ],
+      "state_keys": [
+       "exp_avg",
+       "exp_avg_sq",
+       "step"
+      ],
+      "exp_avg_l2": 0.13647714147999343,
+      "exp_avg_sq_sum": 0.001997792966244279,
+      "all_finite": true
+     },
+     "batch_hashes": [
+      "0780be3b0eee32a0",
+      "253e063abc2a6240",
+      "2c68924b83855510",
+      "6c860fd436a15687"
+     ],
+     "rng_cpu_sha256": "59294f27b0e77a92354f1b2f751dbc744656e015429c30ed67e23dfc0e62bbc0",
+     "rng_cuda_sha256": "85f7f89c7e6c13baaa9e9a71205e0f019f85f95971980a69c2fc84a2876fda23"
+    },
+    "grad_norm": [
+     10.6875
+    ],
+    "loss0": 0.944775
+   },
+   "dw_route": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs the accumulated dense gradients after every micro-batch (386 tensors), the pre-clip gradient norm, the post-update dense parameters (388 tensors) and the dense optimizer state are identical to the same-snapshot native runs; losses equal; key sets equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors": 386,
+    "dense_param_tensors": 388,
+    "dense_grad_tensors_differing_max": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal": true,
+    "grad_norm_equal": true,
+    "keys_equal": true,
+    "nonfinite_total": 0,
+    "call_counts_candidate_runs": {
+     "whitelist_match": 864,
+     "flag_gems_mm": 864,
+     "native_fallback": 10688
+    },
+    "native_band": {
+     "pairs": 3,
+     "dense_bitwise_identical_in_all_pairs": true,
+     "keys_equal_all_pairs": true,
+     "losses_and_grad_norm_equal_all_pairs": true,
+     "embedding_table_grad_tensors_differing_per_pair": [
+      2,
+      2,
+      2
+     ],
+     "embedding_table_grad_max_abs": 0.00013351
+    },
+    "snapshot": {
+     "param_sha256_dense": "1efcd804d352f2fdf5397fcbe7ffdf16c08c8cce877f525ce545912e37b6edc1",
+     "param_sha256_all": "9770e099f65828606c4fa16f3425de77dbe271c59cdc7648339db92064c4701f",
+     "optimizer": {
+      "state_entries": 389,
+      "steps": [
+       2.0
+      ],
+      "state_keys": [
+       "exp_avg",
+       "exp_avg_sq",
+       "step"
+      ],
+      "exp_avg_l2": 0.13920620485885735,
+      "exp_avg_sq_sum": 0.0020006469139097435,
+      "all_finite": true
+     },
+     "batch_hashes": [
+      "0780be3b0eee32a0",
+      "253e063abc2a6240",
+      "2c68924b83855510",
+      "6c860fd436a15687"
+     ],
+     "rng_cpu_sha256": "59294f27b0e77a92354f1b2f751dbc744656e015429c30ed67e23dfc0e62bbc0",
+     "rng_cuda_sha256": "85f7f89c7e6c13baaa9e9a71205e0f019f85f95971980a69c2fc84a2876fda23"
+    },
+    "grad_norm": [
+     9.8125
+    ],
+    "loss0": 0.940723
+   },
+   "prefetch_loss_reimpl": {
+    "verdict": "PASS (bitwise): in all 7 candidate pairs the accumulated dense gradients after every micro-batch (386 tensors), the pre-clip gradient norm, the post-update dense parameters (388 tensors) and the dense optimizer state are identical to the same-snapshot native runs; losses equal; key sets equal; 0 non-finite. Only the word / position embedding gradients (and the embedding tables' optimizer state) differ, and native-vs-native differs on the same tensors (device accumulation-order non-determinism).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors": 386,
+    "dense_param_tensors": 388,
+    "dense_grad_tensors_differing_max": 0,
+    "dense_grad_max_abs": 0.0,
+    "dense_grad_max_rel": 0.0,
+    "dense_param_tensors_differing_max": 0,
+    "dense_param_max_abs": 0.0,
+    "dense_optimizer_state_max_abs": 0.0,
+    "loss_equal": true,
+    "grad_norm_equal": true,
+    "keys_equal": true,
+    "nonfinite_total": 0,
+    "call_counts_candidate_runs": null,
+    "native_band": {
+     "pairs": 3,
+     "dense_bitwise_identical_in_all_pairs": true,
+     "keys_equal_all_pairs": true,
+     "losses_and_grad_norm_equal_all_pairs": true,
+     "embedding_table_grad_tensors_differing_per_pair": [
+      2,
+      2,
+      1
+     ],
+     "embedding_table_grad_max_abs": 6.795e-05
+    },
+    "snapshot": {
+     "param_sha256_dense": "7b306d102ab17baec1a6eb35bf6ef963854109b1d85dad23953e13b5fe838b1e",
+     "param_sha256_all": "4ec8f45c2bea31c1d12c02427f77b3799648dc1555ab49d4756c23f4142f3af0",
+     "optimizer": {
+      "state_entries": 389,
+      "steps": [
+       2.0
+      ],
+      "state_keys": [
+       "exp_avg",
+       "exp_avg_sq",
+       "step"
+      ],
+      "exp_avg_l2": 0.14258359075714458,
+      "exp_avg_sq_sum": 0.002003401106520672,
+      "all_finite": true
+     },
+     "batch_hashes": [
+      "0780be3b0eee32a0",
+      "253e063abc2a6240",
+      "2c68924b83855510",
+      "6c860fd436a15687"
+     ],
+     "rng_cpu_sha256": "59294f27b0e77a92354f1b2f751dbc744656e015429c30ed67e23dfc0e62bbc0",
+     "rng_cuda_sha256": "85f7f89c7e6c13baaa9e9a71205e0f019f85f95971980a69c2fc84a2876fda23"
+    },
+    "grad_norm": [
+     10.75
+    ],
+    "loss0": 0.950439
+   },
+   "prefetch_loss_reimpl_run1": {
+    "verdict": "FAIL: candidate is not within the declared thresholds in all candidate pairs (dense grad tensors differing up to 386 per comparison, grad max_rel 80.5, param max_abs 3.052e-05).",
+    "candidate_pairs": 7,
+    "dense_grad_tensors": 386,
+    "dense_param_tensors": 388,
+    "dense_grad_tensors_differing_max": 386,
+    "dense_grad_max_abs": 0.02734375,
+    "dense_grad_max_rel": 80.5,
+    "dense_param_tensors_differing_max": 298,
+    "dense_param_max_abs": 3.052e-05,
+    "dense_optimizer_state_max_abs": 0.00018311,
+    "loss_equal": false,
+    "grad_norm_equal": false,
+    "keys_equal": true,
+    "nonfinite_total": 0,
+    "call_counts_candidate_runs": null,
+    "native_band": {
+     "pairs": 3,
+     "dense_bitwise_identical_in_all_pairs": true,
+     "keys_equal_all_pairs": true,
+     "losses_and_grad_norm_equal_all_pairs": true,
+     "embedding_table_grad_tensors_differing_per_pair": [
+      2,
+      2,
+      2
+     ],
+     "embedding_table_grad_max_abs": 0.00016975
+    },
+    "snapshot": {
+     "param_sha256_dense": "585885df6e7fa308c933f368d74c448728e2e1a7828ed57cb7e527250ef253e7",
+     "param_sha256_all": "c6796a9e4a758c530070413cfa1d4a33c7cbc27f2be99b9990f668b82e95da29",
+     "optimizer": {
+      "state_entries": 389,
+      "steps": [
+       2.0
+      ],
+      "state_keys": [
+       "exp_avg",
+       "exp_avg_sq",
+       "step"
+      ],
+      "exp_avg_l2": 0.1391050632089381,
+      "exp_avg_sq_sum": 0.001999858471220081,
+      "all_finite": true
+     },
+     "batch_hashes": [
+      "0780be3b0eee32a0",
+      "253e063abc2a6240",
+      "2c68924b83855510",
+      "6c860fd436a15687"
+     ],
+     "rng_cpu_sha256": "59294f27b0e77a92354f1b2f751dbc744656e015429c30ed67e23dfc0e62bbc0",
+     "rng_cuda_sha256": "85f7f89c7e6c13baaa9e9a71205e0f019f85f95971980a69c2fc84a2876fda23"
+    },
+    "grad_norm": [
+     14.375
+    ],
+    "loss0": 0.951123
+   }
+  },
+  "verdict": "dw_route / prefetch_faithful / h2d_nonblocking / prefetch_loss_reimpl: bitwise identical to the same-snapshot native runs in every dense section after every micro-batch, with equal pre-clip gradient norm, equal key sets and 0 non-finite; only the word / position embedding gradients and their optimizer state differ, and native-vs-native differs on the same tensors. prefetch_loss_reimpl_run1 (the round-56 implementation): FAIL."
+ },
+ "item2_route_from_step0": {
+  "files": "results/route_from_step0_r58/<mode>_N/run.json (+ saved gradients, not committed) -> results/route_from_step0_r58.json ; results/route_from_step0_r58_nocopy.json",
+  "script": "scripts/route_from_step0_consistency.py (v3)",
+  "command": "python3 examples/retrieval/route_from_step0_consistency.py --conf examples/retrieval/conf/run/bge_m3_ppu.yaml --mode {native_from_start|fallback_from_start|route_from_start} --copy-grads host --save-grads <dir> --out <dir>/run.json   (5 fresh processes per mode, interleaved) ; python3 examples/retrieval/route_from_step0_consistency.py --aggregate 'results/route_from_step0_r58/*/run.json' --out results/route_from_step0_r58.json",
+  "bug_fixed": "round-57's route_from_start mode set USE_FG=True as a function-local variable, so the override never reached flag_gems.mm (whitelist hits were counted, native mm.out was executed). The switch is now a module-level global; three counters are kept separately (whitelist matches / actual flag_gems.mm calls / native fallbacks); a run that requests the route with zero flag_gems.mm calls exits with code 3.",
+  "round57_withdrawal": "the round-57 numbers 9.125 / 10.5 / 13.5 (three 'route_from_start' processes) were fallback-only runs; they are withdrawn as evidence about FlagGems.",
+  "groups": {
+   "native_from_start": {
+    "n_processes": 5,
+    "call_counts_total": {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 0
+    },
+    "per_step_calls": [
+     {
+      "whitelist_match": 0,
+      "flag_gems_mm": 0,
+      "native_fallback": 0
+     },
+     {
+      "whitelist_match": 0,
+      "flag_gems_mm": 0,
+      "native_fallback": 0
+     },
+     {
+      "whitelist_match": 0,
+      "flag_gems_mm": 0,
+      "native_fallback": 0
+     }
+    ],
+    "distinct_initial_param_sha256": 1,
+    "step0_losses_identical_across_processes": true,
+    "distinct_warmup_param_sha256": 5,
+    "hit_step_micro0_loss": [
+     0.940625,
+     0.942627,
+     0.945264,
+     0.945752,
+     0.94585
+    ],
+    "hit_step_grad_norm": [
+     10.375,
+     11.25,
+     11.375,
+     12.0,
+     12.4375
+    ]
+   },
+   "fallback_from_start": {
+    "n_processes": 5,
+    "call_counts_total": {
+     "whitelist_match": 2640,
+     "flag_gems_mm": 0,
+     "native_fallback": 86640
+    },
+    "per_step_calls": [
+     {
+      "whitelist_match": 0,
+      "flag_gems_mm": 0,
+      "native_fallback": 5776
+     },
+     {
+      "whitelist_match": 96,
+      "flag_gems_mm": 0,
+      "native_fallback": 5776
+     },
+     {
+      "whitelist_match": 432,
+      "flag_gems_mm": 0,
+      "native_fallback": 5776
+     }
+    ],
+    "distinct_initial_param_sha256": 1,
+    "step0_losses_identical_across_processes": true,
+    "distinct_warmup_param_sha256": 5,
+    "hit_step_micro0_loss": [
+     0.941162,
+     0.944971,
+     0.945166,
+     0.947607,
+     0.949072
+    ],
+    "hit_step_grad_norm": [
+     9.625,
+     9.8125,
+     10.4375,
+     11.9375,
+     18.625
+    ]
+   },
+   "route_from_start": {
+    "n_processes": 5,
+    "call_counts_total": {
+     "whitelist_match": 2640,
+     "flag_gems_mm": 2640,
+     "native_fallback": 84000
+    },
+    "per_step_calls": [
+     {
+      "whitelist_match": 0,
+      "flag_gems_mm": 0,
+      "native_fallback": 5776
+     },
+     {
+      "whitelist_match": 96,
+      "flag_gems_mm": 96,
+      "native_fallback": 5680
+     },
+     {
+      "whitelist_match": 432,
+      "flag_gems_mm": 432,
+      "native_fallback": 5344
+     }
+    ],
+    "distinct_initial_param_sha256": 1,
+    "step0_losses_identical_across_processes": true,
+    "distinct_warmup_param_sha256": 5,
+    "hit_step_micro0_loss": [
+     0.942187,
+     0.945312,
+     0.946729,
+     0.947363,
+     0.948633
+    ],
+    "hit_step_grad_norm": [
+     9.4375,
+     9.5,
+     10.0,
+     10.125,
+     10.25
+    ]
+   }
+  },
+  "batch_hashes_steps_and_hit": [
+   "230e6090a50da609",
+   "c56ecd82e9207b65",
+   "038db01d997e1076",
+   "474b324c4b11b2c3",
+   "ee6faadec6f0ea86",
+   "919b2722bb9857dd",
+   "fee28506b0fb4962",
+   "77b99dea70c62477",
+   "7a23d6bbb8fcaf11",
+   "288503503a6302c1",
+   "873051929d240157",
+   "8606eac50a5afca1"
+  ],
+  "pair_classes_by_step": {
+   "fallback_vs_fallback": {
+    "0": {
+     "n_differing": {
+      "min": 279,
+      "median": 298.5,
+      "max": 317
+     },
+     "max_abs": {
+      "min": 0.000977,
+      "median": 0.000977,
+      "max": 0.001953
+     },
+     "max_rel": {
+      "min": 0.120192,
+      "median": 0.222222,
+      "max": 0.285714
+     },
+     "over_2pct": {
+      "min": 103,
+      "median": 108.0,
+      "max": 121
+     },
+     "n_pairs": 10
+    },
+    "1": {
+     "n_differing": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.29541,
+      "median": 0.395996,
+      "max": 0.535156
+     },
+     "max_rel": {
+      "min": 58.252247,
+      "median": 114.655518,
+      "max": 290.082642
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "n_pairs": 10
+    },
+    "2": {
+     "n_differing": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.276367,
+      "median": 1.073486,
+      "max": 1.804688
+     },
+     "max_rel": {
+      "min": 66.403511,
+      "median": 161.947136,
+      "max": 221.222229
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "n_pairs": 10
+    }
+   },
+   "native_vs_fallback": {
+    "0": {
+     "n_differing": {
+      "min": 120,
+      "median": 313,
+      "max": 319
+     },
+     "max_abs": {
+      "min": 0.000488,
+      "median": 0.000977,
+      "max": 0.001953
+     },
+     "max_rel": {
+      "min": 0.120192,
+      "median": 0.222222,
+      "max": 0.234375
+     },
+     "over_2pct": {
+      "min": 38,
+      "median": 116,
+      "max": 128
+     },
+     "n_pairs": 25
+    },
+    "1": {
+     "n_differing": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.26416,
+      "median": 0.404297,
+      "max": 0.755859
+     },
+     "max_rel": {
+      "min": 59.533901,
+      "median": 111.59259,
+      "max": 438.842957
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "n_pairs": 25
+    },
+    "2": {
+     "n_differing": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.339844,
+      "median": 1.044922,
+      "max": 2.144531
+     },
+     "max_rel": {
+      "min": 67.666664,
+      "median": 163.541672,
+      "max": 405.785126
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "n_pairs": 25
+    }
+   },
+   "fallback_vs_route": {
+    "0": {
+     "n_differing": {
+      "min": 273,
+      "median": 310,
+      "max": 320
+     },
+     "max_abs": {
+      "min": 0.000977,
+      "median": 0.000977,
+      "max": 0.001953
+     },
+     "max_rel": {
+      "min": 0.120192,
+      "median": 0.138221,
+      "max": 0.285714
+     },
+     "over_2pct": {
+      "min": 91,
+      "median": 115,
+      "max": 130
+     },
+     "n_pairs": 25
+    },
+    "1": {
+     "n_differing": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.313477,
+      "median": 0.421875,
+      "max": 0.65625
+     },
+     "max_rel": {
+      "min": 71.875,
+      "median": 108.919273,
+      "max": 174.734039
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "n_pairs": 25
+    },
+    "2": {
+     "n_differing": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.28125,
+      "median": 0.693359,
+      "max": 1.415039
+     },
+     "max_rel": {
+      "min": 97.073174,
+      "median": 175.172409,
+      "max": 624.364441
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "n_pairs": 25
+    }
+   },
+   "native_vs_native": {
+    "0": {
+     "n_differing": {
+      "min": 289,
+      "median": 314.5,
+      "max": 320
+     },
+     "max_abs": {
+      "min": 0.000977,
+      "median": 0.000977,
+      "max": 0.001953
+     },
+     "max_rel": {
+      "min": 0.117647,
+      "median": 0.136203,
+      "max": 0.234375
+     },
+     "over_2pct": {
+      "min": 102,
+      "median": 114.5,
+      "max": 125
+     },
+     "n_pairs": 10
+    },
+    "1": {
+     "n_differing": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.262695,
+      "median": 0.442871,
+      "max": 0.564941
+     },
+     "max_rel": {
+      "min": 60.904255,
+      "median": 93.121494,
+      "max": 117.824722
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "n_pairs": 10
+    },
+    "2": {
+     "n_differing": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.523438,
+      "median": 1.123047,
+      "max": 2.347656
+     },
+     "max_rel": {
+      "min": 105.24691,
+      "median": 158.412262,
+      "max": 658.143921
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "n_pairs": 10
+    }
+   },
+   "native_vs_route": {
+    "0": {
+     "n_differing": {
+      "min": 281,
+      "median": 312,
+      "max": 319
+     },
+     "max_abs": {
+      "min": 0.000977,
+      "median": 0.000977,
+      "max": 0.001953
+     },
+     "max_rel": {
+      "min": 0.113122,
+      "median": 0.222222,
+      "max": 0.222222
+     },
+     "over_2pct": {
+      "min": 101,
+      "median": 116,
+      "max": 134
+     },
+     "n_pairs": 25
+    },
+    "1": {
+     "n_differing": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.318604,
+      "median": 0.494141,
+      "max": 0.654297
+     },
+     "max_rel": {
+      "min": 67.927635,
+      "median": 107.627686,
+      "max": 189.127609
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "n_pairs": 25
+    },
+    "2": {
+     "n_differing": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.23877,
+      "median": 0.848145,
+      "max": 1.618164
+     },
+     "max_rel": {
+      "min": 123.536034,
+      "median": 251.214569,
+      "max": 833.262756
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386,
+      "max": 386
+     },
+     "n_pairs": 25
+    }
+   },
+   "route_vs_route": {
+    "0": {
+     "n_differing": {
+      "min": 290,
+      "median": 312.0,
+      "max": 318
+     },
+     "max_abs": {
+      "min": 0.000977,
+      "median": 0.001953,
+      "max": 0.001953
+     },
+     "max_rel": {
+      "min": 0.121359,
+      "median": 0.285714,
+      "max": 0.285714
+     },
+     "over_2pct": {
+      "min": 101,
+      "median": 119.5,
+      "max": 138
+     },
+     "n_pairs": 10
+    },
+    "1": {
+     "n_differing": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.34436,
+      "median": 0.418152,
+      "max": 0.732422
+     },
+     "max_rel": {
+      "min": 67.666664,
+      "median": 98.908966,
+      "max": 283.529419
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "n_pairs": 10
+    },
+    "2": {
+     "n_differing": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "max_abs": {
+      "min": 0.255859,
+      "median": 0.661133,
+      "max": 0.839844
+     },
+     "max_rel": {
+      "min": 73.132622,
+      "median": 163.14579,
+      "max": 329.449158
+     },
+     "over_2pct": {
+      "min": 386,
+      "median": 386.0,
+      "max": 386
+     },
+     "n_pairs": 10
+    }
+   }
+  },
+  "step_labels": {
+   "0": "warmup step 0",
+   "1": "warmup step 1",
+   "2": "hit step"
+  },
+  "step0_native_vs_route_within_native_range": true,
+  "reading": "dense accumulated gradients of two processes, per step. Step 0 starts from the identical initial model / batches / RNG in every process (forward identical). warmup step 0: native-vs-native [tensors differing 289-320 (median 314.5/386), max_abs 0.00098-0.002] ; fallback-vs-native [tensors differing 120-319 (median 313/386), max_abs 0.00049-0.002] ; route-vs-native [tensors differing 281-319 (median 312/386), max_abs 0.00098-0.002] | warmup step 1: native-vs-native [tensors differing 386-386 (median 386.0/386), max_abs 0.26-0.56] ; fallback-vs-native [tensors differing 386-386 (median 386/386), max_abs 0.26-0.76] ; route-vs-native [tensors differing 386-386 (median 386/386), max_abs 0.32-0.65] | hit step: native-vs-native [tensors differing 386-386 (median 386.0/386), max_abs 0.52-2.3] ; fallback-vs-native [tensors differing 386-386 (median 386/386), max_abs 0.34-2.1] ; route-vs-native [tensors differing 386-386 (median 386/386), max_abs 0.24-1.6]",
+  "hit_step_grad_norm_ranges_batch1": {
+   "route": {
+    "a_range": [
+     9.4375,
+     10.25
+    ],
+    "b_range": [
+     10.375,
+     12.4375
+    ],
+    "ranges_overlap": false
+   },
+   "fallback": {
+    "a_range": [
+     9.625,
+     18.625
+    ],
+    "b_range": [
+     10.375,
+     12.4375
+    ],
+    "ranges_overlap": true
+   }
+  },
+  "batch2_groups": {
+   "native_from_start": {
+    "n_processes": 5,
+    "call_counts_total": {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 0
+    },
+    "distinct_initial_param_sha256": 1,
+    "step0_losses_identical_across_processes": true,
+    "distinct_warmup_param_sha256": 5,
+    "hit_step_micro0_loss": [
+     0.941162,
+     0.945166,
+     0.947266,
+     0.947412,
+     0.950781
+    ],
+    "hit_step_grad_norm": [
+     10.1875,
+     10.3125,
+     10.75,
+     10.875,
+     16.25
+    ]
+   },
+   "fallback_from_start": {
+    "n_processes": 5,
+    "call_counts_total": {
+     "whitelist_match": 2640,
+     "flag_gems_mm": 0,
+     "native_fallback": 86640
+    },
+    "distinct_initial_param_sha256": 1,
+    "step0_losses_identical_across_processes": true,
+    "distinct_warmup_param_sha256": 5,
+    "hit_step_micro0_loss": [
+     0.940869,
+     0.945312,
+     0.945898,
+     0.946582,
+     0.949951
+    ],
+    "hit_step_grad_norm": [
+     9.5,
+     9.875,
+     10.0,
+     10.1875,
+     10.25
+    ]
+   },
+   "route_from_start": {
+    "n_processes": 5,
+    "call_counts_total": {
+     "whitelist_match": 2640,
+     "flag_gems_mm": 2640,
+     "native_fallback": 84000
+    },
+    "distinct_initial_param_sha256": 1,
+    "step0_losses_identical_across_processes": true,
+    "distinct_warmup_param_sha256": 5,
+    "hit_step_micro0_loss": [
+     0.941309,
+     0.944482,
+     0.945166,
+     0.9479,
+     0.94834
+    ],
+    "hit_step_grad_norm": [
+     9.6875,
+     10.125,
+     10.375,
+     10.75,
+     11.5
+    ]
+   }
+  },
+  "verdict": "FlagGems dW really executes from the warmup on (whitelist matches == flag_gems.mm calls: 2640 / 2640 over 5 route processes; per process 0 in warmup step 0, 96 in warmup step 1, 432 in the hit step). At warmup step 0 (identical initial model, batches and RNG in every process) route-vs-native differs in 281-319 of 386 dense gradient tensors with max_abs at most 0.00195; native-vs-native differs in 289-320 with max_abs at most 0.00195: the same band. From warmup step 1 on, native-vs-native itself differs in 386/386 tensors (max_abs 0.26-2.3), so from-step-0 comparisons cannot isolate a route effect. Hit-step grad norm, 10 processes per group: native (10.1875, 16.25), route (9.4375, 11.5), fallback-only (9.5, 18.625) (Mann-Whitney p: route vs native 0.006, fallback vs native 0.031, route vs fallback 0.79) - the statistic is dominated by the warmup divergence (the fallback-only group never calls flag_gems.mm and differs from native too).",
+  "copy_grads_none": {
+   "native_from_start": {
+    "n_processes": 3,
+    "distinct_initial_param_sha256": 1,
+    "distinct_warmup_param_sha256": 3,
+    "distinct_warmup_state_sha256": 3,
+    "call_counts_total": {
+     "whitelist_match": 0,
+     "flag_gems_mm": 0,
+     "native_fallback": 0
+    },
+    "hit_step_micro0_loss": [
+     0.941455,
+     0.949805,
+     0.956201
+    ],
+    "hit_step_grad_norm": [
+     10.8125,
+     15.625,
+     16.125
+    ]
+   },
+   "route_from_start": {
+    "n_processes": 3,
+    "distinct_initial_param_sha256": 1,
+    "distinct_warmup_param_sha256": 3,
+    "distinct_warmup_state_sha256": 3,
+    "call_counts_total": {
+     "whitelist_match": 1584,
+     "flag_gems_mm": 1584,
+     "native_fallback": 50400
+    },
+    "hit_step_micro0_loss": [
+     0.9396,
+     0.943066,
+     0.943506
+    ],
+    "hit_step_grad_norm": [
+     10.625,
+     11.0,
+     11.1875
+    ]
+   }
+  },
+  "pooled_main_plus_batch2": {
+   "field_version": "route_from_step0_r58_pooled_v1",
+   "source": "results/route_from_step0_r58/*/run.json (batch 1, gradients saved) + results/route_from_step0_r58_b2/*/run.json (batch 2), identical run pattern (--copy-grads host)",
+   "n_per_group": {
+    "fallback_from_start": 10,
+    "native_from_start": 10,
+    "route_from_start": 10
+   },
+   "groups": {
+    "fallback_from_start": {
+     "hit_step_grad_norm": [
+      9.5,
+      9.625,
+      9.8125,
+      9.875,
+      10.0,
+      10.1875,
+      10.25,
+      10.4375,
+      11.9375,
+      18.625
+     ],
+     "hit_step_micro0_loss": [
+      0.940869,
+      0.941162,
+      0.944971,
+      0.945166,
+      0.945312,
+      0.945898,
+      0.946582,
+      0.947607,
+      0.949072,
+      0.949951
+     ],
+     "warmup_step1_micro0_loss": [
+      1.22998,
+      1.230664,
+      1.230762,
+      1.234277,
+      1.23584,
+      1.23584,
+      1.236621,
+      1.238477,
+      1.238672,
+      1.238965
+     ],
+     "distinct_warmup_param_sha256": 10,
+     "call_counts_total": {
+      "whitelist_match": 5280,
+      "flag_gems_mm": 0,
+      "native_fallback": 173280
+     }
+    },
+    "native_from_start": {
+     "hit_step_grad_norm": [
+      10.1875,
+      10.3125,
+      10.375,
+      10.75,
+      10.875,
+      11.25,
+      11.375,
+      12.0,
+      12.4375,
+      16.25
+     ],
+     "hit_step_micro0_loss": [
+      0.940625,
+      0.941162,
+      0.942627,
+      0.945166,
+      0.945264,
+      0.945752,
+      0.94585,
+      0.947266,
+      0.947412,
+      0.950781
+     ],
+     "warmup_step1_micro0_loss": [
+      1.226367,
+      1.227246,
+      1.232227,
+      1.233301,
+      1.234277,
+      1.234961,
+      1.235742,
+      1.23584,
+      1.236719,
+      1.237402
+     ],
+     "distinct_warmup_param_sha256": 10,
+     "call_counts_total": {
+      "whitelist_match": 0,
+      "flag_gems_mm": 0,
+      "native_fallback": 0
+     }
+    },
+    "route_from_start": {
+     "hit_step_grad_norm": [
+      9.4375,
+      9.5,
+      9.6875,
+      10.0,
+      10.125,
+      10.125,
+      10.25,
+      10.375,
+      10.75,
+      11.5
+     ],
+     "hit_step_micro0_loss": [
+      0.941309,
+      0.942187,
+      0.944482,
+      0.945166,
+      0.945312,
+      0.946729,
+      0.947363,
+      0.9479,
+      0.94834,
+      0.948633
+     ],
+     "warmup_step1_micro0_loss": [
+      1.232617,
+      1.232617,
+      1.234668,
+      1.23584,
+      1.23584,
+      1.23584,
+      1.23623,
+      1.237793,
+      1.238965,
+      1.240039
+     ],
+     "distinct_warmup_param_sha256": 10,
+     "call_counts_total": {
+      "whitelist_match": 5280,
+      "flag_gems_mm": 5280,
+      "native_fallback": 168000
+     }
+    }
+   },
+   "mann_whitney_normal_approx": {
+    "hit_step_grad_norm": {
+     "route_vs_native": {
+      "U": 14.0,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": -2.721,
+      "p_two_sided_normal_approx": 0.0065,
+      "median_native": 11.25,
+      "median_other": 10.125,
+      "range_native": [
+       10.1875,
+       16.25
+      ],
+      "range_other": [
+       9.4375,
+       11.5
+      ],
+      "ranges_overlap": true
+     },
+     "fallback_vs_native": {
+      "U": 21.5,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": -2.154,
+      "p_two_sided_normal_approx": 0.0312,
+      "median_native": 11.25,
+      "median_other": 10.1875,
+      "range_native": [
+       10.1875,
+       16.25
+      ],
+      "range_other": [
+       9.5,
+       18.625
+      ],
+      "ranges_overlap": true
+     },
+     "route_vs_fallback": {
+      "U": 46.5,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": -0.265,
+      "p_two_sided_normal_approx": 0.7913,
+      "median_native": 10.1875,
+      "median_other": 10.125,
+      "range_native": [
+       9.5,
+       18.625
+      ],
+      "range_other": [
+       9.4375,
+       11.5
+      ],
+      "ranges_overlap": true
+     }
+    },
+    "hit_loss0": {
+     "route_vs_native": {
+      "U": 57.5,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": 0.567,
+      "p_two_sided_normal_approx": 0.5708,
+      "median_native": 0.945751965045929,
+      "median_other": 0.946728527545929,
+      "range_native": [
+       0.940625011920929,
+       0.9507812261581421
+      ],
+      "range_other": [
+       0.9413086175918579,
+       0.9486328363418579
+      ],
+      "ranges_overlap": true
+     },
+     "fallback_vs_native": {
+      "U": 55.0,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": 0.378,
+      "p_two_sided_normal_approx": 0.7055,
+      "median_native": 0.945751965045929,
+      "median_other": 0.9458984136581421,
+      "range_native": [
+       0.940625011920929,
+       0.9507812261581421
+      ],
+      "range_other": [
+       0.940869152545929,
+       0.949951171875
+      ],
+      "ranges_overlap": true
+     },
+     "route_vs_fallback": {
+      "U": 52.0,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": 0.151,
+      "p_two_sided_normal_approx": 0.8798,
+      "median_native": 0.9458984136581421,
+      "median_other": 0.946728527545929,
+      "range_native": [
+       0.940869152545929,
+       0.949951171875
+      ],
+      "range_other": [
+       0.9413086175918579,
+       0.9486328363418579
+      ],
+      "ranges_overlap": true
+     }
+    },
+    "step1_loss0": {
+     "route_vs_native": {
+      "U": 71.5,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": 1.625,
+      "p_two_sided_normal_approx": 0.1041,
+      "median_native": 1.234960913658142,
+      "median_other": 1.23583984375,
+      "range_native": [
+       1.2263672351837158,
+       1.237402319908142
+      ],
+      "range_other": [
+       1.2326171398162842,
+       1.2400391101837158
+      ],
+      "ranges_overlap": true
+     },
+     "fallback_vs_native": {
+      "U": 63.5,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": 1.021,
+      "p_two_sided_normal_approx": 0.3075,
+      "median_native": 1.234960913658142,
+      "median_other": 1.23583984375,
+      "range_native": [
+       1.2263672351837158,
+       1.237402319908142
+      ],
+      "range_other": [
+       1.22998046875,
+       1.2389647960662842
+      ],
+      "ranges_overlap": true
+     },
+     "route_vs_fallback": {
+      "U": 57.5,
+      "n_native": 10,
+      "n_route_or_fallback": 10,
+      "z": 0.567,
+      "p_two_sided_normal_approx": 0.5708,
+      "median_native": 1.23583984375,
+      "median_other": 1.23583984375,
+      "range_native": [
+       1.22998046875,
+       1.2389647960662842
+      ],
+      "range_other": [
+       1.2326171398162842,
+       1.2400391101837158
+      ],
+      "ranges_overlap": true
+     }
+    }
+   },
+   "reading": "The hit-step grad norm / loss after a 2-step warmup is dominated by the warmup's run-to-run divergence (see step0_repro_r58.json and state_transfer_r58): the fallback-only group, which never calls flag_gems.mm, differs from native by p=0.031 while route vs native is p=0.006. The statistic therefore cannot separate a route effect from the native band; it only shows that the route's spread is of the same nature and size as native's."
+  },
+  "per_step_state_hashes_diag": {
+   "note": "6 processes (3 native, 3 route, --copy-grads none); hashes of the dense parameters and of the CUDA / CPU RNG states taken right after each step",
+   "rows": [
+    {
+     "mode": "native_from_start",
+     "step0": {
+      "params_dense": "348b8ef7bacc2830",
+      "rng_cuda": "c50f7bbf199d1971"
+     },
+     "step1": {
+      "params_dense": "0e006b6098f2ab72",
+      "rng_cuda": "85f7f89c7e6c13ba"
+     },
+     "hit": {
+      "params_dense": "377b7a188a6b3f1b",
+      "rng_cuda": "c0c07f9b382fb6ca"
+     },
+     "step1_loss0": 1.239746
+    },
+    {
+     "mode": "native_from_start",
+     "step0": {
+      "params_dense": "034ef7b7d7e55bf0",
+      "rng_cuda": "c50f7bbf199d1971"
+     },
+     "step1": {
+      "params_dense": "05c02d360628370d",
+      "rng_cuda": "85f7f89c7e6c13ba"
+     },
+     "hit": {
+      "params_dense": "5d87b3a97b6da8f9",
+      "rng_cuda": "c0c07f9b382fb6ca"
+     },
+     "step1_loss0": 1.232422
+    },
+    {
+     "mode": "native_from_start",
+     "step0": {
+      "params_dense": "4fd18af6359492ec",
+      "rng_cuda": "c50f7bbf199d1971"
+     },
+     "step1": {
+      "params_dense": "d8483d5a7d8bea60",
+      "rng_cuda": "85f7f89c7e6c13ba"
+     },
+     "hit": {
+      "params_dense": "c73e993a59866954",
+      "rng_cuda": "c0c07f9b382fb6ca"
+     },
+     "step1_loss0": 1.239746
+    },
+    {
+     "mode": "route_from_start",
+     "step0": {
+      "params_dense": "b0f78464e2ed1680",
+      "rng_cuda": "c50f7bbf199d1971"
+     },
+     "step1": {
+      "params_dense": "97a0e68bcf7b575a",
+      "rng_cuda": "85f7f89c7e6c13ba"
+     },
+     "hit": {
+      "params_dense": "819af49a40823be0",
+      "rng_cuda": "c0c07f9b382fb6ca"
+     },
+     "step1_loss0": 1.227148
+    },
+    {
+     "mode": "route_from_start",
+     "step0": {
+      "params_dense": "bea8d02135dd5279",
+      "rng_cuda": "c50f7bbf199d1971"
+     },
+     "step1": {
+      "params_dense": "ec064bfef5ac5a15",
+      "rng_cuda": "85f7f89c7e6c13ba"
+     },
+     "hit": {
+      "params_dense": "ca4210b85e805783",
+      "rng_cuda": "c0c07f9b382fb6ca"
+     },
+     "step1_loss0": 1.232324
+    },
+    {
+     "mode": "route_from_start",
+     "step0": {
+      "params_dense": "9b365cddbc7b06d6",
+      "rng_cuda": "c50f7bbf199d1971"
+     },
+     "step1": {
+      "params_dense": "76f5316c8f3ce736",
+      "rng_cuda": "85f7f89c7e6c13ba"
+     },
+     "hit": {
+      "params_dense": "635a0fee66d297c7",
+      "rng_cuda": "c0c07f9b382fb6ca"
+     },
+     "step1_loss0": 1.229102
+    }
+   ],
+   "distinct_dense_param_hashes": {
+    "initial": 1,
+    "after_step0": 6,
+    "after_step1": 6
+   },
+   "distinct_cuda_rng_hashes": {
+    "after_step0": 1,
+    "after_step1": 1
+   }
+  },
+  "note": "the saved per-step gradients (~600 MB per process and step) stay on the measurement host; the JSON holds the per-pair comparisons"
+ },
+ "why_trajectories_diverge_after_a_real_update": {
+  "files": "results/step0_repro_r58.json (scripts/step0_repro_probe.py), results/state_transfer_r58/*.json (scripts/state_transfer_probe.py), per-step hashes in results/route_from_step0_r58_diag/*/run.json",
+  "1_first_backward_is_not_bitwise_reproducible_across_processes": {
+   "design": "3 fresh processes, native path, one entry-loop step on batches 0-3, no host access to the gradients before clip; clipped gradients / parameters / optimizer state copied to the host after optimizer.step()",
+   "step0_losses_identical": true,
+   "step0_grad_norm_per_process": [
+    15.75,
+    15.75,
+    15.75
+   ],
+   "dtypes": {
+    "param": "torch.bfloat16",
+    "grad": "torch.bfloat16",
+    "exp_avg": "torch.bfloat16",
+    "exp_avg_sq": "torch.bfloat16"
+   },
+   "optimizer": "AdamW",
+   "pair_1_vs_2": {
+    "grads_clipped": {
+     "differing_elements": 801487,
+     "numel": 302311424,
+     "differing_pct": 0.2651,
+     "sign_flips": 267,
+     "elements_rel_gt_10pct": 24467,
+     "tensors_with_differences": 316,
+     "max_abs": 0.0001220703125
+    },
+    "exp_avg": {
+     "differing_elements": 741386,
+     "numel": 302311424,
+     "differing_pct": 0.2452,
+     "sign_flips": 267,
+     "elements_rel_gt_10pct": 22872,
+     "tensors_with_differences": 314,
+     "max_abs": 7.62939453125e-06
+    },
+    "exp_avg_sq": {
+     "differing_elements": 801278,
+     "numel": 302311424,
+     "differing_pct": 0.2651,
+     "sign_flips": 0,
+     "elements_rel_gt_10pct": 46757,
+     "tensors_with_differences": 316,
+     "max_abs": 2.7939677238464355e-09
+    },
+    "params": {
+     "differing_elements": 2018,
+     "numel": 303361024,
+     "differing_pct": 0.0007,
+     "sign_flips": 0,
+     "elements_rel_gt_10pct": 21,
+     "tensors_with_differences": 121,
+     "max_abs": 6.103515625e-05
+    }
+   },
+   "other_pairs_differing_elements": {
+    "grads_clipped": [
+     800032,
+     743414
+    ],
+    "params": [
+     2095,
+     1899
+    ]
+   }
+  },
+  "2_first_update_differs_by_1_ulp_in_a_few_elements": {
+   "dense_param_sha256_after_step0_per_process": [
+    "e9d51c11cfe4a618",
+    "f6118ae51334a76e",
+    "8d0c53b2f635c19b"
+   ],
+   "differing_elements": "1899-2095 of 303361024",
+   "max_abs": 6.103515625e-05
+  },
+  "3_forward_is_a_deterministic_function_of_the_state": {
+   "design": "the state after step 0 of one process (parameters, optimizer state, CPU+CUDA RNG) is saved and loaded by 3 fresh processes; step-1 forward on batches 4-7",
+   "step1_losses_in_saving_process": [
+    1.2346680164337158,
+    0.9571288824081421,
+    0.520214855670929,
+    0.903027355670929
+   ],
+   "fresh_processes_equal_to_saving_process": true,
+   "replays_bitwise_equal_in_every_fresh_process": true
+  },
+  "4_loss_is_extremely_sensitive_to_single_ulp_weight_changes": {
+   "design": "same saved state, N random dense parameter elements moved by exactly one bf16 ulp before the step-1 forward",
+   "max_abs_loss_change": {
+    "1_element": 0.001758,
+    "2000_elements": 0.003516,
+    "20000_elements": 0.009668
+   },
+   "unperturbed_replay_equals_baseline": true,
+   "mechanism": "contrastive loss with temperature 0.05: logits = cosine / 0.05 are ~20x the embedding differences and are computed by an autocast bf16 matmul, so a 1-ulp change of ONE weight already moves the micro-batch loss by ~0.1%"
+  },
+  "5_consequence": "after one real update the processes differ in ~0.0007% of the parameters by 1 ulp, which through (4) gives ~1% differences in the step-1 loss and 10-50% differences in the later grad norms; the RNG states stay hash-identical. Trajectory-level comparisons between a candidate and native (from-step-0 runs) are therefore dominated by this amplification; same-state single-step comparisons (item 1) are the valid instrument.",
+  "round57_correction": "the round-57 statement that the native warmup is reproducible across fresh processes (5/5, sha b133cb9f...) referred to a 'warmup' WITHOUT optimizer updates (parameters unchanged) plus one update; with real updates the warmup state differs in every process (train_state_r58.json: 5 distinct snapshot hashes)."
+ },
+ "item3a_dw_gain_process_level": {
+  "file": "results/route_entry_ab_r57.json (re-aggregated, field version route_entry_ab_v3)",
+  "script": "scripts/route_entry_ab.py",
+  "why": "the three training steps of one process share the run environment; the process level (one mean per process) is the conservative unit",
+  "process_level": {
+   "all_28_processes": {
+    "n": "14 vs 14",
+    "diff_ms": -9.03,
+    "ci95_ms": [
+     -20.67,
+     2.6
+    ],
+    "ci_excludes_zero": false,
+    "native_mean_ms": 5.8,
+    "native_sd_ms": 13.07,
+    "py_route_mean_ms": -3.24,
+    "py_route_sd_ms": 16.54,
+    "welch_df": 24.7
+   },
+   "batch2_only_16_processes": {
+    "n": "8 vs 8",
+    "diff_ms": -5.33,
+    "ci95_ms": [
+     -24.85,
+     14.19
+    ],
+    "ci_excludes_zero": false,
+    "native_mean_ms": 7.13,
+    "native_sd_ms": 15.42,
+    "py_route_mean_ms": 1.8,
+    "py_route_sd_ms": 20.14,
+    "welch_df": 13.1
+   },
+   "batch1_console_only_12_processes": {
+    "n": "6 vs 6",
+    "diff_ms": -13.97,
+    "ci95_ms": [
+     -25.67,
+     -2.28
+    ],
+    "ci_excludes_zero": true,
+    "native_mean_ms": 4.01,
+    "native_sd_ms": 10.22,
+    "py_route_mean_ms": -9.96,
+    "py_route_sd_ms": 6.97,
+    "welch_df": 8.8
+   }
+  },
+  "step_level": {
+   "all": {
+    "n": "42 vs 42",
+    "diff_ms": -9.04,
+    "ci95_ms": [
+     -17.7,
+     -0.37
+    ],
+    "ci_excludes_zero": true,
+    "native_mean_ms": 5.8,
+    "native_sd_ms": 21.15,
+    "py_route_mean_ms": -3.24,
+    "py_route_sd_ms": 18.45,
+    "welch_df": 80.5
+   },
+   "batch2_only": {
+    "n": "24 vs 24",
+    "diff_ms": -5.33,
+    "ci95_ms": [
+     -18.38,
+     7.71
+    ],
+    "ci_excludes_zero": false,
+    "native_mean_ms": 7.13,
+    "native_sd_ms": 23.57,
+    "py_route_mean_ms": 1.8,
+    "py_route_sd_ms": 21.25,
+    "welch_df": 45.5
+   },
+   "batch1_console_only": {
+    "n": "18 vs 18",
+    "diff_ms": -13.97,
+    "ci95_ms": [
+     -24.19,
+     -3.76
+    ],
+    "ci_excludes_zero": true,
+    "native_mean_ms": 4.01,
+    "native_sd_ms": 17.93,
+    "py_route_mean_ms": -9.96,
+    "py_route_sd_ms": 11.22,
+    "welch_df": 28.5
+   }
+  },
+  "provenance": {
+   "all": {
+    "batch2": "16 processes (8 py_route + 8 native control), per-run JSON files committed (results/route_entry_ab_r57/*.json)",
+    "batch1_console": "12 processes (6 + 6); per-run JSON files were lost to a shell file-naming bug, step times transcribed from the console and committed as results/route_entry_ab_r57_batch1_console/*.json - NOT independent raw records"
+   },
+   "batch2_only": {
+    "batch2": "16 processes (8 py_route + 8 native control), per-run JSON files committed (results/route_entry_ab_r57/*.json)"
+   },
+   "batch1_console_only": {
+    "batch1_console": "12 processes (6 + 6); per-run JSON files were lost to a shell file-naming bug, step times transcribed from the console and committed as results/route_entry_ab_r57_batch1_console/*.json - NOT independent raw records"
+   }
+  },
+  "sign_test": {
+   "process_mean_negative": {
+    "py_route": 13,
+    "n_py_route": 14,
+    "native": 6,
+    "n_native": 14
+   },
+   "fisher_two_sided_p": 0.0128
+  },
+  "process_mean_diffs_ms": {
+   "batch1_console|native": {
+    "run02": -1.77,
+    "run04": 3.46,
+    "run06": -2.26,
+    "run08": 13.89,
+    "run10": -7.81,
+    "run12": 18.57
+   },
+   "batch1_console|py_route": {
+    "run01": -23.12,
+    "run03": -4.31,
+    "run05": -9.36,
+    "run07": -8.71,
+    "run09": -10.26,
+    "run11": -3.99
+   },
+   "batch2|native": {
+    "run02": -1.36,
+    "run03": 3.38,
+    "run06": -16.42,
+    "run07": 9.44,
+    "run10": 12.87,
+    "run11": 35.3,
+    "run14": 16.69,
+    "run15": -2.84
+   },
+   "batch2|py_route": {
+    "run01": -4.02,
+    "run04": -5.78,
+    "run05": -10.11,
+    "run08": -2.64,
+    "run09": 51.05,
+    "run12": -0.01,
+    "run13": -7.7,
+    "run16": -6.37
+   }
+  },
+  "verdict": "process level, all 28 processes: -9.03 ms, Welch 95% CI [-20.67, +2.60] - the interval spans zero. There is a small indication of a gain (13/14 py_route processes with a negative mean vs 6/14 controls), not enough to deploy. Batch 2 alone (complete raw records): -5.33 ms [-24.85, +14.19]."
+ },
+ "item3b_gemm_tiers": {
+  "file": "results/software_roofline_r49.json (field version roofline_v2)",
+  "script": "scripts/software_roofline.py",
+  "window": "SINGLE-STEP window: the per-shape rows come from ONE training step (kernel_efficiency_r36, step 2). Every device_ms / headroom_ms in this block is per step-2 window; 772.12 ms is the 3-step mean backward-GEMM time and is a different window.",
+  "token_dim_rule": "flattened-token dim = the operand dimension of [M,K,N] that is NOT a fixed model dimension (1024 / 4096): [4096,5120,1024] -> 5120 (K), [5120,1024,1024] -> 5120 (M), [1024,5120,1024] -> 5120 (K, was 1024 under the previous dX-takes-M rule). Rows with neither M nor K a model dimension are the loss matmuls (listed separately). Both model dims -> dW takes K, dX takes M. The old max(M,K) rule counted the fixed FFN feature dim 4096 as a long sequence (review BqpXfeg item 4).",
+  "regroup_note": "round-58 (review 7182886976 item 3): the two [1024,5120,1024] rows move from the short tier to the long tier (5120 flattened tokens); the two loss matmuls ([40,10,1024] dW and [10,40,1024] dX) are listed separately. Previous values: mid 113.91 / long 87.16 / short 47.65 ms.",
+  "tiers": [
+   {
+    "group": "long (flattened tokens >= 4000)",
+    "n_shapes": 20,
+    "calls": 1728,
+    "device_ms": 353.48,
+    "headroom_ms": 99.91,
+    "share_pct": 40.2
+   },
+   {
+    "group": "mid (1400 <= flattened tokens < 4000)",
+    "n_shapes": 60,
+    "calls": 2880,
+    "device_ms": 324.79,
+    "headroom_ms": 113.91,
+    "share_pct": 45.8
+   },
+   {
+    "group": "short (flattened tokens < 1400)",
+    "n_shapes": 18,
+    "calls": 1152,
+    "device_ms": 40.23,
+    "headroom_ms": 34.67,
+    "share_pct": 13.9
+   }
+  ],
+  "loss_matmul_separate": {
+   "n": 2,
+   "device_ms": 0.23,
+   "headroom_ms": 0.23,
+   "rows": [
+    {
+     "kind": "dW_other",
+     "shape": [
+      40,
+      10,
+      1024
+     ],
+     "token_dim": null,
+     "count": 4,
+     "device_ms": 0.14,
+     "headroom_ms_vs_peak": 0.14
+    },
+    {
+     "kind": "dX_other",
+     "shape": [
+      10,
+      40,
+      1024
+     ],
+     "token_dim": null,
+     "count": 4,
+     "device_ms": 0.09,
+     "headroom_ms_vs_peak": 0.09
+    }
+   ]
+  },
+  "covered_headroom_ms_per_step": 248.73,
+  "headroom_definition": "device_ms - FLOPs/(139.2e12) per shape, summed over the tier, clamped >= 0: the ideal-device-time gap under the 139.2 TFLOP/s reference assumption; NOT an end-to-end ceiling"
+ },
+ "item4_hardware": {
+  "status": "BLOCKED - unchanged",
+  "evidence": "results/hbm_blocked_r58.md (probe 2026-11-26T04:52:41Z: acu exit 101 'Device is not ready for profiling'; dmesg: 'PPU0000 PCM is in used by app[pg-exporter]!')",
+  "not_answered": [
+   "HBM bytes read/written",
+   "HBM bandwidth utilization",
+   "matrix-unit activity"
+  ],
+  "owner_actions_dependency": "see results/hbm_blocked_r58.md",
+  "device_utilization_sampling_kept": {
+   "file": "results/smi_utilization_r57.json",
+   "n_samples": 259,
+   "utilization_gpu": {
+    "min": 88,
+    "p10": 94,
+    "median": 96,
+    "mean": 96.1,
+    "p90": 98,
+    "max": 100
+   },
+   "caveat": "utilization.gpu semantics are vendor-defined and not documented for this device; raw distribution only, not a busy-time measurement"
+  },
+  "hardware_status": "unverified"
+ },
+ "item5_records_delivery": {
+  "field_version": "records_delivery_v1",
+  "built_utc": "2026-11-26T10:39:43Z",
+  "original_file": {
+   "name": "acc_hit_step_r44.json.records.pkl",
+   "sha256": "7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3",
+   "bytes": 7247960317
+  },
+  "split": {
+   "part_size_bytes": 1992294400,
+   "n_parts": 4,
+   "parts": [
+    {
+     "name": "records.part.00",
+     "sha256": "b917d5a7056e56bdf3ccb49b3fccc67c980d9c83069459ab4c25e52b8ac14b44",
+     "bytes": 1992294400
+    },
+    {
+     "name": "records.part.01",
+     "sha256": "d1d864385ffac0c3482028574176c6ac8262064bc75a4e2a80dcbf80db8cc81e",
+     "bytes": 1992294400
+    },
+    {
+     "name": "records.part.02",
+     "sha256": "f76ebe8a9dcd9c9ffcb520aec0a635d18a76b3a8690d4ca241f86aade1958305",
+     "bytes": 1992294400
+    },
+    {
+     "name": "records.part.03",
+     "sha256": "0460c4cad3a8be7c4a6ede78d38268e54649e207cbc67201517731788738153e",
+     "bytes": 1271077117
+    }
+   ],
+   "reason": "GitHub limits one release asset to 2 GiB",
+   "rejoin": "cat records.part.00 records.part.01 records.part.02 records.part.03 > acc_hit_step_r44.json.records.pkl",
+   "rejoin_sha256_verified_locally": true,
+   "rejoin_check_output": "rejoin check: 7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3  -"
+  },
+  "release": {
+   "repo": "FLAG-OP/flag-fixes",
+   "tag": "problem29-dw-records-r44",
+   "id": 459020982,
+   "draft": true,
+   "url": "https://github.com/FLAG-OP/flag-fixes/releases/tag/untagged-b6f7f4d0d7006f9adeac",
+   "target_commitish": "issue7-zw810e-opt-round1",
+   "assets": [
+    {
+     "name": "RELEASE_NOTES.md",
+     "bytes": 1245,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T06:03:59Z",
+     "matches_local_bytes": null
+    },
+    {
+     "name": "SHA256SUMS",
+     "bytes": 100,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T06:04:09Z",
+     "matches_local_bytes": null
+    },
+    {
+     "name": "SHA256SUMS.parts",
+     "bytes": 328,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T06:04:25Z",
+     "matches_local_bytes": null
+    },
+    {
+     "name": "records.part.00",
+     "bytes": 1992294400,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T09:59:22Z",
+     "matches_local_bytes": true
+    },
+    {
+     "name": "records.part.01",
+     "bytes": 1992294400,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T06:32:32Z",
+     "matches_local_bytes": true
+    },
+    {
+     "name": "records.part.02",
+     "bytes": 1992294400,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T06:32:32Z",
+     "matches_local_bytes": true
+    },
+    {
+     "name": "records.part.03",
+     "bytes": 1271077117,
+     "state": "uploaded",
+     "uploaded_at": "2026-11-26T06:04:44Z",
+     "matches_local_bytes": true
+    }
+   ],
+   "all_parts_uploaded": true,
+   "access": "DRAFT release: visible to users with write access to the repository. Download: gh release download problem29-dw-records-r44 --repo FLAG-OP/flag-fixes --dir <dir>. Publishing it (or not) is the maintainers' decision.",
+   "upload_throughput_note": "the measurement host uploads at ~0.95 MB/s per stream (1.27 GB part: 1344 s; 1.99 GB parts: ~4800 s each with 3 streams in parallel); one 1.99 GB part failed with HTTP 408 and was re-uploaded"
+  },
+  "clean_copy_recompute": {
+   "command": "python3 scripts/recompute_dw_accuracy.py <records.pkl> <out.json>",
+   "clean_copy_how": "git transport to github.com (clone) and tarball downloads are reset / stall from this environment; the script and the committed recompute result were fetched through the Git data API by blob SHA and verified against the tree of commit 59346831",
+   "script_blob_sha256_of_content": "68085b857be303ea8bc474d78a20395fc3a05712f17e895aa8fb547d11f9ce3f",
+   "script_git_blob_sha": "4fbddb4f158e005c321a5dffbd351f7d97c9e8c3",
+   "matches_committed_blob": true,
+   "committed_result_blob_matches": true,
+   "exit_reason": 0,
+   "verdict": "dw-only PASS at 2% per-element floored-rel gate (unrounded recomputation); native self-comparison valid",
+   "record_sha256": "7d00baa38532d5ad2a02c6681283a6a039448777ff1bb003c1daf8e3af8a5ec3",
+   "dw_only_hits_this_step": 432,
+   "native_self_comparison_valid": true,
+   "candidate_vs_native_pass": true,
+   "comparisons": {
+    "A_native_run2_vs_native_run1": {
+     "FFN_up": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     },
+     "FFN_down": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     },
+     "attn_out_proj": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     }
+    },
+    "B_wrapped_stock_vs_native_run1": {
+     "FFN_up": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     },
+     "FFN_down": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     },
+     "attn_out_proj": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     }
+    },
+    "C_dw_only_vs_native_run1": {
+     "FFN_up": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     },
+     "FFN_down": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     },
+     "attn_out_proj": {
+      "grad_rel_max_unrounded": 0.0,
+      "PASS": true,
+      "post_param_bits_unequal": 0
+     }
+    }
+   },
+   "identical_to_committed_result_except_record_file": true
+  },
+  "download_back_verification": [
+   "download-back verification stopped 10:07:41Z: ~9 KB/s from this host (1.65 MB in ~3 min), a 1.27 GB part is not feasible"
+  ]
+ },
+ "answers_against_original_goal": {
+  "main_time_cost_of_one_step": {
+   "step_wall_ms_steps_2_4": [
+    1890.83,
+    2133.72,
+    2349.69
+   ],
+   "mean_step_ms_12_steps": 2165.65,
+   "device_kernel_time_per_step_3step_mean": {
+    "backward GEMM": 772.12,
+    "backward attention": 375.44,
+    "forward GEMM": 330.16,
+    "forward attention": 204.64
+   },
+   "device_kernel_time_source": "results/software_roofline_r49.json phase_ranking (training_trace r36)",
+   "host_per_step": {
+    "prepare_embedding_inputs_ms": 65.67,
+    "h2d_ms": 252.44,
+    "forward_launch_ms": 268.21,
+    "loss_sync_ms": 118.78,
+    "backward_launch_ms": 1425.68,
+    "end_wait_ms": 13.41
+   }
+  },
+  "realizable_whole_step_saving_with_uncertainty": {
+   "tokenize prefetch": "+27.7 ms (12/12 slower, CI [+21.8, +41.0]) - closed",
+   "h2d_nonblocking": "-1.8 ms median (CI [-10.1, +8.1]) - no significant difference",
+   "dW Python route": "-9.03 ms, process-level Welch 95% CI [-20.67, +2.60] (~0.4% of a step) - small indication of a gain, not enough to deploy",
+   "measured_noise_floor": "paired-step sd 14.3 ms (h2d_nb, r57)"
+  },
+  "accuracy": {
+   "same_snapshot_single_step": "dw_route bitwise identical to native in all dense sections after every micro-batch from a snapshot with AdamW momentum (flag_gems.mm called 864 times in the candidate runs)",
+   "from_step_0": "real flag_gems.mm calls from step 1 on (counters); route-vs-native deviation at step 0 equals native-vs-native; from step 1 on cross-process comparisons are dominated by the native run-to-run divergence (see item2_route_from_step0 and why_trajectories_diverge_after_a_real_update)"
+  },
+  "hardware_measured_vs_unknown": {
+   "measured": [
+    "SMI utilization.gpu sampling: median 96 over 259 samples"
+   ],
+   "unknown": [
+    "HBM bytes / bandwidth utilization / matrix-unit activity (PCM blocked)",
+    "~4% not-utilized time in the unprofiled run",
+    "backward-window stalls seen under the profiler (~10.7 ms/step)",
+    "why native numerics depend on the run pattern"
+   ]
+  },
+  "conclusion": "No change is deployable on the evidence so far: keep the native path. The dW Python route remains a candidate (accuracy bitwise identical in same-state comparisons; ~0.4% step-time indication with an interval spanning zero)."
+ }
+}

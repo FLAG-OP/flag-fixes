@@ -1,0 +1,7 @@
+PASS aggregate: only-checkpoint-fail -> [checkpoint_restore_fail({'params_bitwise_equal': False, 'state_bitwise_equal': True})]
+PASS aggregate: only-state-missing -> k/float32/fused/param0.exp_avg/state_missing_or_mismatch
+PASS aggregate: only-state-tolerance -> k/float32/fused/param0.exp_avg/state_tol_violation
+PASS aggregate: only-step-mismatch -> k/float32/fused/step_count_mismatch
+PASS aggregate: all-pass control -> empty (exit 0)
+PASS exit-code rule uses aggregate() result
+selftest failures: 0

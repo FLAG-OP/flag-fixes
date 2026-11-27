@@ -1,0 +1,53 @@
+{
+ "gap_evidence": {
+  "source": "gap_attribution_r51.json (scripts/gap_attribution.py)",
+  "method": "window per micro-batch from CPU rf markers (forward_m{i}/backward_m{i}); device events crossing a boundary are CLIPPED into it; union of clipped intervals; gaps = uncovered time inside the window. Host reconciliation uses the trace's own cpu_op / cuda_runtime / sync events and ac2g correlation ids. No PCM.",
+  "finding": "per micro-batch forward window: idle 28-38 ms, largest single gap 3-5 ms; every top gap STARTS when the previous kernel ends and ENDS when 'Memcpy HtoD (Pageable->Device)' starts; no cpu_op runs at gap start -> host-side tokenize (prepare_embedding_inputs, 5 groups/micro-batch) blocks the device",
+  "idle_in_gaps_ge2ms_per_step": {
+   "s2": 60.17,
+   "s3": 34.09,
+   "s4": 30.47
+  },
+  "h2d_is_not_the_cost": "microbench: pageable .to(cuda) 0.029 ms vs pinned non_blocking 0.021 ms for one micro-batch of input_ids -> the H2D copy itself is NOT the 3-5 ms; the host tokenize before it is"
+ },
+ "hypothesis": "overlapping the tokenize of group i+1 with the device compute of group i removes most of the per-micro-batch gap",
+ "experiment": {
+  "single_factor": "WHEN tokenize happens (inline = current; overlap = tokenize next group while current computes); same snapshot/inputs/tokenizer/H2D/math; F.normalize tail identical to the real embedding_batch",
+  "order": {
+   "rep1": "inline -> overlap",
+   "rep2": "overlap -> inline"
+  },
+  "profiler": "OFF",
+  "rounds": 3,
+  "tokens": "27,052/31,454/35,506"
+ },
+ "paired_overlap_minus_inline_ms": {
+  "rep1": [
+   -3.7,
+   -1.0,
+   1.7
+  ],
+  "rep2": [
+   2.9,
+   -9.0,
+   7.7
+  ],
+  "all6": [
+   -3.7,
+   -1.0,
+   1.7,
+   2.9,
+   -9.0,
+   7.7
+  ],
+  "median": 0.35,
+  "n_negative": 3
+ },
+ "equivalence_check": {
+  "loss0_max_rel_diff_inline_vs_overlap": 0.00395,
+  "note": "<0.2%: bf16-level, math identical"
+ },
+ "verdict": "HYPOTHESIS REJECTED: overlap vs inline flips sign across 6 paired steps (median 0.3 ms, 3/6 negative) -> whole-step FLAT. The per-micro-batch host-tokenize gap cannot be recovered by simple overlap (the host is already saturated by tokenize, so overlapping adds sync points instead of hiding them).",
+ "note_on_first_attempt": "the FIRST run of this experiment omitted F.normalize (loss ~1568 instead of ~2.9) and its numbers were DISCARDED; the corrected run reproduces the real loss magnitude and is the one reported here.",
+ "RETRACTED": "Superseded by tokenize_overlap_r53.json. This version: sorted() made negative_1 the positive (wrong loss semantics), zero_grad ran per micro (grad accumulation broken), and inline/overlap had the same host order (no real overlap). Its numbers are not valid evidence."
+}
