@@ -25,7 +25,7 @@ torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份�
 | `e2e-fsdp2-2card-{base,fixed}-2026-11-26.{json,log,train.log}` | 常规数据、真实权重、batch 32：基线走完 2 步、修复树走完 3 步 + validation，均被 XCCL watchdog 终止 |
 | `e2e-fsdp2-2card-{base,fixed}-randominit-2026-11-26.{json,train.log}`、`e2e-fsdp2-2card-fixed-b16-randominit-2026-11-26.{json,train.log}` | 常规数据、随机权重的早期尝试（基线停在第 2 步、修复停在第 3 步；batch 16 第 1 步遇设备 kernel exception）。这几次没有单独保存 launcher 输出，摘要都在 JSON 里 |
 | `allocator-probe-2026-11-27.{json,log}` | `tests/probe_p800_allocator.py`：不等大空洞交还设备后 11.57 GiB 请求在 72.84 GiB 空闲时失败、1.25 GiB 成功；`expandable_segments` 在两种环境变量拼写下都不生效 |
-| `verify-2026-11-27.json`、`verify-2026-11-27.stderr.log` | 干净提交 `57e2c756` 上的 `flag-fixes verify`（修复树，6 个声明命令，passed、`source_dirty=false`；stderr 为空） |
+| `verify-2026-11-27.json`、`verify-2026-11-27.stderr.log` | 干净提交 `c2aef972` 上的 `flag-fixes verify`（修复树，6 个声明命令，passed、`source_dirty=false`；stderr 为空） |
 
 e2e 的 `.log` 是 launcher 输出（JSON 摘要），`.train.log` 是 trainer 的 `train.log`
 （只把解释器与脚本的本机前缀改写为相对路径，内容未删减，attempt 3 除外）；被 watchdog

@@ -158,7 +158,7 @@ segments）在两种拼写下都不生效。修复后的步骤最大单次请求
 - `flag-fixes apply reranker-last-token-logits --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <基线树>`：clean；对已打补丁的树 `check` 报 `Baseline checksum differs`（exit 2）
 - `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，6/6 rc=0**，在干净提交
-  `57e2c756`（`source_dirty=false`）上运行，2026-11-27；原始输出 `../results/verify-2026-11-27.json`（stderr 为空）
+  `c2aef972`（`source_dirty=false`）上运行，2026-11-27；原始输出 `../results/verify-2026-11-27.json`（stderr 为空）
   - reranker-lmhead-dispatch（dispatch）：rc=0
   - reranker-fsdp2-step-cpu（dispatch）：rc=0
   - reranker-logits-alloc-repro（repro）：rc=0
