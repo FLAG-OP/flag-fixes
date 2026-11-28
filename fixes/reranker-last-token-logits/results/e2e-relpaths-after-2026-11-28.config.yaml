@@ -1,0 +1,48 @@
+train:
+  task: reranker
+  seed: 42
+  epochs: 1
+  log_every: 1
+  save_every_epoch: false
+  save_steps: 0
+  gradient_accumulation_steps: 1
+  name: qwen3-reranker-8b
+  batch_size: 16
+  output_dir: /tmp/opencode/scratch/e2e-relpath-after2
+  parallel: ddp
+  master_dtype: bf16
+  model:
+    model_type: qwen3_reranker
+    model_path: /tmp/opencode/models/Qwen3-Reranker-8B
+    max_length: 640
+    torch_dtype: bf16
+    freeze_backbone: false
+    use_score_head: false
+    gradient_checkpointing: true
+  data:
+    path: /tmp/opencode/data/t2ranking-triplet-15
+    validation_path: /tmp/opencode/data/t2ranking-triplet-15
+    test_path: /tmp/opencode/data/t2ranking-triplet-15
+    train_split: train
+    validation_split: validation
+    test_split: test
+    eval_max_samples: 16
+    split_modulo: 20
+    shuffle_buffer: 20000
+    length_sort_window: 256
+    num_negatives: 1
+    max_samples: 80
+  optimizer:
+    name: adamw
+    lr: 1.0e-05
+    lr_decay_style: cosine
+    min_lr: 1.0e-06
+    warmup_steps: 200
+    weight_decay: 0.01
+    max_grad_norm: 0.0
+  hardware:
+    device_type: cuda
+    distributed_backend: auto
+    autocast_device: cuda
+    use_flaggems: false
+  deterministic: false

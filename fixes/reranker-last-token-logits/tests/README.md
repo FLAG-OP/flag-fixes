@@ -30,9 +30,20 @@ launcher（`test_reranker_fsdp2_step.py`、`e2e_reranker_train.py`）通过
   torch_xmlir 栈上启动 trainer 会失败（Python 侧数到 8 张卡、运行时侧只有 2 张），这是厂商栈
   的行为，与 launcher 无关，记录见 `../reports/validation.md`；在这台机器上选卡用
   `CUDA_VISIBLE_DEVICES`。
+- **两层超时是协调好的**。`flag-fixes verify` 的预算到点时会直接终止 launcher，被终止的 launcher
+  没法清理自己启动的作业。所以 verify 把预算放进环境变量 `FLAG_FIXES_COMMAND_TIMEOUT`，`run_job`
+  把内层超时压在"预算 − launcher 已经花掉的启动时间 − 60 秒清理预留"之内；预算连一次启动加清理
+  都装不下时不启动作业，launcher 以退出码 2 结束并在记录里写 `launched: false`。两个 launcher 命令
+  在 `fix.yaml` 里的 `timeout_seconds` 是各自 `--timeout` 默认值再加 120 秒，所以正常 verify 下内层
+  超时仍等于默认值。launcher 的记录里有实际生效的 `timeout_s` 和它的来源 `timeout_source`。
+- **E2E 的路径以调用者目录为准**。`--model`、`--data`、`--out`（以及它们的环境变量默认值）在入口
+  一次性解析成绝对路径，配置里只写绝对路径——worker 是在 `tests/` 下启动的，相对路径在那里会指到
+  别处。`--out` 就是本次运行的目录；不给时用 `$RERANKER_E2E_OUT` 或系统临时目录下的
+  `reranker-e2e/<时间戳>`。
 
 `_reranker_common.py`、`_torchrun_job.py` 是共享工具；`_fsdp2_worker.py` /
-`_e2e_trainer_entry.py` / `_launcher_worker.py` 只被 launcher 启动，不单独作为验证入口。
+`_e2e_trainer_entry.py` / `_launcher_worker.py` 只被 launcher 启动；`_verify_budget_entry.py`
+由自测复制进一个临时 fix、经真实的 `flag-fixes verify` 启动。它们都不单独作为验证入口。
 
 设备：昆仑芯 P800 OAM（96 GiB），torch 2.9.0+cu129（torch_xmlir shim），
 transformers 4.57.6。设备命令沿用平台启动脚本的 `XMLIR_BMM_DISPATCH_VALUE=0`。
@@ -57,7 +68,7 @@ transformers 4.57.6。设备命令沿用平台启动脚本的 `XMLIR_BMM_DISPATC
 | `repro_reranker_logits_alloc.py` | repro | XPU（≥90 GiB 单卡） | batch 32（64 对 × 640）：part 1 记录 `lm_head` 单次输出；part 2 在"61 GiB 常驻 + 34 GiB 不等大碎片"的堆上跑一步真实 `reranker_loss` 前向+反向 | **exit 1**（`Tried to allocate 11.57 GiB`） | exit 0（同一步跑通） | 1800 s |
 | `bench_reranker_step.py` | benchmark | XPU | batch 16/32、长度 640 的前向/反向耗时（墙钟与 event 中位数）与峰值显存 | exit 0（记录） | exit 0（记录，对照两份 JSON） | 3600 s |
 | `e2e_reranker_train.py` | e2e | XPU | 原始 trainer `flagscale.train.train_retrieval` + 真实 checkpoint + T2Ranking `triplet-15`：逐 optimizer step 的 allocated/reserved、loss；资产来自 `--model`/`$RERANKER_MODEL`、`--data`/`$RERANKER_DATA` | 视配置（2 卡 batch 32 在本机被 F-P800-1 阻断） | 视配置 | 3600 s |
-| `test_reranker_launchers.py` | regression | CPU | 两个 launcher 共用部分的自测，与 FlagScale 树无关：①两个共用同一 worker 脚本路径的 torchrun 作业（各 2 rank），超时那组自己的 rank 与子进程在 launcher 返回时全部退出、另一组未被信号且每个 rank 在超时前后都活着并 exit 0；②可见设备三种情况（默认可见 / 显式 CUDA 列表 / 仅 XPU 列表）及截断、XPU 已设两种变体 | —（`--cleanup legacy` 用旧清理方式重放同一场景：另一组被杀，预期 exit 1） | exit 0（17 项） | 900 s |
+| `test_reranker_launchers.py` | regression | CPU | 两个 launcher 所依赖部分的自测，与 FlagScale 树无关：①可见设备 7 种输入（默认可见 / 显式 CUDA 列表 / 仅 XPU 列表，及截断、XPU 已设两种变体）；②E2E 入口的相对路径：从另一个目录传相对的 `--model`/`--data`/`--out`（命令行与环境变量默认值各一例），配置里的路径都是绝对路径、在 worker 目录下可读，缺输入仍是前置条件；③两个共用同一 worker 脚本路径的 torchrun 作业（各 2 rank），超时那组自己的 rank 与子进程在 launcher 返回时全部退出、另一组未被信号且每个 rank 在超时前后都活着并 exit 0；④从真实的 `flag_fixes.cli.main` 入口给一个临时 fix 触发短超时（`--verify-budget`，默认 75 s）：替身 launcher 用真实 `run_job` 起一个卡住的 torchrun 作业，要求命令报失败且是 launcher 自己超时后返回的、verify 返回时本作业残留进程为 0、并行的对照作业正常退出 | —（`--cleanup legacy`、`--budget ignored` 分别重放两种修订前的行为，预期 exit 1） | exit 0（27 项） | 900 s |
 
 判定口径：
 

@@ -86,6 +86,24 @@ validation:
     列表时 launcher 能启动 trainer 但 trainer 在本机厂商栈 import 阶段失败（不在本修复范围）。
     修订后在干净提交 217d46f 上重跑 flag-fixes verify：passed=true、7/7 rc=0、source_dirty=false，
     记录于 results/verify-2026-11-27-r2.json。
+  - 2026-11-28 复审修订（flag-fixes PR 11 的评论 7230246671），两处验证入口的问题。
+    (1) verify 的外层超时与 launcher 的内层默认超时相同（FSDP2 1800 s、E2E 3600 s），外层先计时，
+    到点直接终止 launcher，它来不及清理自己启动的作业。现在 verify 把本次命令的预算放进环境变量
+    FLAG_FIXES_COMMAND_TIMEOUT（src/flag_fixes/cli.py），run_job 把内层超时压在"预算减去已花掉的
+    启动时间与 60 s 清理预留"之内，装不下就不启动（launcher exit 2，记录 launched=false）；两个
+    launcher 命令的 timeout_seconds 改为内层默认值加 120 s。回归从真实的 flag_fixes.cli.main 入口给
+    一个临时 fix 触发短超时（替身 launcher 用真实 run_job 起卡住的 torchrun 作业）：预算 75 s 时
+    launcher 自己在 14.99 s 超时并清理后返回失败，verify 15.4 s 返回并报告命令失败，残留进程 0，
+    并行对照作业正常退出；用 --budget ignored（修订前的行为）时外层 25 s 终止 launcher，verify
+    返回时还有 5 个带作业 id 的进程。真实 e2e launcher 在预算 100 s 下 36.7 s 自行超时并结束真实
+    trainer worker，预算 30 s 时不启动；对真实 fix 跑 verify --timeout 70 时第 2 条命令的 launcher
+    8 s 自行超时并报失败，verify 返回后无残留进程。
+    (2) E2E 入口在调用者目录检查 --model / --data 并写配置，却切到 tests/ 启动 worker，相对路径在
+    worker 那里指到别处（68b79639 实测 FileNotFoundError）。现在三个路径在入口统一解析成绝对路径，
+    配置只含绝对路径；--out 仍是本次运行的目录，默认输出根从写死的本机路径改为系统临时目录。
+    回归：自测从另一个目录传相对路径（命令行与环境变量默认值各一例）；真实 trainer 从仓库根目录
+    传相对的模型、数据、输出路径跑完 5 步，产物在指定目录。
+  - 修订后在干净提交上重跑 flag-fixes verify：7 个声明命令，记录于 results/verify-2026-11-28.json。
   - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、
     owner=null。
   commands:
@@ -105,7 +123,8 @@ validation:
     - --steps
     - '2'
     level: dispatch
-    timeout_seconds: 1800
+    # the launcher's own --timeout (1800) plus start-up and the cleanup reserve it keeps
+    timeout_seconds: 1920
     env:
       PYTHONPATH: '{target}'
   - name: reranker-launcher-selftest
@@ -153,7 +172,8 @@ validation:
     - '0'
     - --no-save
     level: e2e
-    timeout_seconds: 3600
+    # the launcher's own --timeout (3600) plus start-up and the cleanup reserve it keeps
+    timeout_seconds: 3720
     env:
       PYTHONPATH: '{target}'
 notes:
@@ -176,6 +196,11 @@ notes:
 - launcher（_torchrun_job.py）：超时清理只对环境里带本作业 id 的进程发 SIGKILL，launcher 自身被
   外部终止时不做清理；可见设备只在有显式 CUDA_VISIBLE_DEVICES 时截断并镜像到 XPU_VISIBLE_DEVICES，
   默认可见或只设 XPU 列表原样透传。只设 XPU 列表时本机 torch_xmlir 栈上 trainer 起不来（厂商栈行为）。
+- verify 与 launcher 的两层超时靠环境变量 FLAG_FIXES_COMMAND_TIMEOUT 协调（src/flag_fixes/cli.py 把预算
+  传给命令）：launcher 的内层超时不超过"预算减去已花掉的启动时间与 60 s 清理预留"，装不下就不启动；
+  声明命令里两个 launcher 的 timeout_seconds 因此是内层默认值加 120 s（1920 / 3720）。不起子进程的脚本
+  不读这个变量，预算到点仍会被 verify 直接终止，它们没有需要清理的子进程。
+- e2e 命令的 --model / --data / --out 在入口解析成绝对路径后再写进配置；从任何目录用相对路径调用都一样。
 - 未覆盖（已记录）：厂商 clip_grad_norm_ 对 bf16 梯度的临时张量、AdamW step 的
   15.25 GiB 临时张量、平台 batch/accum 配置的回退评估。
 installation_status: source-checked

@@ -45,7 +45,7 @@ flag-fixes --root . rollback --target /path/to/FlagGems
 
 `check` 和 `plan` 是同一精确基线暂存预演，要求目标仍是修复前内容；已安装内容不能用它们作验收。前述三项快照不一致条目的预演会失败。v1 拒绝任何共享目标文件的组合，也没有 bundle 安装入口。
 
-`verify` 只输出 JSON 测试结果，不修改安装状态中的 `verification: not-run`，也不提升 catalog 的 hardware_status；需另存输出并提交验收证据。
+`verify` 只输出 JSON 测试结果，不修改安装状态中的 `verification: not-run`，也不提升 catalog 的 hardware_status；需另存输出并提交验收证据。命令超时到点会被直接终止；verify 把预算放进环境变量 `FLAG_FIXES_COMMAND_TIMEOUT`，会启动子进程的命令据此自行提前超时并清理。
 
 `pip install` 只安装工具。实际部署必须显式 `apply`；请停止使用目标环境的进程，修改后以新进程重新加载模块。安装按精确文件 hash 检查基线、保存备份，回滚前检查文件是否被用户再次修改。多文件事务依靠日志恢复，不承诺整个文件系统原子替换。
 

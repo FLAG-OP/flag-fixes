@@ -1,6 +1,6 @@
 # 结果
 
-本目录保存小型 JSON / 日志，均为 2026-11-26/27 在本机（KunlunXin P800 OAM 96 GiB，
+本目录保存小型 JSON / 日志，均为 2026-11-26/27/28 在本机（KunlunXin P800 OAM 96 GiB，
 torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份或模型缓存。
 `base` = FlagScale `89f342e6` 干净快照，`fixed` = 基线 + 本 patch。环境、hash、逐命令的精确命令行与
 证据采集时间见 `../reports/validation.md`；下面每条记录的输入、判定标准与结果以对应 JSON 为准。
@@ -30,10 +30,17 @@ torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份�
 | `allocator-probe-2026-11-27.{json,log}` | `tests/probe_p800_allocator.py`：不等大空洞交还设备后 11.57 GiB 请求在 72.84 GiB 空闲时失败、1.25 GiB 成功；`expandable_segments` 在两种环境变量拼写下都不生效 |
 | `verify-2026-11-27.json`、`verify-2026-11-27.stderr.log` | 干净提交 `c2aef972` 上的 `flag-fixes verify`（修复树，6 个声明命令，passed、`source_dirty=false`；stderr 为空）。对应审阅修订前的脚本 |
 | `verify-2026-11-27-r2.json`、`verify-2026-11-27-r2.stderr.log` | 审阅修订后的干净提交上的 `flag-fixes verify`（修复树，7 个声明命令，passed、`source_dirty=false`；修订提交 `217d46f`） |
-| `launcher-selftest-scoped-2026-11-27.{json,log}`、`…-{hang,normal}.log` | `tests/test_reranker_launchers.py`（默认 scoped）：两个共用同一 worker 脚本路径的 torchrun 作业，17/17 exit 0。超时那组的 2 个 rank 与 2 个子进程在 launcher 返回时全部结束；另一组未被信号，60 s 超时时刻活着、91.9 s 正常结束。`hang.log` / `normal.log` 是两个作业的 torchrun 输出（含 worker 的 `[job-worker]` 公告行） |
-| `launcher-selftest-legacy-2026-11-27.{json,log}`、`…-{hang,normal}.log` | 同一自测用 `--cleanup legacy`（`c6f73493` 的清理方式，`pkill -KILL -f <worker 脚本>`）：另一组 60.2 s 被杀（返回码 -9），超时那组留下 2 个子进程，3/14 项失败，exit 1——预期结果，用来说明自测能区分两种行为 |
+| `launcher-selftest-scoped-2026-11-27.{json,log}`、`…-{hang,normal}.log` | `tests/test_reranker_launchers.py` 第一轮修订后的版本（17 项；已被 11-28 的 27 项记录取代）：两个共用同一 worker 脚本路径的 torchrun 作业，17/17 exit 0。超时那组的 2 个 rank 与 2 个子进程在 launcher 返回时全部结束；另一组未被信号，60 s 超时时刻活着、91.9 s 正常结束。`hang.log` / `normal.log` 是两个作业的 torchrun 输出（含 worker 的 `[job-worker]` 公告行） |
+| `launcher-selftest-legacy-2026-11-27.{json,log}`、`…-{hang,normal}.log` | 第一轮的同一自测用 `--cleanup legacy`（`c6f73493` 的清理方式，`pkill -KILL -f <worker 脚本>`）：另一组 60.2 s 被杀（返回码 -9），超时那组留下 2 个子进程，3/14 项失败，exit 1——预期结果，用来说明自测能区分两种行为 |
 | `launcher-visible-devices-before-c6f73493-2026-11-27.log` | `c6f73493` 的 e2e launcher 在两种环境下的原始输出（以 `###` 分隔行标注环境与命令；文件由 shell 拼接）：默认可见、仅 `XPU_VISIBLE_DEVICES=1,2` 都是 `KeyError: 'CUDA_VISIBLE_DEVICES'`，exit 1，trainer 未启动 |
 | `e2e-1card-fixed-{defaultvis,explicitvis,xpuonly}-2026-11-27.{json,log}` | 新 launcher 在三种可见设备环境下启动真实 trainer（修复树，单卡 bf16 batch 16）：默认可见 exit 0（5 步）；显式 `CUDA_VISIBLE_DEVICES=1,2` exit 0（5 步）；仅 `XPU_VISIBLE_DEVICES=1,2` launcher 透传并启动，trainer exit 1（0 步）。JSON 的 `visible_devices` 记录处理前后的两个变量，`job_id` / `timeout_cleanup` 记录作业身份 |
+| `launcher-selftest-{scoped,legacy,budget-ignored}-2026-11-28.{json,log}`、`…-{hang,normal}.log` | 第二轮修订后的自测（27 项，四部分：可见设备、E2E 相对路径、清理作用范围、verify 的超时预算）。scoped：27/27 exit 0——第③部分超时那组 2 个 rank 与 2 个子进程在 launcher 返回时全部结束；第④部分从真实的 `flag_fixes.cli.main` 入口给临时 fix `--timeout 75`，替身 launcher 自己的超时 14.99 s，verify 15.4 s 返回，残留 0，对照作业正常退出。legacy（`--cleanup legacy`）：3/24 失败，exit 1（预期）。budget-ignored（`--budget ignored`）：外层 25 s 终止 launcher，verify 返回时 5 个带作业 id 的进程，3/27 失败，exit 1（预期）。三份的收尾清扫之后都没有残留进程 |
+| `e2e-relpaths-before-68b79639-2026-11-28.{log,train.log,config.yaml}` | 把 `68b79639` 检出到临时 worktree，从它的根目录用相对的 `--model` / `--data` / `--out` 调用旧 launcher：exit 1、0 步。`config.yaml` 是它写出的配置（相对路径），`train.log` 是 worker 的 `FileNotFoundError: …/flags/scratch/…/config.yaml`，`.log` 是 launcher 输出 |
+| `e2e-relpaths-after-2026-11-28.{json,log,config.yaml}` | 修订后的 launcher 从仓库根目录传相对路径：exit 0、5 步、40.1 s；`config.yaml` 里 `output_dir`、`model_path` 与三个数据路径都是绝对路径 |
+| `e2e-1card-fixed-verifybudget{100,30}-2026-11-28.{json,log}` | 直接给真实 e2e launcher verify 的预算（不经 verify）。100 s：内层超时 36.7 s，launcher 自行超时、结束 1 个真实 trainer worker 后返回失败（exit 1，`timeout_cleanup` 记录被信号的进程）；30 s：不启动（exit 2，`launched=false`） |
+| `fsdp2-cpu-budget{75,5}-2026-11-28.{json,log}` | 直接给 FSDP2 launcher verify 的预算（CPU，单 rank，不经 verify）。75 s：内层超时 13.5 s，自行超时、结束 1 个 worker 后返回（exit 2，`blocked=true`，`timeout_cleanup` 记录被信号的进程，残留为空）；5 s：不启动（exit 2，`launched=false`） |
+| `verify-2026-11-28.json`、`verify-2026-11-28.stderr.log` | 第二轮修订后的干净提交上的 `flag-fixes verify`（修复树，7 个声明命令，passed、`source_dirty=false`） |
+| `verify-short-timeout-2026-11-28.json` | 同一提交上的 `flag-fixes verify … --timeout 70`：dispatch 通过；FSDP2 CPU 测试的 launcher 把内层超时压到 8 s、自行超时并结束作业后报失败（rc=2，不是外层超时）；verify 返回 `passed=false`，返回后没有带作业 id 的进程（进程检查在 verify 返回后立刻用 pgrep 做了一次，没有单独留文件） |
 | `e2e-1card-fixed-xpuonly-2026-11-27.train.log` | 仅 XPU 列表那次的 trainer 日志：`import torch` 后第一次 CUDA 调用报 `device >= 0 && device < num_gpus INTERNAL ASSERT FAILED … device=2, num_gpus=2`（厂商栈行为） |
 
 e2e 的 `.log` 是 launcher 输出（JSON 摘要），`.train.log` 是 trainer 的 `train.log`
@@ -50,10 +57,12 @@ e2e 的 `.log` 是 launcher 输出（JSON 摘要），`.train.log` 是 trainer �
 | dispatch（CPU、FSDP2 CPU、FSDP2 2 卡） | ✅ 基线 exit 1 → 修复 exit 0 |
 | 真实 trainer 单卡 bf16 batch 16 | ✅ 两棵树 exit 0；loss 在日志记录精度（6 位小数）下一致；reserved 峰值 92.76 → 79.64 GiB |
 | 真实 trainer 2 卡 FSDP2：修复版越过基线 OOM 的那一步（长文档 step 3） | ✅ 第 4 次尝试 step 1–3 完成（越过基线 OOM 点，step 3 峰值 allocated 84.41 GiB）。可比的 loss 只有前两步，在日志记录精度下一致；基线没有 step 3 的记录 |
-| launcher 超时清理只作用于本作业（自测，两个共用脚本路径的并发作业） | ✅ scoped 17/17 exit 0；旧清理方式下同一自测 3/14 失败（exit 1，预期） |
+| launcher 超时清理只作用于本作业（自测，两个共用脚本路径的并发作业） | ✅ scoped 27/27 exit 0；旧清理方式下同一自测 3/24 失败（exit 1，预期） |
+| verify 的外层超时不再抢在 launcher 清理之前（自测第④部分，从真实的 verify 入口触发短超时） | ✅ 预算 75 s：launcher 自己在 14.99 s 超时并清理后返回失败，verify 15.4 s 返回时残留 0，对照作业正常退出；`--budget ignored`（修订前行为）下外层终止 launcher、残留 5 个进程（3/27 失败，exit 1，预期） |
+| E2E 从仓库根目录传相对的模型、数据、输出路径 | ✅ 修订后 5 步、exit 0、产物在指定目录；`68b79639` 的 launcher 0 步、exit 1 |
 | launcher 在默认可见 / 显式选卡 / 仅 XPU 列表下启动 trainer | ✅ 前两种各跑完 5 步；⚠️ 仅 XPU 列表：launcher 不再崩溃并启动了 trainer，但 trainer 在本机厂商栈 import 阶段失败（不在本修复范围，不计为通过） |
 | 真实 trainer 2 卡 FSDP2 修复后完整跑通（干净退出） | ❌ 未得到：本机 XCCL 集合通信间歇性卡死（F-P800-1），修复树 7 次 trainer 尝试里 2 次走完 3 个 optimizer step，均未干净退出 |
-| `flag-fixes verify`（修复树，7 个声明命令） | ✅ passed，7/7 rc=0（审阅修订后的干净提交，`source_dirty=false`；`verify-2026-11-27-r2.json`） |
+| `flag-fixes verify`（修复树，7 个声明命令） | ✅ passed，7/7 rc=0（第二轮修订后的干净提交，`source_dirty=false`；`verify-2026-11-28.json`；`--timeout 70` 的短超时探针见 `verify-short-timeout-2026-11-28.json`） |
 | 平台整模型验收 | ❌ not-run，`hardware_status=unverified` |
 
 ## 口径说明

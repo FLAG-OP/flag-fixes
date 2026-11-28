@@ -1,0 +1,30 @@
+{
+  "device": "cpu",
+  "nproc": 1,
+  "layers": 2,
+  "hidden": 2048,
+  "returncode": -9,
+  "timed_out": true,
+  "elapsed_s": 13.8,
+  "ranks": [],
+  "job_id": "166141-1795824193-a3340a8cdb4f",
+  "timeout_cleanup": {
+    "job_id": "166141-1795824193-a3340a8cdb4f",
+    "signalled": [
+      {
+        "pid": 166281,
+        "cmdline": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -u /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_fsdp2_worker.py --device cpu --steps 2 --rows 8 --json /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/results/fsdp2-cpu-budget75-2026-11-28.json --layers 2 --hidden 2048"
+      }
+    ],
+    "survived": [],
+    "grace_s": 30.0
+  },
+  "visible_devices": null,
+  "launched": true,
+  "timeout_s": 13.479254007339478,
+  "timeout_source": "min(--timeout 1800 s, flag-fixes verify budget 75 s minus start-up and a 60 s cleanup reserve)",
+  "log": "fixes/reranker-last-token-logits/results/fsdp2-cpu-budget75-2026-11-28.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 fixes/reranker-last-token-logits/tests/_fsdp2_worker.py --device cpu --steps 2 --rows 8 --json fixes/reranker-last-token-logits/results/fsdp2-cpu-budget75-2026-11-28.json --layers 2 --hidden 2048",
+  "passed": false,
+  "blocked": true
+}

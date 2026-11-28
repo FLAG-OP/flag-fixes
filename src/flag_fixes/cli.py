@@ -78,9 +78,13 @@ def verify(root, target, manifest, python, timeout=None):
         env['PYTHONPATH'] = str(target/'src') + (os.pathsep+env['PYTHONPATH'] if env.get('PYTHONPATH') else '')
         argv = [executable, str(script), *command.get('args', [])]
         record = {'name': command['name'], 'level': command['level'], 'argv': argv}
+        budget = timeout or command.get('timeout_seconds', 600)
+        # The command learns how much time it has. One that starts worker processes keeps its
+        # own timeout inside this budget, so it can still end them before the budget does.
+        env['FLAG_FIXES_COMMAND_TIMEOUT'] = str(budget)
         try:
             result = subprocess.run(argv, cwd=source, env=env, text=True, capture_output=True,
-                                    timeout=timeout or command.get('timeout_seconds', 600))
+                                    timeout=budget)
             record.update(returncode=result.returncode, passed=result.returncode == 0,
                           stdout=result.stdout, stderr=result.stderr)
         except subprocess.TimeoutExpired:

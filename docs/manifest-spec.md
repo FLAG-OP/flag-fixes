@@ -48,6 +48,8 @@ name、script、level 必填；level 只允许 repro / regression / dispatch / e
 
 script 相对 source.path，命令工作目录为 source.path。CLI 用 --python 指定解释器，参数列表不经 shell 执行；仅 env 中替换 `{target}`，args 不做该替换。PYTHONPATH 前置目标的 src/。默认超时 600 秒，CLI --timeout 可覆盖。失败返回非零值；缺设备或跳过不构成通过。
 
+超时到点时 verify 直接终止命令进程，不会替它收尾。所以运行命令时 verify 把本次预算（秒，即 `timeout_seconds` 或 `--timeout`）放进命令的环境变量 `FLAG_FIXES_COMMAND_TIMEOUT`：会启动子进程的脚本应据此让自己的内层超时早于预算到期，留出结束子进程的时间；预算装不下一次完整运行加清理时应直接跳过。可参考 `fixes/reranker-last-token-logits/tests/_torchrun_job.py` 的 `resolve_timeout`。
+
 verify 先检查目标为声明的 after_sha256，只输出 JSON 结果，不更新安装状态的 verification 字段，也不提升 catalog hardware_status。需保存结果作为后续审核材料。
 
 ## 部署资格与来源状态

@@ -15,7 +15,8 @@ The model and the T2Ranking ``triplet-15`` parquet shards are not bundled:
 Exit codes
     0  trainer completed at least ``--min-steps`` optimizer steps
     1  trainer failed (non-zero return code, OOM in the log, too few steps)
-    2  precondition missing (model / data / device) -- SKIP, not a pass
+    2  precondition missing (model / data / device), or flag-fixes verify's time budget cannot
+       hold a run and a cleanup -- SKIP, not a pass
 """
 from __future__ import annotations
 
@@ -25,6 +26,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -33,6 +35,8 @@ import yaml
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from _torchrun_job import limit_visible_devices, run_job  # noqa: E402
+
+STARTED_AT = time.time()  # the clock for flag-fixes verify's time budget starts here
 
 GIB = 2**30
 OOM_PATTERN = re.compile(
@@ -116,7 +120,51 @@ def build_config(args) -> dict:
     return {"train": train}
 
 
-def main() -> int:
+def absolute(path: str) -> str:
+    """Resolve against the caller's directory.
+
+    The launcher checks --model / --data and writes the config where it is called from, but
+    starts the worker with cwd=tests/: a relative path that passes the checks here would point
+    somewhere else there.  So every path is resolved once, at the entry, and the config only
+    carries absolute paths.
+    """
+    return str(Path(path).expanduser().resolve())
+
+
+def prepare(args):
+    """Resolve the input paths, check them, create the run directory and write its config.
+
+    Returns ``(out, config_path, config)``, or the reason the run cannot start (a precondition
+    is missing).  Needs no device, so ``tests/test_reranker_launchers.py`` calls it from other
+    directories to check the path handling.
+    """
+    if getattr(args, "model", None):
+        args.model = absolute(args.model)
+    if getattr(args, "data", None):
+        args.data = absolute(args.data)
+    if not args.model or not Path(args.model, "config.json").is_file():
+        return "no checkpoint directory (--model / $RERANKER_MODEL)"
+    if not args.data or not (Path(args.data).is_file() or list(Path(args.data).glob("*.parquet"))):
+        return "no triplet parquet (--data / $RERANKER_DATA)"
+
+    if args.out:  # the run directory itself
+        out = Path(args.out).expanduser().resolve()
+    else:  # one directory per run under the given or default root
+        given = os.environ.get("RERANKER_E2E_OUT")
+        root = Path(absolute(given)) if given else Path(tempfile.gettempdir()) / "reranker-e2e"
+        tag = f"{args.parallel}-{args.master_dtype}-b{args.batch}-n{args.nproc}-{time.strftime('%Y%m%d-%H%M%S')}"
+        out = root / tag
+    out.mkdir(parents=True, exist_ok=True)
+    for stale in out.glob("memory.json.rank*"):  # a reused --out must not mix in an earlier run
+        stale.unlink()
+    args.out = out
+    config = build_config(args)
+    config_path = out / "config.yaml"
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False, allow_unicode=True), encoding="utf-8")
+    return out, config_path, config
+
+
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--model", default=os.environ.get("RERANKER_MODEL"))
     parser.add_argument("--data", default=os.environ.get("RERANKER_DATA"))
@@ -134,16 +182,17 @@ def main() -> int:
         help="optimizer.max_grad_norm; 0 disables clipping (the vendor clip_grad_norm_ "
         "materialises ~35 GiB of fp32 temporaries for bf16 gradients)",
     )
-    args = parser.parse_args()
+    return parser.parse_args(argv)
 
-    if not args.model or not Path(args.model, "config.json").is_file():
-        print("SKIP: no checkpoint directory (--model / $RERANKER_MODEL); exit 2")
+
+def main() -> int:
+    args = parse_args()
+
+    prepared = prepare(args)
+    if isinstance(prepared, str):
+        print(f"SKIP: {prepared}; exit 2")
         return 2
-    if not args.data or not (
-        Path(args.data).is_file() or list(Path(args.data).glob("*.parquet"))
-    ):
-        print("SKIP: no triplet parquet (--data / $RERANKER_DATA); exit 2")
-        return 2
+    out, config_path, config = prepared
     try:
         import torch  # noqa: F401
     except Exception as error:
@@ -156,14 +205,6 @@ def main() -> int:
     if probe.returncode != 0:
         print("SKIP: no CUDA device for the trainer; exit 2")
         return 2
-
-    tag = f"{args.parallel}-{args.master_dtype}-b{args.batch}-n{args.nproc}-{time.strftime('%Y%m%d-%H%M%S')}"
-    out = Path(args.out or Path(os.environ.get("RERANKER_E2E_OUT", "/tmp/opencode/reranker-e2e")) / tag)
-    out.mkdir(parents=True, exist_ok=True)
-    args.out = out
-    config = build_config(args)
-    config_path = out / "config.yaml"
-    config_path.write_text(yaml.safe_dump(config, sort_keys=False, allow_unicode=True), encoding="utf-8")
 
     env = dict(os.environ)
     # an explicit CUDA_VISIBLE_DEVICES is cut to the rank count and mirrored to XPU; with the
@@ -194,12 +235,12 @@ def main() -> int:
         "--config-file", str(config_path), "--mem-out", str(mem_out),
     ]
     # own session per job; a timeout ends the agent and the processes carrying this job's id
-    job = run_job(command, env, out / "train.log", args.timeout, cwd=str(HERE))
+    job = run_job(command, env, out / "train.log", args.timeout, cwd=str(HERE), started_at=STARTED_AT)
     returncode, timed_out, elapsed = job["returncode"], job["timed_out"], job["elapsed_s"]
     if timed_out:
         cleanup = job["cleanup"]
         ended = [item["pid"] for item in cleanup["signalled"]]
-        print(f"launcher timeout after {args.timeout} s: torchrun agent ended, job {job['job_id']} "
+        print(f"launcher timeout after {job['timeout_s']:.0f} s: torchrun agent ended, job {job['job_id']} "
               f"processes signalled {ended}, survived {cleanup['survived']}")
 
     text = (out / "train.log").read_text(errors="replace")
@@ -220,7 +261,8 @@ def main() -> int:
         "passed": passed,
         "returncode": returncode,
         "timed_out": timed_out,
-        "elapsed_s": round(elapsed, 1),
+        "elapsed_s": elapsed,
+        "launched": job["launched"],
         "batch": args.batch,
         "parallel": args.parallel,
         "master_dtype": args.master_dtype,
@@ -244,11 +286,19 @@ def main() -> int:
         "job_id": job["job_id"],
         "timeout_cleanup": job["cleanup"],
         "visible_devices": visible,
+        # the timeout this run actually had and where it came from (--timeout, or cut to fit
+        # the budget flag-fixes verify gave the command)
+        "timeout_s": job["timeout_s"],
+        "timeout_source": job["timeout_source"],
     }
     if args.json:
         Path(args.json).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json).write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(json.dumps(summary, indent=2, ensure_ascii=False))
+    if not job["launched"]:
+        # flag-fixes verify's budget was too short for a run and a cleanup: nothing was started
+        print(f"SKIP: {job['timeout_source']}; exit 2")
+        return 2
     if not passed:
         print(f"E2E FAIL: steps {steps_done}/{args.min_steps}, returncode {returncode}, oom={bool(oom_lines)}")
         return 1

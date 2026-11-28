@@ -1,0 +1,55 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[job-worker] tag=e2e-trainer job=152487-1795823300-959f0f9489c4 pid=152624 rank=0
+Traceback (most recent call last):
+  File "/tmp/opencode/scratch/wt-68b79639/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py", line 91, in main
+    train_retrieval.main()
+  File "/tmp/opencode/FlagScale-fixed/flagscale/train/train_retrieval.py", line 1317, in main
+    config = OmegaConf.load(args.config_file)
+  File "/tmp/opencode/pydeps/omegaconf/omegaconf.py", line 189, in load
+    with io.open(os.path.abspath(file_), "r", encoding="utf-8") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/opencode/scratch/wt-68b79639/fixes/scratch/e2e-relpath-before/config.yaml'
+Traceback (most recent call last):
+  File "/tmp/opencode/scratch/wt-68b79639/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py", line 116, in <module>
+    raise SystemExit(main())
+  File "/tmp/opencode/scratch/wt-68b79639/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py", line 110, in main
+    with open(f"{args.mem_out}.rank{RANK}", "w", encoding="utf-8") as handle:
+FileNotFoundError: [Errno 2] No such file or directory: '../../scratch/e2e-relpath-before/memory.json.rank0'
+E1128 07:48:30.852000 152619 site-packages/torch/distributed/elastic/multiprocessing/api.py:882] failed (exitcode: 1) local_rank: 0 (pid: 152624) of binary: /root/miniconda/envs/python310_torch29_cuda/bin/python3
+Traceback (most recent call last):
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 940, in <module>
+    main()
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 936, in main
+    run(args)
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/run.py", line 927, in run
+    elastic_launch(
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 156, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 293, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/tmp/opencode/scratch/wt-68b79639/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-11-28_07:48:30
+  host      : VM-20-4-ubuntu
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 152624)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

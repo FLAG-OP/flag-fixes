@@ -231,4 +231,8 @@ AdamW 状态（step 1 起 15.25 GiB 常驻）与临时量（每步 15.25 GiB）�
   lm_head all-gather"的归因可在上游一并更正。
 - 验证入口自身的两处平台相关边界（不在补丁范围）：只设 `XPU_VISIBLE_DEVICES` 时本机 torch_xmlir 栈的
   device 枚举不一致、trainer 起不来，launcher 只保证不崩溃并如实透传；launcher 的超时清理按作业 id 限定，
-  但 launcher 自身被外部终止时不做清理。
+  但 launcher 自身被外部终止时不做清理。与 `flag-fixes verify` 之间靠预算环境变量
+  `FLAG_FIXES_COMMAND_TIMEOUT` 协调：launcher 把内层超时压在预算之内并留出清理时间，verify 不会再在
+  launcher 清理之前终止它。
+- E2E 入口的 `--model` / `--data` / `--out` 以调用者目录为准解析成绝对路径；worker 在 `tests/` 下启动，
+  相对路径在那里会指到别处（第二轮审阅修订）。

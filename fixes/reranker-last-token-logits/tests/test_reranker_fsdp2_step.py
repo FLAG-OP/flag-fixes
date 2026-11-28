@@ -30,11 +30,15 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from _torchrun_job import limit_visible_devices, run_job  # noqa: E402
+
+STARTED_AT = time.time()  # the clock for flag-fixes verify's time budget starts here
 
 BLOCKER = re.compile(r"Watchdog caught collective operation timeout|kl3ChannelCheckErrors|kernel exception", re.I)
 
@@ -77,7 +81,12 @@ def main() -> int:
             print("SKIP: no CUDA device; exit 2")
             return 2
 
-    given = Path(args.json or Path(os.environ.get("RERANKER_TEST_OUT", "/tmp/opencode/reranker-tests")) / "fsdp2-step.json")
+    if args.json:
+        given = Path(args.json)
+    else:
+        root = Path(os.environ["RERANKER_TEST_OUT"]) if os.environ.get("RERANKER_TEST_OUT") \
+            else Path(tempfile.gettempdir()) / "reranker-tests"
+        given = root / "fsdp2-step.json"
     # the worker runs with cwd=tests/, so hand it an absolute record path
     out = given.resolve()
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -106,12 +115,12 @@ def main() -> int:
     command += extra
 
     # own session per job; a timeout ends the agent and the processes carrying this job's id
-    job = run_job(command, env, log_path, args.timeout, cwd=str(HERE))
+    job = run_job(command, env, log_path, args.timeout, cwd=str(HERE), started_at=STARTED_AT)
     returncode, timed_out, elapsed = job["returncode"], job["timed_out"], job["elapsed_s"]
     if timed_out:
         cleanup = job["cleanup"]
         ended = [item["pid"] for item in cleanup["signalled"]]
-        print(f"launcher timeout after {args.timeout} s: torchrun agent ended, job {job['job_id']} "
+        print(f"launcher timeout after {job['timeout_s']:.0f} s: torchrun agent ended, job {job['job_id']} "
               f"processes signalled {ended}, survived {cleanup['survived']}")
 
     text = log_path.read_text(errors="replace")
@@ -127,15 +136,29 @@ def main() -> int:
         "job_id": job["job_id"],
         "timeout_cleanup": job["cleanup"],
         "visible_devices": visible,
+        # the timeout this run actually had and where it came from (--timeout, or cut to fit
+        # the budget flag-fixes verify gave the command)
+        "launched": job["launched"],
+        "timeout_s": job["timeout_s"],
+        "timeout_source": job["timeout_source"],
     }
     summary["log"] = display(log_path)
     summary["command"] = " ".join(display(part) for part in command)
+    if not job["launched"]:
+        # flag-fixes verify's budget was too short for a run and a cleanup: nothing was started
+        summary["passed"] = False
+        write_summary(args.json, summary)
+        print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
+        print(f"SKIP: {job['timeout_source']}; exit 2")
+        return 2
     blocked = timed_out or bool(BLOCKER.search(text))
     if blocked:
         summary.update(passed=False, blocked=True)
         write_summary(args.json, summary)
         print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
-        print("BLOCKED: the platform did not complete the FSDP2 run (collective timeout / device error); "
+        why = (f"launcher timeout after {job['timeout_s']:.0f} s: {job['timeout_source']}" if timed_out
+               else "collective timeout / device error")
+        print(f"BLOCKED: the FSDP2 run did not complete ({why}); "
               "exit 2 -- not a pass. See the log for the watchdog trace.")
         return 2
     if not records:

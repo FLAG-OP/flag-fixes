@@ -8,11 +8,14 @@
 审阅修订（PR #11 评论 7210838015，2026-11-27）：两个 launcher、等价性脚本有改动并新增 launcher 自测，受影响的
 脚本都已重跑；改动、理由与证据见文末"审阅修订"一节。
 
+第二轮复审（PR #11 评论 7230246671，2026-11-28）：修了两处验证入口的问题——verify 与 launcher 的两层超时、
+E2E 入口的相对路径——受影响的脚本、管理工具的 `verify` 及其测试都已重跑，见文末"审阅修订，第二轮"。
+
 ## 环境与源码
 
 | 项 | 值 |
 |---|---|
-| 执行日期 | 首轮 2026-11-26 20:22 – 2026-11-27 08:44；审阅修订后的重跑 2026-11-27 13:50 起（本机时间） |
+| 执行日期 | 首轮 2026-11-26 20:22 – 2026-11-27 08:44；第一轮审阅修订后的重跑 2026-11-27 13:50 起；第二轮 2026-11-28 07:40 起（本机时间） |
 | 执行者 | AI 代理自动执行，没有人工复核；全部命令与原始输出都在 `../results/` |
 | 机器 | KunlunXin P800 OAM ×8 节点，本验证用可见的 2 张卡（每卡 96 GiB）；同节点卡 3、4 上始终有其他进程的负载（非本验证） |
 | 驱动 / 运行时 | XPU-SMI 5.0.21.47 / XPU-RT 5.13.0；分配器后端 `xpu native` |
@@ -53,7 +56,9 @@ omegaconf 不在共享环境里，本机以 `pip install --target` 装到独立�
 | 回归 / 边界 | `PYTHONPATH=<树> python3 tests/test_reranker_scores_equivalence.py` | 两侧各 9 个预期梯度、逐张量有限；分数在参考最大 logit 的 2 个 bf16 ulp 内，梯度相对差 ≤ 3%（bf16 权重）；fp32 权重下 1e-4 / 1e-3；7 个比较器自检用例全部按预期 | exit 0（基线即参考，平凡通过） | exit **0**（14/14：bf16 权重 5 例 max\|diff\| = 0.0；fp32 权重 2 例分数 2.4e-7、梯度相对差 2.0e-4；比较器 7 例） | `equivalence-{base,fixed}-2026-11-27.{json,log}`（审阅修订后重跑；11-26 的 5 例旧版记录保留） |
 | 性能 / 精度 | `PYTHONPATH=<树> python3 tests/bench_reranker_step.py --iters 5` | 记录前后耗时与峰值显存（见 `../benchmarks/README.md`） | exit 0 | exit 0 | `bench-{base,fixed}-2026-11-26.{json,log}` |
 | e2e（真实 trainer） | `RERANKER_MODEL=<checkpoint> RERANKER_DATA=<triplet-15> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save` | 两棵树都跑完 5 步；loss 一致 | exit 0 | exit 0；5 步 loss、validation、test loss 在日志记录精度（6 位小数）下一致 | `e2e-1card-{base,fixed}-2026-11-27.{json,log,train.log}` |
-| launcher 自测（CPU） | `python3 tests/test_reranker_launchers.py` | 两个共用同一 worker 脚本路径的 torchrun 作业（各 2 rank）：超时那组自己的 rank 与子进程在 launcher 返回时全部退出；另一组未被信号，每个 rank 在超时前启动、超时后结束，exit 0。可见设备 7 种输入 | 旧清理方式（`--cleanup legacy`）：另一组在 60.2 s 被杀（返回码 -9），超时那组留下 2 个子进程；3/14 项失败，exit **1** | exit **0**（17/17） | `launcher-selftest-{scoped,legacy}-2026-11-27.{json,log}` |
+| launcher 自测（CPU） | `python3 tests/test_reranker_launchers.py` | 四部分：①可见设备 7 种输入；②E2E 入口从另一个目录拿到相对的 `--model` / `--data` / `--out`（命令行与环境变量默认值各一例）后，配置里全是绝对路径、在 worker 目录下可读，缺输入仍是前置条件；③两个共用同一 worker 脚本路径的 torchrun 作业（各 2 rank）：超时那组自己的 rank 与子进程在 launcher 返回时全部退出，另一组未被信号、每个 rank 在超时前后都活着并 exit 0；④从真实的 `flag_fixes.cli.main` 入口给一个临时 fix 触发短超时（`--verify-budget`，默认 75 s）：命令报失败且是 launcher 自己超时后返回的，verify 返回时本作业残留进程为 0，并行的对照作业正常退出 | 修订前的两种行为（`--cleanup legacy`：另一组 60.2 s 被杀、返回码 -9，超时那组留下 2 个子进程，3/24 项失败；`--budget ignored`：外层 25 s 终止 launcher，verify 返回时还有 5 个带作业 id 的进程，3/27 项失败），都是 exit **1** | exit **0**（27/27）：第④部分里 launcher 自己的超时 14.99 s，verify 15.4 s 返回 | `launcher-selftest-{scoped,legacy,budget-ignored}-2026-11-28.{json,log}` |
+| E2E 的相对路径（真实 trainer，修复树） | 在仓库根目录：`python3 fixes/reranker-last-token-logits/tests/e2e_reranker_train.py --model <相对的 checkpoint 目录> --data <相对的 parquet 目录> --out <相对的输出目录> --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save` | worker 在 `tests/` 下启动后仍能读到配置、模型和数据；产物写回指定的输出目录 | `68b79639` 的 launcher：exit **1**、0 步，worker 报 `FileNotFoundError: [Errno 2] No such file or directory: '…/flags/scratch/…/config.yaml'`（配置里写的是相对路径） | exit **0**，5 步，40.1 s；配置里的 `output_dir`、`model_path` 与三个数据路径都是绝对路径，`config.yaml` / `train.log` / `memory.json.rank0` / `metrics.json` 都在指定目录 | `e2e-relpaths-{before-68b79639,after}-2026-11-28.*` |
+| verify 的超时预算（真实 launcher，不经过 verify，直接给预算） | `FLAG_FIXES_COMMAND_TIMEOUT=100 python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save`；另三种：e2e 预算 30 s；`FLAG_FIXES_COMMAND_TIMEOUT=75 python3 tests/test_reranker_fsdp2_step.py --device cpu --nproc 1 --steps 2`；FSDP2 预算 5 s | 预算够启动但不够跑完时，launcher 先于预算自行超时、结束自己启动的作业并报失败；预算连一次启动加清理都装不下时不启动 | —（修订前没有预算可读：verify 的外层超时到点直接终止 launcher） | e2e 预算 100 s：内层超时 36.7 s，launcher 37.0 s 返回（结束 1 个真实 trainer worker），返回后带作业 id 的进程 0 个，exit 1；预算 30 s：不启动，exit 2。FSDP2 预算 75 s：13.5 s 截断、exit 2；预算 5 s：不启动，exit 2 | `e2e-1card-fixed-verifybudget{100,30}-2026-11-28.{json,log}`、`fsdp2-cpu-budget{75,5}-2026-11-28.{json,log}` |
 | launcher 启动路径（真实 trainer，修复树） | `env -u CUDA_VISIBLE_DEVICES -u XPU_VISIBLE_DEVICES RERANKER_MODEL=<checkpoint> RERANKER_DATA=<triplet-15> PYTHONPATH=<树> python3 tests/e2e_reranker_train.py --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save`；另两种环境：`CUDA_VISIBLE_DEVICES=1,2`；仅 `XPU_VISIBLE_DEVICES=1,2` | launcher 不因可见设备变量崩溃，trainer 被启动 | `c6f73493` 的 launcher：默认可见与仅 XPU 列表都是 `KeyError: 'CUDA_VISIBLE_DEVICES'`，exit 1，trainer 未启动 | 默认可见：exit 0（5 步）；显式选卡：exit 0（5 步）；仅 XPU 列表：launcher 透传并启动，trainer 在厂商栈 import 阶段失败（exit 1，0 步） | `launcher-visible-devices-before-c6f73493-2026-11-27.log`、`e2e-1card-fixed-{defaultvis,explicitvis,xpuonly}-2026-11-27.{json,log}` |
 | 安装 / 回滚 | `python3 -m flag_fixes --root <本仓库> check / plan / apply / status reranker-last-token-logits --target <树>` | 基线 hash 命中、patch 可干净应用、结果与快照一致；未获部署资格时 `apply` 拒绝 | — | `check`/`plan` exit 0；`apply` exit 2（`deployable=false`）；`status` clean | 本页"工具链校验"一节 |
 
@@ -65,6 +70,14 @@ CUDA 调用（FlagScale 注册平台时导入 flag_gems → `torch.cuda.get_devi
 `torch.cuda.device_count()` 返回 8，逐卡 `get_device_name` 到第 3 张失败——Python 侧仍按 8 张卡枚举，运行时侧
 只给了 XPU 列表里的 2 张。这是本机 torch_xmlir 栈对"只设 `XPU_VISIBLE_DEVICES`"的处理，不在本修复范围；
 launcher 的责任（不崩溃、不替用户发明 CUDA 列表、如实透传）已经满足，但这一种情况**不算跑通**。
+
+两层超时怎么配合：`flag-fixes verify` 到点时是直接终止命令进程的，被终止的 launcher 没法清理自己启动的
+作业。所以 verify 把本次命令的预算（`timeout_seconds` 或 `--timeout`）放进环境变量
+`FLAG_FIXES_COMMAND_TIMEOUT`；`run_job` 把 launcher 的内层超时压在"预算 − launcher 已经花掉的启动时间 −
+60 s 清理预留"之内，余量不为正就不启动作业。`fix.yaml` 里两个 launcher 命令的 `timeout_seconds` 是各自
+`--timeout` 默认值加 120 s，所以正常 verify 下内层超时仍等于默认值；launcher 的记录里有实际生效的
+`timeout_s` 与来源 `timeout_source`。launcher 自测自己也起作业，预算装不下整个自测（默认参数下 200 s）时
+同样直接跳过、不启动任何东西。
 
 ### 证据的采集时间与脚本版本
 
@@ -86,6 +99,12 @@ launcher 的责任（不崩溃、不替用户发明 CUDA 列表、如实透传�
 - `verify-2026-11-27-r2.json` 是修订提交 `217d46f` 上的重跑（7 个命令，`source_dirty=false`），取代上一条。
   重跑时 fix 目录没有未提交改动：verify 的输出要先写到仓库之外、跑完再拷进来，否则输出文件本身会被
   `git status` 计入 dirty（第一次就把输出重定向进了 `results/`，那份 7/7 的记录带着 `source_dirty=true`，已丢弃）。
+- 第二轮修订（PR #11 评论 7230246671，2026-11-28）改了 `run_job`（读 verify 的预算）、两个 launcher、E2E 入口的
+  路径处理、launcher 自测（新增两部分），以及管理工具的 `verify`（多传一个环境变量，附一条测试）。受影响的
+  都重跑：`launcher-selftest-*-2026-11-28.*`（27 项，取代 11-27 的 17 项记录）、`e2e-relpaths-*`、
+  `e2e-1card-fixed-verifybudget*`，以及修订提交上的 `flag-fixes verify`（`verify-2026-11-28.json`）。
+- `e2e-relpaths-before-68b79639-*` 是把 `68b79639` 检出到一个临时 worktree、从它的根目录用相对路径调用得到的
+  原始输出（launcher 输出、worker 日志、写出的配置各一份）。
 - 工具与脚本的原始输出含本机绝对路径，未做脱敏或改写。
 
 ## 关键数据
@@ -225,17 +244,22 @@ PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口
   （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply reranker-last-token-logits --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <基线树>`：clean；对已打补丁的树 `check` 报 `Baseline checksum differs`（exit 2）
-- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在修订提交 `217d46f` 上
-  运行（fix 目录无未提交改动，`source_dirty=false`），2026-11-27；原始输出
-  `../results/verify-2026-11-27-r2.json`（stderr 为空）。声明命令比首轮多一个 launcher 自测
-- 首轮记录 `../results/verify-2026-11-27.json`（干净提交 `c2aef972`，6/6 rc=0）对应修订前的脚本，已被上一条取代；
-  首轮的 6 个命令：
+- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在第二轮修订提交上
+  运行（fix 目录无未提交改动，`source_dirty=false`），2026-11-28；原始输出 `../results/verify-2026-11-28.json`
+  （stderr 为空）。7 个声明命令：
   - reranker-lmhead-dispatch（dispatch）：rc=0
   - reranker-fsdp2-step-cpu（dispatch）：rc=0
+  - reranker-launcher-selftest（regression）：rc=0
   - reranker-logits-alloc-repro（repro）：rc=0
   - reranker-scores-equivalence（regression）：rc=0
   - reranker-step-benchmark（benchmark）：rc=0
   - reranker-trainer-single-card（e2e）：rc=0
+- 真实入口上的短超时（同一天，同一提交）：`flag-fixes verify … --timeout 70`。每条命令拿到 70 s 的预算；dispatch
+  （不起子进程）照常通过，FSDP2 CPU 测试的 launcher 把内层超时压到 8 s、自行超时并结束作业后报失败，verify 随即
+  返回（`passed=false`；该命令的记录是 launcher 自己返回的 rc=2，不是外层超时），返回后没有带作业 id 的进程。
+  原始输出 `../results/verify-short-timeout-2026-11-28.json`
+- 之前的两份记录对应各自当时的脚本，已被上面的记录取代：`../results/verify-2026-11-27.json`（`c2aef972`，6/6）
+  与 `../results/verify-2026-11-27-r2.json`（`217d46f`，7/7）
 - 仓库测试 `python -m pytest -q`：26 passed, 3 subtests passed；`python -m compileall -q fixes`：exit 0
 
 verify 只输出 JSON 测试结果，不提升 `hardware_status`；上面的设备结论仍以平台验收为准。
@@ -252,6 +276,17 @@ verify 只输出 JSON 测试结果，不提升 `hardware_status`；上面的设�
 | 4 | trainer 的 loss 只保存 6 位小数，不能说"逐位相同"；2 卡只有前两步有双方可比的 loss，第 3 步应写"修复版越过基线 OOM 点"并分别列两边实测的显存；`WORKFLOW.md` 里"AdamW 切碎缓存导致第 2 步失败"与实际第 3 步 OOM 冲突；缺模板第 8 行 | 凡是 loss 对照一律改为"日志记录精度下一致"（README、WORKFLOW、fix.yaml、两份报告、results 索引）；2 卡一节改为逐 step 对照表，两边显存分列；WORKFLOW 第 4 行改为"触发步次取决于分配器缓存历史，机制未逐事件确认"；补第 8 行"上游：not-run" | 本页"2 卡 FSDP2"一节；`WORKFLOW.md` 第 4、6、8 行 |
 
 修订没有改动补丁本身（patch sha256 不变），也没有改变 `deployable=false` / `hardware_status=unverified`。
+
+## 审阅修订，第二轮（PR #11 评论 7230246671，2026-11-28）
+
+复审对象是 `68b79639`。两处验证入口的问题都已修，各有一条回归；回归结果已并入"命令与结果"表。
+
+| # | 意见 | 修改 | 回归 |
+|---|---|---|---|
+| 1 | verify 的外层超时（FSDP2 1800 s、E2E 3600 s）与 launcher 的内层默认超时相同，外层先计时，可能提前终止 launcher，使其来不及清理；实测外层返回后仍能找到带本次作业 id 的进程 | verify 把本次命令的预算放进环境变量 `FLAG_FIXES_COMMAND_TIMEOUT`（`src/flag_fixes/cli.py` 一处改动，管理工具自己的测试加一条契约检查）；`run_job` 把内层超时压在"预算 − launcher 已花掉的启动时间 − 60 s 清理预留"之内，余量不为正就不启动作业（launcher exit 2，记录 `launched=false`）；`fix.yaml` 里两个 launcher 命令的 `timeout_seconds` 改为内层默认值加 120 s；launcher 自测在预算装不下整个自测时也直接跳过 | 自测第④部分从真实的 `flag_fixes.cli.main` 入口对一个临时 fix 触发短超时（替身 launcher 用真实 `run_job` 起一个卡住的 torchrun 作业）：预算 75 s 时 launcher 自己在 14.99 s 超时、结束 2 个 rank 与 2 个子进程后返回失败，verify 15.4 s 返回并报告命令失败，残留进程 0，并行的对照作业正常退出（27/27，exit 0）。`--budget ignored`（修订前的行为）：外层 25 s 终止 launcher，verify 返回时还有 5 个带作业 id 的进程（3/27 失败，exit 1，预期）。真实入口上另试：e2e launcher 预算 100 s 时 36.7 s 自行超时并结束真实 trainer worker；预算 30 s 时不启动；对真实 fix 跑 `verify --timeout 70`，第 2 条命令的 launcher 8 s 自行超时并报失败，verify 返回后无残留进程 |
+| 2 | 从仓库根目录传相对的 `--out` / `--model` / `--data` 时，launcher 在调用者目录检查并写好配置，却切到 `tests/` 启动 worker，worker 按相对路径找不到 | 三个路径（含环境变量默认值）在入口统一解析成绝对路径，配置只含绝对路径；`--out` 仍是本次运行的目录；默认输出根从写死的本机路径改为系统临时目录 | 自测第②部分：从另一个目录传相对路径（命令行、环境变量默认值各一例），配置里的路径都是绝对路径、在 worker 目录下可读，缺输入仍是前置条件。真实 trainer 从仓库根目录传相对的模型、数据、输出路径：`68b79639` 的 launcher 失败（worker 报 `FileNotFoundError: …/flags/scratch/…/config.yaml`，0 步）；修订后 5 步、exit 0，产物在指定目录 |
+
+修订没有改动补丁本身，也没有改变 `deployable=false` / `hardware_status=unverified`。管理工具只多了 verify 传出的这一个环境变量。
 
 ## not-run（未验证清单，不记为通过）
 

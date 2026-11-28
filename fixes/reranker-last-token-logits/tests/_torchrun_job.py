@@ -15,6 +15,12 @@ this with two concurrent jobs sharing one worker script path.
 
 The same module holds ``limit_visible_devices``, the only place the launchers touch the
 visible-device variables.
+
+Two layers of timeout meet when ``flag-fixes verify`` runs a launcher: verify kills the command
+when its own budget (``timeout_seconds`` or ``--timeout``) ends, and a killed launcher cannot
+clean up.  verify therefore passes the budget in ``FLAG_FIXES_COMMAND_TIMEOUT`` and
+``resolve_timeout`` keeps the launcher's timeout short enough for the job to end and be
+cleaned up before it.
 """
 from __future__ import annotations
 
@@ -25,10 +31,38 @@ import subprocess
 import time
 
 JOB_ID_ENV = "RERANKER_JOB_ID"
+# set by ``flag-fixes verify``: seconds until it kills the command it started
+BUDGET_ENV = "FLAG_FIXES_COMMAND_TIMEOUT"
+# what a launcher keeps for ending its job when the budget runs out: terminate_job waits up to
+# 30 s for signalled processes to exit, the rest covers reading the log and writing the summary
+RESERVE_S = 60.0
 
 
 def new_job_id() -> str:
     return f"{os.getpid()}-{int(time.time())}-{secrets.token_hex(6)}"
+
+
+def resolve_timeout(requested: float, started_at: float) -> tuple[float | None, str]:
+    """The launcher's own timeout, kept inside the time budget ``flag-fixes verify`` gives the command.
+
+    Standalone there is no budget and ``requested`` stands.  Under verify the command is killed
+    the moment its budget ends, with no chance to clean up the job it started, so the launcher
+    gives back what it has already spent since ``started_at`` and keeps ``RESERVE_S`` for the
+    cleanup.  ``None`` means what is left would not fit a run and a cleanup: start nothing.
+    """
+    budget = os.environ.get(BUDGET_ENV)
+    try:
+        budget = float(budget) if budget else None
+    except ValueError:  # not written by flag-fixes verify; do not let it break the launcher
+        budget = None
+    if budget is None:
+        return requested, "--timeout"
+    left = budget - (time.time() - started_at) - RESERVE_S
+    if left <= 0:
+        return None, (f"flag-fixes verify budget {budget:g} s minus the time already spent and the "
+                      f"{RESERVE_S:g} s cleanup reserve leaves nothing for a run")
+    return min(requested, left), (f"min(--timeout {requested:g} s, flag-fixes verify budget {budget:g} s minus "
+                                  f"start-up and a {RESERVE_S:g} s cleanup reserve)")
 
 
 def announce_worker(tag: str) -> None:
@@ -97,16 +131,27 @@ def terminate_job(job_id: str, grace: float = 30.0) -> dict:
     return cleanup
 
 
-def run_job(command: list[str], env: dict, log_path, timeout: float, cwd=None, job_id: str | None = None) -> dict:
+def run_job(command: list[str], env: dict, log_path, timeout: float, cwd=None, job_id: str | None = None,
+            started_at: float | None = None) -> dict:
     """Run ``command`` in a session of its own; on timeout end the agent and the job's processes.
 
     ``job_id`` is placed in the child's environment under ``JOB_ID_ENV`` and returned with
-    the result.  ``cleanup`` is ``None`` unless the timeout fired.
+    the result.  ``cleanup`` is ``None`` unless the timeout fired.  ``started_at`` is when the
+    launcher began; under ``flag-fixes verify`` the timeout is cut so that the job is over and
+    cleaned up before the budget ends (``resolve_timeout``).  ``launched`` is ``False`` when
+    the budget left no room for a run: nothing was started.
     """
     job_id = job_id or new_job_id()
+    timeout, timeout_source = resolve_timeout(timeout, time.time() if started_at is None else started_at)
+    result = {"job_id": job_id, "started_at": time.time(), "timed_out": False, "cleanup": None,
+              "launched": True, "timeout_s": timeout, "timeout_source": timeout_source}
+    if timeout is None:
+        with open(log_path, "w", encoding="utf-8") as log:  # the launcher still has a log to read
+            log.write(f"not launched: {timeout_source}\n")
+        result.update(launched=False, returncode=None, elapsed_s=round(time.time() - result["started_at"], 1))
+        return result
     env = dict(env)
     env[JOB_ID_ENV] = job_id
-    result = {"job_id": job_id, "started_at": time.time(), "timed_out": False, "cleanup": None}
     with open(log_path, "w", encoding="utf-8") as log:
         process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, env=env, cwd=cwd,
                                    start_new_session=True)

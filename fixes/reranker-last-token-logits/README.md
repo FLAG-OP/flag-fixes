@@ -117,7 +117,8 @@ RERANKER_MODEL=/path/to/Qwen3-Reranker-8B RERANKER_DATA=/path/to/triplet-15 \
   PYTHONPATH="$TARGET" python3 tests/e2e_reranker_train.py \
   --nproc 1 --parallel ddp --master-dtype bf16 --batch 16 --min-steps 5 --max-grad-norm 0 --no-save
 
-# launcher 自测（CPU，约 95 秒；与 FlagScale 树无关）：超时清理只作用于本作业、可见设备三种情况
+# launcher 自测（CPU，约 2 分 20 秒；与 FlagScale 树无关）：超时清理只作用于本作业、可见设备、
+# E2E 相对路径、verify 的超时预算（第四部分会搭一个临时 fix 走真实的 flag-fixes verify）
 python3 tests/test_reranker_launchers.py
 
 # 或由管理工具一次跑完 7 个声明命令（要求目标已是修复后内容；同样需要上面两个环境变量）
@@ -149,7 +150,9 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
 │   ├── test_reranker_scores_equivalence.py     #   分数与梯度对原公式，bf16 与 fp32 权重（level: regression）
 │   ├── bench_reranker_step.py                  #   前后耗时与峰值显存（level: benchmark）
 │   ├── e2e_reranker_train.py + _e2e_trainer_entry.py   # 原始 trainer（level: e2e，需真实权重与数据）
-│   ├── test_reranker_launchers.py + _launcher_worker.py   # launcher 自测：清理作用范围、可见设备（level: regression，CPU）
+│   ├── test_reranker_launchers.py + _launcher_worker.py   # launcher 自测：清理作用范围、可见设备、E2E 相对路径、
+│   │                                                       #   verify 超时预算（level: regression，CPU）
+│   ├── _verify_budget_entry.py       #   自测用：经真实 verify 启动的替身 launcher（不单独作为入口）
 │   ├── build_long_parquet.py          #   构造长文档子集（2 卡自然复现用）
 │   ├── probe_p800_allocator.py        #   诊断：分配器性质（非验证命令）
 │   ├── probe_xccl_timing.py           #   诊断：集合通信卡死的时序探索（非验证命令）
@@ -177,10 +180,11 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
 | batch 32 前向 / 反向耗时 | 3.459 / 10.129 s | 3.247 / 9.760 s |
 | 真实 trainer 单卡 bf16 batch 16，reserved 峰值 | 92.76 GiB | 79.64 GiB |
 | 同上，5 步 loss / validation / test loss | 0.539403 / 0.461096 / 0.329392 | 日志记录精度（6 位小数）下一致 |
-| launcher（`test_reranker_launchers.py`，CPU，17 项） | 旧清理方式下，超时作业会把另一组的进程一起杀掉（`--cleanup legacy`，exit 1）；默认可见或只设 XPU 列表时 launcher `KeyError`，trainer 不启动 | exit 0：超时清理只作用于本作业；三种可见设备情况 launcher 都能启动 trainer |
+| launcher（`test_reranker_launchers.py`，CPU，27 项） | 修订前：超时作业会把另一组的进程一起杀掉（`--cleanup legacy`，exit 1）；verify 的外层超时先到时直接终止 launcher、留下作业进程（`--budget ignored`，exit 1）；默认可见或只设 XPU 列表时 launcher `KeyError`；从别的目录传相对路径时 worker 找不到配置 | exit 0：清理只作用于本作业；三种可见设备情况都能启动 trainer；launcher 读 verify 的预算，先于预算自行超时并清理；相对路径在入口解析成绝对路径 |
+| 真实 trainer 从仓库根目录传相对的模型、数据、输出路径 | `68b79639`：exit 1、0 步（worker 找不到配置） | exit 0，5 步；配置里全是绝对路径，产物在指定目录 |
 | 真实 trainer 2 卡 FSDP2、batch 32、长文档 | 第 3 步反向 OOM（与平台记录逐项吻合） | 第 4 次尝试越过基线 OOM 点（step 3 峰值 allocated 84.41 GiB），**没有一次干净退出**（XCCL 卡死） |
 | `flag-fixes validate` / `check` / `plan` | — | exit 0 |
-| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（修订提交 `217d46f`，`source_dirty=false`） |
+| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（第二轮修订提交，`source_dirty=false`；`verify-2026-11-28.json`） |
 
 判定与覆盖边界：脚本只有退出码 0 才算通过，缺设备或缺 checkpoint/数据一律退出码 2。
 普通 CI（无设备 runner）只执行 `flag-fixes validate`、`python -m pytest -q` 和本地 fix 脚本的
@@ -206,8 +210,12 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
   形状下的 fp32 舍入，具体 kernel 选择没有追踪。训练形态（bf16 权重 + bf16 autocast）是逐位相同。
 - **launcher 只保证不替用户发明可见设备列表**：只设 `XPU_VISIBLE_DEVICES` 时原样透传；在本机的
   torch_xmlir 栈上这样启动的 trainer 在 import 阶段就失败（Python 侧 `device_count()` = 8、运行时侧
-  只有 2 张卡），是厂商栈的行为，不在本修复范围。超时清理按作业 id 限定；launcher 自身被外部终止时
-  不做清理。
+  只有 2 张卡），是厂商栈的行为，不在本修复范围。超时清理按作业 id 限定；launcher 自身被外部
+  （不是 `flag-fixes verify`）终止时不做清理。
+- **两层超时的协调只覆盖 launcher 读到预算的情况**：`flag-fixes verify` 把预算放进
+  `FLAG_FIXES_COMMAND_TIMEOUT`，launcher 把内层超时压在预算之内，装不下就不启动。不起子进程的脚本
+  （dispatch、repro、equivalence、bench）不读这个变量，预算到点仍会被 verify 直接终止——它们没有
+  需要清理的子进程。
 - **平台配置的 batch 16 / GA 1 是为这次 OOM 设的**：修复后是否有余量回到 32 或 accum=2，
   需在平台 2 卡环境实测后再改配置；平台注释里"11.57 GiB 是 lm_head all-gather"的归因待更正。
 - **只改了适配层一处分支**：厂商 `clip_grad_norm_` 对 bf16 梯度会物化约 35 GiB 临时张量，
@@ -219,5 +227,9 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
   版本逻辑相同，只多两个后来删掉的未使用辅助函数（复现脚本另有一处说明文字后来改过）。
   `results/verify-2026-11-27.json` 是干净提交 `c2aef972` 上的重跑（6 个命令）。审阅修订
   （PR #11 评论 7210838015）改了两个 launcher、等价性脚本并新增 launcher 自测，受影响的脚本全部
-  重跑，记录是 `results/` 里 2026-11-27 的第二批次文件；修订后的 `flag-fixes verify`（7 个命令）
-  记录在 `results/verify-2026-11-27-r2.json`。工具原始输出含本机绝对路径，未做脱敏或改写。
+  重跑，记录是 `results/` 里 2026-11-27 的第二批次文件；第一轮修订后的 `flag-fixes verify`（7 个命令）
+  记录在 `results/verify-2026-11-27-r2.json`。
+- **第二轮复审修订（PR #11 评论 7230246671，2026-11-28）**：改了 `run_job`（读 verify 的预算）、两个 launcher、
+  E2E 入口的路径处理、launcher 自测（新增两部分，27 项）和管理工具的 `verify`（多传一个环境变量，附一条测试）。
+  受影响的都已重跑，记录是 `results/` 里 2026-11-28 的文件；第二轮修订后的 `flag-fixes verify` 记录在
+  `results/verify-2026-11-28.json`。工具原始输出含本机绝对路径，未做脱敏或改写。
