@@ -1,0 +1,19 @@
+{
+  "device": "cpu",
+  "nproc": 1,
+  "layers": 2,
+  "hidden": 2048,
+  "returncode": null,
+  "timed_out": false,
+  "elapsed_s": 0.0,
+  "ranks": [],
+  "job_id": "166616-1795824209-479bacf84fc3",
+  "timeout_cleanup": null,
+  "visible_devices": null,
+  "launched": false,
+  "timeout_s": null,
+  "timeout_source": "flag-fixes verify budget 5 s minus the time already spent and the 60 s cleanup reserve leaves nothing for a run",
+  "log": "fixes/reranker-last-token-logits/results/fsdp2-cpu-budget5-2026-11-28.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 fixes/reranker-last-token-logits/tests/_fsdp2_worker.py --device cpu --steps 2 --rows 8 --json fixes/reranker-last-token-logits/results/fsdp2-cpu-budget5-2026-11-28.json --layers 2 --hidden 2048",
+  "passed": false
+}

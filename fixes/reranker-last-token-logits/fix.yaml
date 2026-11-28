@@ -1,0 +1,209 @@
+schema_version: 1
+template_version: 1
+id: reranker-last-token-logits
+title: Qwen3-Reranker 只对打分位置做 LM head（去掉 11.57 GiB 整序列 logits，消除 P800 碎片化 OOM）
+owner: null
+status: draft
+deployable: false
+source:
+  kind: local
+  path: fixes/reranker-last-token-logits
+  commit: null
+  repository: null
+target:
+  package: flagscale
+  baseline_version: null
+  baseline_commit: 89f342e690053e07dda845f1365089ec00464e09
+patches:
+- path: patches/reranker-last-token-logits.patch
+  sha256: ee7ded27c09fd2ae7b15f499ce1f14a79891ecf20b428f30fa812848197537d4
+targets:
+- path: flagscale/models/retrieval/qwen3_reranker.py
+  before_sha256: 501470249c00c934268bd3a02bb29cad0884dd4a9336635c1d2f85a70781f7fc
+  after_sha256: dd34c0dd0459f0469280968496ed7a42d86e46fb3feac6ada822d221ccbfcd89
+  after_source: src/flagscale/models/retrieval/qwen3_reranker.py
+backends:
+- kunlunxin
+requires: []
+conflicts: []
+validation:
+  hardware_status: unverified
+  evidence:
+  - 问题（problem26）：Qwen3-Reranker-8B 在昆仑芯 P800 上以 2 卡 FSDP2、fp32 master、
+    batch_size=32 训练，若干步后报 "Tried to allocate 11.57 GiB. 96.00 GiB total,
+    20.90 GiB free, 71.68 GiB already allocated by PyTorch"；平台把 batch 降到 16 规避，
+    显存仍 95/96 GB（FlagScale conf/train/qwen3_reranker_p800.yaml 注释）。
+  - 根因：平台注释把 11.57 GiB 归因于 lm_head 的 all-gather，实测 all-gather 只有
+    1.157 GiB（trainer 日志 gathers 1185 MiB）。11.57 GiB = 64 对 x 640 token x
+    151,669 词表 x 2 B，是 Qwen3RerankerModel.forward 让因果 LM 对每个位置算出的
+    整序列 logits（实测 outputs.logits 形状 (64, 640, 151669) bf16），适配器每条序列
+    只用 1 行。P800 分配器上 expandable_segments 不生效（PYTORCH_CUDA_ALLOC_CONF 下告警
+    UserWarning expandable_segments not supported on this platform，PYTORCH_ALLOC_CONF 下
+    静默忽略），碎片后无法提供大块连续显存。
+  - 复现（2026-11-26，本机 P800 OAM 96 GiB 单卡，torch 2.9.0+cu129，transformers 4.57.6）：
+    tests/repro_reranker_logits_alloc.py 在 "61.0 GiB 常驻 + 34 GiB 不等大碎片" 的堆上跑
+    一步真实 reranker_loss。基线 exit 1：
+    "Tried to allocate 11.57 GiB ... of which 20.63 GiB is free. Of the allocated memory
+    73.51 GiB is allocated by PyTorch"；修复后 exit 0，同一步跑通，峰值 +25.36 GiB。
+    常驻量与真实 trainer step 1 之后实测的 61.02 GiB 一致。
+  - 数值（tests/test_reranker_scores_equivalence.py，审阅修订后 14 例，两棵树 exit 0）：真实架构
+    （36 层、词表 151,669）随机权重，每例记录权重 dtype 与是否 autocast。bf16 权重（autocast
+    开或关）5 例分数与 BCE 反向梯度对基线公式 max|diff| 均为 0.0；fp32 权重、无 autocast
+    2 例分数 max|diff| 2.4e-7、梯度相对差 2.0e-4（阈值 1e-4 / 1e-3）——fp32 下不是逐位相同。
+    梯度比较先验结构（两侧各 9 个预期梯度）并逐张量检查有限，再算误差；7 个 comparator 自检
+    用例确认 NaN 梯度、两侧同时缺一个等会被拒绝。真实 trainer + Qwen3-Reranker-8B revision
+    77d193c7 + T2Ranking triplet-15 单卡 bf16 batch 16：两棵树 5 步 loss（0.627536/0.466457/
+    0.370828/0.639762/0.592430）、train_loss 0.539403、validation_loss 0.461096、test_loss
+    0.329392 在日志记录精度（6 位小数）下一致。
+  - 分派：CPU 2 层随机 Qwen3 上 lm_head 只收到 [rows, hidden]、每条序列取最后非 pad 位、
+    梯度到达 lm_head/embedding/norm/块（25 例，基线 6 例失败 exit 1，修复 exit 0）；
+    真实 parallel_utils.apply_fsdp2（CPU/gloo 单 rank）上 lm_head 是 Shard(0) DTensor、
+    带 FSDP pre/post hook、每步两个 micro-batch（先关同步再同步）、optimizer 更新
+    lm_head 分片（基线 exit 1，修复 exit 0）。
+  - 显存与耗时（tests/bench_reranker_step.py，单卡无优化器状态，长度 640）：
+    batch 32 LM head 单次输出 11.5714 -> 0.0181 GiB，前向/反向峰值 allocated
+    40.80/54.99 -> 29.94/40.61 GiB，前向/反向 3.459/10.129 -> 3.247/9.760 s；
+    batch 16 前向峰值 28.60 -> 22.67 GiB。原始 trainer 单卡 bf16 batch 16 五步
+    reserved 峰值 92.76 -> 79.64 GiB。
+  - 平台形态（2 卡 FSDP2、fp32 master、batch 32、真实权重）的自然复现——数据换成每对都截断到
+    640 的长文档子集（T2Ranking shard 0 中 454 行）后，基线第 3 步反向在两个 rank 同时报
+    "Tried to allocate 11.57 GiB … of which 20.77 GiB is free. Of the allocated memory 71.66 GiB
+    is allocated by PyTorch"，traceback 落在 lm_head 反向对整序列 logits 梯度的物化；与平台
+    记录（11.57 / 20.90 / 71.68）逐项吻合。
+  - 修复树在同一数据上 4 次 2 卡尝试——前三次分别停在第 2、3、1 步，第 4 次走完 3 步
+    （越过基线 OOM 的那一步，step 3 峰值 allocated 84.41 GiB）后停在 validation；可比的 loss
+    只有前两步（日志记录精度下与基线一致），第 3 步只有修复树有记录，两边的显存逐步分列于
+    reports/validation.md。常规数据上走完 3 步 + validation 后停在收尾。均被 XCCL 集合通信卡死终止（已登记的平台阻断
+    F-P800-1，不是 OOM）。本机 2 卡主干触发 14 次、两棵树都中招；修复对照的干净结果来自
+    单卡构造堆与真实 apply_fsdp2 的 2 卡单元测试（修复树通过一次）。修复后 batch 32 在
+    2 卡上完整跑通这件事未验证。
+  - 2026-11-27 在干净提交 c2aef972 上重跑 flag-fixes verify（修复树）：passed=true、6/6 rc=0、
+    source_dirty=false，results/verify-2026-11-27.json（对应审阅修订前的脚本）。
+  - 审阅修订（flag-fixes PR 11 的评论 7210838015）：launcher 的超时清理改为按作业 id 限定（此前按入口脚本
+    路径 pkill -f，会杀同一 checkout 下并行作业的 worker），可见设备只在有显式 CUDA 列表时映射
+    （此前默认可见或只设 XPU 列表时 KeyError）。launcher 自测 17 项 exit 0，旧清理方式下同一
+    自测 3/14 失败（exit 1，预期）；真实 trainer 在默认可见与显式选卡下各跑完 5 步，只设 XPU
+    列表时 launcher 能启动 trainer 但 trainer 在本机厂商栈 import 阶段失败（不在本修复范围）。
+    修订后在干净提交 217d46f 上重跑 flag-fixes verify：passed=true、7/7 rc=0、source_dirty=false，
+    记录于 results/verify-2026-11-27-r2.json。
+  - 2026-11-28 复审修订（flag-fixes PR 11 的评论 7230246671），两处验证入口的问题。
+    (1) verify 的外层超时与 launcher 的内层默认超时相同（FSDP2 1800 s、E2E 3600 s），外层先计时，
+    到点直接终止 launcher，它来不及清理自己启动的作业。现在 verify 把本次命令的预算放进环境变量
+    FLAG_FIXES_COMMAND_TIMEOUT（src/flag_fixes/cli.py），run_job 把内层超时压在"预算减去已花掉的
+    启动时间与 60 s 清理预留"之内，装不下就不启动（launcher exit 2，记录 launched=false）；两个
+    launcher 命令的 timeout_seconds 改为内层默认值加 120 s。回归从真实的 flag_fixes.cli.main 入口给
+    一个临时 fix 触发短超时（替身 launcher 用真实 run_job 起卡住的 torchrun 作业）：预算 75 s 时
+    launcher 自己在 14.99 s 超时并清理后返回失败，verify 15.4 s 返回并报告命令失败，残留进程 0，
+    并行对照作业正常退出；用 --budget ignored（修订前的行为）时外层 25 s 终止 launcher，verify
+    返回时还有 5 个带作业 id 的进程。真实 e2e launcher 在预算 100 s 下 36.7 s 自行超时并结束真实
+    trainer worker，预算 30 s 时不启动；对真实 fix 跑 verify --timeout 70 时第 2 条命令的 launcher
+    8 s 自行超时并报失败，verify 返回后无残留进程。
+    (2) E2E 入口在调用者目录检查 --model / --data 并写配置，却切到 tests/ 启动 worker，相对路径在
+    worker 那里指到别处（68b79639 实测 FileNotFoundError）。现在三个路径在入口统一解析成绝对路径，
+    配置只含绝对路径；--out 仍是本次运行的目录，默认输出根从写死的本机路径改为系统临时目录。
+    回归：自测从另一个目录传相对路径（命令行与环境变量默认值各一例）；真实 trainer 从仓库根目录
+    传相对的模型、数据、输出路径跑完 5 步，产物在指定目录。
+  - 修订后在干净提交 11d6c2d 上重跑 flag-fixes verify：passed=true、7/7 rc=0、source_dirty=false，
+    记录于 results/verify-2026-11-28.json；同一提交上的 verify --timeout 70 记录于
+    results/verify-short-timeout-2026-11-28.json（返回后按作业 id 检查，残留为空）。
+  - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、
+    owner=null。
+  commands:
+  - name: reranker-lmhead-dispatch
+    script: tests/test_reranker_lmhead_dispatch.py
+    level: dispatch
+    timeout_seconds: 900
+    env:
+      PYTHONPATH: '{target}'
+  - name: reranker-fsdp2-step-cpu
+    script: tests/test_reranker_fsdp2_step.py
+    args:
+    - --device
+    - cpu
+    - --nproc
+    - '1'
+    - --steps
+    - '2'
+    level: dispatch
+    # the launcher's own --timeout (1800) plus start-up and the cleanup reserve it keeps
+    timeout_seconds: 1920
+    env:
+      PYTHONPATH: '{target}'
+  - name: reranker-launcher-selftest
+    script: tests/test_reranker_launchers.py
+    level: regression
+    timeout_seconds: 900
+  - name: reranker-logits-alloc-repro
+    script: tests/repro_reranker_logits_alloc.py
+    level: repro
+    timeout_seconds: 1800
+    env:
+      PYTHONPATH: '{target}'
+      XMLIR_BMM_DISPATCH_VALUE: '0'
+  - name: reranker-scores-equivalence
+    script: tests/test_reranker_scores_equivalence.py
+    level: regression
+    timeout_seconds: 3600
+    env:
+      PYTHONPATH: '{target}'
+      XMLIR_BMM_DISPATCH_VALUE: '0'
+  - name: reranker-step-benchmark
+    script: tests/bench_reranker_step.py
+    args:
+    - --iters
+    - '5'
+    level: benchmark
+    timeout_seconds: 3600
+    env:
+      PYTHONPATH: '{target}'
+      XMLIR_BMM_DISPATCH_VALUE: '0'
+  - name: reranker-trainer-single-card
+    script: tests/e2e_reranker_train.py
+    args:
+    - --nproc
+    - '1'
+    - --parallel
+    - ddp
+    - --master-dtype
+    - bf16
+    - --batch
+    - '16'
+    - --min-steps
+    - '5'
+    - --max-grad-norm
+    - '0'
+    - --no-save
+    level: e2e
+    # the launcher's own --timeout (3600) plus start-up and the cleanup reserve it keeps
+    timeout_seconds: 3720
+    env:
+      PYTHONPATH: '{target}'
+notes:
+- 目标包是 flagscale（同 adamw-fused / flaggems-selective-enable），基线同一 commit
+  89f342e6；FlagScale 仓库布局是根下 flagscale/ 包（无 src/ 顶层），verify 预置的
+  PYTHONPATH=<target>/src 不存在但无害，命令 env 里用 PYTHONPATH={target}。
+- 修复不改打分语义：同一位置、同一权重，bf16 下分数与梯度逐位相同，fp32 权重下在
+  1e-4 / 1e-3 以内，因此没有配置开关，也没有保留整序列 logits 的路径。
+- 代码路径与厂商无关；设备证据只覆盖 KunlunXin P800 单卡，backends 只登记 kunlunxin。
+  A100/PPU/昇腾上的显存收益与行为未实测。
+- 除 e2e 外的脚本自包含：按发布版 config.json 在设备上随机初始化同架构权重，
+  不依赖 16 GB checkpoint；随机权重的 loss 数值本身无意义，两棵树在日志记录精度下一致
+  才是检验点（loss 只保留 6 位小数）。
+  repro 的碎片堆是构造的，用于在同一张卡上稳定复现"大请求 + 碎片"。
+- e2e 需要环境提供 RERANKER_MODEL（checkpoint 目录）与 RERANKER_DATA（T2Ranking
+  triplet-15 parquet），缺失时 exit 2。声明的是单卡 bf16 DDP 形态并以 max_grad_norm=0
+  绕开厂商 clip_grad_norm_ 的约 35 GiB 临时张量；2 卡 FSDP2 形态在本机被 F-P800-1
+  阻断，未列为命令，尝试记录见 results/e2e-fsdp2-2card-*。
+- 复现与等价性脚本需要一张 >= 90 GiB 的空闲卡；设备缺失时退出码 2，跳过不算通过。
+- launcher（_torchrun_job.py）：超时清理只对环境里带本作业 id 的进程发 SIGKILL，launcher 自身被
+  外部终止时不做清理；可见设备只在有显式 CUDA_VISIBLE_DEVICES 时截断并镜像到 XPU_VISIBLE_DEVICES，
+  默认可见或只设 XPU 列表原样透传。只设 XPU 列表时本机 torch_xmlir 栈上 trainer 起不来（厂商栈行为）。
+- verify 与 launcher 的两层超时靠环境变量 FLAG_FIXES_COMMAND_TIMEOUT 协调（src/flag_fixes/cli.py 把预算
+  传给命令）：launcher 的内层超时不超过"预算减去已花掉的启动时间与 60 s 清理预留"，装不下就不启动；
+  声明命令里两个 launcher 的 timeout_seconds 因此是内层默认值加 120 s（1920 / 3720）。不起子进程的脚本
+  不读这个变量，预算到点仍会被 verify 直接终止，它们没有需要清理的子进程。
+- e2e 命令的 --model / --data / --out 在入口解析成绝对路径后再写进配置；从任何目录用相对路径调用都一样。
+- 未覆盖（已记录）：厂商 clip_grad_norm_ 对 bf16 梯度的临时张量、AdamW step 的
+  15.25 GiB 临时张量、平台 batch/accum 配置的回退评估。
+installation_status: source-checked
+upstream_issue: null

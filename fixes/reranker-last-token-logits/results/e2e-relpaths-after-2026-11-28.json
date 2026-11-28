@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "returncode": 0,
+  "timed_out": false,
+  "elapsed_s": 40.2,
+  "launched": true,
+  "batch": 16,
+  "parallel": "ddp",
+  "master_dtype": "bf16",
+  "nproc": 1,
+  "min_steps": 5,
+  "steps_done": 5,
+  "training_steps_complete": true,
+  "loss_log": [
+    "epoch=1 optimizer_step=1 running_loss=0.627536 window_loss=0.627536 lr=1.000e-07",
+    "epoch=1 optimizer_step=2 running_loss=0.546996 window_loss=0.466457 lr=1.500e-07",
+    "epoch=1 optimizer_step=3 running_loss=0.488274 window_loss=0.370828 lr=2.000e-07",
+    "epoch=1 optimizer_step=4 running_loss=0.526146 window_loss=0.639762 lr=2.500e-07",
+    "epoch=1 optimizer_step=5 running_loss=0.539403 window_loss=0.592430 lr=3.000e-07",
+    "epoch=1/1 train_loss=0.539403 validation_loss=0.461096 device=cuda:0",
+    "test_loss=0.329392 epochs=1 elapsed=23.8s"
+  ],
+  "oom": false,
+  "oom_allocate_requests_gib": [],
+  "first_oom_line": null,
+  "max_memory_allocated_gib": 61.019,
+  "per_rank": [
+    {
+      "rank": 0,
+      "error": null,
+      "oom": false,
+      "steps": [
+        {
+          "step": 1,
+          "allocated_gib": 61.024,
+          "reserved_gib": 77.322,
+          "step_peak_allocated_gib": 76.276,
+          "step_peak_reserved_gib": 77.322
+        },
+        {
+          "step": 2,
+          "allocated_gib": 61.012,
+          "reserved_gib": 77.326,
+          "step_peak_allocated_gib": 76.264,
+          "step_peak_reserved_gib": 77.326
+        },
+        {
+          "step": 3,
+          "allocated_gib": 61.013,
+          "reserved_gib": 79.641,
+          "step_peak_allocated_gib": 76.266,
+          "step_peak_reserved_gib": 79.641
+        },
+        {
+          "step": 4,
+          "allocated_gib": 61.015,
+          "reserved_gib": 79.641,
+          "step_peak_allocated_gib": 76.267,
+          "step_peak_reserved_gib": 79.641
+        },
+        {
+          "step": 5,
+          "allocated_gib": 61.019,
+          "reserved_gib": 79.641,
+          "step_peak_allocated_gib": 76.271,
+          "step_peak_reserved_gib": 79.641
+        }
+      ],
+      "peak_allocated_gib": 76.276,
+      "peak_reserved_gib": 79.641,
+      "max_memory_allocated_gib": 61.019,
+      "max_memory_reserved_gib": 79.641
+    }
+  ],
+  "log": "/tmp/opencode/scratch/e2e-relpath-after2/train.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py --config-file /tmp/opencode/scratch/e2e-relpath-after2/config.yaml --mem-out /tmp/opencode/scratch/e2e-relpath-after2/memory.json",
+  "job_id": "165625-1795824106-21691a57cbff",
+  "timeout_cleanup": null,
+  "visible_devices": {
+    "nproc": 1,
+    "before": {
+      "CUDA_VISIBLE_DEVICES": "1,2",
+      "XPU_VISIBLE_DEVICES": null
+    },
+    "action": "kept; mirrored to XPU_VISIBLE_DEVICES",
+    "after": {
+      "CUDA_VISIBLE_DEVICES": "1,2",
+      "XPU_VISIBLE_DEVICES": "1,2"
+    }
+  },
+  "timeout_s": 3600,
+  "timeout_source": "--timeout"
+}

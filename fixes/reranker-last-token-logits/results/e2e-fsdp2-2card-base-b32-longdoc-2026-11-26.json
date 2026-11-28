@@ -1,0 +1,77 @@
+{
+  "passed": false,
+  "returncode": 1,
+  "timed_out": false,
+  "elapsed_s": 69.9,
+  "batch": 32,
+  "parallel": "fsdp2",
+  "master_dtype": "fp32",
+  "nproc": 2,
+  "min_steps": 3,
+  "steps_done": 2,
+  "training_steps_complete": false,
+  "loss_log": [
+    "epoch=1 optimizer_step=1 running_loss=0.392380 window_loss=0.392380 lr=1.000e-07",
+    "epoch=1 optimizer_step=2 running_loss=0.377111 window_loss=0.361841 lr=1.500e-07"
+  ],
+  "oom": true,
+  "oom_allocate_requests_gib": [
+    11.57
+  ],
+  "first_oom_line": "torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 11.57 GiB. GPU 0 has a total capacity of 96.00 GiB of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation",
+  "max_memory_allocated_gib": 73.615,
+  "per_rank": [
+    {
+      "rank": 0,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 11.57 GiB. GPU 0 has a total capacity of 96.00 GiB of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)",
+      "oom": true,
+      "steps": [
+        {
+          "step": 1,
+          "allocated_gib": 61.01,
+          "reserved_gib": 92.062,
+          "step_peak_allocated_gib": 76.262,
+          "step_peak_reserved_gib": 92.062
+        },
+        {
+          "step": 2,
+          "allocated_gib": 61.01,
+          "reserved_gib": 92.27,
+          "step_peak_allocated_gib": 87.016,
+          "step_peak_reserved_gib": 95.133
+        }
+      ],
+      "peak_allocated_gib": 82.037,
+      "peak_reserved_gib": 94.771,
+      "max_memory_allocated_gib": 73.615,
+      "max_memory_reserved_gib": 94.148
+    },
+    {
+      "rank": 1,
+      "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 11.57 GiB. GPU 1 has a total capacity of 96.00 GiB of which 20.77 GiB is free. Of the allocated memory 71.66 GiB is allocated by PyTorch, and 2.98 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)",
+      "oom": true,
+      "steps": [
+        {
+          "step": 1,
+          "allocated_gib": 61.01,
+          "reserved_gib": 92.062,
+          "step_peak_allocated_gib": 76.262,
+          "step_peak_reserved_gib": 92.062
+        },
+        {
+          "step": 2,
+          "allocated_gib": 61.01,
+          "reserved_gib": 92.27,
+          "step_peak_allocated_gib": 87.016,
+          "step_peak_reserved_gib": 95.133
+        }
+      ],
+      "peak_allocated_gib": 0.0,
+      "peak_reserved_gib": 0.0,
+      "max_memory_allocated_gib": 73.615,
+      "max_memory_reserved_gib": 94.148
+    }
+  ],
+  "log": "/tmp/opencode/reranker-e2e-real/fsdp2-fp32-b32-n2-20261126-235051/train.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=2 /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py --config-file /tmp/opencode/reranker-e2e-real/fsdp2-fp32-b32-n2-20261126-235051/config.yaml --mem-out /tmp/opencode/reranker-e2e-real/fsdp2-fp32-b32-n2-20261126-235051/memory.json"
+}

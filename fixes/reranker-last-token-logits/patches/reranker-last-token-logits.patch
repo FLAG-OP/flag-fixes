@@ -1,0 +1,39 @@
+diff --git a/flagscale/models/retrieval/qwen3_reranker.py b/flagscale/models/retrieval/qwen3_reranker.py
+index e5abccd..8e7bc30 100644
+--- a/flagscale/models/retrieval/qwen3_reranker.py
++++ b/flagscale/models/retrieval/qwen3_reranker.py
+@@ -22,7 +22,7 @@ import torch
+ from omegaconf import DictConfig
+ 
+ from .base import RetrievalModel
+-from .transformer_encoder import torch_dtype_from_config
++from .transformer_encoder import last_token_pool, torch_dtype_from_config
+ from .registry import register_retrieval_model
+ 
+ # The checkpoint is trained to answer yes/no through Qwen's chat format; its
+@@ -105,11 +105,20 @@ class Qwen3RerankerModel(RetrievalModel):
+             rows = torch.arange(hidden.shape[0], device=hidden.device)
+             scores = self.score_head(hidden[rows, positions]).squeeze(-1)
+             return {"scores": scores}
+-        outputs = self.backbone(**features, return_dict=True, **kwargs)
+-        logits = outputs.logits
+-        positions = features["attention_mask"].to(dtype=torch.long).sum(dim=1).clamp_min(1) - 1
+-        rows = torch.arange(logits.shape[0], device=logits.device)
+-        final_logits = logits[rows, positions]
++        # Project only the scored position through the vocabulary. Asking the
++        # causal LM for `logits` computes them for every position while this
++        # adapter keeps one row per sequence: at batch 32 (64 pairs x 640
++        # tokens) the discarded tensor is a single 11.57 GiB bf16 allocation,
++        # and backward materialises a same-shaped gradient. P800 has no
++        # expandable segments, so that block cannot be carved out of a
++        # fragmented heap and the trainer stopped with "Tried to allocate
++        # 11.57 GiB" while 20.9 GiB was free. Running the decoder and the LM
++        # head as two calls projects `[batch, hidden]` instead (19 MiB) and
++        # scores the same positions with the same weights.
++        outputs = self.backbone.model(**features, return_dict=True, **kwargs)
++        final_hidden = last_token_pool(outputs.last_hidden_state, features["attention_mask"])
++        # Call the module rather than F.linear so FSDP's hooks on lm_head run.
++        final_logits = self.backbone.lm_head(final_hidden)
+         scores = final_logits[:, self.true_token_id] - final_logits[:, self.false_token_id]
+         return {"scores": scores}
+ 

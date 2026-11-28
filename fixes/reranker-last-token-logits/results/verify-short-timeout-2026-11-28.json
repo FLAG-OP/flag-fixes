@@ -1,0 +1,40 @@
+{
+  "fix": "reranker-last-token-logits",
+  "passed": false,
+  "scope": "declared commands only; does not promote catalog hardware status",
+  "target": "/tmp/opencode/FlagScale-fixed",
+  "source_commit": "11d6c2d60959988316692f68fcf8047a92aa4d24",
+  "source_dirty": false,
+  "results": [
+    {
+      "name": "reranker-lmhead-dispatch",
+      "level": "dispatch",
+      "argv": [
+        "/tmp/opencode/bin/flagfixes-python",
+        "/tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/test_reranker_lmhead_dispatch.py"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "stdout": "RESULT_JSON {\"passed\": true, \"cases\": 25, \"failed\": [], \"results\": [{\"case\": \"mixed_lengths:scores_shape\", \"pass\": true, \"shape\": [10], \"rows\": 5}, {\"case\": \"mixed_lengths:scores_match_full_logit_reference\", \"pass\": true, \"max_abs_diff\": 2.9802322387695312e-08, \"padded_length\": 400, \"min_real_length\": 364, \"max_real_length\": 400}, {\"case\": \"mixed_lengths:lm_head_called_once\", \"pass\": true, \"calls\": 1}, {\"case\": \"mixed_lengths:lm_head_projects_scored_rows_only\", \"pass\": true, \"lm_head_calls\": [{\"input_shape\": [10, 64], \"input_dim\": 2, \"output_shape\": [10, 1000], \"output_bytes\": 40000}], \"full_sequence_logit_bytes\": 8000000, \"note\": \"baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]\"}, {\"case\": \"equal_lengths_all_truncated:scores_shape\", \"pass\": true, \"shape\": [8], \"rows\": 4}, {\"case\": \"equal_lengths_all_truncated:scores_match_full_logit_reference\", \"pass\": true, \"max_abs_diff\": 0.0, \"padded_length\": 400, \"min_real_length\": 400, \"max_real_length\": 400}, {\"case\": \"equal_lengths_all_truncated:lm_head_called_once\", \"pass\": true, \"calls\": 1}, {\"case\": \"equal_lengths_all_truncated:lm_head_projects_scored_rows_only\", \"pass\": true, \"lm_head_calls\": [{\"input_shape\": [8, 64], \"input_dim\": 2, \"output_shape\": [8, 1000], \"output_bytes\": 32000}], \"full_sequence_logit_bytes\": 6400000, \"note\": \"baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]\"}, {\"case\": \"single_sequence:scores_shape\", \"pass\": true, \"shape\": [2], \"rows\": 1}, {\"case\": \"single_sequence:scores_match_full_logit_reference\", \"pass\": true, \"max_abs_diff\": 2.9802322387695312e-08, \"padded_length\": 400, \"min_real_length\": 383, \"max_real_length\": 400}, {\"case\": \"single_sequence:lm_head_called_once\", \"pass\": true, \"calls\": 1}, {\"case\": \"single_sequence:lm_head_projects_scored_rows_only\", \"pass\": true, \"lm_head_calls\": [{\"input_shape\": [2, 64], \"input_dim\": 2, \"output_shape\": [2, 1000], \"output_bytes\": 8000}], \"full_sequence_logit_bytes\": 1600000, \"note\": \"baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]\"}, {\"case\": \"two_sequences:scores_shape\", \"pass\": true, \"shape\": [4], \"rows\": 2}, {\"case\": \"two_sequences:scores_match_full_logit_reference\", \"pass\": true, \"max_abs_diff\": 0.0, \"padded_length\": 400, \"min_real_length\": 381, \"max_real_length\": 400}, {\"case\": \"two_sequences:lm_head_called_once\", \"pass\": true, \"calls\": 1}, {\"case\": \"two_sequences:lm_head_projects_scored_rows_only\", \"pass\": true, \"lm_head_calls\": [{\"input_shape\": [4, 64], \"input_dim\": 2, \"output_shape\": [4, 1000], \"output_bytes\": 16000}], \"full_sequence_logit_bytes\": 3200000, \"note\": \"baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]\"}, {\"case\": \"batch_of_32_rows:scores_shape\", \"pass\": true, \"shape\": [64], \"rows\": 32}, {\"case\": \"batch_of_32_rows:scores_match_full_logit_reference\", \"pass\": true, \"max_abs_diff\": 0.0, \"padded_length\": 400, \"min_real_length\": 356, \"max_real_length\": 400}, {\"case\": \"batch_of_32_rows:lm_head_called_once\", \"pass\": true, \"calls\": 1}, {\"case\": \"batch_of_32_rows:lm_head_projects_scored_rows_only\", \"pass\": true, \"lm_head_calls\": [{\"input_shape\": [64, 64], \"input_dim\": 2, \"output_shape\": [64, 1000], \"output_bytes\": 256000}], \"full_sequence_logit_bytes\": 51200000, \"note\": \"baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]\"}, {\"case\": \"gradients:reach_lm_head_embedding_norm_blocks\", \"pass\": true, \"grad_norms\": {\"backbone.model.embed_tokens.weight\": 0.540434, \"backbone.model.layers.0.self_attn.q_proj.weight\": 0.100647, \"backbone.model.layers.1.mlp.down_proj.weight\": 0.072478, \"backbone.model.norm.weight\": 0.010189, \"backbone.lm_head.weight\": 0.582532}, \"loss\": 0.696808}, {\"case\": \"gradient_checkpointing:train_mode_scores_match_reference\", \"pass\": true, \"max_abs_diff\": 0.0, \"use_cache\": false}, {\"case\": \"gradient_checkpointing:lm_head_projects_scored_rows_only\", \"pass\": true, \"lm_head_calls\": [{\"input_shape\": [8, 64], \"input_dim\": 2, \"output_shape\": [8, 1000], \"output_bytes\": 32000}]}, {\"case\": \"kwargs:use_cache_false_accepted\", \"pass\": true, \"shape\": [4]}, {\"case\": \"score_head_variant:unchanged_shape\", \"pass\": true, \"shape\": [2]}], \"torch\": \"2.9.0+cu129\"}\ndispatch OK: 25 cases; lm_head receives only the scored rows; exit 0\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n/tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/test_reranker_lmhead_dispatch.py:91: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n  max_abs = float((scores - reference).abs().max())\n"
+    },
+    {
+      "name": "reranker-fsdp2-step-cpu",
+      "level": "dispatch",
+      "argv": [
+        "/tmp/opencode/bin/flagfixes-python",
+        "/tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/test_reranker_fsdp2_step.py",
+        "--device",
+        "cpu",
+        "--nproc",
+        "1",
+        "--steps",
+        "2"
+      ],
+      "returncode": 2,
+      "passed": false,
+      "stdout": "launcher timeout after 8 s: torchrun agent ended, job 171179-1795825074-43cb7dd9fdb7 processes signalled [171312], survived []\nRESULT_JSON {\"device\": \"cpu\", \"nproc\": 1, \"layers\": 2, \"hidden\": 2048, \"returncode\": -9, \"timed_out\": true, \"elapsed_s\": 8.8, \"ranks\": [], \"job_id\": \"171179-1795825074-43cb7dd9fdb7\", \"timeout_cleanup\": {\"job_id\": \"171179-1795825074-43cb7dd9fdb7\", \"signalled\": [{\"pid\": 171312, \"cmdline\": \"/root/miniconda/envs/python310_torch29_cuda/bin/python3 -u /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_fsdp2_worker.py --device cpu --steps 2 --rows 8 --json /tmp/reranker-tests/fsdp2-step.json --layers 2 --hidden 2048\"}], \"survived\": [], \"grace_s\": 30.0}, \"visible_devices\": null, \"launched\": true, \"timeout_s\": 8.48116660118103, \"timeout_source\": \"min(--timeout 1800 s, flag-fixes verify budget 70 s minus start-up and a 60 s cleanup reserve)\", \"log\": \"/tmp/reranker-tests/fsdp2-step.log\", \"command\": \"/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 tests/_fsdp2_worker.py --device cpu --steps 2 --rows 8 --json /tmp/reranker-tests/fsdp2-step.json --layers 2 --hidden 2048\", \"passed\": false, \"blocked\": true}\nBLOCKED: the FSDP2 run did not complete (launcher timeout after 8 s: min(--timeout 1800 s, flag-fixes verify budget 70 s minus start-up and a 60 s cleanup reserve)); exit 2 -- not a pass. See the log for the watchdog trace.\n",
+      "stderr": "XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded\n\u001b[35mSYMBOL_REWRITE \u001b[0m\u001b[32mtorch success\u001b[0m\n"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "passed": false,
+  "returncode": null,
+  "timed_out": false,
+  "elapsed_s": 0.0,
+  "launched": false,
+  "batch": 16,
+  "parallel": "ddp",
+  "master_dtype": "bf16",
+  "nproc": 1,
+  "min_steps": 5,
+  "steps_done": 0,
+  "training_steps_complete": false,
+  "loss_log": [],
+  "oom": false,
+  "oom_allocate_requests_gib": [],
+  "first_oom_line": null,
+  "max_memory_allocated_gib": null,
+  "per_rank": [],
+  "log": "/tmp/reranker-e2e/ddp-bf16-b16-n1-20261128-080308/train.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py --config-file /tmp/reranker-e2e/ddp-bf16-b16-n1-20261128-080308/config.yaml --mem-out /tmp/reranker-e2e/ddp-bf16-b16-n1-20261128-080308/memory.json",
+  "job_id": "166010-1795824191-c7597bec6d82",
+  "timeout_cleanup": null,
+  "visible_devices": {
+    "nproc": 1,
+    "before": {
+      "CUDA_VISIBLE_DEVICES": "1,2",
+      "XPU_VISIBLE_DEVICES": null
+    },
+    "action": "kept; mirrored to XPU_VISIBLE_DEVICES",
+    "after": {
+      "CUDA_VISIBLE_DEVICES": "1,2",
+      "XPU_VISIBLE_DEVICES": "1,2"
+    }
+  },
+  "timeout_s": null,
+  "timeout_source": "flag-fixes verify budget 30 s minus the time already spent and the 60 s cleanup reserve leaves nothing for a run"
+}

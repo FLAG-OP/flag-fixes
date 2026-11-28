@@ -1,0 +1,38 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+{
+  "passed": false,
+  "returncode": 1,
+  "timed_out": false,
+  "elapsed_s": 7.3,
+  "batch": 16,
+  "parallel": "ddp",
+  "master_dtype": "bf16",
+  "nproc": 1,
+  "min_steps": 5,
+  "steps_done": 0,
+  "training_steps_complete": false,
+  "loss_log": [],
+  "oom": false,
+  "oom_allocate_requests_gib": [],
+  "first_oom_line": null,
+  "max_memory_allocated_gib": null,
+  "per_rank": [],
+  "log": "/tmp/opencode/reranker-e2e/ddp-bf16-b16-n1-20261127-140156/train.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 /tmp/opencode/flag-fixes-shallow/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py --config-file /tmp/opencode/reranker-e2e/ddp-bf16-b16-n1-20261127-140156/config.yaml --mem-out /tmp/opencode/reranker-e2e/ddp-bf16-b16-n1-20261127-140156/memory.json",
+  "job_id": "99704-1795759316-9f80b96e727c",
+  "timeout_cleanup": null,
+  "visible_devices": {
+    "nproc": 1,
+    "before": {
+      "CUDA_VISIBLE_DEVICES": null,
+      "XPU_VISIBLE_DEVICES": "1,2"
+    },
+    "action": "XPU_VISIBLE_DEVICES only: left as set",
+    "after": {
+      "CUDA_VISIBLE_DEVICES": null,
+      "XPU_VISIBLE_DEVICES": "1,2"
+    }
+  }
+}
+E2E FAIL: steps 0/5, returncode 1, oom=False

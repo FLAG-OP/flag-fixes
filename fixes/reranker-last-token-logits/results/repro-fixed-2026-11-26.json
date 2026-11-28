@@ -1,0 +1,56 @@
+{
+  "device_total_gib": 96.0,
+  "torch": "2.9.0+cu129",
+  "rows": 32,
+  "pairs": 64,
+  "padded_length": 640,
+  "vocab": 151669,
+  "full_sequence_logits_gib": 11.5714,
+  "weights_gib": 15.253,
+  "part1": {
+    "lm_head_input_shape": [
+      64,
+      4096
+    ],
+    "lm_head_output_shape": [
+      64,
+      151669
+    ],
+    "lm_head_output_gib": 0.0181,
+    "forward_peak_allocated_gib": 14.688
+  },
+  "part2": {
+    "resident_gib": 61.01,
+    "resident_note": "bf16 weights + 3 stand-ins per parameter = the 61.03 GiB the real trainer has allocated after its first optimizer step (fp32 master/grad/AdamW on 2 cards and bf16 on 1 card have the same footprint)",
+    "fragment_sizes_gib": [
+      5.0,
+      2.5,
+      3.75,
+      2.0,
+      4.5,
+      3.0,
+      6.0,
+      2.25,
+      5.0
+    ],
+    "fragments_total_gib": 34.0,
+    "largest_cached_free_block_gib": 6.0,
+    "device_free_gib_before_step": 0.133,
+    "cached_free_gib_before_step": 34.572,
+    "step": {
+      "completed": true,
+      "loss": 0.968551,
+      "peak_allocated_gib": 25.359,
+      "peak_reserved_gib": 95.584,
+      "lm_head_output_shapes": [
+        [
+          64,
+          151669
+        ]
+      ],
+      "device_free_gib_after_step": 0.006
+    }
+  },
+  "passed": true,
+  "verdict": "the step runs on the fragmented heap; the LM head projects only the scored rows"
+}

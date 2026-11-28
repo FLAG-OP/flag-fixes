@@ -1,0 +1,280 @@
+{
+  "passed": true,
+  "layers": 36,
+  "cases": 14,
+  "failed": [],
+  "results": [
+    {
+      "case": "bf16_weights:bf16_autocast:scores:padded_mixed_length:16rows",
+      "pass": true,
+      "weights_dtype": "torch.bfloat16",
+      "autocast": true,
+      "score_dtype": "torch.bfloat16",
+      "max_abs_diff": 0.0,
+      "tolerance": 0.0625,
+      "largest_reference_logit": 6.59375,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            32,
+            4096
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            32,
+            151669
+          ],
+          "output_bytes": 9706816
+        }
+      ],
+      "pairs": 32,
+      "padded_length": 640
+    },
+    {
+      "case": "bf16_weights:bf16_autocast:scores:full_length_640:32rows",
+      "pass": true,
+      "weights_dtype": "torch.bfloat16",
+      "autocast": true,
+      "score_dtype": "torch.bfloat16",
+      "max_abs_diff": 0.0,
+      "tolerance": 0.0625,
+      "largest_reference_logit": 6.75,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            64,
+            4096
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            64,
+            151669
+          ],
+          "output_bytes": 19413632
+        }
+      ],
+      "pairs": 64,
+      "padded_length": 640
+    },
+    {
+      "case": "bf16_weights:no_autocast:scores:padded_mixed_length:4rows",
+      "pass": true,
+      "weights_dtype": "torch.bfloat16",
+      "autocast": false,
+      "score_dtype": "torch.bfloat16",
+      "max_abs_diff": 0.0,
+      "tolerance": 0.0625,
+      "largest_reference_logit": 6.1875,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            8,
+            4096
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            8,
+            151669
+          ],
+          "output_bytes": 2426704
+        }
+      ],
+      "pairs": 8,
+      "padded_length": 640
+    },
+    {
+      "case": "bf16_weights:bf16_autocast:gradients:16rows",
+      "pass": true,
+      "weights_dtype": "torch.bfloat16",
+      "autocast": true,
+      "tolerance": 0.03,
+      "expected": 9,
+      "missing_reference": [],
+      "missing_candidate": [],
+      "unexpected_reference": [],
+      "unexpected_candidate": [],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": [],
+      "complete": true,
+      "finite": true,
+      "worst_relative_diff": 0.0,
+      "worst_abs_diff": 0.0,
+      "worst_tensor": null,
+      "compared": 9
+    },
+    {
+      "case": "comparator_accepts:uncorrupted_pair",
+      "pass": true,
+      "comparator_accepted": true,
+      "corrupted_tensor": null,
+      "missing_reference": [],
+      "missing_candidate": [],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": []
+    },
+    {
+      "case": "comparator_rejects:nan_gradient",
+      "pass": true,
+      "comparator_accepted": false,
+      "corrupted_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "missing_reference": [],
+      "missing_candidate": [],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "nonfinite_difference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ]
+    },
+    {
+      "case": "comparator_rejects:nan_in_reference",
+      "pass": true,
+      "comparator_accepted": false,
+      "corrupted_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "missing_reference": [],
+      "missing_candidate": [],
+      "nonfinite_reference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ]
+    },
+    {
+      "case": "comparator_rejects:both_sides_missing_one_expected_gradient",
+      "pass": true,
+      "comparator_accepted": false,
+      "corrupted_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "missing_reference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "missing_candidate": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": []
+    },
+    {
+      "case": "comparator_rejects:missing_on_one_side",
+      "pass": true,
+      "comparator_accepted": false,
+      "corrupted_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "missing_reference": [],
+      "missing_candidate": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": []
+    },
+    {
+      "case": "comparator_rejects:difference_overflows",
+      "pass": true,
+      "comparator_accepted": false,
+      "corrupted_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "missing_reference": [],
+      "missing_candidate": [],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ]
+    },
+    {
+      "case": "comparator_rejects:nan_difference_from_infinite_sides",
+      "pass": true,
+      "comparator_accepted": false,
+      "corrupted_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "missing_reference": [],
+      "missing_candidate": [],
+      "nonfinite_reference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "nonfinite_candidate": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ],
+      "nonfinite_difference": [
+        "backbone.model.layers.0.input_layernorm.weight"
+      ]
+    },
+    {
+      "case": "bf16_weights:no_autocast:gradients:2rows",
+      "pass": true,
+      "weights_dtype": "torch.bfloat16",
+      "autocast": false,
+      "tolerance": 0.03,
+      "expected": 9,
+      "missing_reference": [],
+      "missing_candidate": [],
+      "unexpected_reference": [],
+      "unexpected_candidate": [],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": [],
+      "complete": true,
+      "finite": true,
+      "worst_relative_diff": 0.0,
+      "worst_abs_diff": 0.0,
+      "worst_tensor": null,
+      "compared": 9
+    },
+    {
+      "case": "fp32_weights:no_autocast:scores:padded_mixed_length:4rows",
+      "pass": true,
+      "weights_dtype": "torch.float32",
+      "autocast": false,
+      "score_dtype": "torch.float32",
+      "max_abs_diff": 2.384185791015625e-07,
+      "tolerance": 0.0001,
+      "largest_reference_logit": 6.170113563537598,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            8,
+            4096
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            8,
+            151669
+          ],
+          "output_bytes": 4853408
+        }
+      ],
+      "pairs": 8,
+      "padded_length": 640
+    },
+    {
+      "case": "fp32_weights:no_autocast:gradients:2rows",
+      "pass": true,
+      "weights_dtype": "torch.float32",
+      "autocast": false,
+      "tolerance": 0.001,
+      "expected": 9,
+      "missing_reference": [],
+      "missing_candidate": [],
+      "unexpected_reference": [],
+      "unexpected_candidate": [],
+      "nonfinite_reference": [],
+      "nonfinite_candidate": [],
+      "nonfinite_difference": [],
+      "complete": true,
+      "finite": true,
+      "worst_relative_diff": 0.00020405625190925413,
+      "worst_abs_diff": 0.0009238719940185547,
+      "worst_tensor": "backbone.model.layers.0.input_layernorm.weight",
+      "compared": 9
+    }
+  ],
+  "torch": "2.9.0+cu129",
+  "weights_gib": {
+    "bf16": 15.252,
+    "fp32": 30.505
+  },
+  "expected_gradients": 9
+}

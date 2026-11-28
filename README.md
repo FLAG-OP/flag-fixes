@@ -22,7 +22,7 @@ flag-fixes --root . show gather-5746
 ## 当前交付范围
 
 - 8 个历史修复源仓库的固定 submodule 和 9 项 fix 索引（GELU 来源拆出 Triton 层条目）。
-- 5 项本仓库维护的本地修复 [linear-5379](fixes/linear-5379/)、[zeros-7181](fixes/zeros-7181/)、2 项 FlagGems/FlagScale 性能修复 [gelu-kunlunxin-pow](fixes/gelu-kunlunxin-pow/)、[adamw-fused](fixes/adamw-fused/)，以及 1 项接入层修复 [flaggems-selective-enable](fixes/flaggems-selective-enable/)（FlagScale 层，flaggems_include 选择性注册）（flag_fixes fix 索引合计 14 项 = 9 项外部 + 5 项本地）。
+- 6 项本仓库维护的本地修复 [linear-5379](fixes/linear-5379/)、[zeros-7181](fixes/zeros-7181/)、2 项 FlagGems/FlagScale 性能修复 [gelu-kunlunxin-pow](fixes/gelu-kunlunxin-pow/)、[adamw-fused](fixes/adamw-fused/)、1 项接入层修复 [flaggems-selective-enable](fixes/flaggems-selective-enable/)（FlagScale 层，flaggems_include 选择性注册），以及 1 项 FlagScale 模型层显存修复 [reranker-last-token-logits](fixes/reranker-last-token-logits/)（Qwen3-Reranker 只对打分位置做 LM head，去掉 11.57 GiB 整序列 logits）（flag_fixes fix 索引合计 15 项 = 9 项外部 + 6 项本地）。
 - 新修复模板和 `new` 创建入口。
 - 清单校验、基线检查、安装预演、显式安装、状态、回滚与验证命令。
 - 安装器使用临时目标树进行功能测试。
@@ -45,7 +45,7 @@ flag-fixes --root . rollback --target /path/to/FlagGems
 
 `check` 和 `plan` 是同一精确基线暂存预演，要求目标仍是修复前内容；已安装内容不能用它们作验收。前述三项快照不一致条目的预演会失败。v1 拒绝任何共享目标文件的组合，也没有 bundle 安装入口。
 
-`verify` 只输出 JSON 测试结果，不修改安装状态中的 `verification: not-run`，也不提升 catalog 的 hardware_status；需另存输出并提交验收证据。
+`verify` 只输出 JSON 测试结果，不修改安装状态中的 `verification: not-run`，也不提升 catalog 的 hardware_status；需另存输出并提交验收证据。命令超时到点会被直接终止；verify 把预算放进环境变量 `FLAG_FIXES_COMMAND_TIMEOUT`，会启动子进程的命令据此自行提前超时并清理。
 
 `pip install` 只安装工具。实际部署必须显式 `apply`；请停止使用目标环境的进程，修改后以新进程重新加载模块。安装按精确文件 hash 检查基线、保存备份，回滚前检查文件是否被用户再次修改。多文件事务依靠日志恢复，不承诺整个文件系统原子替换。
 

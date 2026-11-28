@@ -8,7 +8,7 @@
 
 `rollback` 按事务逆序恢复。若目标文件已被其他人修改，会拒绝覆盖，需要先协调这些修改。安装后启动新进程；不要依赖运行中已导入模块热更新。
 
-`verify <id> --target <root> --python <device-python> [--timeout <seconds>]` 显式运行清单声明的验证。先核对目标文件为精确修复后内容，再执行声明的命令。未声明命令或缺少设备不算通过。结果只打印 JSON，不回写安装事务的 verification 字段（仍为 not-run），也不修改目录 hardware_status；可将 stdout 保存为验收材料。验证可能需要源仓库额外的 Torch、Triton、模型等依赖，应先阅读该条目说明。
+`verify <id> --target <root> --python <device-python> [--timeout <seconds>]` 显式运行清单声明的验证。先核对目标文件为精确修复后内容，再执行声明的命令。未声明命令或缺少设备不算通过。结果只打印 JSON，不回写安装事务的 verification 字段（仍为 not-run），也不修改目录 hardware_status；可将 stdout 保存为验收材料。验证可能需要源仓库额外的 Torch、Triton、模型等依赖，应先阅读该条目说明。`--timeout`（或清单里的 `timeout_seconds`）到点时命令被直接终止；命令从环境变量 `FLAG_FIXES_COMMAND_TIMEOUT` 得知这个预算，会启动子进程的命令应在此之前自行超时并清理，详见清单规范。
 
 首版不自动发现 site-packages、不安装厂商软件栈、不提供经过硬件验收的组合包；默认导入清单处于不可部署状态。
 

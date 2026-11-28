@@ -1,0 +1,27 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+reproducibility: seed=42 per_rank=42 deterministic=False world_size=1 platform=cuda
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00, 126.21it/s]
+gradient checkpointing enabled
+parallelism=ddp master_dtype=bf16 compute_dtype=bf16
+lr schedule: cosine 1e-05 -> 1e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[e2e-mem] after optimizer step 1: allocated=61.02 GiB reserved=77.32 GiB step_peak_allocated=76.28 GiB step_peak_reserved=77.32 GiB
+epoch=1 optimizer_step=1 running_loss=0.627536 window_loss=0.627536 lr=1.000e-07
+[e2e-mem] after optimizer step 2: allocated=61.01 GiB reserved=77.33 GiB step_peak_allocated=76.26 GiB step_peak_reserved=77.33 GiB
+epoch=1 optimizer_step=2 running_loss=0.546996 window_loss=0.466457 lr=1.500e-07
+[e2e-mem] after optimizer step 3: allocated=61.01 GiB reserved=79.64 GiB step_peak_allocated=76.27 GiB step_peak_reserved=79.64 GiB
+epoch=1 optimizer_step=3 running_loss=0.488274 window_loss=0.370828 lr=2.000e-07
+[e2e-mem] after optimizer step 4: allocated=61.02 GiB reserved=79.64 GiB step_peak_allocated=76.27 GiB step_peak_reserved=79.64 GiB
+epoch=1 optimizer_step=4 running_loss=0.526146 window_loss=0.639762 lr=2.500e-07
+[e2e-mem] after optimizer step 5: allocated=61.02 GiB reserved=79.64 GiB step_peak_allocated=76.27 GiB step_peak_reserved=79.64 GiB
+epoch=1 optimizer_step=5 running_loss=0.539403 window_loss=0.592430 lr=3.000e-07
+lr schedule anchored at epoch 1: 5 steps so far -> total 5 for 1 epochs
+epoch=1/1 train_loss=0.539403 validation_loss=0.461096 device=cuda:0
+test_loss=0.329392 epochs=1 elapsed=23.8s
+saved checkpoint to /tmp/opencode/reranker-e2e-real/ddp-bf16-b16-n1-20261127-003939

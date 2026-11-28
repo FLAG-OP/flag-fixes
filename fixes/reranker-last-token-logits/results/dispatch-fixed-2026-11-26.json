@@ -1,0 +1,263 @@
+{
+  "passed": true,
+  "cases": 25,
+  "failed": [],
+  "results": [
+    {
+      "case": "mixed_lengths:scores_shape",
+      "pass": true,
+      "shape": [
+        10
+      ],
+      "rows": 5
+    },
+    {
+      "case": "mixed_lengths:scores_match_full_logit_reference",
+      "pass": true,
+      "max_abs_diff": 2.9802322387695312e-08,
+      "padded_length": 400,
+      "min_real_length": 364,
+      "max_real_length": 400
+    },
+    {
+      "case": "mixed_lengths:lm_head_called_once",
+      "pass": true,
+      "calls": 1
+    },
+    {
+      "case": "mixed_lengths:lm_head_projects_scored_rows_only",
+      "pass": true,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            10,
+            64
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            10,
+            1000
+          ],
+          "output_bytes": 40000
+        }
+      ],
+      "full_sequence_logit_bytes": 8000000,
+      "note": "baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]"
+    },
+    {
+      "case": "equal_lengths_all_truncated:scores_shape",
+      "pass": true,
+      "shape": [
+        8
+      ],
+      "rows": 4
+    },
+    {
+      "case": "equal_lengths_all_truncated:scores_match_full_logit_reference",
+      "pass": true,
+      "max_abs_diff": 0.0,
+      "padded_length": 400,
+      "min_real_length": 400,
+      "max_real_length": 400
+    },
+    {
+      "case": "equal_lengths_all_truncated:lm_head_called_once",
+      "pass": true,
+      "calls": 1
+    },
+    {
+      "case": "equal_lengths_all_truncated:lm_head_projects_scored_rows_only",
+      "pass": true,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            8,
+            64
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            8,
+            1000
+          ],
+          "output_bytes": 32000
+        }
+      ],
+      "full_sequence_logit_bytes": 6400000,
+      "note": "baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]"
+    },
+    {
+      "case": "single_sequence:scores_shape",
+      "pass": true,
+      "shape": [
+        2
+      ],
+      "rows": 1
+    },
+    {
+      "case": "single_sequence:scores_match_full_logit_reference",
+      "pass": true,
+      "max_abs_diff": 2.9802322387695312e-08,
+      "padded_length": 400,
+      "min_real_length": 383,
+      "max_real_length": 400
+    },
+    {
+      "case": "single_sequence:lm_head_called_once",
+      "pass": true,
+      "calls": 1
+    },
+    {
+      "case": "single_sequence:lm_head_projects_scored_rows_only",
+      "pass": true,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            2,
+            64
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            2,
+            1000
+          ],
+          "output_bytes": 8000
+        }
+      ],
+      "full_sequence_logit_bytes": 1600000,
+      "note": "baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]"
+    },
+    {
+      "case": "two_sequences:scores_shape",
+      "pass": true,
+      "shape": [
+        4
+      ],
+      "rows": 2
+    },
+    {
+      "case": "two_sequences:scores_match_full_logit_reference",
+      "pass": true,
+      "max_abs_diff": 0.0,
+      "padded_length": 400,
+      "min_real_length": 381,
+      "max_real_length": 400
+    },
+    {
+      "case": "two_sequences:lm_head_called_once",
+      "pass": true,
+      "calls": 1
+    },
+    {
+      "case": "two_sequences:lm_head_projects_scored_rows_only",
+      "pass": true,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            4,
+            64
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            4,
+            1000
+          ],
+          "output_bytes": 16000
+        }
+      ],
+      "full_sequence_logit_bytes": 3200000,
+      "note": "baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]"
+    },
+    {
+      "case": "batch_of_32_rows:scores_shape",
+      "pass": true,
+      "shape": [
+        64
+      ],
+      "rows": 32
+    },
+    {
+      "case": "batch_of_32_rows:scores_match_full_logit_reference",
+      "pass": true,
+      "max_abs_diff": 0.0,
+      "padded_length": 400,
+      "min_real_length": 356,
+      "max_real_length": 400
+    },
+    {
+      "case": "batch_of_32_rows:lm_head_called_once",
+      "pass": true,
+      "calls": 1
+    },
+    {
+      "case": "batch_of_32_rows:lm_head_projects_scored_rows_only",
+      "pass": true,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            64,
+            64
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            64,
+            1000
+          ],
+          "output_bytes": 256000
+        }
+      ],
+      "full_sequence_logit_bytes": 51200000,
+      "note": "baseline feeds [rows, seq, hidden] and materialises [rows, seq, vocab]; the fix feeds [rows, hidden]"
+    },
+    {
+      "case": "gradients:reach_lm_head_embedding_norm_blocks",
+      "pass": true,
+      "grad_norms": {
+        "backbone.model.embed_tokens.weight": 0.540434,
+        "backbone.model.layers.0.self_attn.q_proj.weight": 0.100647,
+        "backbone.model.layers.1.mlp.down_proj.weight": 0.072478,
+        "backbone.model.norm.weight": 0.010189,
+        "backbone.lm_head.weight": 0.582532
+      },
+      "loss": 0.696808
+    },
+    {
+      "case": "gradient_checkpointing:train_mode_scores_match_reference",
+      "pass": true,
+      "max_abs_diff": 0.0,
+      "use_cache": false
+    },
+    {
+      "case": "gradient_checkpointing:lm_head_projects_scored_rows_only",
+      "pass": true,
+      "lm_head_calls": [
+        {
+          "input_shape": [
+            8,
+            64
+          ],
+          "input_dim": 2,
+          "output_shape": [
+            8,
+            1000
+          ],
+          "output_bytes": 32000
+        }
+      ]
+    },
+    {
+      "case": "kwargs:use_cache_false_accepted",
+      "pass": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "case": "score_head_variant:unchanged_shape",
+      "pass": true,
+      "shape": [
+        2
+      ]
+    }
+  ],
+  "torch": "2.9.0+cu129"
+}

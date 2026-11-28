@@ -141,3 +141,31 @@ def test_verify_uses_selected_target_and_reports_script_failure(tmp_path, capsys
     assert result['source_dirty'] is True
     assert not (target/'.flag-fixes-state').exists()
     assert yaml.safe_load(manifest_file.read_text())['validation']['hardware_status'] == 'unverified'
+
+def verify_probe_root(tmp_path):
+    root = copy_skeleton(tmp_path/'manager')
+    cli.new_fix(root, 'sample-fix', 'sample')
+    source = root/'fixes/sample-fix'
+    target = tmp_path/'target'
+    (target/'src').mkdir(parents=True)
+    file = target/'src/fixed_module.py'; file.write_text('fixed\n')
+    (source/'tests/verify.py').write_text(
+        'import os\nprint(os.environ.get("FLAG_FIXES_COMMAND_TIMEOUT"))\n')
+    manifest = yaml.safe_load((source/'fix.yaml').read_text())
+    manifest['targets'] = [{'path':'src/fixed_module.py','before_sha256':'0'*64,'after_sha256':catalog.sha256(file)}]
+    manifest['validation']['commands'] = [
+        {'name':'probe','script':'tests/verify.py','level':'regression','timeout_seconds':900}]
+    (source/'fix.yaml').write_text(yaml.safe_dump(manifest))
+    return root, target
+
+
+def test_verify_tells_the_command_how_much_time_it_has(tmp_path, capsys):
+    """A command that starts worker processes gets the budget, so it can end them before verify kills it."""
+    root, target = verify_probe_root(tmp_path)
+    argv = ['--root',str(root),'verify','sample-fix','--target',str(target),'--python',sys.executable]
+    assert cli.main(argv) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result['passed'] is True
+    assert result['results'][0]['stdout'].strip() == '900'  # the declared timeout_seconds
+    assert cli.main([*argv,'--timeout','12']) == 0
+    assert json.loads(capsys.readouterr().out)['results'][0]['stdout'].strip() == '12'  # the CLI override

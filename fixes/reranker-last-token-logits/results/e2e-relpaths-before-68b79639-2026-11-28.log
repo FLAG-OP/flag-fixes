@@ -1,0 +1,38 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+{
+  "passed": false,
+  "returncode": 1,
+  "timed_out": false,
+  "elapsed_s": 10.9,
+  "batch": 16,
+  "parallel": "ddp",
+  "master_dtype": "bf16",
+  "nproc": 1,
+  "min_steps": 5,
+  "steps_done": 0,
+  "training_steps_complete": false,
+  "loss_log": [],
+  "oom": false,
+  "oom_allocate_requests_gib": [],
+  "first_oom_line": null,
+  "max_memory_allocated_gib": null,
+  "per_rank": [],
+  "log": "../../scratch/e2e-relpath-before/train.log",
+  "command": "/root/miniconda/envs/python310_torch29_cuda/bin/python3 -m torch.distributed.run --standalone --nproc_per_node=1 /tmp/opencode/scratch/wt-68b79639/fixes/reranker-last-token-logits/tests/_e2e_trainer_entry.py --config-file ../../scratch/e2e-relpath-before/config.yaml --mem-out ../../scratch/e2e-relpath-before/memory.json",
+  "job_id": "152487-1795823300-959f0f9489c4",
+  "timeout_cleanup": null,
+  "visible_devices": {
+    "nproc": 1,
+    "before": {
+      "CUDA_VISIBLE_DEVICES": "1,2",
+      "XPU_VISIBLE_DEVICES": null
+    },
+    "action": "kept; mirrored to XPU_VISIBLE_DEVICES",
+    "after": {
+      "CUDA_VISIBLE_DEVICES": "1,2",
+      "XPU_VISIBLE_DEVICES": "1,2"
+    }
+  }
+}
+E2E FAIL: steps 0/5, returncode 1, oom=False

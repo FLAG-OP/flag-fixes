@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""FSDP2 dispatch: the adapter's forward under FlagScale's real FSDP2 wiring.
+
+``train.parallel=fsdp2`` shards ``backbone.lm_head`` as its own FSDP module
+("oversized leaf", see ``parallel.iter_large_leaf_modules``).  The fix calls
+``self.backbone.lm_head`` directly instead of letting ``Qwen3ForCausalLM``
+call it, so this test checks on the real ``apply_fsdp2`` path that
+
+* lm_head keeps its FSDP pre/post-forward hooks and Shard(0) placement,
+* every forward routes exactly one ``[rows, hidden]`` tensor through it
+  (baseline: ``[rows, seq, hidden]`` -- the full-sequence logits),
+* gradients reach lm_head, the embedding, the norm and the blocks and the
+  optimizer updates the lm_head shard,
+* scores equal the full-logit reference on the same sharded weights.
+
+Default: ``--device cpu`` (gloo, single rank, small hidden size) so the check
+runs wherever torch has composable FSDP.  ``--device cuda --nproc 2`` repeats
+it on the accelerator with the trainer's bf16 autocast.
+
+Exit 0  all checks pass on every rank
+Exit 1  a check failed
+Exit 2  precondition missing, or the platform blocked the run (timeout /
+        collective watchdog) -- SKIP, not a pass
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from _torchrun_job import limit_visible_devices, run_job  # noqa: E402
+
+STARTED_AT = time.time()  # the clock for flag-fixes verify's time budget starts here
+
+BLOCKER = re.compile(r"Watchdog caught collective operation timeout|kl3ChannelCheckErrors|kernel exception", re.I)
+
+
+def write_summary(path, summary: dict) -> None:
+    if path:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
+    parser.add_argument("--nproc", type=int, default=None, help="default 1 for cpu, 2 for cuda")
+    parser.add_argument("--backend", default=None)
+    parser.add_argument("--steps", type=int, default=2)
+    parser.add_argument("--rows", type=int, default=8)
+    parser.add_argument("--layers", type=int, default=None, help="default: 2 on cpu, 4 on cuda")
+    parser.add_argument("--hidden", type=int, default=None, help="default: 2048 on cpu, 4096 on cuda")
+    parser.add_argument("--timeout", type=int, default=1800)
+    parser.add_argument("--json", default=None)
+    args, extra = parser.parse_known_args()
+
+    try:
+        import torch  # noqa: F401
+        from torch.distributed._composable.fsdp import fully_shard  # noqa: F401
+    except Exception as error:
+        print(f"SKIP: torch / composable FSDP (fully_shard) unavailable ({type(error).__name__}: {error}); exit 2")
+        return 2
+
+    nproc = args.nproc or (1 if args.device == "cpu" else 2)
+    layers = args.layers or (2 if args.device == "cpu" else 4)
+    hidden = args.hidden or (2048 if args.device == "cpu" else 4096)
+    if args.device == "cuda":
+        probe = subprocess.run(
+            [sys.executable, "-c", "import torch,sys; sys.exit(0 if torch.cuda.is_available() else 3)"],
+            capture_output=True, text=True, timeout=600,
+        )
+        if probe.returncode != 0:
+            print("SKIP: no CUDA device; exit 2")
+            return 2
+
+    if args.json:
+        given = Path(args.json)
+    else:
+        root = Path(os.environ["RERANKER_TEST_OUT"]) if os.environ.get("RERANKER_TEST_OUT") \
+            else Path(tempfile.gettempdir()) / "reranker-tests"
+        given = root / "fsdp2-step.json"
+    # the worker runs with cwd=tests/, so hand it an absolute record path
+    out = given.resolve()
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    def display(path) -> str:
+        relative = os.path.relpath(path)
+        return relative if not relative.startswith("..") else str(path)
+    for stale in out.parent.glob(out.name + ".rank*"):
+        stale.unlink()
+    log_path = out.with_suffix(".log")
+
+    env = dict(os.environ)
+    # an explicit CUDA_VISIBLE_DEVICES is cut to the rank count and mirrored to XPU; with the
+    # default visibility or an XPU-only list nothing is touched (see limit_visible_devices)
+    visible = limit_visible_devices(env, nproc) if args.device == "cuda" else None
+    if args.device == "cuda":
+        env.setdefault("XMLIR_BMM_DISPATCH_VALUE", "0")
+    command = [
+        sys.executable, "-m", "torch.distributed.run", "--standalone", f"--nproc_per_node={nproc}",
+        str(HERE / "_fsdp2_worker.py"), "--device", args.device, "--steps", str(args.steps),
+        "--rows", str(args.rows), "--json", str(out),
+    ]
+    if args.backend:
+        command += ["--backend", args.backend]
+    command += ["--layers", str(layers), "--hidden", str(hidden)]
+    command += extra
+
+    # own session per job; a timeout ends the agent and the processes carrying this job's id
+    job = run_job(command, env, log_path, args.timeout, cwd=str(HERE), started_at=STARTED_AT)
+    returncode, timed_out, elapsed = job["returncode"], job["timed_out"], job["elapsed_s"]
+    if timed_out:
+        cleanup = job["cleanup"]
+        ended = [item["pid"] for item in cleanup["signalled"]]
+        print(f"launcher timeout after {job['timeout_s']:.0f} s: torchrun agent ended, job {job['job_id']} "
+              f"processes signalled {ended}, survived {cleanup['survived']}")
+
+    text = log_path.read_text(errors="replace")
+    records = [json.loads(p.read_text()) for p in sorted(out.parent.glob(out.name + ".rank*"))]
+    summary = {
+        "device": args.device, "nproc": nproc, "layers": layers, "hidden": hidden,
+        "returncode": returncode, "timed_out": timed_out,
+        "elapsed_s": elapsed,
+        "ranks": records,
+        # which processes belonged to this run: the id every process of the job carried, what
+        # the timeout cleanup signalled (None unless the timeout fired), and how the
+        # visible-device variables were handled (None on the CPU)
+        "job_id": job["job_id"],
+        "timeout_cleanup": job["cleanup"],
+        "visible_devices": visible,
+        # the timeout this run actually had and where it came from (--timeout, or cut to fit
+        # the budget flag-fixes verify gave the command)
+        "launched": job["launched"],
+        "timeout_s": job["timeout_s"],
+        "timeout_source": job["timeout_source"],
+    }
+    summary["log"] = display(log_path)
+    summary["command"] = " ".join(display(part) for part in command)
+    if not job["launched"]:
+        # flag-fixes verify's budget was too short for a run and a cleanup: nothing was started
+        summary["passed"] = False
+        write_summary(args.json, summary)
+        print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
+        print(f"SKIP: {job['timeout_source']}; exit 2")
+        return 2
+    blocked = timed_out or bool(BLOCKER.search(text))
+    if blocked:
+        summary.update(passed=False, blocked=True)
+        write_summary(args.json, summary)
+        print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
+        why = (f"launcher timeout after {job['timeout_s']:.0f} s: {job['timeout_source']}" if timed_out
+               else "collective timeout / device error")
+        print(f"BLOCKED: the FSDP2 run did not complete ({why}); "
+              "exit 2 -- not a pass. See the log for the watchdog trace.")
+        return 2
+    if not records:
+        summary["passed"] = False
+        write_summary(args.json, summary)
+        print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
+        print("FSDP2 test produced no per-rank record (worker crashed); see the log. exit 1")
+        return 1
+    summary["passed"] = returncode == 0 and len(records) == nproc and all(r["passed"] for r in records)
+    write_summary(args.json, summary)
+    print("RESULT_JSON " + json.dumps(summary, ensure_ascii=False, default=str))
+    for record in records:
+        for name, check in record["checks"].items():
+            if not check["pass"]:
+                print(f"FAIL rank{record['rank']} {name}: {json.dumps(check['detail'], default=str)[:600]}")
+    if not summary["passed"]:
+        print("FSDP2 dispatch test FAILED; exit 1")
+        return 1
+    print(f"FSDP2 dispatch OK on {nproc} rank(s) ({args.device}): lm_head is a sharded FSDP module and receives "
+          f"only the scored rows; exit 0")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

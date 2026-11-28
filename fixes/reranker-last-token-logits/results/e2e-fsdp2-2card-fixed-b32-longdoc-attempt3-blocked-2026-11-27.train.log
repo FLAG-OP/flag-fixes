@@ -1,0 +1,56 @@
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+/root/miniconda/envs/python310_torch29_cuda/lib/python3.10/runpy.py:126: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+XCCL /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libbkcl.so loaded
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+[35mSYMBOL_REWRITE [0m[32mtorch success[0m
+reproducibility: seed=42 per_rank=42 deterministic=False world_size=2 platform=cuda
+loading weights directly in master dtype fp32
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]
+Loading checkpoint shards:  20%|██        | 1/5 [00:03<00:14,  3.67s/it]
+Loading checkpoint shards:  20%|██        | 1/5 [00:03<00:15,  3.93s/it]
+Loading checkpoint shards:  40%|████      | 2/5 [00:07<00:11,  3.70s/it]
+Loading checkpoint shards:  40%|████      | 2/5 [00:07<00:11,  3.83s/it]
+Loading checkpoint shards:  60%|██████    | 3/5 [00:11<00:07,  3.69s/it]
+Loading checkpoint shards:  60%|██████    | 3/5 [00:11<00:07,  3.78s/it]
+Loading checkpoint shards:  80%|████████  | 4/5 [00:13<00:03,  3.31s/it]
+Loading checkpoint shards:  80%|████████  | 4/5 [00:14<00:03,  3.37s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:14<00:00,  2.53s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:14<00:00,  2.99s/it]
+gradient checkpointing enabled
+coalesced all-gather shim installed on ProcessGroupXCCL, ProcessGroupGloo: per-tensor _allgather_base fallback
+funcol.all_gather_tensor overridden (per-tensor fallback for this backend)
+
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  2.56s/it]
+Loading checkpoint shards: 100%|██████████| 5/5 [00:15<00:00,  3.06s/it]
+  oversized leaf: backbone.model.embed_tokens gathers 1185 MiB in torch.bfloat16
+  oversized leaf: backbone.lm_head gathers 1185 MiB in torch.bfloat16
+FSDP2 sharded 36 transformer blocks, 2 oversized leaf module(s) and the root over 2 rank(s); compute dtype torch.bfloat16, reduce dtype torch.bfloat16, max param group 1024 MiB
+moved FSDP2 shards to cuda:0 in master dtype fp32
+parallelism=fsdp2 master_dtype=fp32 compute_dtype=bf16
+lr schedule: cosine 1e-05 -> 1e-06 (total_steps=estimated after epoch 1), warmup 200 steps
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[00:20:39][VM-20-4-ubuntu][53834:53834][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+You're using a Qwen2TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+[00:20:40][VM-20-4-ubuntu][53835:53835][INFO][XCCL][globals.cpp:346] xccl version: 101c420 [rdma] [[fix] all2allv nranks=1 precision issue] build data: Apr 14 2026 04:43:53
+[rank0]:[W1127 00:35:09.537731997 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=38, addr=[localhost]:39742, remote=[VM-20-4-ubuntu]:40751): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /pytorch/torch/csrc/distributed/c10d/Utils.hpp:697 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0x80 (0x7f0aeb18bb80 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0x5ffd551 (0x7f0b4852a551 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #2: <unknown function> + 0x5ffe94d (0x7f0b4852b94d in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0x5fff4fa (0x7f0b4852c4fa in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #4: c10d::TCPStore::check(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) + 0x31e (0x7f0b4852721e in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch/lib/libtorch_cpu.so)
+frame #5: torch_xmlir::kccl::ProcessGroupXCCL::HeartbeatMonitor::runLoop() + 0x447 (0x7f0a30c54357 in /root/miniconda/envs/python310_torch29_cuda/lib/python3.10/site-packages/torch_xmlir/libxpytorch.so)
+frame #6: <unknown function> + 0xdc253 (0x7f0b680d3253 in /lib/x86_64-linux-gnu/libstdc++.so.6)
+frame #7: <unknown function> + 0x94ac3 (0x7f0b68e54ac3 in /lib/x86_64-linux-gnu/libc.so.6)
+frame #8: <unknown function> + 0x1268c0 (0x7f0b68ee68c0 in /lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[W1127 00:35:09.708911989 TCPStore.cpp:125] [c10d] recvValue failed on SocketImpl(fd=38, addr=[localhost]:39754, remote=[VM-20-4-ubuntu]:40751): Failed to recv, got 0 bytes. Connection was likely closed. Did the remote server shutdown or crash?
+Exception raised from recvBytes at /pytorch/torch/csrc/distributed/c10d/Utils.hpp:697 (most recent call first):
+[results note] 4522 further lines omitted: repeated TCPStore 'sendBytes failed' and ProcessGroupXCCL::HeartbeatMonitor traces emitted while the launcher's 900 s timeout tore the stuck job down (SIGKILL). No optimizer step was reached; see the JSON summary.
