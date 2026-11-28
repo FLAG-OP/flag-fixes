@@ -103,7 +103,9 @@ validation:
     配置只含绝对路径；--out 仍是本次运行的目录，默认输出根从写死的本机路径改为系统临时目录。
     回归：自测从另一个目录传相对路径（命令行与环境变量默认值各一例）；真实 trainer 从仓库根目录
     传相对的模型、数据、输出路径跑完 5 步，产物在指定目录。
-  - 修订后在干净提交上重跑 flag-fixes verify：7 个声明命令，记录于 results/verify-2026-11-28.json。
+  - 修订后在干净提交 11d6c2d 上重跑 flag-fixes verify：passed=true、7/7 rc=0、source_dirty=false，
+    记录于 results/verify-2026-11-28.json；同一提交上的 verify --timeout 70 记录于
+    results/verify-short-timeout-2026-11-28.json（返回后按作业 id 检查，残留为空）。
   - hardware_status 保持 unverified：平台 2 卡整模型验收未完成；deployable=false、
     owner=null。
   commands:

@@ -244,7 +244,7 @@ PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口
   （基线 hash 命中、`git apply --check` 干净、patch 结果与 `src/` 快照一致）
 - `flag-fixes apply reranker-last-token-logits --target <树>`：exit 2 拒绝（`deployable=false`，符合预期）
 - `flag-fixes status --target <基线树>`：clean；对已打补丁的树 `check` 报 `Baseline checksum differs`（exit 2）
-- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在第二轮修订提交上
+- `flag-fixes verify reranker-last-token-logits --target <修复树>`：**passed=true，7/7 rc=0**，在第二轮修订提交 `11d6c2d` 上
   运行（fix 目录无未提交改动，`source_dirty=false`），2026-11-28；原始输出 `../results/verify-2026-11-28.json`
   （stderr 为空）。7 个声明命令：
   - reranker-lmhead-dispatch（dispatch）：rc=0
@@ -254,10 +254,11 @@ PyTorch 的 expandable segments 建立在 CUDA 驱动的虚拟内存管理接口
   - reranker-scores-equivalence（regression）：rc=0
   - reranker-step-benchmark（benchmark）：rc=0
   - reranker-trainer-single-card（e2e）：rc=0
-- 真实入口上的短超时（同一天，同一提交）：`flag-fixes verify … --timeout 70`。每条命令拿到 70 s 的预算；dispatch
+- 真实入口上的短超时（同一天，同一提交 `11d6c2d`，同样 `source_dirty=false`）：`flag-fixes verify … --timeout 70`。每条命令拿到 70 s 的预算；dispatch
   （不起子进程）照常通过，FSDP2 CPU 测试的 launcher 把内层超时压到 8 s、自行超时并结束作业后报失败，verify 随即
   返回（`passed=false`；该命令的记录是 launcher 自己返回的 rc=2，不是外层超时），返回后没有带作业 id 的进程。
-  原始输出 `../results/verify-short-timeout-2026-11-28.json`
+  原始输出 `../results/verify-short-timeout-2026-11-28.json`，返回后按记录里的作业 id 做的进程检查在
+  `../results/verify-short-timeout-2026-11-28.after.txt`（为空）
 - 之前的两份记录对应各自当时的脚本，已被上面的记录取代：`../results/verify-2026-11-27.json`（`c2aef972`，6/6）
   与 `../results/verify-2026-11-27-r2.json`（`217d46f`，7/7）
 - 仓库测试 `python -m pytest -q`：26 passed, 3 subtests passed；`python -m compileall -q fixes`：exit 0

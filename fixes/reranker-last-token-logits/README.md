@@ -184,7 +184,7 @@ git -C "$TARGET" apply --reverse --check "$MANAGER/fixes/reranker-last-token-log
 | 真实 trainer 从仓库根目录传相对的模型、数据、输出路径 | `68b79639`：exit 1、0 步（worker 找不到配置） | exit 0，5 步；配置里全是绝对路径，产物在指定目录 |
 | 真实 trainer 2 卡 FSDP2、batch 32、长文档 | 第 3 步反向 OOM（与平台记录逐项吻合） | 第 4 次尝试越过基线 OOM 点（step 3 峰值 allocated 84.41 GiB），**没有一次干净退出**（XCCL 卡死） |
 | `flag-fixes validate` / `check` / `plan` | — | exit 0 |
-| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（第二轮修订提交，`source_dirty=false`；`verify-2026-11-28.json`） |
+| `flag-fixes verify`（修复树，7 个声明命令） | — | passed，7/7 rc=0（第二轮修订提交 `11d6c2d`，`source_dirty=false`；`verify-2026-11-28.json`） |
 
 判定与覆盖边界：脚本只有退出码 0 才算通过，缺设备或缺 checkpoint/数据一律退出码 2。
 普通 CI（无设备 runner）只执行 `flag-fixes validate`、`python -m pytest -q` 和本地 fix 脚本的

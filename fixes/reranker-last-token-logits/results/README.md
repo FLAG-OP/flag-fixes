@@ -39,8 +39,8 @@ torch 2.9.0+cu129，transformers 4.57.6）实测。没有凭据、机器备份�
 | `e2e-relpaths-after-2026-11-28.{json,log,config.yaml}` | 修订后的 launcher 从仓库根目录传相对路径：exit 0、5 步、40.1 s；`config.yaml` 里 `output_dir`、`model_path` 与三个数据路径都是绝对路径 |
 | `e2e-1card-fixed-verifybudget{100,30}-2026-11-28.{json,log}` | 直接给真实 e2e launcher verify 的预算（不经 verify）。100 s：内层超时 36.7 s，launcher 自行超时、结束 1 个真实 trainer worker 后返回失败（exit 1，`timeout_cleanup` 记录被信号的进程）；30 s：不启动（exit 2，`launched=false`） |
 | `fsdp2-cpu-budget{75,5}-2026-11-28.{json,log}` | 直接给 FSDP2 launcher verify 的预算（CPU，单 rank，不经 verify）。75 s：内层超时 13.5 s，自行超时、结束 1 个 worker 后返回（exit 2，`blocked=true`，`timeout_cleanup` 记录被信号的进程，残留为空）；5 s：不启动（exit 2，`launched=false`） |
-| `verify-2026-11-28.json`、`verify-2026-11-28.stderr.log` | 第二轮修订后的干净提交上的 `flag-fixes verify`（修复树，7 个声明命令，passed、`source_dirty=false`） |
-| `verify-short-timeout-2026-11-28.json` | 同一提交上的 `flag-fixes verify … --timeout 70`：dispatch 通过；FSDP2 CPU 测试的 launcher 把内层超时压到 8 s、自行超时并结束作业后报失败（rc=2，不是外层超时）；verify 返回 `passed=false`，返回后没有带作业 id 的进程（进程检查在 verify 返回后立刻用 pgrep 做了一次，没有单独留文件） |
+| `verify-2026-11-28.json`、`verify-2026-11-28.stderr.log` | 第二轮修订提交 `11d6c2d` 上的 `flag-fixes verify`（修复树，7 个声明命令，passed、`source_dirty=false`；stderr 为空） |
+| `verify-short-timeout-2026-11-28.json`、`…-2026-11-28.stderr.log`、`…-2026-11-28.after.txt` | 同一提交上的 `flag-fixes verify … --timeout 70`（`source_dirty=false`）：dispatch 通过；FSDP2 CPU 测试的 launcher 把内层超时压到 8 s、自行超时并结束作业后报失败（rc=2，不是外层超时）；verify 返回 `passed=false`；`after.txt` 是返回后立刻按记录里的作业 id 做的进程检查（FSDP2 那条命令的作业：残留为空） |
 | `e2e-1card-fixed-xpuonly-2026-11-27.train.log` | 仅 XPU 列表那次的 trainer 日志：`import torch` 后第一次 CUDA 调用报 `device >= 0 && device < num_gpus INTERNAL ASSERT FAILED … device=2, num_gpus=2`（厂商栈行为） |
 
 e2e 的 `.log` 是 launcher 输出（JSON 摘要），`.train.log` 是 trainer 的 `train.log`
